@@ -1,0 +1,95 @@
+<?php
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Frontend\DashboardController;
+use App\Http\Controllers\Frontend\EventsAndApptController;
+use App\Http\Controllers\Frontend\QuestionsController;
+use App\Http\Controllers\Frontend\UserController;
+use Illuminate\Support\Facades\Route;
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::group(['middleware' => 'admin'], function () {
+    Route::get('/', [AdminController::class, 'login']);
+    Route::get('Dashboard', [DashboardController::class, 'dashboard'])->name('Dashboard');
+
+    // users & scholars
+    Route::get('AllUsers', [UserController::class, 'all_users'])->name('AllUsers');
+    Route::get('getUsers', [UserController::class, 'get_all_users'])->name('getUsers');
+    Route::get('AllScholars', [UserController::class, 'all_scholars'])->name('AllScholars');
+    Route::get('getScholars', [UserController::class, 'get_all_scholars'])->name('getScholars');
+    Route::get('ScholarsRequests', [UserController::class, 'all_scholar_request'])->name('ScholarsRequests');
+    Route::get('getScholarRequests', [UserController::class, 'get_all_scholar_request'])->name('getScholarRequests');
+    Route::get('ScholarRequest/Detail/{id}', [UserController::class, 'scholar_request_detail'])->name('ScholarRequest/Detail');
+    Route::get('Approve/{id}', [UserController::class, 'approve_request'])->name('Approve');
+    Route::get('Reject/{id}', [UserController::class, 'reject_request'])->name('Reject');
+
+    Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
+    Route::get('getUserPublicQuestions/{id}', [UserController::class, 'get_public_questions_posted_by_user'])->name('getUserPublicQuestions');
+    Route::get('UserDetail/PrivateQuestions/{id}', [UserController::class, 'user_detail_private_questons'])->name('UserDetail/PrivateQuestions');
+    Route::get('getUserPrivateQuestions/{id}', [UserController::class, 'get_private_questions_asked_by_user'])->name('getUserPrivateQuestions');
+    Route::get('UserDetail/Appointments/{id}', [UserController::class, 'user_detail_appointments'])->name('UserDetail/Appointments');
+    Route::get('getUserAppointments/{id}', [UserController::class, 'get_appointments_of_user'])->name('getUserAppointments');
+    Route::get('UserDetail/AskedFromScholar/{id}', [UserController::class, 'user_detail_asked_from_me'])->name('UserDetail/AskedFromScholar');
+    Route::get('getUserAskedFromMe/{id}', [UserController::class, 'get_asked_from_me'])->name('getUserAskedFromMe');
+    Route::get('UserDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('UserDetail/Degrees');
+
+    Route::get('UserDetail/UserEvents/{id}', [UserController::class, 'user_events'])->name('UserDetail/UserEvents');
+    Route::get('getUserEvents/{id}', [UserController::class, 'get_user_events'])->name('getUserEvents');
+
+    Route::get('UserDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('UserDetail/UserEventsRequest');
+    Route::get('getUserEventsRequests/{id}', [UserController::class, 'get_user_events_requests'])->name('getUserEventsRequests');
+    
+    Route::get('DeleteUser/{id}', [UserController::class, 'delete_user'])->name('DeleteUser');
+
+
+
+    //Public Questions
+    Route::get('PublicQuestions', [QuestionsController::class, 'all_public_questions'])->name('PublicQuestions');
+    Route::get('getPublicQuestions', [QuestionsController::class, 'get_all_public_questions'])->name('getPublicQuestions');
+    Route::get('PublicQuestionDetail/{id}', [QuestionsController::class, 'public_question_detail'])->name('PublicQuestionDetail');
+    Route::get('getQuestionComments/{id}', [QuestionsController::class, 'get_question_comments'])->name('getQuestionComments');
+
+
+    //Private Questions
+    Route::get('PrivateQuestions', [QuestionsController::class, 'all_private_questions'])->name('PrivateQuestions');
+    Route::get('getPrivateQuestions', [QuestionsController::class, 'get_all_private_questions'])->name('getPrivateQuestions');
+    Route::get('PrivateQuestionDetail/{id}', [QuestionsController::class, 'private_question_detail'])->name('PrivateQuestionDetail');
+
+    // Appointments & Events
+    Route::get('AllAppointments', [EventsAndApptController::class, 'all_appointments'])->name('AllAppointments');
+    Route::get('getAppts', [EventsAndApptController::class, 'get_all_appointments'])->name('getAppts');
+    Route::get('AppointmentDetail/{id}', [EventsAndApptController::class, 'appointment_detail'])->name('AppointmentDetail');
+
+    Route::get('AllEvents', [EventsAndApptController::class, 'all_events'])->name('AllEvents');
+    Route::get('getEvents', [EventsAndApptController::class, 'get_all_events'])->name('getEvents');
+    Route::get('RequestedEvents', [EventsAndApptController::class, 'all_requested_events'])->name('RequestedEvents');
+    Route::get('getRequestedEvents', [EventsAndApptController::class, 'get_all_requested_events'])->name('getRequestedEvents');
+    Route::get('EventRequestApprove/{id}', [EventsAndApptController::class, 'approve_request'])->name('EventRequestApprove');
+    Route::get('EventRequestDecline/{id}', [EventsAndApptController::class, 'reject_request'])->name('EventRequestDecline');
+    Route::get('EventDetail/{id}', [EventsAndApptController::class, 'event_detail'])->name('EventDetail');
+    Route::get('getEventsQuestions/{id}', [EventsAndApptController::class, 'get_event_questions'])->name('getEventsQuestions');
+    Route::get('EventQuestionDetail/{id}', [EventsAndApptController::class, 'event_question_detail'])->name('EventQuestionDetail');
+    Route::get('getEventScholars/{id}', [EventsAndApptController::class, 'get_event_questions'])->name('getEventScholars');
+
+
+});
+
+Route::post('loginn', [AdminController::class, 'loginn']);
+Route::get('logout', [AdminController::class, 'flush']);
+Route::get('/fogetPassword', [AdminController::class, 'forget']);
+Route::get('/resetPassword', [AdminController::class, 'reset']);
+Route::get('resetAdminPassword', [AdminController::class, 'reset_password']);
+Route::get('fogetPasswordOTP', [AdminController::class, 'generate_otp']);
+Route::get('verifyOTP', [AdminController::class, 'verify_otp']);
