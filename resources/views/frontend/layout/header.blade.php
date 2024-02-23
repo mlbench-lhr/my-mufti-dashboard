@@ -13,9 +13,9 @@
     <meta property="og:type" content="article" />
     <meta property="og:title"
         content="Explore and ask questions, and connect with scholars with personal appointments for insightful guidance on your journey of learning and understanding." />
-    <meta property="og:url" content="https://probau-web.ml-bench.com/" />
-    <meta property="og:site_name" content="Diet Planner" />
-    <link rel="canonical" href="https://probau-web.ml-bench.com/" />
+    <meta property="og:url" content="https://dashboard.mymuftiapp.com/" />
+    <meta property="og:site_name" content="My Mufti" />
+    <link rel="canonical" href="https://dashboard.mymuftiapp.com/" />
     <link rel="shortcut icon" href=" {{ ' ../../public/frontend/media/tabLogo.svg ' }}" />
     <!--begin::Fonts-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
