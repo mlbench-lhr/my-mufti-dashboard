@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('image')->default('');
             $table->string('event_title')->default('');
-            $table->json('event_category')->default("[]");
+            $table->json('event_category');
             $table->timestamp('date')->useCurrent();
             $table->string('location')->default('');
             $table->double('latitude')->default(0);
