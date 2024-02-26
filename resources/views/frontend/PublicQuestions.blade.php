@@ -204,7 +204,7 @@
                         <td style = "padding-left: 50px;" >${row.user.user_type}</td>
                         <td>${row.question}</td>
                         <td style = "padding-left: 50px;"> 
-                                ${row.voting_option == 0 ?
+                                ${row.voting_option == 1 ?
                                     `Yes, No` :
                                     `True, False`}
                         </td>
