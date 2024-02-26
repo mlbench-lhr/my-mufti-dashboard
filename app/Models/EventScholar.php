@@ -21,4 +21,8 @@ class EventScholar extends Model
         'user_id' => 'integer',
         'category' => 'array',
     ];
+
+    protected $attributes = [
+        'category' => "[]",
+    ];
 }

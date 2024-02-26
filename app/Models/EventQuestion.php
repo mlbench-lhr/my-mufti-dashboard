@@ -19,6 +19,12 @@ class EventQuestion extends Model
         'event_id' => 'integer',
         'user_id' => 'integer',
     ];
+
+    protected $attributes = [
+        'question' => "",
+        'answer' => "",
+    ];
+
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

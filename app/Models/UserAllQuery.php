@@ -21,6 +21,11 @@ class UserAllQuery extends Model
         'user_id' => 'integer',
         'query_id' => 'integer',
     ];
+
+    protected $attributes = [
+        'question' => "",
+    ];
+    
     public function mufti_detail()
     {
         return $this->belongsTo(User::class, 'mufti_id', 'id');

@@ -26,6 +26,10 @@ class MuftiAppointment extends Model
         'user_id' => 'integer',
     ];
 
+    protected $attributes = [
+        'description' => "",
+    ];
+
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id')->select('id','name','image', 'email', 'user_type');

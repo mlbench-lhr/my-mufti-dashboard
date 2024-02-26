@@ -19,6 +19,10 @@ class ScholarReply extends Model
         'user_id' => 'integer',
         'question_id' => 'integer',
     ];
+
+    protected $attributes = [
+        'reply' => "",
+    ];
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id','name', 'image');

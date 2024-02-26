@@ -26,6 +26,12 @@ class Question extends Model
         'user_info' => 'integer',
         'voting_option' => 'integer',
     ];
+
+    protected $attributes = [
+        'question_category' => "[]",
+        'question' => "",
+    ];
+
     protected $hidden = [
         'question_category',
     ];

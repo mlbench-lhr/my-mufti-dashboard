@@ -16,4 +16,8 @@ class Notification extends Model
     protected $casts = [
         'user_id' => 'integer',
     ];
+
+    protected $attributes = [
+        'body' => "",
+    ];
 }

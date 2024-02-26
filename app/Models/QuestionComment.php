@@ -20,6 +20,10 @@ class QuestionComment extends Model
         'question_id' => 'integer',
     ];
 
+    protected $attributes = [
+        'comment' => "",
+    ];
+
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id','name', 'image');

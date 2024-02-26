@@ -24,6 +24,10 @@ class UserQuery extends Model
 
     ];
 
+    protected $attributes = [
+        'question' => "",
+        'category' => "[]",
+    ];
     public function all_question()
     {
         return $this->hasMany(UserAllQuery::class, 'query_id', 'id');

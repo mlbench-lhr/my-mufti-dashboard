@@ -33,6 +33,11 @@ class Event extends Model
         'event_category' => 'array',
     ];
 
+    protected $attributes = [
+        'event_category' => "[]",
+        'about' => "",
+    ];
+    
     protected static function boot()
     {
         parent::boot();
