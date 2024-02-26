@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('location')->default('');
             $table->double('latitude')->default(0);
             $table->double('longitude')->default(0);
-            $table->longText('about')->default('');
+            $table->longText('about');
             $table->integer('event_status')->comment("0 for rejected,1 for approved,2 for pending")->default(2);
             $table->timestamps();
         });

@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('fiqa')->default('');
             $table->integer('mufti_status')->comment("1 for pending,2 for accepted,3 for rejected")->default(0);
             $table->string('user_type')->default('user');
-            $table->longText('device_id')->default('');
-            $table->longText('a_code')->default('');
-            $table->longText('g_code')->default('');
+            $table->longText('device_id');
+            $table->longText('a_code');
+            $table->longText('g_code');
             $table->integer('email_code')->default(0);
             $table->timestamps();
             $table->softDeletes();

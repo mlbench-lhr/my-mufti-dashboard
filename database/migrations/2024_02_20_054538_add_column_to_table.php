@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_queries', function (Blueprint $table) {
-            $table->json('category')->default("[]")->after('question');
+            $table->json('category')->after('question');
         });
     }
 

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mufti_appointments', function (Blueprint $table) {
-            $table->longText('payment_id')->default('');
+            $table->string('payment_id')->default('');
             $table->string('payment_method')->default('');
         });
     }

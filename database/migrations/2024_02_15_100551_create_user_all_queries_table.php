@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('mufti_id');
             $table->foreign('mufti_id')->references('id')->on('users');
-            $table->longText('question')->default('');
+            $table->longText('question');
             $table->integer('status')->comment("0 for pending,1 for accepted,2 for rejected")->default(0);
             $table->timestamps();
         });

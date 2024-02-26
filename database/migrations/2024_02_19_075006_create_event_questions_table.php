@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('category')->default('');
-            $table->longText('question')->default('');
-            $table->longText('answer')->default('');
+            $table->longText('question');
+            $table->longText('answer');
             $table->timestamps();
         });
     }

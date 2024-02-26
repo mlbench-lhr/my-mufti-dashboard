@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name')->default('');
             $table->string('fiqa')->default('');
             $table->string('image')->default('');
-            $table->json('category')->default("[]");
+            $table->json('category');
             $table->timestamps();
         });
     }

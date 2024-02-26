@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('mufti_id');
             $table->foreign('mufti_id')->references('id')->on('users');
             $table->string('category')->default('');
-            $table->longText('description')->default('');
+            $table->longText('description');
             $table->string('date')->default('');
             $table->string('duration')->default('');
             $table->string('consultation_fee')->default('');

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->json('question_category')->default("[]");
-            $table->longText('question')->default('');
+            $table->json('question_category');
+            $table->longText('question');
             $table->string('time_limit')->default('');
             $table->integer('voting_option')->default(0);
             $table->integer('user_info')->default(1);

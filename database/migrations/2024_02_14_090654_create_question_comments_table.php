@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('question_id')->references('id')->on('questions');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->longText('comment')->default('');
+            $table->longText('comment');
             $table->timestamps();
         });
     }
