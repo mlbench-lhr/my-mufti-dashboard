@@ -110,18 +110,25 @@ class UserController extends Controller
 
         $years = $diff->y;
         $months = $diff->m;
-
+        $days = $diff->d;
         $work_experience = "";
 
         if ($years > 0) {
             $work_experience .= $years . " year" . ($years > 1 ? "s" : "");
+            if ($months > 0 || $days > 0) {
+                $work_experience .= " ";
+            }
         }
 
         if ($months > 0) {
-            if ($years > 0) {
-                $work_experience .= " ";
-            }
             $work_experience .= $months . " month" . ($months > 1 ? "s" : "");
+            if ($days > 0) {
+                $work_experience .= " and ";
+            }
+        }
+
+        if ($days > 0) {
+            $work_experience .= $days . " day" . ($days > 1 ? "s" : "");
         }
         $response = [
             'user' => $user,
@@ -315,7 +322,7 @@ class UserController extends Controller
     }
 
     public function get_user_events(Request $request)
-    {   
+    {
         $searchTerm = $request->input('search');
         $query = Event::where('event_status', 1)->where('user_id', $request->id);
         $userCount = Event::where('event_status', 1)->where('user_id', $request->id)->count();
@@ -343,7 +350,7 @@ class UserController extends Controller
     }
 
     public function get_user_events_requests(Request $request)
-    {   
+    {
         $searchTerm = $request->input('search');
         $query = Event::where('user_id', $request->id);
         $userCount = Event::where('user_id', $request->id)->count();

@@ -92,7 +92,7 @@
                     {{ \Carbon\Carbon::parse($question->time_limit)->format('M d, Y') }}
                 </div>
                 <div class="col-12 fs-3 fw-normal text-dark pb-10">
-                    {{$question->question}}
+                    {{ $question->question }}
                 </div>
 
                 <div class="col-12 fs-2 fw-bolder text-dark pb-2">
@@ -100,28 +100,28 @@
                 </div>
 
                 <div class="col-12 fs-2 fw-bolder text-dark d-flex pb-5">
-                         @if ($question->user_detail->image == '')
-                                <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                    <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
-                                        style="height: 80px; width:80px;" />
-                                </div>
-                            @else
-                                <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                    <img src="{{ asset('public/storage/' . $question->user_detail->image) }}" alt="image"
-                                        style="height: 80px; width:80px; object-fit: cover;" />
-                                </div>
-                            @endif
-                    
-                  
+                    @if ($question->user_detail->image == '')
+                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
+                                style="height: 80px; width:80px;" />
+                        </div>
+                    @else
+                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                            <img src="{{ asset('public/storage/' . $question->user_detail->image) }}" alt="image"
+                                style="height: 80px; width:80px; object-fit: cover;" />
+                        </div>
+                    @endif
+
+
                     <div class="ms-2">
                         <div class="fs-5 fw-normal text-success">
-                            {{$question->user_detail->user_type}}
+                            {{ $question->user_detail->user_type }}
                         </div>
                         <div class="fs-4">
-                            {{$question->user_detail->name}}
+                            {{ $question->user_detail->name }}
                         </div>
                         <div class="fs-6 fw-normal text-muted">
-                            {{$question->user_detail->email}}
+                            {{ $question->user_detail->email }}
                         </div>
                     </div>
                 </div>
@@ -133,27 +133,28 @@
                 <div class="col-9">
                     <div class="row">
                         @foreach ($question->question_category as $data)
-                        <div class="col-3 badge badge-light fw-normal fs-4 mb-3"
-                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
-                            {{$data}}
-                        </div>
+                            <div class="col-3 badge badge-light fw-normal fs-4 mb-3"
+                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                {{ $data }}
+                            </div>
                         @endforeach
                     </div>
 
                 </div>
             </div>
 
-            <div class="row flex-col mb-5">
+            <div class="row flex-col mb-7">
                 <div class="col-12 fs-2 fw-bolder text-dark mb-5">
                     Public Feedback
                 </div>
                 <div class="row mb-5">
                     <div class="col-6 d-flex justify-content-center align-content-center">
                         <div class="fs-3 fw-bold text-success">
-                            {{$question->yesVotesPercentage}}%
+                            {{ $question->yesVotesPercentage }}%
                         </div>
                         <div class="progress h-15px w-100 ms-3 mt-2">
-                            <div class="progress-bar" role="progressbar" style="width: {{$question->yesVotesPercentage}}% ;  background-color:#38B89A;"
+                            <div class="progress-bar" role="progressbar"
+                                style="width: {{ $question->yesVotesPercentage }}% ;  background-color:#38B89A;"
                                 aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="fs-3 fw-bold text-success ms-3 d-flex">
@@ -177,10 +178,11 @@
                 <div class="row">
                     <div class="col-6 d-flex justify-content-center align-content-center">
                         <div class="fs-3 fw-bold text-danger">
-                            {{$question->noVotesPercentage}}%
+                            {{ $question->noVotesPercentage }}%
                         </div>
                         <div class="progress h-15px w-100 ms-3 mt-2">
-                            <div class="progress-bar" role="progressbar" style="width: {{$question->noVotesPercentage}}%;  background-color:#F52E2E;"
+                            <div class="progress-bar" role="progressbar"
+                                style="width: {{ $question->noVotesPercentage }}%;  background-color:#F52E2E;"
                                 aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="fs-3 fw-bold text-danger ms-3 d-flex">
@@ -204,6 +206,53 @@
 
             </div>
 
+            {{-- Scholars Reply --}}
+            <div class="col-12 fs-2 fw-bolder text-dark pb-2">
+                Scholar's Reply
+            </div>
+            @if (!empty($question->scholar_reply))
+                <div class="col-12 fs-2 fw-bolder text-dark d-flex pb-5">
+                    @if ($question->scholar_reply->user_detail->image == '')
+                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
+                                style="height: 80px; width:80px;" />
+                        </div>
+                    @else
+                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                            <img src="{{ asset('public/storage/' . $question->scholar_reply->user_detail->image) }}"
+                                alt="image" style="height: 80px; width:80px; object-fit: cover;" />
+                        </div>
+                    @endif
+
+
+                    <div class="ms-2">
+                        <div class="fs-5 fw-normal text-success">
+                            {{ $question->scholar_reply->user_detail->fiqa }}
+                        </div>
+                        <div class="fs-4">
+                            {{ $question->scholar_reply->user_detail->name }}
+                        </div>
+                        <div class="text-muted fs-5 fw-normal"
+                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;">
+                            @foreach ($question->scholar_reply->user_detail->interests as $data)
+                                {{ $data->interest }}
+                                @if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 fs-4 fw-bold text-muted pb-10">
+                    {{ $question->scholar_reply->reply }}
+                </div>
+            @else
+                <div class="col-12 fs-1  fw-bold text-muted pb-10 text-center mt-10 mb-10">
+                    No Scholar’s Reply!!
+                </div>
+            @endif
+
+
             {{-- question comments --}}
 
             <div class="card">
@@ -218,8 +267,8 @@
                     <!--begin::Card toolbar-->
                     <div class="card-toolbar mb-5">
                         <!--begin::Toolbar-->
-                        <h3 class="mt-4 fs-2 text-muted fw-normal">Total Comments: <span class="fs-5"
-                            id="user-count" style="font-weight:500 "> </span> </h3>
+                        <h3 class="mt-4 fs-2 text-muted fw-normal">Total Comments: <span class="fs-5" id="user-count"
+                                style="font-weight:500 "> </span> </h3>
                         <!--end::Toolbar-->
                     </div>
                     <!--end::Card toolbar-->
@@ -306,7 +355,8 @@
 
                     var count = (users.data.length > 0) ? (users.current_page - 1) * users.per_page : 0;
                     $.each(users.data, function(index, row) {
-                        var modifiedSerialNumber = pad(count + 1, 2, '0'); // Calculate modified serial number
+                        var modifiedSerialNumber = pad(count + 1, 2,
+                            '0'); // Calculate modified serial number
                         var newRow = `
                     <tr>
                         <td class="d-flex align-items-center">
