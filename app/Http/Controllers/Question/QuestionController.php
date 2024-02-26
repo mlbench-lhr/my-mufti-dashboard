@@ -363,13 +363,13 @@ class QuestionController extends Controller
         $data2 = [
             'query_id' => $question->id,
             'user_id' => $request->user_id,
-            'mufti_id' => 11,
+            'mufti_id' => 9,
             'question' => $request->question,
         ];
 
         $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
 
-        $defaultMufti = User::where(['id' => 11, 'mufti_status' => 2])->first();
+        $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
 
         $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
 
@@ -446,11 +446,11 @@ class QuestionController extends Controller
             $data2 = [
                 'query_id' => $question->id,
                 'user_id' => $request->user_id,
-                'mufti_id' => 11,
+                'mufti_id' => 9,
                 'question' => $request->question,
             ];
 
-            $defaultMufti = User::where(['id' => 11, 'mufti_status' => 2])->first();
+            $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
             $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
 
             UserAllQuery::create($data2);
@@ -459,14 +459,14 @@ class QuestionController extends Controller
 
         }
 
-        $defaultMufti = User::where(['id' => 11, 'mufti_status' => 2])->first();
+        $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
 
         $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
 
         $data2 = [
             'query_id' => $question->id,
             'user_id' => $request->user_id,
-            'mufti_id' => 11,
+            'mufti_id' => 9,
             'question' => $request->question,
         ];
         UserAllQuery::create($data2);
