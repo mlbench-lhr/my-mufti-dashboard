@@ -22,13 +22,21 @@ class DashboardController extends Controller
         $get_scholars = $this->get_scholars();
         $get_all_appoinments = $this->get_all_appoinments();
         $get_all_questions = $this->get_all_questions();
-        $accountCount = User::count();
         $apple = User::where('a_code', '!=', '')->count();
-        $apple = floor((($apple / $accountCount) * 100));
         $google = User::where('g_code', '!=', '')->count();
-        $google = floor((($google / $accountCount) * 100));
         $inApp = User::where('g_code', '=', '')->where('a_code', '=', '')->count();
-        $inApp = floor((($inApp / $accountCount) * 100));
+        $accountCount = User::count();
+        if($accountCount == 0){
+            $apple = 0;
+            $google = 0;
+            $inApp = 0;
+        }else{
+            $apple = floor((($apple / $accountCount) * 100));
+            $google = floor((($google / $accountCount) * 100));
+            $inApp = floor((($inApp / $accountCount) * 100));
+        }
+      
+        
         $appointmentCount = MuftiAppointment::count();
         $questionCount = UserAllQuery::count();
         if ($questionCount != 0) {
@@ -237,21 +245,41 @@ class DashboardController extends Controller
 
         $all_questions = count($all_questions);
 
-        $data = [
-            'total_matches' => $all_questions,
-            'current_month_match' => round(((count($current_month_match) / $all_questions) * 100), 0) ?? 0,
-            'one_month_before_match' => round(((count($one_month_before_match) / $all_questions) * 100), 0) ?? 0,
-            'two_months_before_match' => round(((count($two_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'three_months_before_match' => round(((count($three_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'four_months_before_match' => round(((count($four_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'five_months_before_match' => round(((count($five_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'six_months_before_match' => round(((count($six_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'seven_months_before_match' => round(((count($seven_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'eight_months_before_match' => round(((count($eight_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'nine_months_before_match' => round(((count($nine_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'ten_months_before_match' => round(((count($ten_months_before_match) / $all_questions) * 100), 0) ?? 0,
-            'eleven_months_before_match' => round(((count($eleven_months_before_match) / $all_questions) * 100), 0) ?? 0,
-        ];
+        if ($all_questions == 0) {
+            $data = [
+                'total_matches' => $all_questions,
+                'current_month_match' => 0,
+                'one_month_before_match' =>  0,
+                'two_months_before_match' =>  0,
+                'three_months_before_match' =>  0,
+                'four_months_before_match' =>  0,
+                'five_months_before_match' =>  0,
+                'six_months_before_match' =>  0,
+                'seven_months_before_match' =>  0,
+                'eight_months_before_match' =>  0,
+                'nine_months_before_match' =>  0,
+                'ten_months_before_match' =>  0,
+                'eleven_months_before_match' =>  0,
+            ];
+        } else {
+            $data = [
+                'total_matches' => $all_questions,
+                'current_month_match' => round(((count($current_month_match) / $all_questions) * 100), 0) ?? 0,
+                'one_month_before_match' => round(((count($one_month_before_match) / $all_questions) * 100), 0) ?? 0,
+                'two_months_before_match' => round(((count($two_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'three_months_before_match' => round(((count($three_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'four_months_before_match' => round(((count($four_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'five_months_before_match' => round(((count($five_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'six_months_before_match' => round(((count($six_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'seven_months_before_match' => round(((count($seven_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'eight_months_before_match' => round(((count($eight_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'nine_months_before_match' => round(((count($nine_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'ten_months_before_match' => round(((count($ten_months_before_match) / $all_questions) * 100), 0) ?? 0,
+                'eleven_months_before_match' => round(((count($eleven_months_before_match) / $all_questions) * 100), 0) ?? 0,
+            ];
+        }
+
+
         return $data;
     }
     public function get_scholars()
@@ -295,21 +323,41 @@ class DashboardController extends Controller
 
         $all_scholars = count($all_scholars);
 
-        $data = [
-            'total_matches' => $all_scholars,
-            'current_month_match' => round(((count($current_month_match) / $all_scholars) * 100), 0) ?? 0,
-            'one_month_before_match' => round(((count($one_month_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'two_months_before_match' => round(((count($two_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'three_months_before_match' => round(((count($three_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'four_months_before_match' => round(((count($four_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'five_months_before_match' => round(((count($five_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'six_months_before_match' => round(((count($six_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'seven_months_before_match' => round(((count($seven_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'eight_months_before_match' => round(((count($eight_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'nine_months_before_match' => round(((count($nine_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'ten_months_before_match' => round(((count($ten_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-            'eleven_months_before_match' => round(((count($eleven_months_before_match) / $all_scholars) * 100), 0) ?? 0,
-        ];
+        if ($all_scholars == 0) {
+            $data = [
+                'total_matches' => $all_scholars,
+                'current_month_match' =>  0,
+                'one_month_before_match' =>  0,
+                'two_months_before_match' =>  0,
+                'three_months_before_match' =>  0,
+                'four_months_before_match' =>  0,
+                'five_months_before_match' =>  0,
+                'six_months_before_match' =>  0,
+                'seven_months_before_match' =>  0,
+                'eight_months_before_match' =>  0,
+                'nine_months_before_match' =>  0,
+                'ten_months_before_match' =>  0,
+                'eleven_months_before_match' =>  0,
+            ];
+        } else {
+            $data = [
+                'total_matches' => $all_scholars,
+                'current_month_match' => round(((count($current_month_match) / $all_scholars) * 100), 0) ?? 0,
+                'one_month_before_match' => round(((count($one_month_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'two_months_before_match' => round(((count($two_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'three_months_before_match' => round(((count($three_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'four_months_before_match' => round(((count($four_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'five_months_before_match' => round(((count($five_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'six_months_before_match' => round(((count($six_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'seven_months_before_match' => round(((count($seven_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'eight_months_before_match' => round(((count($eight_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'nine_months_before_match' => round(((count($nine_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'ten_months_before_match' => round(((count($ten_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+                'eleven_months_before_match' => round(((count($eleven_months_before_match) / $all_scholars) * 100), 0) ?? 0,
+            ];
+        }
+
+
         return $data;
     }
     public function get_all_activities()
@@ -349,7 +397,7 @@ class DashboardController extends Controller
         ];
 
         $current_month = $one_month_before = $two_months_before = $three_months_before = $four_months_before =
-        $five_months_before = $six_months_before = [];
+            $five_months_before = $six_months_before = [];
 
         foreach ($month as $value) {
             if ($value == 0) {
@@ -414,9 +462,9 @@ class DashboardController extends Controller
         }
 
         $current_month = $one_month_before = $two_months_before = $three_months_before = $four_months_before =
-        $five_months_before = $six_months_before = [];
+            $five_months_before = $six_months_before = [];
         $current_month1 = $one_month_before1 = $two_months_before1 = $three_months_before1 = $four_months_before1 =
-        $five_months_before1 = $six_months_before1 = [];
+            $five_months_before1 = $six_months_before1 = [];
 
         foreach ($month as $value) {
             if ($value == 0) {
@@ -503,5 +551,4 @@ class DashboardController extends Controller
 
         return $data;
     }
-
 }
