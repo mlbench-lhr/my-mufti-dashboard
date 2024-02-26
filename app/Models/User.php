@@ -73,6 +73,14 @@ class User extends Authenticatable
         'email_code' => 'integer',
     ];
     protected $dates = ['deleted_at'];
+
+    protected $attributes = [
+        'device_id' => "",
+        'a_code' => "",
+        'g_code' => "",
+    ];
+
+
     public function getDeletedAtAttribute($value)
     {
         return $value !== null ? $value : '';
