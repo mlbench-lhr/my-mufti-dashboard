@@ -434,8 +434,8 @@ class EditProfile extends Controller
             'description' => $request->description,
             'date' => $request->date,
             'duration' => $request->duration,
-            'payment_id' => $request->payment_id,
-            'payment_method' => $request->payment_method,
+            'payment_id' => $request->payment_id ?? "",
+            'payment_method' => $request->payment_method ?? "",
             'consultation_fee' => $request->consultation_fee,
         ];
 
