@@ -24,8 +24,6 @@ class SocialRequest extends FormRequest
         return [
             'social_key' => 'required|string',
             'social_token' => 'required|string',
-            'email' => 'required',
-            'name' => 'required',
             'device_id' => 'required',
         ];
     }
