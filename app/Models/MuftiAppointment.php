@@ -28,6 +28,8 @@ class MuftiAppointment extends Model
 
     protected $attributes = [
         'description' => "",
+        'payment_id' => "",
+        "payment_method" => "",   
     ];
 
     public function user_detail()
