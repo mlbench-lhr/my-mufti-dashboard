@@ -100,7 +100,7 @@ Route::group([
     Route::post('searchEvent', [EventController::class, 'search_event']);
     Route::post('allQuestionsBelongstoEvents', [EventController::class, 'all_questions_belongs_to_events']);
     Route::post('allCategoryBelongstoEvents', [EventController::class, 'all_category_belongs_to_events']);
-    Route::delete('deleteEvent', [EventController::class, 'delete_event']);
+    Route::post('deleteEvent', [EventController::class, 'delete_event']);
     Route::post('addEventScholars', [EventController::class, 'add_event_scholars']);
     Route::post('removeEventScholar', [EventController::class, 'remove_event_scholar']);
 
