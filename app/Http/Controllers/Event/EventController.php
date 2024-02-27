@@ -522,8 +522,8 @@ class EventController extends Controller
 
         $page = $request->input('page', 1);
         $perPage = 20;
-
-        $userSaveEvents = SaveEvent::forPage($page, $perPage)->with('event_detail:id,image,event_title,event_category,date,duration,event_status,location')->where('user_id', $request->user_id)->get();
+        $userSaveEvents = SaveEvent::where('user_id', $request->user_id)->pluck('event_id')->toArray();
+        $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
 
         $totalPages = ceil(SaveEvent::forPage($page, $perPage)->where('user_id', $request->user_id)->get()->count() / $perPage);
         $response = [
