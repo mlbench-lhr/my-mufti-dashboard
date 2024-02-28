@@ -372,6 +372,7 @@ class EventController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'flag' => 'required',
+            'time_zone' => "required",
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -413,6 +414,7 @@ class EventController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'flag' => 'required',
+            'time_zone' => "required",
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -424,8 +426,7 @@ class EventController extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-
-        $todayDate = Carbon::now();
+        $todayDate = Carbon::now($request->time_zone);
         $page = $request->input('page', 1);
         $perPage = 20;
 
@@ -541,13 +542,14 @@ class EventController extends Controller
 
         $validator = Validator::make($request->all(), [
             'flag' => 'required',
+            'time_zone' => "required",
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
         if ($validationError !== null) {
             return $validationError;
         }
-        $todayDate = Carbon::now();
+        $todayDate = Carbon::now($request->time_zone);
         $search = $request->search;
 
         $query = Event::where(function ($query) use ($search) {
