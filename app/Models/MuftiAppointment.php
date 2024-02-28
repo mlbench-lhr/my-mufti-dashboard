@@ -34,7 +34,7 @@ class MuftiAppointment extends Model
 
     public function user_detail()
     {
-        return $this->belongsTo(User::class, 'mufti_id')->select('id','name','image', 'email', 'user_type');
+        return $this->belongsTo(User::class, 'user_id')->select('id','name','image', 'email', 'user_type');
     }
 
     public function mufti_detail()

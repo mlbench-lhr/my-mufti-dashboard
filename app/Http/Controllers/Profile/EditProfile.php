@@ -473,7 +473,7 @@ class EditProfile extends Controller
                 ->get();
         } elseif ($userType == "scholar") {
             $appointments = MuftiAppointment::with('user_detail')
-                ->where('mufti_id', $request->user_id)
+                ->where('user_id', $request->user_id)
                 ->get();
         }
         $appointments = $appointments->map(function ($appointment) {
