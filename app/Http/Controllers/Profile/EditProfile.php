@@ -464,16 +464,16 @@ class EditProfile extends Controller
         }
 
         $userType = $user->user_type;
+        $status = $user->mufti_status;
         // scholar
 
-
-        if ($userType == "user") {
+        if (($userType == "user" && $status != 2) || ($userType == "scholar" && $status != 2)) {
             $appointments = MuftiAppointment::with('mufti_detail')
                 ->where('user_id', $request->user_id)
                 ->get();
-        } elseif ($userType == "scholar") {
+        } elseif ($userType == "scholar" && $status == 2) {
             $appointments = MuftiAppointment::with('user_detail')
-                ->where('user_id', $request->user_id)
+                ->where('mufti_id', $request->user_id)
                 ->get();
         }
         $appointments = $appointments->map(function ($appointment) {
