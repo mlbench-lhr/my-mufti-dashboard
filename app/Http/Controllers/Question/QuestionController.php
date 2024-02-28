@@ -353,6 +353,34 @@ class QuestionController extends Controller
         ];
 
         $question = UserQuery::create($data);
+        if ($request->mufti_id == 9) {
+            $data2 = [
+                'query_id' => $question->id,
+                'user_id' => $request->user_id,
+                'mufti_id' => 9,
+                'question' => $request->question,
+            ];
+            $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
+
+            $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+            $device_id = $user->device_id;
+            $notifTitle = "Question Request Sent";
+
+            $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+            $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+            $message_type = "Question Request Sent";
+
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+            $data = [
+                'user_id' => $user->id,
+                'title' => $notifTitle,
+                'body' => $body,
+            ];
+            Notification::create($data);
+            UserAllQuery::create($data2);
+
+        }
 
         $data1 = [
             'query_id' => $question->id,
