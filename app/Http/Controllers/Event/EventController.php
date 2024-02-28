@@ -378,7 +378,7 @@ class EventController extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
-        $todayDate = Carbon::now();
+        $todayDate = Carbon::now($request->time_zone);
         $page = $request->input('page', 1);
         $perPage = 20;
 
