@@ -464,6 +464,8 @@ class EditProfile extends Controller
         }
 
         $userType = $user->user_type;
+        // scholar
+
 
         if ($userType == "user") {
             $appointments = MuftiAppointment::with('mufti_detail')
