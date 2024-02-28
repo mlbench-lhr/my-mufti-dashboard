@@ -71,11 +71,16 @@
                 <!--begin::Heading-->
                 <h1 class="d-flex flex-column text-dark fw-bolder my-0 fs-1">Question Detail
                 </h1>
-
+               
                 <!--end::Heading-->
             </div>
             <!--end::Page title=-->
-
+            <div class="d-flex ">
+                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}">
+                    <button type="button" class="btn btn-danger w-100 text-uppercase"
+                        style="background-color:#EA4335;">Delete</button>
+                </a>
+            </div>
         </div>
         <!--end::Container-->
     </div>

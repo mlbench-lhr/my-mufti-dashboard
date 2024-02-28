@@ -84,7 +84,20 @@ class QuestionsController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
+    public function delete_public_question(Request $request, $id)
+    {
+        $question = Question::where('id', $id)->first();
+        // delete question comments
+        $comments = QuestionComment::where('question_id', $id)->delete();
+        // delete question votes 
+        $vote = QuestionVote::where('question_id', $id)->delete();
+        // delete scholars reply 
+        $scholar_reply = ScholarReply::where('question_id', $id)->delete();
+        $question->delete();
 
+        return redirect('PublicQuestions');
+
+    }
 
 
     public  function all_private_questions()
@@ -115,5 +128,15 @@ class QuestionsController extends Controller
         $detail = UserQuery::with('questioned_by')->where('id', $question_id)->first();
         $question_from = UserAllQuery::with('mufti_detail.interests')->where('query_id', $question_id)->get();
         return view('frontend.PrivateQuestionDetail', compact('detail', 'question_id', 'question_from'));
+    }
+
+    public function delete_private_question(Request $request, $id)
+    {
+        $question = UserQuery::with('questioned_by')->where('id', $id)->first();
+        $question_from = UserAllQuery::with('mufti_detail.interests')->where('query_id', $id)->delete();
+        $question->delete();
+
+        return redirect('PrivateQuestions');
+
     }
 }

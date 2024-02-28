@@ -226,7 +226,7 @@
                             <!--begin::Col-->
                             <div class="col-lg-5">
                                 <span class="fw-bold fs-3 text-muted">
-                                    {{ \Carbon\Carbon::parse($detail->created_at)->format('M d, Y, h:iA') }}
+                                    {{ \Carbon\Carbon::parse($detail->date)->format('M d, Y, h:iA') }}
                                 </span>
                             </div>
                             <!--end::Col-->

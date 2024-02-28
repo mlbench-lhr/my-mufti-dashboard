@@ -60,12 +60,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('getPublicQuestions', [QuestionsController::class, 'get_all_public_questions'])->name('getPublicQuestions');
     Route::get('PublicQuestionDetail/{id}', [QuestionsController::class, 'public_question_detail'])->name('PublicQuestionDetail');
     Route::get('getQuestionComments/{id}', [QuestionsController::class, 'get_question_comments'])->name('getQuestionComments');
+    Route::get('DeletePublicQuestion/{id}', [QuestionsController::class, 'delete_public_question'])->name('DeletePublicQuestion');
 
 
     //Private Questions
     Route::get('PrivateQuestions', [QuestionsController::class, 'all_private_questions'])->name('PrivateQuestions');
     Route::get('getPrivateQuestions', [QuestionsController::class, 'get_all_private_questions'])->name('getPrivateQuestions');
     Route::get('PrivateQuestionDetail/{id}', [QuestionsController::class, 'private_question_detail'])->name('PrivateQuestionDetail');
+    Route::get('DeletePrivateQuestion/{id}', [QuestionsController::class, 'delete_private_question'])->name('DeletePrivateQuestion');
 
     // Appointments & Events
     Route::get('AllAppointments', [EventsAndApptController::class, 'all_appointments'])->name('AllAppointments');
@@ -86,6 +88,7 @@ Route::group(['middleware' => 'admin'], function () {
 
 });
 
+// Auth module
 Route::post('loginn', [AdminController::class, 'loginn']);
 Route::get('logout', [AdminController::class, 'flush']);
 Route::get('/fogetPassword', [AdminController::class, 'forget']);
