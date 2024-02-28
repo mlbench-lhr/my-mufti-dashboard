@@ -447,7 +447,7 @@ class QuestionController extends Controller
 
         $muftisUser = User::where('mufti_status', 2)->inRandomOrder()->limit(5)->pluck('id')->toArray();
 
-        $valueToRemove = 11;
+        $valueToRemove = 9;
 
         $filteredArray = array_filter($muftisUser, function ($item) use ($valueToRemove) {
             return $item !== $valueToRemove;
