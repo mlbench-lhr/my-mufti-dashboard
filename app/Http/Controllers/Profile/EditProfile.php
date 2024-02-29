@@ -408,11 +408,14 @@ class EditProfile extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        $user->delete();
 
-        return ResponseHelper::jsonResponse(true, 'User deleted Successfully!');
+        if ($user) {
+            $user->deleteWithRelated();
+            $user->delete();
+            return ResponseHelper::jsonResponse(true, 'User deleted Successfully!');
+
+        }
     }
-
     public function book_an_appointment(BookAppointment $request)
     {
 

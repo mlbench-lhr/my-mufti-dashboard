@@ -5,7 +5,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Activity;
 use App\Models\Degree;
+use App\Models\Event;
 use App\Models\EventQuestion;
+use App\Models\EventScholar;
 use App\Models\Experience;
 use App\Models\HelpFeedBack;
 use App\Models\Interest;
@@ -73,19 +75,10 @@ class User extends Authenticatable
         'email_code' => 'integer',
     ];
     protected $dates = ['deleted_at'];
-
-    protected $attributes = [
-        'device_id' => "",
-        'a_code' => "",
-        'g_code' => "",
-    ];
-
-
     public function getDeletedAtAttribute($value)
     {
         return $value !== null ? $value : '';
     }
-    // 15 times 2 times mufti
 
     protected static function boot()
     {
@@ -112,11 +105,6 @@ class User extends Authenticatable
             Degree::where('user_id', $model->id)->delete();
             Activity::where('data_id', $model->id)->delete();
 
-            // Event::where('user_id', $model->id)->delete();
-            // EventScholar::where('event_id', $model->id)->delete();
-            // EventQuestion::where('event_id', $model->id)->delete();
-            // SaveEvent::where('event_id', $model->id)->delete();
-
         });
     }
 
@@ -128,6 +116,24 @@ class User extends Authenticatable
     public function mufti_detail()
     {
         return $this->hasOne(Mufti::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'user_id');
+    }
+
+    public function deleteWithRelated()
+    {
+        $eventsToDelete = $this->events;
+
+        $eventIdsToDelete = $eventsToDelete->pluck('id')->toArray();
+
+        EventScholar::whereIn('event_id', $eventIdsToDelete)->delete();
+        EventQuestion::whereIn('event_id', $eventIdsToDelete)->delete();
+        SaveEvent::whereIn('event_id', $eventIdsToDelete)->delete();
+
+        $this->events()->delete();
     }
 
 }
