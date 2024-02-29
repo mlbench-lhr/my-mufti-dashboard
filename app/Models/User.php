@@ -52,7 +52,10 @@ class User extends Authenticatable
         'g_code',
         'email_code',
     ];
-
+    protected $attributes = [
+        'a_code' => "",
+        'g_code' => "",
+    ];
     /**
      * The attributes that should be hidden for serialization.
      *
