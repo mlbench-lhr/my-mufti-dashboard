@@ -86,7 +86,6 @@ class User extends Authenticatable
 
         static::deleting(function ($model) {
 
-            UserQuery::where('user_id', $model->id)->delete();
             UserAllQuery::where('user_id', $model->id)->delete();
             UserAllQuery::where('mufti_id', $model->id)->delete();
             ScholarReply::where('user_id', $model->id)->delete();
@@ -104,6 +103,8 @@ class User extends Authenticatable
             EventQuestion::where('user_id', $model->id)->delete();
             Degree::where('user_id', $model->id)->delete();
             Activity::where('data_id', $model->id)->delete();
+            UserQuery::where('user_id', $model->id)->delete();
+
 
         });
     }
