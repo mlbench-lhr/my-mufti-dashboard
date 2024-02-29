@@ -55,6 +55,7 @@ class User extends Authenticatable
     protected $attributes = [
         'a_code' => "",
         'g_code' => "",
+        'device_id' => "",
     ];
     /**
      * The attributes that should be hidden for serialization.
