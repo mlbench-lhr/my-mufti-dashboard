@@ -62,7 +62,8 @@ class AuthController extends Controller
     }
     // for user signin
     public function sign_in(LoginRequest $request)
-    {
+    {   
+        $device_id = $request->device_id ?? "";
         $user = User::where('email', $request->email)->first();
         if (empty($user)) {
             return response()->json([
@@ -82,7 +83,7 @@ class AuthController extends Controller
             } else {
                 $user_data = User::where('id', $user->id)->first();
 
-                $user_data->update(['device_id' => $request->device_id]);
+                $user_data->update(['device_id' => $device_id]);
 
                 if ($user_data->mufti_status == 2) {
                     $user_data->user_type = "scholar";
