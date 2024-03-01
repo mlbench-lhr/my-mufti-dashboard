@@ -469,28 +469,31 @@ class EditProfile extends Controller
         $userType = $user->user_type;
         $status = $user->mufti_status;
 
-        if ($userType == "user") {
-            $appointments = MuftiAppointment::with('mufti_detail')
+        // if ($userType == "user") {
+        //     $appointments = MuftiAppointment::with('mufti_detail')
+        //         ->where('user_id', $request->user_id)
+        //         ->get();
+        // } elseif ($userType == "scholar" && $status == 2) {
+        //     $user = MuftiAppointment::where('user_id', $request->user_id)->first();
+        //     if ($user) {
+        //         $appointments = MuftiAppointment::with('mufti_detail')
+        //             ->where('user_id', $request->user_id)
+        //             ->get();
+        //     } else {
+        //         $appointments = MuftiAppointment::with('user_detail')
+        //             ->where('mufti_id', $request->user_id)
+        //             ->get();
+        //     }
+        // }
+        
+        // $appointments = $appointments->map(function ($appointment) {
+        //     $appointment->setAttribute('user_detail', $appointment->mufti_detail);
+        //     unset($appointment->mufti_detail);
+        //     return $appointment;
+        // });
+        $appointments = MuftiAppointment::with('user_detail','mufti_detail')
                 ->where('user_id', $request->user_id)
                 ->get();
-        } elseif ($userType == "scholar" && $status == 2) {
-            $user = MuftiAppointment::where('user_id', $request->user_id)->first();
-            if ($user) {
-                $appointments = MuftiAppointment::with('mufti_detail')
-                    ->where('user_id', $request->user_id)
-                    ->get();
-            } else {
-                $appointments = MuftiAppointment::with('user_detail')
-                    ->where('mufti_id', $request->user_id)
-                    ->get();
-            }
-
-        }
-        $appointments = $appointments->map(function ($appointment) {
-            $appointment->setAttribute('user_detail', $appointment->mufti_detail);
-            unset($appointment->mufti_detail);
-            return $appointment;
-        });
 
         return response()->json(
             [
