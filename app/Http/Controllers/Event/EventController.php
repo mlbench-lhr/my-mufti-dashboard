@@ -203,17 +203,18 @@ class EventController extends Controller
         } else {
             $img = "";
         }
+        if ($name != "") {
+            $data1 = [
+                'event_id' => $eventId,
+                'user_id' => 0,
+                'image' => $img,
+                'name' => $name ?? "",
+                'fiqa' => $fiqa ?? "",
+                'category' => $category,
+            ];
 
-        $data1 = [
-            'event_id' => $eventId,
-            'user_id' => 0,
-            'image' => $img,
-            'name' => $name ?? "",
-            'fiqa' => $fiqa ?? "",
-            'category' => $category,
-        ];
-
-        EventScholar::create($data1);
+            EventScholar::create($data1);
+        }
 
         return ResponseHelper::jsonResponse(true, 'Added Event Scholars Successfully!');
     }
