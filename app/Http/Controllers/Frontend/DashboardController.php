@@ -63,7 +63,6 @@ class DashboardController extends Controller
         ];
         return view('frontend.Dashboard', compact('response'));
     }
-
     public function get_all_users()
     {
 

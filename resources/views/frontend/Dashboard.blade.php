@@ -284,8 +284,14 @@
                                                 <!--begin::Text-->
                                                 <div class="fw-mormal timeline-content text-muted ps-3">
                                                     @php
-                                                        $link = URL::to('UserDetail/PublicQuestions/' . $item['data_id']);
-                                                        echo str_replace('Review', "<a href=\"{$link}\">Review</a>", $item['message']);
+                                                        $link = URL::to(
+                                                            'UserDetail/PublicQuestions/' . $item['data_id'],
+                                                        );
+                                                        echo str_replace(
+                                                            'Review',
+                                                            "<a href=\"{$link}\">Review</a>",
+                                                            $item['message'],
+                                                        );
                                                     @endphp
                                                 </div>
                                                 <!--end::Text-->
@@ -459,1029 +465,1027 @@
 
                 </div>
             </div>
-
-
-
             <!--end::Container-->
         </div>
-        <!--end::Content-->
-        <script>
-            var get_all_appoinments = @json($response['get_all_appoinments']);
+    </div>
+    <!--end::Content-->
+    <script>
+        var get_all_appoinments = @json($response['get_all_appoinments']);
 
-            var KTProjectOverviewgraph = (function() {
-                var t = KTUtil.getCssVariableValue("--bs-primary"),
-                    e = KTUtil.getCssVariableValue("--bs-light-primary"),
-                    a = KTUtil.getCssVariableValue("--bs-success"),
-                    r = KTUtil.getCssVariableValue("--bs-light-success"),
-                    o = KTUtil.getCssVariableValue("--bs-gray-200"),
-                    n = KTUtil.getCssVariableValue("--bs-gray-500");
-                return {
-                    init: function() {
-                        var s, i;
-                        (s = document.getElementById("kt_project_overview_graph")),
-                        (i = parseInt(KTUtil.css(s, "height"))),
-                        s &&
-                            new ApexCharts(s, {
-                                series: [{
-                                    name: "Appointments",
-                                    data: [
-                                        get_all_appoinments.six_months_before,
-                                        get_all_appoinments.five_months_before,
-                                        get_all_appoinments.four_months_before,
-                                        get_all_appoinments.three_months_before,
-                                        get_all_appoinments.two_months_before,
-                                        get_all_appoinments.one_month_before,
-                                        get_all_appoinments.current_month,
-                                    ],
-                                }, ],
-                                chart: {
-                                    type: "area",
-                                    height: i,
-                                    toolbar: {
-                                        show: !1
-                                    },
-                                },
-                                plotOptions: {},
-                                legend: {
+        var KTProjectOverviewgraph = (function() {
+            var t = KTUtil.getCssVariableValue("--bs-primary"),
+                e = KTUtil.getCssVariableValue("--bs-light-primary"),
+                a = KTUtil.getCssVariableValue("--bs-success"),
+                r = KTUtil.getCssVariableValue("--bs-light-success"),
+                o = KTUtil.getCssVariableValue("--bs-gray-200"),
+                n = KTUtil.getCssVariableValue("--bs-gray-500");
+            return {
+                init: function() {
+                    var s, i;
+                    (s = document.getElementById("kt_project_overview_graph")),
+                    (i = parseInt(KTUtil.css(s, "height"))),
+                    s &&
+                        new ApexCharts(s, {
+                            series: [{
+                                name: "Appointments",
+                                data: [
+                                    get_all_appoinments.six_months_before,
+                                    get_all_appoinments.five_months_before,
+                                    get_all_appoinments.four_months_before,
+                                    get_all_appoinments.three_months_before,
+                                    get_all_appoinments.two_months_before,
+                                    get_all_appoinments.one_month_before,
+                                    get_all_appoinments.current_month,
+                                ],
+                            }, ],
+                            chart: {
+                                type: "area",
+                                height: i,
+                                toolbar: {
                                     show: !1
                                 },
-                                dataLabels: {
-                                    enabled: !1
+                            },
+                            plotOptions: {},
+                            legend: {
+                                show: !1
+                            },
+                            dataLabels: {
+                                enabled: !1
+                            },
+                            fill: {
+                                type: "solid",
+                                opacity: 1
+                            },
+                            stroke: {
+                                curve: "smooth",
+                                show: !0,
+                                width: 3,
+                                colors: ["#38B89A", a],
+                            },
+                            xaxis: {
+                                categories: [
+                                    get_all_appoinments.month_name['six_before'],
+                                    get_all_appoinments.month_name['five_before'],
+                                    get_all_appoinments.month_name['four_before'],
+                                    get_all_appoinments.month_name['three_before'],
+                                    get_all_appoinments.month_name['two_before'],
+                                    get_all_appoinments.month_name['one_before'],
+                                    get_all_appoinments.month_name['current'],
+                                ],
+                                axisBorder: {
+                                    show: !1
                                 },
-                                fill: {
-                                    type: "solid",
-                                    opacity: 1
+                                axisTicks: {
+                                    show: !1
                                 },
-                                stroke: {
-                                    curve: "smooth",
-                                    show: !0,
-                                    width: 3,
-                                    colors: ["#38B89A", a],
+                                labels: {
+                                    style: {
+                                        colors: n,
+                                        fontSize: "12px"
+                                    }
                                 },
-                                xaxis: {
-                                    categories: [
-                                        get_all_appoinments.month_name['six_before'],
-                                        get_all_appoinments.month_name['five_before'],
-                                        get_all_appoinments.month_name['four_before'],
-                                        get_all_appoinments.month_name['three_before'],
-                                        get_all_appoinments.month_name['two_before'],
-                                        get_all_appoinments.month_name['one_before'],
-                                        get_all_appoinments.month_name['current'],
-                                    ],
-                                    axisBorder: {
-                                        show: !1
-                                    },
-                                    axisTicks: {
-                                        show: !1
-                                    },
-                                    labels: {
-                                        style: {
-                                            colors: n,
-                                            fontSize: "12px"
-                                        }
-                                    },
-                                    crosshairs: {
-                                        position: "front",
-                                        stroke: {
-                                            color: "#38B89A",
-                                            width: 1,
-                                            dashArray: 3
-                                        },
-                                    },
-                                    tooltip: {
-                                        enabled: !0,
-                                        formatter: void 0,
-                                        offsetY: 0,
-                                        style: {
-                                            fontSize: "12px"
-                                        },
-                                    },
-                                },
-                                yaxis: {
-                                    labels: {
-                                        style: {
-                                            colors: n,
-                                            fontSize: "12px"
-                                        }
-                                    },
-                                },
-                                states: {
-                                    normal: {
-                                        filter: {
-                                            type: "none",
-                                            value: 0
-                                        }
-                                    },
-                                    hover: {
-                                        filter: {
-                                            type: "none",
-                                            value: 0
-                                        }
-                                    },
-                                    active: {
-                                        allowMultipleDataPointsSelection: !1,
-                                        filter: {
-                                            type: "none",
-                                            value: 0
-                                        },
+                                crosshairs: {
+                                    position: "front",
+                                    stroke: {
+                                        color: "#38B89A",
+                                        width: 1,
+                                        dashArray: 3
                                     },
                                 },
                                 tooltip: {
+                                    enabled: !0,
+                                    formatter: void 0,
+                                    offsetY: 0,
                                     style: {
                                         fontSize: "12px"
                                     },
-                                    y: {
-                                        formatter: function(t) {
-                                            return t + "% registered";
-                                        },
+                                },
+                            },
+                            yaxis: {
+                                labels: {
+                                    style: {
+                                        colors: n,
+                                        fontSize: "12px"
+                                    }
+                                },
+                            },
+                            states: {
+                                normal: {
+                                    filter: {
+                                        type: "none",
+                                        value: 0
+                                    }
+                                },
+                                hover: {
+                                    filter: {
+                                        type: "none",
+                                        value: 0
+                                    }
+                                },
+                                active: {
+                                    allowMultipleDataPointsSelection: !1,
+                                    filter: {
+                                        type: "none",
+                                        value: 0
                                     },
                                 },
-                                colors: ["#FFFFFF", r],
-                                grid: {
-                                    borderColor: o,
-                                    strokeDashArray: 4,
-                                    yaxis: {
-                                        lines: {
-                                            show: !0
-                                        }
+                            },
+                            tooltip: {
+                                style: {
+                                    fontSize: "12px"
+                                },
+                                y: {
+                                    formatter: function(t) {
+                                        return t + "% registered";
                                     },
                                 },
-                                markers: {
-                                    colors: ["#38B89A", r],
-                                    strokeColor: ["#38B89A", a],
-                                    strokeWidth: 3,
+                            },
+                            colors: ["#FFFFFF", r],
+                            grid: {
+                                borderColor: o,
+                                strokeDashArray: 4,
+                                yaxis: {
+                                    lines: {
+                                        show: !0
+                                    }
                                 },
-                            }).render(),
+                            },
+                            markers: {
+                                colors: ["#38B89A", r],
+                                strokeColor: ["#38B89A", a],
+                                strokeWidth: 3,
+                            },
+                        }).render(),
 
-                            (function() {
-                                var t = document.querySelector(
-                                    "#kt_profile_overview_table"
-                                );
-                                if (!t) return;
-                                t.querySelectorAll("tbody tr").forEach((t) => {
-                                    const e = t.querySelectorAll("td"),
-                                        a = moment(e[1].innerHTML, "MMM D, YYYY").format();
-                                    e[1].setAttribute("data-order", a);
+                        (function() {
+                            var t = document.querySelector(
+                                "#kt_profile_overview_table"
+                            );
+                            if (!t) return;
+                            t.querySelectorAll("tbody tr").forEach((t) => {
+                                const e = t.querySelectorAll("td"),
+                                    a = moment(e[1].innerHTML, "MMM D, YYYY").format();
+                                e[1].setAttribute("data-order", a);
+                            });
+                            const e = $(t).DataTable({
+                                    info: !1,
+                                    order: []
+                                }),
+                                a = document.getElementById("kt_filter_orders"),
+                                r = document.getElementById("kt_filter_year");
+                            var o, n;
+                            a.addEventListener("change", function(t) {
+                                    e.column(3).search(t.target.value).draw();
+                                }),
+                                r.addEventListener("change", function(t) {
+                                    switch (t.target.value) {
+                                        case "thisyear":
+                                            (o = moment().startOf("year").format()),
+                                            (n = moment().endOf("year").format()),
+                                            e.draw();
+                                            break;
+                                        case "thismonth":
+                                            (o = moment().startOf("month").format()),
+                                            (n = moment().endOf("month").format()),
+                                            e.draw();
+                                            break;
+                                        case "lastmonth":
+                                            (o = moment()
+                                                .subtract(1, "months")
+                                                .startOf("month")
+                                                .format()),
+                                            (n = moment()
+                                                .subtract(1, "months")
+                                                .endOf("month")
+                                                .format()),
+                                            e.draw();
+                                            break;
+                                        case "last90days":
+                                            (o = moment()
+                                                .subtract(30, "days")
+                                                .format()),
+                                            (n = moment().format()),
+                                            e.draw();
+                                            break;
+                                        default:
+                                            (o = moment()
+                                                .subtract(100, "years")
+                                                .startOf("month")
+                                                .format()),
+                                            (n = moment()
+                                                .add(1, "months")
+                                                .endOf("month")
+                                                .format()),
+                                            e.draw();
+                                    }
+                                }),
+                                $.fn.dataTable.ext.search.push(function(t, e, a) {
+                                    var r = o,
+                                        s = n,
+                                        i = parseFloat(moment(e[1]).format()) || 0;
+                                    return !!(
+                                        (isNaN(r) && isNaN(s)) ||
+                                        (isNaN(r) && i <= s) ||
+                                        (r <= i && isNaN(s)) ||
+                                        (r <= i && i <= s)
+                                    );
+                                }),
+                                document
+                                .getElementById("kt_filter_search")
+                                .addEventListener("keyup", function(t) {
+                                    e.search(t.target.value).draw();
                                 });
-                                const e = $(t).DataTable({
-                                        info: !1,
-                                        order: []
-                                    }),
-                                    a = document.getElementById("kt_filter_orders"),
-                                    r = document.getElementById("kt_filter_year");
-                                var o, n;
-                                a.addEventListener("change", function(t) {
-                                        e.column(3).search(t.target.value).draw();
-                                    }),
-                                    r.addEventListener("change", function(t) {
-                                        switch (t.target.value) {
-                                            case "thisyear":
-                                                (o = moment().startOf("year").format()),
-                                                (n = moment().endOf("year").format()),
-                                                e.draw();
-                                                break;
-                                            case "thismonth":
-                                                (o = moment().startOf("month").format()),
-                                                (n = moment().endOf("month").format()),
-                                                e.draw();
-                                                break;
-                                            case "lastmonth":
-                                                (o = moment()
-                                                    .subtract(1, "months")
-                                                    .startOf("month")
-                                                    .format()),
-                                                (n = moment()
-                                                    .subtract(1, "months")
-                                                    .endOf("month")
-                                                    .format()),
-                                                e.draw();
-                                                break;
-                                            case "last90days":
-                                                (o = moment()
-                                                    .subtract(30, "days")
-                                                    .format()),
-                                                (n = moment().format()),
-                                                e.draw();
-                                                break;
-                                            default:
-                                                (o = moment()
-                                                    .subtract(100, "years")
-                                                    .startOf("month")
-                                                    .format()),
-                                                (n = moment()
-                                                    .add(1, "months")
-                                                    .endOf("month")
-                                                    .format()),
-                                                e.draw();
-                                        }
-                                    }),
-                                    $.fn.dataTable.ext.search.push(function(t, e, a) {
-                                        var r = o,
-                                            s = n,
-                                            i = parseFloat(moment(e[1]).format()) || 0;
-                                        return !!(
-                                            (isNaN(r) && isNaN(s)) ||
-                                            (isNaN(r) && i <= s) ||
-                                            (r <= i && isNaN(s)) ||
-                                            (r <= i && i <= s)
-                                        );
-                                    }),
-                                    document
-                                    .getElementById("kt_filter_search")
-                                    .addEventListener("keyup", function(t) {
-                                        e.search(t.target.value).draw();
-                                    });
-                            })();
+                        })();
+                },
+            };
+        })();
+
+        KTUtil.onDOMContentLoaded(function() {
+            KTProjectOverviewgraph.init();
+        });
+    </script>
+    <script>
+        // console.log(output.Monday);
+        var get_all_appoinments = @json($response['get_all_appoinments']);
+        var get_all_questions = @json($response['get_all_questions']);
+
+
+
+
+        (function() {
+            var e = document.getElementById("kt_charts_widget_2_chart"),
+                t = parseInt(KTUtil.css(e, "height")),
+                a = KTUtil.getCssVariableValue("--bs-gray-500"),
+                o = KTUtil.getCssVariableValue("--bs-gray-200"),
+                r = KTUtil.getCssVariableValue("--bs-gray-300");
+            e &&
+                new ApexCharts(e, {
+                    series: [{
+                            name: "Accepted",
+                            data: [
+                                get_all_questions.six_months_before1,
+                                get_all_questions.five_months_before1,
+                                get_all_questions.four_months_before1,
+                                get_all_questions.three_months_before1,
+                                get_all_questions.two_months_before1,
+                                get_all_questions.one_month_before1,
+                                get_all_questions.current_month1,
+                            ],
+                        },
+                        {
+                            name: "Rejected",
+                            data: [
+
+
+                                get_all_questions.six_months_before,
+                                get_all_questions.five_months_before,
+                                get_all_questions.four_months_before,
+                                get_all_questions.three_months_before,
+                                get_all_questions.two_months_before,
+                                get_all_questions.one_month_before,
+                                get_all_questions.current_month,
+                            ],
+                        },
+                    ],
+                    chart: {
+                        fontFamily: "inherit",
+                        type: "bar",
+                        height: t,
+                        toolbar: {
+                            show: !1,
+                        },
                     },
-                };
-            })();
-
-            KTUtil.onDOMContentLoaded(function() {
-                KTProjectOverviewgraph.init();
-            });
-        </script>
-        <script>
-            // console.log(output.Monday);
-            var get_all_appoinments = @json($response['get_all_appoinments']);
-            var get_all_questions = @json($response['get_all_questions']);
-
-
-
-
-            (function() {
-                var e = document.getElementById("kt_charts_widget_2_chart"),
-                    t = parseInt(KTUtil.css(e, "height")),
-                    a = KTUtil.getCssVariableValue("--bs-gray-500"),
-                    o = KTUtil.getCssVariableValue("--bs-gray-200"),
-                    r = KTUtil.getCssVariableValue("--bs-gray-300");
-                e &&
-                    new ApexCharts(e, {
-                        series: [{
-                                name: "Accepted",
-                                data: [
-                                    get_all_questions.six_months_before1,
-                                    get_all_questions.five_months_before1,
-                                    get_all_questions.four_months_before1,
-                                    get_all_questions.three_months_before1,
-                                    get_all_questions.two_months_before1,
-                                    get_all_questions.one_month_before1,
-                                    get_all_questions.current_month1,
-                                ],
-                            },
-                            {
-                                name: "Rejected",
-                                data: [
-
-
-                                    get_all_questions.six_months_before,
-                                    get_all_questions.five_months_before,
-                                    get_all_questions.four_months_before,
-                                    get_all_questions.three_months_before,
-                                    get_all_questions.two_months_before,
-                                    get_all_questions.one_month_before,
-                                    get_all_questions.current_month,
-                                ],
-                            },
+                    plotOptions: {
+                        bar: {
+                            horizontal: !1,
+                            columnWidth: ["30%"],
+                            borderRadius: 4,
+                        },
+                    },
+                    legend: {
+                        show: !1,
+                    },
+                    dataLabels: {
+                        enabled: !1,
+                    },
+                    stroke: {
+                        show: !0,
+                        width: 2,
+                        colors: ["transparent"],
+                    },
+                    xaxis: {
+                        categories: [
+                            get_all_appoinments.month_name['six_before'],
+                            get_all_appoinments.month_name['five_before'],
+                            get_all_appoinments.month_name['four_before'],
+                            get_all_appoinments.month_name['three_before'],
+                            get_all_appoinments.month_name['two_before'],
+                            get_all_appoinments.month_name['one_before'],
+                            get_all_appoinments.month_name['current'],
                         ],
+                        axisBorder: {
+                            show: !1,
+                        },
+                        axisTicks: {
+                            show: !1,
+                        },
+                        labels: {
+                            style: {
+                                colors: a,
+                                fontSize: "12px",
+                            },
+                        },
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                colors: a,
+                                fontSize: "12px",
+                            },
+                        },
+                    },
+                    fill: {
+                        opacity: 1,
+                    },
+                    states: {
+                        normal: {
+                            filter: {
+                                type: "none",
+                                value: 0,
+                            },
+                        },
+                        hover: {
+                            filter: {
+                                type: "none",
+                                value: 0,
+                            },
+                        },
+                        active: {
+                            allowMultipleDataPointsSelection: !1,
+                            filter: {
+                                type: "none",
+                                value: 0,
+                            },
+                        },
+                    },
+                    tooltip: {
+                        style: {
+                            fontSize: "12px",
+                        },
+                        y: {
+                            formatter: function(e) {
+                                return e + " Cal";
+                            },
+                        },
+                    },
+
+                    colors: ['#38B89A', "#FA4A0C"],
+                    grid: {
+                        borderColor: o,
+                        strokeDashArray: 4,
+                        yaxis: {
+                            lines: {
+                                show: !0,
+                            },
+                        },
+                    },
+                }).render();
+        })();
+    </script>
+    <script>
+        "use strict";
+
+
+        var apple = @json($response['apple']);
+        var google = @json($response['google']);
+        var inApp = @json($response['inApp']);
+
+
+
+        if (apple == 0 && google == 0 &&
+            inApp == 0) {
+            var zerovalue = 100;
+        }
+
+
+        var KTProjectLists = {
+            initProjectListChart: function() {
+                var t = document.getElementById("user_list_chart");
+                if (t) {
+                    var e = t.getContext("2d");
+                    new Chart(e, {
+                        type: "doughnut",
+                        innerHeight: 200,
+                        data: {
+                            datasets: [{
+                                data: [inApp, google, apple, zerovalue],
+                                backgroundColor: [
+                                    "#F52E2E",
+                                    "#38B89A",
+                                    "#DBDFE9",
+                                    '#E0E2EC',
+                                ],
+                            }, ],
+                            labels: [
+                                "In App",
+                                "Google",
+                                "Apple"
+                                // "None"
+                            ],
+                        },
+                        options: {
+                            chart: {
+                                fontFamily: "inherit"
+                            },
+                            cutout: "75%",
+                            cutoutPercentage: 65,
+                            responsive: !0,
+                            maintainAspectRatio: !1,
+                            title: {
+                                display: !1
+                            },
+                            animation: {
+                                animateScale: !0,
+                                animateRotate: !0
+                            },
+                            tooltips: {
+                                mode: "nearest",
+                                enabled: !0,
+                                intersect: !1,
+                                bodySpacing: 5,
+                                yPadding: 10,
+                                xPadding: 10,
+                                caretPadding: 0,
+                                displayColors: !1,
+                                backgroundColor: "#20D489",
+                                titleFontColor: "#ffffff",
+                                cornerRadius: 4,
+                                footerSpacing: 0,
+                                titleSpacing: 0,
+                            },
+                            plugins: {
+                                legend: {
+                                    display: !1
+                                }
+                            },
+                        },
+                    });
+                }
+            },
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            KTProjectLists.initProjectListChart();
+        });
+    </script>
+    <script>
+        var get_all_users = @json($response['get_all_users']);
+        var get_all_events = @json($response['get_all_events']);
+        var get_questions = @json($response['get_questions']);
+        var get_scholars = @json($response['get_scholars']);
+
+
+        var KTWidget = {
+            init: function() {
+                var e, t, a, o, s, r, i, l, n, c, d, h;
+
+                t = document.querySelectorAll(".mixed-widget-13-chart");
+                [].slice.call(t).map(function(t) {
+                    if (((e = parseInt(KTUtil.css(t, "height"))), t)) {
+                        var a = KTUtil.getCssVariableValue("--bs-gray-800"),
+                            o = KTUtil.getCssVariableValue("--bs-gray-300");
+                        new ApexCharts(t, {
+                            series: [{
+                                name: "Event Registered",
+                                data: [
+                                    get_all_events.five_months_before,
+                                    get_all_events.four_months_before,
+                                    get_all_events.three_months_before,
+                                    get_all_events.two_months_before,
+                                    get_all_events.one_month_before,
+                                    get_all_events.current_month,
+                                ],
+                            }, ],
+                            grid: {
+                                show: !1,
+                                padding: {
+                                    top: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                },
+                            },
+                            chart: {
+                                fontFamily: "inherit",
+                                type: "area",
+                                height: e,
+                                toolbar: {
+                                    show: !1,
+                                },
+                                zoom: {
+                                    enabled: !1,
+                                },
+                                sparkline: {
+                                    enabled: !0,
+                                },
+                            },
+                            plotOptions: {},
+                            legend: {
+                                show: !1,
+                            },
+                            dataLabels: {
+                                enabled: !1,
+                            },
+                            fill: {
+                                type: "gradient",
+                                gradient: {
+                                    opacityFrom: 0.4,
+                                    opacityTo: 0,
+                                    stops: [20, 120, 120, 120],
+                                },
+                            },
+                            stroke: {
+                                curve: "smooth",
+                                show: !0,
+                                width: 3,
+                                colors: ["#FFFFFF"],
+                            },
+                            xaxis: {
+                                categories: [
+                                    get_all_events.month_name['five_before'],
+                                    get_all_events.month_name['four_before'],
+                                    get_all_events.month_name['three_before'],
+                                    get_all_events.month_name['two_before'],
+                                    get_all_events.month_name['one_before'],
+                                    get_all_events.month_name['current'],
+                                ],
+                                axisBorder: {
+                                    show: !1,
+                                },
+                                axisTicks: {
+                                    show: !1,
+                                },
+                                labels: {
+                                    show: !1,
+                                    style: {
+                                        colors: a,
+                                        fontSize: "12px",
+                                    },
+                                },
+                                crosshairs: {
+                                    show: !1,
+                                    position: "front",
+                                    stroke: {
+                                        color: o,
+                                        width: 1,
+                                        dashArray: 3,
+                                    },
+                                },
+                                tooltip: {
+                                    enabled: !0,
+                                    formatter: void 0,
+                                    offsetY: 0,
+                                    style: {
+                                        fontSize: "12px",
+                                    },
+                                },
+                            },
+                            yaxis: {
+                                min: 0,
+                                max: 60,
+                                labels: {
+                                    show: !1,
+                                    style: {
+                                        colors: a,
+                                        fontSize: "12px",
+                                    },
+                                },
+                            },
+                            states: {
+                                normal: {
+                                    filter: {
+                                        type: "none",
+                                        value: 0,
+                                    },
+                                },
+                                hover: {
+                                    filter: {
+                                        type: "none",
+                                        value: 0,
+                                    },
+                                },
+                                active: {
+                                    allowMultipleDataPointsSelection: !1,
+                                    filter: {
+                                        type: "none",
+                                        value: 0,
+                                    },
+                                },
+                            },
+                            tooltip: {
+                                style: {
+                                    fontSize: "12px",
+                                },
+                                y: {
+                                    formatter: function(e) {
+                                        return e + "% Events";
+                                    },
+                                },
+                            },
+                            colors: ["#ffffff"],
+                            markers: {
+                                colors: [a],
+                                strokeColor: [o],
+                                strokeWidth: 3,
+                            },
+                        }).render();
+                    }
+                });
+
+                t = document.querySelectorAll(".mixed-widget-14-chart");
+                [].slice.call(t).map(function(t) {
+                    e = parseInt(KTUtil.css(t, "height"));
+                    var a = KTUtil.getCssVariableValue("--bs-gray-800");
+                    new ApexCharts(t, {
+                        series: [{
+                            name: "Questions",
+                            data: [
+                                get_questions.eleven_months_before_match,
+                                get_questions.ten_months_before_match,
+                                get_questions.nine_months_before_match,
+                                get_questions.eight_months_before_match,
+                                get_questions.seven_months_before_match,
+                                get_questions.six_months_before_match,
+                                get_questions.five_months_before_match,
+                                get_questions.four_months_before_match,
+                                get_questions.three_months_before_match,
+                                get_questions.two_months_before_match,
+                                get_questions.one_month_before_match,
+                                get_questions.current_month_match
+
+                            ],
+                        }, ],
                         chart: {
                             fontFamily: "inherit",
+                            height: e,
                             type: "bar",
-                            height: t,
                             toolbar: {
                                 show: !1,
                             },
                         },
-                        plotOptions: {
-                            bar: {
-                                horizontal: !1,
-                                columnWidth: ["30%"],
-                                borderRadius: 4,
+                        grid: {
+                            show: !1,
+                            padding: {
+                                top: 0,
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
                             },
                         },
-                        legend: {
-                            show: !1,
+                        colors: ["#ffffff"],
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 2.5,
+                                dataLabels: {
+                                    position: "top",
+                                },
+                                columnWidth: "20%",
+                            },
                         },
                         dataLabels: {
                             enabled: !1,
-                        },
-                        stroke: {
-                            show: !0,
-                            width: 2,
-                            colors: ["transparent"],
+                            formatter: function(e) {
+                                return e + "%";
+                            },
+                            offsetY: -20,
+                            style: {
+                                fontSize: "12px",
+                                colors: ["#304758"],
+                            },
                         },
                         xaxis: {
+                            labels: {
+                                show: !1,
+                            },
                             categories: [
-                                get_all_appoinments.month_name['six_before'],
-                                get_all_appoinments.month_name['five_before'],
-                                get_all_appoinments.month_name['four_before'],
-                                get_all_appoinments.month_name['three_before'],
-                                get_all_appoinments.month_name['two_before'],
-                                get_all_appoinments.month_name['one_before'],
-                                get_all_appoinments.month_name['current'],
+                                get_all_users.month_name['eleven_before'],
+                                get_all_users.month_name['ten_before'],
+                                get_all_users.month_name['nine_before'],
+                                get_all_users.month_name['eight_before'],
+                                get_all_users.month_name['seven_before'],
+                                get_all_users.month_name['six_before'],
+                                get_all_users.month_name['five_before'],
+                                get_all_users.month_name['four_before'],
+                                get_all_users.month_name['three_before'],
+                                get_all_users.month_name['two_before'],
+                                get_all_users.month_name['one_before'],
+                                get_all_users.month_name['current'],
                             ],
+                            position: "top",
                             axisBorder: {
                                 show: !1,
                             },
                             axisTicks: {
                                 show: !1,
                             },
-                            labels: {
-                                style: {
-                                    colors: a,
-                                    fontSize: "12px",
-                                },
+                            crosshairs: {
+                                show: !1,
+                            },
+                            tooltip: {
+                                enabled: !1,
                             },
                         },
                         yaxis: {
+                            show: !1,
+                            axisBorder: {
+                                show: !1,
+                            },
+                            axisTicks: {
+                                show: !1,
+                                background: a,
+                            },
                             labels: {
-                                style: {
-                                    colors: a,
-                                    fontSize: "12px",
-                                },
-                            },
-                        },
-                        fill: {
-                            opacity: 1,
-                        },
-                        states: {
-                            normal: {
-                                filter: {
-                                    type: "none",
-                                    value: 0,
-                                },
-                            },
-                            hover: {
-                                filter: {
-                                    type: "none",
-                                    value: 0,
-                                },
-                            },
-                            active: {
-                                allowMultipleDataPointsSelection: !1,
-                                filter: {
-                                    type: "none",
-                                    value: 0,
-                                },
-                            },
-                        },
-                        tooltip: {
-                            style: {
-                                fontSize: "12px",
-                            },
-                            y: {
+                                show: !1,
                                 formatter: function(e) {
-                                    return e + " Cal";
-                                },
-                            },
-                        },
-
-                        colors: ['#38B89A', "#FA4A0C"],
-                        grid: {
-                            borderColor: o,
-                            strokeDashArray: 4,
-                            yaxis: {
-                                lines: {
-                                    show: !0,
+                                    return e + "%";
                                 },
                             },
                         },
                     }).render();
-            })();
-        </script>
-        <script>
-            "use strict";
-
-
-            var apple = @json($response['apple']);
-            var google = @json($response['google']);
-            var inApp = @json($response['inApp']);
-
-
-
-            if (apple == 0 && google == 0 &&
-                inApp == 0) {
-                var zerovalue = 100;
-            }
-
-
-            var KTProjectLists = {
-                initProjectListChart: function() {
-                    var t = document.getElementById("user_list_chart");
-                    if (t) {
-                        var e = t.getContext("2d");
-                        new Chart(e, {
-                            type: "doughnut",
-                            innerHeight: 200,
-                            data: {
-                                datasets: [{
-                                    data: [inApp, google, apple, zerovalue],
-                                    backgroundColor: [
-                                        "#F52E2E",
-                                        "#38B89A",
-                                        "#DBDFE9",
-                                        '#E0E2EC',
-                                    ],
-                                }, ],
-                                labels: [
-                                    "In App",
-                                    "Google",
-                                    "Apple"
-                                    // "None"
-                                ],
-                            },
-                            options: {
-                                chart: {
-                                    fontFamily: "inherit"
-                                },
-                                cutout: "75%",
-                                cutoutPercentage: 65,
-                                responsive: !0,
-                                maintainAspectRatio: !1,
-                                title: {
-                                    display: !1
-                                },
-                                animation: {
-                                    animateScale: !0,
-                                    animateRotate: !0
-                                },
-                                tooltips: {
-                                    mode: "nearest",
-                                    enabled: !0,
-                                    intersect: !1,
-                                    bodySpacing: 5,
-                                    yPadding: 10,
-                                    xPadding: 10,
-                                    caretPadding: 0,
-                                    displayColors: !1,
-                                    backgroundColor: "#20D489",
-                                    titleFontColor: "#ffffff",
-                                    cornerRadius: 4,
-                                    footerSpacing: 0,
-                                    titleSpacing: 0,
-                                },
-                                plugins: {
-                                    legend: {
-                                        display: !1
-                                    }
-                                },
-                            },
-                        });
-                    }
-                },
-            };
-
-            document.addEventListener("DOMContentLoaded", function() {
-                KTProjectLists.initProjectListChart();
-            });
-        </script>
-        <script>
-            var get_all_users = @json($response['get_all_users']);
-            var get_all_events = @json($response['get_all_events']);
-            var get_questions = @json($response['get_questions']);
-            var get_scholars = @json($response['get_scholars']);
-
-
-            var KTWidget = {
-                init: function() {
-                    var e, t, a, o, s, r, i, l, n, c, d, h;
-
-                    t = document.querySelectorAll(".mixed-widget-13-chart");
-                    [].slice.call(t).map(function(t) {
-                        if (((e = parseInt(KTUtil.css(t, "height"))), t)) {
-                            var a = KTUtil.getCssVariableValue("--bs-gray-800"),
-                                o = KTUtil.getCssVariableValue("--bs-gray-300");
-                            new ApexCharts(t, {
-                                series: [{
-                                    name: "Event Registered",
-                                    data: [
-                                        get_all_events.five_months_before,
-                                        get_all_events.four_months_before,
-                                        get_all_events.three_months_before,
-                                        get_all_events.two_months_before,
-                                        get_all_events.one_month_before,
-                                        get_all_events.current_month,
-                                    ],
-                                }, ],
-                                grid: {
-                                    show: !1,
-                                    padding: {
-                                        top: 0,
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                    },
-                                },
-                                chart: {
-                                    fontFamily: "inherit",
-                                    type: "area",
-                                    height: e,
-                                    toolbar: {
-                                        show: !1,
-                                    },
-                                    zoom: {
-                                        enabled: !1,
-                                    },
-                                    sparkline: {
-                                        enabled: !0,
-                                    },
-                                },
-                                plotOptions: {},
-                                legend: {
-                                    show: !1,
-                                },
-                                dataLabels: {
-                                    enabled: !1,
-                                },
-                                fill: {
-                                    type: "gradient",
-                                    gradient: {
-                                        opacityFrom: 0.4,
-                                        opacityTo: 0,
-                                        stops: [20, 120, 120, 120],
-                                    },
-                                },
-                                stroke: {
-                                    curve: "smooth",
-                                    show: !0,
-                                    width: 3,
-                                    colors: ["#FFFFFF"],
-                                },
-                                xaxis: {
-                                    categories: [
-                                        get_all_events.month_name['five_before'],
-                                        get_all_events.month_name['four_before'],
-                                        get_all_events.month_name['three_before'],
-                                        get_all_events.month_name['two_before'],
-                                        get_all_events.month_name['one_before'],
-                                        get_all_events.month_name['current'],
-                                    ],
-                                    axisBorder: {
-                                        show: !1,
-                                    },
-                                    axisTicks: {
-                                        show: !1,
-                                    },
-                                    labels: {
-                                        show: !1,
-                                        style: {
-                                            colors: a,
-                                            fontSize: "12px",
-                                        },
-                                    },
-                                    crosshairs: {
-                                        show: !1,
-                                        position: "front",
-                                        stroke: {
-                                            color: o,
-                                            width: 1,
-                                            dashArray: 3,
-                                        },
-                                    },
-                                    tooltip: {
-                                        enabled: !0,
-                                        formatter: void 0,
-                                        offsetY: 0,
-                                        style: {
-                                            fontSize: "12px",
-                                        },
-                                    },
-                                },
-                                yaxis: {
-                                    min: 0,
-                                    max: 60,
-                                    labels: {
-                                        show: !1,
-                                        style: {
-                                            colors: a,
-                                            fontSize: "12px",
-                                        },
-                                    },
-                                },
-                                states: {
-                                    normal: {
-                                        filter: {
-                                            type: "none",
-                                            value: 0,
-                                        },
-                                    },
-                                    hover: {
-                                        filter: {
-                                            type: "none",
-                                            value: 0,
-                                        },
-                                    },
-                                    active: {
-                                        allowMultipleDataPointsSelection: !1,
-                                        filter: {
-                                            type: "none",
-                                            value: 0,
-                                        },
-                                    },
-                                },
-                                tooltip: {
-                                    style: {
-                                        fontSize: "12px",
-                                    },
-                                    y: {
-                                        formatter: function(e) {
-                                            return e + "% Events";
-                                        },
-                                    },
-                                },
-                                colors: ["#ffffff"],
-                                markers: {
-                                    colors: [a],
-                                    strokeColor: [o],
-                                    strokeWidth: 3,
-                                },
-                            }).render();
-                        }
-                    });
-
-                    t = document.querySelectorAll(".mixed-widget-14-chart");
-                    [].slice.call(t).map(function(t) {
-                        e = parseInt(KTUtil.css(t, "height"));
-                        var a = KTUtil.getCssVariableValue("--bs-gray-800");
-                        new ApexCharts(t, {
-                            series: [{
-                                name: "Questions",
-                                data: [
-                                    get_questions.eleven_months_before_match,
-                                    get_questions.ten_months_before_match,
-                                    get_questions.nine_months_before_match,
-                                    get_questions.eight_months_before_match,
-                                    get_questions.seven_months_before_match,
-                                    get_questions.six_months_before_match,
-                                    get_questions.five_months_before_match,
-                                    get_questions.four_months_before_match,
-                                    get_questions.three_months_before_match,
-                                    get_questions.two_months_before_match,
-                                    get_questions.one_month_before_match,
-                                    get_questions.current_month_match
-
-                                ],
-                            }, ],
-                            chart: {
-                                fontFamily: "inherit",
-                                height: e,
-                                type: "bar",
-                                toolbar: {
-                                    show: !1,
-                                },
-                            },
-                            grid: {
-                                show: !1,
-                                padding: {
-                                    top: 0,
-                                    bottom: 0,
-                                    left: 0,
-                                    right: 0,
-                                },
-                            },
-                            colors: ["#ffffff"],
-                            plotOptions: {
-                                bar: {
-                                    borderRadius: 2.5,
-                                    dataLabels: {
-                                        position: "top",
-                                    },
-                                    columnWidth: "20%",
-                                },
-                            },
-                            dataLabels: {
-                                enabled: !1,
-                                formatter: function(e) {
-                                    return e + "%";
-                                },
-                                offsetY: -20,
-                                style: {
-                                    fontSize: "12px",
-                                    colors: ["#304758"],
-                                },
-                            },
-                            xaxis: {
-                                labels: {
-                                    show: !1,
-                                },
-                                categories: [
-                                    get_all_users.month_name['eleven_before'],
-                                    get_all_users.month_name['ten_before'],
-                                    get_all_users.month_name['nine_before'],
-                                    get_all_users.month_name['eight_before'],
-                                    get_all_users.month_name['seven_before'],
-                                    get_all_users.month_name['six_before'],
-                                    get_all_users.month_name['five_before'],
-                                    get_all_users.month_name['four_before'],
-                                    get_all_users.month_name['three_before'],
-                                    get_all_users.month_name['two_before'],
-                                    get_all_users.month_name['one_before'],
-                                    get_all_users.month_name['current'],
-                                ],
-                                position: "top",
-                                axisBorder: {
-                                    show: !1,
-                                },
-                                axisTicks: {
-                                    show: !1,
-                                },
-                                crosshairs: {
-                                    show: !1,
-                                },
-                                tooltip: {
-                                    enabled: !1,
-                                },
-                            },
-                            yaxis: {
-                                show: !1,
-                                axisBorder: {
-                                    show: !1,
-                                },
-                                axisTicks: {
-                                    show: !1,
-                                    background: a,
-                                },
-                                labels: {
-                                    show: !1,
-                                    formatter: function(e) {
-                                        return e + "%";
-                                    },
-                                },
-                            },
-                        }).render();
-                    });
-
-                    t = document.querySelectorAll(".mixed-widget-21-chart");
-                    [].slice.call(t).map(function(t) {
-                        e = parseInt(KTUtil.css(t, "height"));
-                        var a = KTUtil.getCssVariableValue("--bs-gray-800");
-                        new ApexCharts(t, {
-                            series: [{
-                                name: "Scholars",
-                                data: [
-                                    get_scholars.eleven_months_before_match,
-                                    get_scholars.ten_months_before_match,
-                                    get_scholars.nine_months_before_match,
-                                    get_scholars.eight_months_before_match,
-                                    get_scholars.seven_months_before_match,
-                                    get_scholars.six_months_before_match,
-                                    get_scholars.five_months_before_match,
-                                    get_scholars.four_months_before_match,
-                                    get_scholars.three_months_before_match,
-                                    get_scholars.two_months_before_match,
-                                    get_scholars.one_month_before_match,
-                                    get_scholars.current_month_match
-
-                                ],
-                            }, ],
-                            chart: {
-                                fontFamily: "inherit",
-                                height: e,
-                                type: "bar",
-                                toolbar: {
-                                    show: !1,
-                                },
-                            },
-                            grid: {
-                                show: !1,
-                                padding: {
-                                    top: 0,
-                                    bottom: 0,
-                                    left: 0,
-                                    right: 0,
-                                },
-                            },
-                            colors: ["#ffffff"],
-                            plotOptions: {
-                                bar: {
-                                    borderRadius: 2.5,
-                                    dataLabels: {
-                                        position: "top",
-                                    },
-                                    columnWidth: "20%",
-                                },
-                            },
-                            dataLabels: {
-                                enabled: !1,
-                                formatter: function(e) {
-                                    return e + "%";
-                                },
-                                offsetY: -20,
-                                style: {
-                                    fontSize: "12px",
-                                    colors: ["#304758"],
-                                },
-                            },
-                            xaxis: {
-                                labels: {
-                                    show: !1,
-                                },
-                                categories: [
-                                    get_all_users.month_name['eleven_before'],
-                                    get_all_users.month_name['ten_before'],
-                                    get_all_users.month_name['nine_before'],
-                                    get_all_users.month_name['eight_before'],
-                                    get_all_users.month_name['seven_before'],
-                                    get_all_users.month_name['six_before'],
-                                    get_all_users.month_name['five_before'],
-                                    get_all_users.month_name['four_before'],
-                                    get_all_users.month_name['three_before'],
-                                    get_all_users.month_name['two_before'],
-                                    get_all_users.month_name['one_before'],
-                                    get_all_users.month_name['current'],
-                                ],
-                                position: "top",
-                                axisBorder: {
-                                    show: !1,
-                                },
-                                axisTicks: {
-                                    show: !1,
-                                },
-                                crosshairs: {
-                                    show: !1,
-                                },
-                                tooltip: {
-                                    enabled: !1,
-                                },
-                            },
-                            yaxis: {
-                                show: !1,
-                                axisBorder: {
-                                    show: !1,
-                                },
-                                axisTicks: {
-                                    show: !1,
-                                    background: a,
-                                },
-                                labels: {
-                                    show: !1,
-                                    formatter: function(e) {
-                                        return e + "%";
-                                    },
-                                },
-                            },
-                        }).render();
-                    });
-
-                    t = document.querySelectorAll(".mixed-widget-20-chart");
-                    [].slice.call(t).map(function(t) {
-                        if (((e = parseInt(KTUtil.css(t, "height"))), t)) {
-                            var a = KTUtil.getCssVariableValue("--bs-gray-800"),
-                                o = KTUtil.getCssVariableValue("--bs-gray-300");
-                            new ApexCharts(t, {
-                                series: [{
-                                    name: "User Registered",
-                                    data: [
-                                        get_all_users.five_months_before,
-                                        get_all_users.four_months_before,
-                                        get_all_users.three_months_before,
-                                        get_all_users.two_months_before,
-                                        get_all_users.one_month_before,
-                                        get_all_users.current_month,
-                                    ],
-                                }, ],
-                                grid: {
-                                    show: !1,
-                                    padding: {
-                                        top: 0,
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                    },
-                                },
-                                chart: {
-                                    fontFamily: "inherit",
-                                    type: "area",
-                                    height: e,
-                                    toolbar: {
-                                        show: !1,
-                                    },
-                                    zoom: {
-                                        enabled: !1,
-                                    },
-                                    sparkline: {
-                                        enabled: !0,
-                                    },
-                                },
-                                plotOptions: {},
-                                legend: {
-                                    show: !1,
-                                },
-                                dataLabels: {
-                                    enabled: !1,
-                                },
-                                fill: {
-                                    type: "gradient",
-                                    gradient: {
-                                        opacityFrom: 0.4,
-                                        opacityTo: 0,
-                                        stops: [20, 120, 120, 120],
-                                    },
-                                },
-                                stroke: {
-                                    curve: "smooth",
-                                    show: !0,
-                                    width: 3,
-                                    colors: ["#FFFFFF"],
-                                },
-                                xaxis: {
-                                    categories: [
-                                        get_all_users.month_name['five_before'],
-                                        get_all_users.month_name['four_before'],
-                                        get_all_users.month_name['three_before'],
-                                        get_all_users.month_name['two_before'],
-                                        get_all_users.month_name['one_before'],
-                                        get_all_users.month_name['current'],
-
-                                    ],
-                                    axisBorder: {
-                                        show: !1,
-                                    },
-                                    axisTicks: {
-                                        show: !1,
-                                    },
-                                    labels: {
-                                        show: !1,
-                                        style: {
-                                            colors: a,
-                                            fontSize: "12px",
-                                        },
-                                    },
-                                    crosshairs: {
-                                        show: !1,
-                                        position: "front",
-                                        stroke: {
-                                            color: o,
-                                            width: 1,
-                                            dashArray: 3,
-                                        },
-                                    },
-                                    tooltip: {
-                                        enabled: !0,
-                                        formatter: void 0,
-                                        offsetY: 0,
-                                        style: {
-                                            fontSize: "12px",
-                                        },
-                                    },
-                                },
-                                yaxis: {
-                                    min: 0,
-                                    max: 60,
-                                    labels: {
-                                        show: !1,
-                                        style: {
-                                            colors: a,
-                                            fontSize: "12px",
-                                        },
-                                    },
-                                },
-                                states: {
-                                    normal: {
-                                        filter: {
-                                            type: "none",
-                                            value: 0,
-                                        },
-                                    },
-                                    hover: {
-                                        filter: {
-                                            type: "none",
-                                            value: 0,
-                                        },
-                                    },
-                                    active: {
-                                        allowMultipleDataPointsSelection: !1,
-                                        filter: {
-                                            type: "none",
-                                            value: 0,
-                                        },
-                                    },
-                                },
-                                tooltip: {
-                                    style: {
-                                        fontSize: "12px",
-                                    },
-                                    y: {
-                                        formatter: function(e) {
-                                            return e + "% Users";
-                                        },
-                                    },
-                                },
-                                colors: ["#ffffff"],
-                                markers: {
-                                    colors: [a],
-                                    strokeColor: [o],
-                                    strokeWidth: 3,
-                                },
-                            }).render();
-                        }
-                    });
-
-                },
-            };
-
-            "undefined" != typeof module && (module.exports = KTWidget),
-                KTUtil.onDOMContentLoaded(function() {
-                    KTWidget.init();
                 });
-        </script>
-    @endsection
+
+                t = document.querySelectorAll(".mixed-widget-21-chart");
+                [].slice.call(t).map(function(t) {
+                    e = parseInt(KTUtil.css(t, "height"));
+                    var a = KTUtil.getCssVariableValue("--bs-gray-800");
+                    new ApexCharts(t, {
+                        series: [{
+                            name: "Scholars",
+                            data: [
+                                get_scholars.eleven_months_before_match,
+                                get_scholars.ten_months_before_match,
+                                get_scholars.nine_months_before_match,
+                                get_scholars.eight_months_before_match,
+                                get_scholars.seven_months_before_match,
+                                get_scholars.six_months_before_match,
+                                get_scholars.five_months_before_match,
+                                get_scholars.four_months_before_match,
+                                get_scholars.three_months_before_match,
+                                get_scholars.two_months_before_match,
+                                get_scholars.one_month_before_match,
+                                get_scholars.current_month_match
+
+                            ],
+                        }, ],
+                        chart: {
+                            fontFamily: "inherit",
+                            height: e,
+                            type: "bar",
+                            toolbar: {
+                                show: !1,
+                            },
+                        },
+                        grid: {
+                            show: !1,
+                            padding: {
+                                top: 0,
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                            },
+                        },
+                        colors: ["#ffffff"],
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 2.5,
+                                dataLabels: {
+                                    position: "top",
+                                },
+                                columnWidth: "20%",
+                            },
+                        },
+                        dataLabels: {
+                            enabled: !1,
+                            formatter: function(e) {
+                                return e + "%";
+                            },
+                            offsetY: -20,
+                            style: {
+                                fontSize: "12px",
+                                colors: ["#304758"],
+                            },
+                        },
+                        xaxis: {
+                            labels: {
+                                show: !1,
+                            },
+                            categories: [
+                                get_all_users.month_name['eleven_before'],
+                                get_all_users.month_name['ten_before'],
+                                get_all_users.month_name['nine_before'],
+                                get_all_users.month_name['eight_before'],
+                                get_all_users.month_name['seven_before'],
+                                get_all_users.month_name['six_before'],
+                                get_all_users.month_name['five_before'],
+                                get_all_users.month_name['four_before'],
+                                get_all_users.month_name['three_before'],
+                                get_all_users.month_name['two_before'],
+                                get_all_users.month_name['one_before'],
+                                get_all_users.month_name['current'],
+                            ],
+                            position: "top",
+                            axisBorder: {
+                                show: !1,
+                            },
+                            axisTicks: {
+                                show: !1,
+                            },
+                            crosshairs: {
+                                show: !1,
+                            },
+                            tooltip: {
+                                enabled: !1,
+                            },
+                        },
+                        yaxis: {
+                            show: !1,
+                            axisBorder: {
+                                show: !1,
+                            },
+                            axisTicks: {
+                                show: !1,
+                                background: a,
+                            },
+                            labels: {
+                                show: !1,
+                                formatter: function(e) {
+                                    return e + "%";
+                                },
+                            },
+                        },
+                    }).render();
+                });
+
+                t = document.querySelectorAll(".mixed-widget-20-chart");
+                [].slice.call(t).map(function(t) {
+                    if (((e = parseInt(KTUtil.css(t, "height"))), t)) {
+                        var a = KTUtil.getCssVariableValue("--bs-gray-800"),
+                            o = KTUtil.getCssVariableValue("--bs-gray-300");
+                        new ApexCharts(t, {
+                            series: [{
+                                name: "User Registered",
+                                data: [
+                                    get_all_users.five_months_before,
+                                    get_all_users.four_months_before,
+                                    get_all_users.three_months_before,
+                                    get_all_users.two_months_before,
+                                    get_all_users.one_month_before,
+                                    get_all_users.current_month,
+                                ],
+                            }, ],
+                            grid: {
+                                show: !1,
+                                padding: {
+                                    top: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                },
+                            },
+                            chart: {
+                                fontFamily: "inherit",
+                                type: "area",
+                                height: e,
+                                toolbar: {
+                                    show: !1,
+                                },
+                                zoom: {
+                                    enabled: !1,
+                                },
+                                sparkline: {
+                                    enabled: !0,
+                                },
+                            },
+                            plotOptions: {},
+                            legend: {
+                                show: !1,
+                            },
+                            dataLabels: {
+                                enabled: !1,
+                            },
+                            fill: {
+                                type: "gradient",
+                                gradient: {
+                                    opacityFrom: 0.4,
+                                    opacityTo: 0,
+                                    stops: [20, 120, 120, 120],
+                                },
+                            },
+                            stroke: {
+                                curve: "smooth",
+                                show: !0,
+                                width: 3,
+                                colors: ["#FFFFFF"],
+                            },
+                            xaxis: {
+                                categories: [
+                                    get_all_users.month_name['five_before'],
+                                    get_all_users.month_name['four_before'],
+                                    get_all_users.month_name['three_before'],
+                                    get_all_users.month_name['two_before'],
+                                    get_all_users.month_name['one_before'],
+                                    get_all_users.month_name['current'],
+
+                                ],
+                                axisBorder: {
+                                    show: !1,
+                                },
+                                axisTicks: {
+                                    show: !1,
+                                },
+                                labels: {
+                                    show: !1,
+                                    style: {
+                                        colors: a,
+                                        fontSize: "12px",
+                                    },
+                                },
+                                crosshairs: {
+                                    show: !1,
+                                    position: "front",
+                                    stroke: {
+                                        color: o,
+                                        width: 1,
+                                        dashArray: 3,
+                                    },
+                                },
+                                tooltip: {
+                                    enabled: !0,
+                                    formatter: void 0,
+                                    offsetY: 0,
+                                    style: {
+                                        fontSize: "12px",
+                                    },
+                                },
+                            },
+                            yaxis: {
+                                min: 0,
+                                max: 60,
+                                labels: {
+                                    show: !1,
+                                    style: {
+                                        colors: a,
+                                        fontSize: "12px",
+                                    },
+                                },
+                            },
+                            states: {
+                                normal: {
+                                    filter: {
+                                        type: "none",
+                                        value: 0,
+                                    },
+                                },
+                                hover: {
+                                    filter: {
+                                        type: "none",
+                                        value: 0,
+                                    },
+                                },
+                                active: {
+                                    allowMultipleDataPointsSelection: !1,
+                                    filter: {
+                                        type: "none",
+                                        value: 0,
+                                    },
+                                },
+                            },
+                            tooltip: {
+                                style: {
+                                    fontSize: "12px",
+                                },
+                                y: {
+                                    formatter: function(e) {
+                                        return e + "% Users";
+                                    },
+                                },
+                            },
+                            colors: ["#ffffff"],
+                            markers: {
+                                colors: [a],
+                                strokeColor: [o],
+                                strokeWidth: 3,
+                            },
+                        }).render();
+                    }
+                });
+
+            },
+        };
+
+        "undefined" != typeof module && (module.exports = KTWidget),
+            KTUtil.onDOMContentLoaded(function() {
+                KTWidget.init();
+            });
+    </script>
+@endsection
