@@ -381,7 +381,7 @@ class QuestionController extends Controller
             UserAllQuery::create($data2);
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
 
-        } elseif ($request->mufti_id != 9) {
+        } elseif ($request->mufti_id != 9 && $request->user_id !=9) {
 
             $data1 = [
                 'query_id' => $question->id,
@@ -420,6 +420,38 @@ class QuestionController extends Controller
 
             UserAllQuery::create($data1);
             UserAllQuery::create($data2);
+
+            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+        }elseif($request->mufti_id != 9 && $request->user_id ==9){
+            $data1 = [
+                'query_id' => $question->id,
+                'user_id' => $request->user_id,
+                'mufti_id' => $request->mufti_id,
+                'question' => $request->question,
+            ];
+           
+            $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
+
+
+            
+
+            $device_id = $user->device_id;
+            $notifTitle = "Question Request Sent";
+
+            $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+            $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+            $message_type = "Question Request Sent";
+
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+            $data = [
+                'user_id' => $user->id,
+                'title' => $notifTitle,
+                'body' => $body,
+            ];
+            Notification::create($data);
+
+            UserAllQuery::create($data1);
 
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
         }
