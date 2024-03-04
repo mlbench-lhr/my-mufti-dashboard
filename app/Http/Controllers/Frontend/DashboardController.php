@@ -26,17 +26,16 @@ class DashboardController extends Controller
         $google = User::where('g_code', '!=', '')->count();
         $inApp = User::where('g_code', '=', '')->where('a_code', '=', '')->count();
         $accountCount = User::count();
-        if($accountCount == 0){
+        if ($accountCount == 0) {
             $apple = 0;
             $google = 0;
             $inApp = 0;
-        }else{
+        } else {
             $apple = floor((($apple / $accountCount) * 100));
             $google = floor((($google / $accountCount) * 100));
             $inApp = floor((($inApp / $accountCount) * 100));
         }
-      
-        
+
         $appointmentCount = MuftiAppointment::count();
         $questionCount = UserAllQuery::count();
         if ($questionCount != 0) {
@@ -248,17 +247,17 @@ class DashboardController extends Controller
             $data = [
                 'total_matches' => $all_questions,
                 'current_month_match' => 0,
-                'one_month_before_match' =>  0,
-                'two_months_before_match' =>  0,
-                'three_months_before_match' =>  0,
-                'four_months_before_match' =>  0,
-                'five_months_before_match' =>  0,
-                'six_months_before_match' =>  0,
-                'seven_months_before_match' =>  0,
-                'eight_months_before_match' =>  0,
-                'nine_months_before_match' =>  0,
-                'ten_months_before_match' =>  0,
-                'eleven_months_before_match' =>  0,
+                'one_month_before_match' => 0,
+                'two_months_before_match' => 0,
+                'three_months_before_match' => 0,
+                'four_months_before_match' => 0,
+                'five_months_before_match' => 0,
+                'six_months_before_match' => 0,
+                'seven_months_before_match' => 0,
+                'eight_months_before_match' => 0,
+                'nine_months_before_match' => 0,
+                'ten_months_before_match' => 0,
+                'eleven_months_before_match' => 0,
             ];
         } else {
             $data = [
@@ -277,7 +276,6 @@ class DashboardController extends Controller
                 'eleven_months_before_match' => round(((count($eleven_months_before_match) / $all_questions) * 100), 0) ?? 0,
             ];
         }
-
 
         return $data;
     }
@@ -325,18 +323,18 @@ class DashboardController extends Controller
         if ($all_scholars == 0) {
             $data = [
                 'total_matches' => $all_scholars,
-                'current_month_match' =>  0,
-                'one_month_before_match' =>  0,
-                'two_months_before_match' =>  0,
-                'three_months_before_match' =>  0,
-                'four_months_before_match' =>  0,
-                'five_months_before_match' =>  0,
-                'six_months_before_match' =>  0,
-                'seven_months_before_match' =>  0,
-                'eight_months_before_match' =>  0,
-                'nine_months_before_match' =>  0,
-                'ten_months_before_match' =>  0,
-                'eleven_months_before_match' =>  0,
+                'current_month_match' => 0,
+                'one_month_before_match' => 0,
+                'two_months_before_match' => 0,
+                'three_months_before_match' => 0,
+                'four_months_before_match' => 0,
+                'five_months_before_match' => 0,
+                'six_months_before_match' => 0,
+                'seven_months_before_match' => 0,
+                'eight_months_before_match' => 0,
+                'nine_months_before_match' => 0,
+                'ten_months_before_match' => 0,
+                'eleven_months_before_match' => 0,
             ];
         } else {
             $data = [
@@ -355,7 +353,6 @@ class DashboardController extends Controller
                 'eleven_months_before_match' => round(((count($eleven_months_before_match) / $all_scholars) * 100), 0) ?? 0,
             ];
         }
-
 
         return $data;
     }
@@ -396,7 +393,7 @@ class DashboardController extends Controller
         ];
 
         $current_month = $one_month_before = $two_months_before = $three_months_before = $four_months_before =
-            $five_months_before = $six_months_before = [];
+        $five_months_before = $six_months_before = [];
 
         foreach ($month as $value) {
             if ($value == 0) {
@@ -462,9 +459,9 @@ class DashboardController extends Controller
         }
 
         $current_month = $one_month_before = $two_months_before = $three_months_before = $four_months_before =
-            $five_months_before = $six_months_before = [];
+        $five_months_before = $six_months_before = [];
         $current_month1 = $one_month_before1 = $two_months_before1 = $three_months_before1 = $four_months_before1 =
-            $five_months_before1 = $six_months_before1 = [];
+        $five_months_before1 = $six_months_before1 = [];
 
         foreach ($month as $value) {
             if ($value == 0) {
@@ -504,6 +501,12 @@ class DashboardController extends Controller
 
         $all_accepted = count($all_accepted);
         $all_rejected = count($all_rejected);
+        if ($all_accepted == 0) {
+            $all_accepted = 1;
+        }
+        if ($all_rejected == 0) {
+            $all_rejected == 1;
+        }
 
         if ($all_accepted > 0 || $all_rejected > 0) {
 
