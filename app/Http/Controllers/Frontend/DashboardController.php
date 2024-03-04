@@ -66,7 +66,7 @@ class DashboardController extends Controller
     public function get_all_users()
     {
 
-        $all_users = User::select('created_at')->where('name', '!=', "")->where('user_type', 'user')->get();
+        $all_users = User::select('created_at')->where('user_type', 'user')->get();
         $month = [];
         foreach ($all_users as $value) {
             $month[] = Carbon::now()->diffInMonths($value->created_at);
@@ -284,7 +284,7 @@ class DashboardController extends Controller
     public function get_scholars()
     {
 
-        $all_scholars = User::select('created_at')->where('name', '!=', "")->where('user_type', 'scholar')->get();
+        $all_scholars = User::select('created_at')->where('user_type', 'scholar')->get();
         $month = [];
         foreach ($all_scholars as $value) {
             $month[] = Carbon::now()->diffInMonths($value->created_at);
@@ -450,6 +450,7 @@ class DashboardController extends Controller
     {
 
         $all_accepted = UserAllQuery::select('updated_at')->where('status', 1)->get();
+        dd($all_accepted);
         $all_rejected = UserAllQuery::select('updated_at')->where('status', 2)->get();
         $month = [];
         $accepted = [];

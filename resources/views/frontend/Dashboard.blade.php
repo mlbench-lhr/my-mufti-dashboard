@@ -735,8 +735,6 @@
                         {
                             name: "Rejected",
                             data: [
-
-
                                 get_all_questions.six_months_before,
                                 get_all_questions.five_months_before,
                                 get_all_questions.four_months_before,
