@@ -381,7 +381,7 @@ class QuestionController extends Controller
             UserAllQuery::create($data2);
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
 
-        } elseif ($request->mufti_id != 9 && $request->user_id !=9) {
+        } elseif ($request->mufti_id != 9 && $request->user_id != 9) {
 
             $data1 = [
                 'query_id' => $question->id,
@@ -422,18 +422,15 @@ class QuestionController extends Controller
             UserAllQuery::create($data2);
 
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-        }elseif($request->mufti_id != 9 && $request->user_id ==9){
+        } elseif ($request->mufti_id != 9 && $request->user_id == 9) {
             $data1 = [
                 'query_id' => $question->id,
                 'user_id' => $request->user_id,
                 'mufti_id' => $request->mufti_id,
                 'question' => $request->question,
             ];
-           
+
             $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
-
-
-            
 
             $device_id = $user->device_id;
             $notifTitle = "Question Request Sent";
@@ -450,9 +447,7 @@ class QuestionController extends Controller
                 'body' => $body,
             ];
             Notification::create($data);
-
             UserAllQuery::create($data1);
-
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
         }
 
@@ -505,6 +500,10 @@ class QuestionController extends Controller
         $question = UserQuery::create($data);
 
         if (count($muftis) <= 0) {
+            if ($request->user_id == 9) {
+                return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+            }
+
             $data2 = [
                 'query_id' => $question->id,
                 'user_id' => $request->user_id,
