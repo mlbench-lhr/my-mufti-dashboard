@@ -124,6 +124,16 @@ class QuestionController extends Controller
                 'vote' => $request->vote,
             ];
             $voteQuestion->update($data);
+            $device_id = $user->device_id;
+            $notifTitle = "Vote On Question";
+
+            $notiBody = 'Vote Submit Successfully!';
+            $message_type = "voting question";
+            $other_data = "voting question";
+            $notification_type = "2";
+
+
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
         } else {
             $data = [
@@ -131,6 +141,16 @@ class QuestionController extends Controller
                 'question_id' => $request->question_id,
                 'vote' => $request->vote,
             ];
+            $device_id = $user->device_id;
+            $notifTitle = "Vote On Question";
+
+            $notiBody = 'Vote Submit Successfully!';
+            $message_type = "voting question";
+            $other_data = "voting question";
+            $notification_type = "2";
+
+
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
 
             $question = QuestionVote::create($data);
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
@@ -369,8 +389,12 @@ class QuestionController extends Controller
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $message_type = "Question Request Sent";
+            $other_data = "personal question";
+            $notification_type = "1";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
 
             $data = [
                 'user_id' => $user->id,
@@ -408,8 +432,11 @@ class QuestionController extends Controller
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $message_type = "Question Request Sent";
+            $other_data = "personal question";
+            $notification_type = "1";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
 
             $data = [
                 'user_id' => $user->id,
@@ -438,8 +465,12 @@ class QuestionController extends Controller
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $message_type = "Question Request Sent";
+            $other_data = "personal question";
+            $notification_type = "1";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
 
             $data = [
                 'user_id' => $user->id,
@@ -567,7 +598,7 @@ class QuestionController extends Controller
     }
 
     // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
+    public function send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data,$notification_type)
     {
         $url = 'https://fcm.googleapis.com/fcm/send';
         // server key
@@ -587,9 +618,9 @@ class QuestionController extends Controller
         $dataPayLoad = [
             'to' => '/topics/test',
             'date' => '2019-01-01',
-            'other_data' => 'Request Notification',
+            'other_data' => $other_data,
             'message_Type' => $message_type,
-            // 'notification' => $notification,
+            'notification_type' => $notification_type,
         ];
 
         // create Api body
@@ -619,8 +650,11 @@ class QuestionController extends Controller
         $notiBody = 'User' . ' ' . $name . ' wants to ask a question for you.';
         $body = 'User' . ' ' . $name . ' wants to ask a question for you.';
         $message_type = $title;
+        $other_data = "personal question";
+        $notification_type = "1";
 
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
 
         $data = [
             'user_id' => $muftiId,

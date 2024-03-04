@@ -199,7 +199,7 @@ class EventsAndApptController extends Controller
          $dataPayLoad = [
              'to' => '/topics/test',
              'date' => '2019-01-01',
-             'other_data' => 'Request Notification',
+             'other_data' => 'meeting',
              'message_Type' => $message_type,
              // 'notification' => $notification,
          ];

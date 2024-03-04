@@ -324,6 +324,7 @@ class EditProfile extends Controller
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
             $message_type = "Question Accepted";
+            
 
             $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
@@ -527,7 +528,7 @@ class EditProfile extends Controller
             'date' => '2019-01-01',
             'other_data' => 'Request Notification',
             'message_Type' => $message_type,
-            // 'notification' => $notification,
+            'notification_type' => "0",
         ];
 
         // create Api body
