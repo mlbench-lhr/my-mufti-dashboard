@@ -485,15 +485,15 @@ class EditProfile extends Controller
         //             ->get();
         //     }
         // }
-        
+
         // $appointments = $appointments->map(function ($appointment) {
         //     $appointment->setAttribute('user_detail', $appointment->mufti_detail);
         //     unset($appointment->mufti_detail);
         //     return $appointment;
         // });
-        $appointments = MuftiAppointment::with('user_detail','mufti_detail')
-                ->where('user_id', $request->user_id)
-                ->get();
+        $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
+            ->where('user_id', $request->user_id)->where('mufti_id', $request->user_id)
+            ->get();
 
         return response()->json(
             [
