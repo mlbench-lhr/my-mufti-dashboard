@@ -108,8 +108,6 @@ class User extends Authenticatable
             Degree::where('user_id', $model->id)->delete();
             Activity::where('data_id', $model->id)->delete();
             UserQuery::where('user_id', $model->id)->delete();
-
-
         });
     }
 
@@ -128,17 +126,30 @@ class User extends Authenticatable
         return $this->hasMany(Event::class, 'user_id');
     }
 
+    public function questions()
+    {
+        return $this->hasMany(Question::class, 'user_id');
+    }
+
+
     public function deleteWithRelated()
     {
         $eventsToDelete = $this->events;
+        $questionsToDelete = $this->questions;
+
 
         $eventIdsToDelete = $eventsToDelete->pluck('id')->toArray();
+        $questionIdsToDelete = $questionsToDelete->pluck('id')->toArray();
+
+        QuestionComment::whereIn('question_id', $questionIdsToDelete)->delete();
+        QuestionVote::whereIn('question_id', $questionIdsToDelete)->delete();
 
         EventScholar::whereIn('event_id', $eventIdsToDelete)->delete();
         EventQuestion::whereIn('event_id', $eventIdsToDelete)->delete();
         SaveEvent::whereIn('event_id', $eventIdsToDelete)->delete();
 
         $this->events()->delete();
+        $this->questions()->delete();
     }
 
 }
