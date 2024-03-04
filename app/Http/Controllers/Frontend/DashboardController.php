@@ -505,7 +505,7 @@ class DashboardController extends Controller
             $all_accepted = 1;
         }
         if ($all_rejected == 0) {
-            $all_rejected == 1;
+            $all_rejected = 1;
         }
 
         if ($all_accepted > 0 || $all_rejected > 0) {
