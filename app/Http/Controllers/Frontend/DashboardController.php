@@ -505,7 +505,7 @@ class DashboardController extends Controller
         $all_accepted = count($all_accepted);
         $all_rejected = count($all_rejected);
 
-        if ($all_accepted > 0 && $all_rejected > 0) {
+        if ($all_accepted > 0 || $all_rejected > 0) {
 
             $data = [
                 'all_accepted' => $all_accepted,
