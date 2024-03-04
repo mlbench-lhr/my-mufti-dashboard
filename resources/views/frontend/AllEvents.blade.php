@@ -89,7 +89,7 @@
                 </span>
                 <!--end::Svg Icon-->
                 <input type="text" id="global-search"
-                    class="form-control form-control-solid w-250px ps-14" placeholder="Search user" />
+                    class="form-control form-control-solid w-250px ps-14" placeholder="Search event" />
             </div>
             <!--end::Page title=-->
 
