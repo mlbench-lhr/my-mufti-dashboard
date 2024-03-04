@@ -450,7 +450,7 @@ class DashboardController extends Controller
     {
 
         $all_accepted = UserAllQuery::select('updated_at')->where('status', 1)->get();
-        dd($all_accepted);
+        // dd($all_accepted);
         $all_rejected = UserAllQuery::select('updated_at')->where('status', 2)->get();
         $month = [];
         $accepted = [];

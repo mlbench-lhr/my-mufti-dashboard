@@ -708,6 +708,7 @@
         // console.log(output.Monday);
         var get_all_appoinments = @json($response['get_all_appoinments']);
         var get_all_questions = @json($response['get_all_questions']);
+        console.log(get_all_questions);
 
 
 
