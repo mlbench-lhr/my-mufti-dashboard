@@ -492,7 +492,7 @@ class EditProfile extends Controller
         //     return $appointment;
         // });
         $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
-            ->where('user_id', $request->user_id)->where('mufti_id', $request->user_id)
+            ->where('user_id', $request->user_id)->orWhere('mufti_id', $request->user_id)
             ->get();
 
         return response()->json(
