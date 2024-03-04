@@ -520,31 +520,49 @@ class QuestionController extends Controller
 
         }
 
-        $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
+        if ($request->user_id == 9) {
 
-        $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+            $questionId = $question->id;
+            collect($muftis)->map(function ($value) use ($request, $questionId) {
+                return [
+                    'query_id' => $questionId,
+                    'user_id' => $request->user_id,
+                    'mufti_id' => $value,
+                    'question' => $request->question,
+                ];
+            })->each(function ($data) {
+                UserAllQuery::create($data);
+            });
 
-        $data2 = [
-            'query_id' => $question->id,
-            'user_id' => $request->user_id,
-            'mufti_id' => 9,
-            'question' => $request->question,
-        ];
-        UserAllQuery::create($data2);
+            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
 
-        $questionId = $question->id;
-        collect($muftis)->map(function ($value) use ($request, $questionId) {
-            return [
-                'query_id' => $questionId,
+        } else {
+            $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
+
+            $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+
+            $data2 = [
+                'query_id' => $question->id,
                 'user_id' => $request->user_id,
-                'mufti_id' => $value,
+                'mufti_id' => 9,
                 'question' => $request->question,
             ];
-        })->each(function ($data) {
-            UserAllQuery::create($data);
-        });
+            UserAllQuery::create($data2);
 
-        return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+            $questionId = $question->id;
+            collect($muftis)->map(function ($value) use ($request, $questionId) {
+                return [
+                    'query_id' => $questionId,
+                    'user_id' => $request->user_id,
+                    'mufti_id' => $value,
+                    'question' => $request->question,
+                ];
+            })->each(function ($data) {
+                UserAllQuery::create($data);
+            });
+
+            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+        }
 
     }
 
