@@ -351,7 +351,7 @@ class QuestionController extends Controller
         ScholarReply::create($data);
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
-        $notifTitle = "Reply On Your Question";
+        $notifTitle = "Scholar Reply On Your Question";
 
         $notiBody = 'Reply Added Successfully!';
         $message_type = "question reply";
