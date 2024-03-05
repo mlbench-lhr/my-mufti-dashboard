@@ -303,7 +303,6 @@ class QuestionController extends Controller
             'question_id' => $request->question_id,
             'comment' => $request->comment,
         ];
-        QuestionComment::create($data);
 
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
@@ -315,6 +314,7 @@ class QuestionController extends Controller
         $notification_type = "2";
 
         $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+        $comment = QuestionComment::create($data);
 
         return ResponseHelper::jsonResponse(true, 'Comment added successfully!');
     }
