@@ -348,7 +348,7 @@ class QuestionController extends Controller
             'question_id' => $request->question_id,
             'reply' => $request->reply,
         ];
-        $question = ScholarReply::create($data);
+        ScholarReply::create($data);
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
         $notifTitle = "Reply On Your Question";
