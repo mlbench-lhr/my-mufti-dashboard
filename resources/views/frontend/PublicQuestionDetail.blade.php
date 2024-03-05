@@ -75,12 +75,14 @@
                 <!--end::Heading-->
             </div>
             <!--end::Page title=-->
-            <div class="d-flex ">
-                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase"
-                        style="background-color:#EA4335;">Delete</button>
+            <div class="d-flex">
+                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{$user_id}}">
+                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;">
+                        Delete
+                    </button>
                 </a>
             </div>
+            
         </div>
         <!--end::Container-->
     </div>

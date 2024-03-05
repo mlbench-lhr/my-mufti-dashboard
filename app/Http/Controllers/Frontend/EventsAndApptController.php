@@ -22,7 +22,14 @@ class EventsAndApptController extends Controller
         $query = MuftiAppointment::with('user_detail', 'mufti_detail');
 
         if ($searchTerm) {
-            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+            $query->where(function ($query) use ($searchTerm) {
+                $query->whereHas('mufti_detail', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                })
+                ->orWhereHas('user_detail', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                });
+            });
         }
         $query->orderBy('created_at', 'desc');
 

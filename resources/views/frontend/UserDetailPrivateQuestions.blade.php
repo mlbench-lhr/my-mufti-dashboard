@@ -399,7 +399,7 @@
                         <td>${row.fiqa}</td>
                         <td class="text-end">
                             <div class="fs-4 fw-bolder text-dark">
-                                <a href="{{ URL::to('PrivateQuestionDetail') }}/${row.id}" class="link-success fw-bold">
+                                <a href="{{ URL::to('PrivateQuestionDetail') }}/${row.id}?flag=0&uId=${user_id}" class="link-success fw-bold">
                                     View Detail
                                 </a>
                             </div>

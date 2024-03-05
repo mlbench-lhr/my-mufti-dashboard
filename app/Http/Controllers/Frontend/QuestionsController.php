@@ -33,6 +33,8 @@ class QuestionsController extends Controller
 
     public  function public_question_detail(Request $request)
     {
+        $type = $request->flag;
+        $user_id = $request->uId;
         $question_id = $request->id;
         $question = Question::where('id', $request->id)->first();
 
@@ -67,7 +69,7 @@ class QuestionsController extends Controller
 
 
         // dd($question);
-        return view('frontend.PublicQuestionDetail', compact('question', 'question_id'));
+        return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id'));
     }
 
     public function get_question_comments(Request $request)
@@ -94,9 +96,13 @@ class QuestionsController extends Controller
         // delete scholars reply 
         $scholar_reply = ScholarReply::where('question_id', $id)->delete();
         $question->delete();
-
-        return redirect('PublicQuestions');
-
+        
+        if ($request->flag === "1") {
+            return redirect('PublicQuestions');
+        }else{
+            return redirect("UserDetail/PublicQuestions/{$request->uId}");
+        }
+        
     }
 
 
@@ -124,10 +130,12 @@ class QuestionsController extends Controller
 
     public  function private_question_detail(Request $request)
     {
+        $type = $request->flag;
+        $user_id = $request->uId;
         $question_id = $request->id;
         $detail = UserQuery::with('questioned_by')->where('id', $question_id)->first();
         $question_from = UserAllQuery::with('mufti_detail.interests')->where('query_id', $question_id)->get();
-        return view('frontend.PrivateQuestionDetail', compact('detail', 'question_id', 'question_from'));
+        return view('frontend.PrivateQuestionDetail', compact('detail', 'question_id', 'question_from', 'type', 'user_id'));
     }
 
     public function delete_private_question(Request $request, $id)
@@ -135,8 +143,10 @@ class QuestionsController extends Controller
         $question = UserQuery::with('questioned_by')->where('id', $id)->first();
         $question_from = UserAllQuery::with('mufti_detail.interests')->where('query_id', $id)->delete();
         $question->delete();
-
-        return redirect('PrivateQuestions');
-
+        if ($request->flag === "1") {
+            return redirect('PrivateQuestions');
+        }else{
+            return redirect("UserDetail/PrivateQuestions/{$request->uId}");
+        }
     }
 }
