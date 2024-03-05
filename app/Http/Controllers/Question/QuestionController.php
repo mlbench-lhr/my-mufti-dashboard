@@ -124,16 +124,16 @@ class QuestionController extends Controller
                 'vote' => $request->vote,
             ];
             $voteQuestion->update($data);
-            $device_id = $user->device_id;
-            $notifTitle = "Vote On Question";
+            $userData = User::where('id', $question->user_id)->first();
+            $device_id = $userData->device_id;
+            $notifTitle = "Vote On Your Question";
 
-            $notiBody = 'Vote Submit Successfully!';
+            $notiBody = 'Vote Added Successfully!';
             $message_type = "voting question";
             $other_data = "voting question";
             $notification_type = "2";
 
-
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
         } else {
             $data = [
@@ -141,18 +141,19 @@ class QuestionController extends Controller
                 'question_id' => $request->question_id,
                 'vote' => $request->vote,
             ];
-            $device_id = $user->device_id;
-            $notifTitle = "Vote On Question";
+            QuestionVote::create($data);
 
-            $notiBody = 'Vote Submit Successfully!';
+            $userData = User::where('id', $question->user_id)->first();
+            $device_id = $userData->device_id;
+            $notifTitle = "Vote On Your Question";
+
+            $notiBody = 'Vote Added Successfully!';
             $message_type = "voting question";
             $other_data = "voting question";
             $notification_type = "2";
 
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
-
-            $question = QuestionVote::create($data);
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
         }
 
@@ -302,8 +303,19 @@ class QuestionController extends Controller
             'question_id' => $request->question_id,
             'comment' => $request->comment,
         ];
+        QuestionComment::create($data);
 
-        $question = QuestionComment::create($data);
+        $userData = User::where('id', $question->user_id)->first();
+        $device_id = $userData->device_id;
+        $notifTitle = "Add Comment On Your Question";
+
+        $notiBody = 'Comment Added Successfully!';
+        $message_type = "question comment";
+        $other_data = "voting question";
+        $notification_type = "2";
+
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+
         return ResponseHelper::jsonResponse(true, 'Comment added successfully!');
     }
 
@@ -336,8 +348,17 @@ class QuestionController extends Controller
             'question_id' => $request->question_id,
             'reply' => $request->reply,
         ];
-
         $question = ScholarReply::create($data);
+        $userData = User::where('id', $question->user_id)->first();
+        $device_id = $userData->device_id;
+        $notifTitle = "Reply On Your Question";
+
+        $notiBody = 'Reply Added Successfully!';
+        $message_type = "question reply";
+        $other_data = "voting question";
+        $notification_type = "2";
+
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
         return ResponseHelper::jsonResponse(true, 'Reply added successfully!');
     }
 
@@ -392,9 +413,7 @@ class QuestionController extends Controller
             $other_data = "personal question";
             $notification_type = "1";
 
-
-
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
             $data = [
                 'user_id' => $user->id,
@@ -435,8 +454,7 @@ class QuestionController extends Controller
             $other_data = "personal question";
             $notification_type = "1";
 
-
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
             $data = [
                 'user_id' => $user->id,
@@ -468,9 +486,7 @@ class QuestionController extends Controller
             $other_data = "personal question";
             $notification_type = "1";
 
-
-
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
             $data = [
                 'user_id' => $user->id,
@@ -598,7 +614,7 @@ class QuestionController extends Controller
     }
 
     // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data,$notification_type)
+    public function send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type)
     {
         $url = 'https://fcm.googleapis.com/fcm/send';
         // server key
@@ -653,8 +669,7 @@ class QuestionController extends Controller
         $other_data = "personal question";
         $notification_type = "1";
 
-
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type,$other_data,$notification_type);
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
         $data = [
             'user_id' => $muftiId,
