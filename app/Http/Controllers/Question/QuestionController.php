@@ -126,9 +126,8 @@ class QuestionController extends Controller
             $voteQuestion->update($data);
             $userData = User::where('id', $question->user_id)->first();
             $device_id = $userData->device_id;
-            $notifTitle = "Vote On Your Question";
-
-            $notiBody = 'Vote Added Successfully!';
+            $notifTitle = "Added Vote";
+            $notiBody = 'User ' . $user->name . ' has vote on your question.';
             $message_type = "voting question";
             $other_data = "voting question";
             $notification_type = "2";
@@ -145,9 +144,8 @@ class QuestionController extends Controller
 
             $userData = User::where('id', $question->user_id)->first();
             $device_id = $userData->device_id;
-            $notifTitle = "Vote On Your Question";
-
-            $notiBody = 'Vote Added Successfully!';
+            $notifTitle = "Added Vote";
+            $notiBody = 'User ' . $user->name . ' has vote on your question.';
             $message_type = "voting question";
             $other_data = "voting question";
             $notification_type = "2";
@@ -306,9 +304,8 @@ class QuestionController extends Controller
 
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
-        $notifTitle = "Add Comment On Your Question";
-
-        $notiBody = 'Comment Added Successfully!';
+        $notifTitle = "Added Comment";
+        $notiBody = 'User ' . $user->name . ' has comment on your question.';
         $message_type = "question comment";
         $other_data = "voting question";
         $notification_type = "2";
@@ -351,9 +348,8 @@ class QuestionController extends Controller
         ScholarReply::create($data);
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
-        $notifTitle = "Scholar Reply On Your Question";
-
-        $notiBody = 'Reply Added Successfully!';
+        $notifTitle = "Scholar Replied";
+        $notiBody = 'Scholar ' . $user->name . ' has reply on your question.';
         $message_type = "question reply";
         $other_data = "voting question";
         $notification_type = "2";
