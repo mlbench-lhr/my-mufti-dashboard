@@ -349,7 +349,7 @@ class QuestionController extends Controller
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
         $notifTitle = "Scholar Replied";
-        $notiBody = 'Scholar ' . $user->name . ' has reply on your question.';
+        $notiBody = $user->name . ' has reply on your question.';
         $message_type = "question reply";
         $other_data = "voting question";
         $notification_type = "2";
