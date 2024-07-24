@@ -286,7 +286,7 @@ class EditProfile extends Controller
         $perPage = 10;
         $totalPages = ceil(UserAllQuery::where('mufti_id', $request->mufti_id)->count() / $perPage);
 
-        $myAllQueries = UserAllQuery::forPage($page, $perPage)->with('user_detail.interests')->where(['mufti_id' => $request->mufti_id])->get();
+        $myAllQueries = UserAllQuery::forPage($page, $perPage)->with('user_detail.interests')->where(['mufti_id' => $request->mufti_id])->orderBy('created_at', 'DESC')->get();
 
         return response()->json(
             [
