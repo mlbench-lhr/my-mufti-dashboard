@@ -188,6 +188,7 @@ class QuestionController extends Controller
                 'comments as comments_count',
             ])
             ->with('user_detail')
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         $questions->each(function ($question) use ($request) {
