@@ -32,7 +32,7 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bolder my-0 fs-1">Dashboard
+                <h1 class="d-flex flex-column text-dark fw-bolder my-0 fs-1">Dashboard 1
                 </h1>
 
                 <!--end::Heading-->
@@ -709,10 +709,6 @@
         var get_all_appoinments = @json($response['get_all_appoinments']);
         var get_all_questions = @json($response['get_all_questions']);
         // console.log(get_all_questions);
-
-
-
-
         (function() {
             var e = document.getElementById("kt_charts_widget_2_chart"),
                 t = parseInt(KTUtil.css(e, "height")),
