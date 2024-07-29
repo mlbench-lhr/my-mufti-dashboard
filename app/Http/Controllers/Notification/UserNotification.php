@@ -32,7 +32,7 @@ class UserNotification extends Controller
         $perPage = 10;
         $totalPages = ceil(Notification::where('user_id', $request->user_id)->count() / $perPage);
 
-        $notifications = Notification::forPage($page, $perPage)->where('user_id', $request->user_id)->get();
+        $notifications = Notification::forPage($page, $perPage)->orderBy('created_at', 'desc')->where('user_id', $request->user_id)->get();
 
         $response = [
             'status' => true,
