@@ -32,7 +32,7 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bolder my-0 fs-1">Dashboard 1
+                <h1 class="d-flex flex-column text-dark fw-bolder my-0 fs-1">Dashboard
                 </h1>
 
                 <!--end::Heading-->
