@@ -140,7 +140,7 @@
                 <div class="col-9">
                     <div class="row">
                         @foreach ($question->question_category as $data)
-                            <div class="col-3 badge badge-light fw-normal fs-4 mb-3"
+                            <div class="col-3 badge badge-light fw-normal fs-4 mb-3 ms-2"
                                 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
                                 {{ $data }}
                             </div>
@@ -295,9 +295,9 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-125px">User name</th>
-                                        <th class="min-w-125px">Account Type</th>
-                                        <th class="min-w-125px ">Date</th>
-                                        <th class="min-w-175px">Comment</th>
+                                        <th class="min-w-175px text-center">Account Type</th>
+                                        <th class="min-w-175px text-center">Date</th>
+                                        <th class="min-w-175px text-center">Comment</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
