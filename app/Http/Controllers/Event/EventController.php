@@ -456,7 +456,7 @@ class EventController extends Controller
             return response()->json($response, 200);
         }
         if ($request->flag == 3) {
-            $allUserEvents = Event::forPage($page, $perPage)->where('user_id', $request->user_id)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
+            $allUserEvents = Event::forPage($page, $perPage)->where(['event_status' => 2, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
             $totalEventsPages = ceil(Event::where('user_id', $request->user_id)->get()->count() / $perPage);
             $response = [
                 'status' => true,
