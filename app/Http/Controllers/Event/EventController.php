@@ -457,7 +457,7 @@ class EventController extends Controller
         }
         if ($request->flag == 3) {
             $allUserEvents = Event::forPage($page, $perPage)->where(['event_status' => 2, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
-            $totalEventsPages = ceil(Event::where('user_id', $request->user_id)->get()->count() / $perPage);
+            $totalEventsPages = ceil(Event::where(['event_status' => 2, 'user_id' => $request->user_id])->get()->count() / $perPage);
             $response = [
                 'status' => true,
                 'message' => 'Total Events!',
