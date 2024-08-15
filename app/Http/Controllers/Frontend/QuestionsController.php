@@ -20,7 +20,7 @@ class QuestionsController extends Controller
         $searchTerm = $request->input('search');
         $userCount = Question::count();
         $query = Question::with('user');
-
+        $query->orderBy('created_at', 'DESC');
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
         }
@@ -120,6 +120,7 @@ class QuestionsController extends Controller
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
         }
+        $query->orderBy('created_at', 'DESC');
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('j \\ F Y');
