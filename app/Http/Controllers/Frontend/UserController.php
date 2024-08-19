@@ -368,9 +368,20 @@ class UserController extends Controller
     public function delete_user(Request $request, $id)
     {
         $user = User::where('id',  $id)->first();
-
+        if ($user->mufti_status == 2) {
+            $data = array(
+                'status' => 'mufti',
+                'message' => 'User deleted successfully.',
+            );
+        } else {
+            $data = array(
+                'status' => 'user',
+                'message' => 'User deleted successfully.',
+            );
+        }
+        
         $user->delete();
-
-        return redirect('AllUsers');
+       
+        return response()->json($data);
     }
 }

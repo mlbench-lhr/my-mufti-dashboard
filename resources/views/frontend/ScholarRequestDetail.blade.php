@@ -33,7 +33,7 @@
         max-width: 100px;
         /* Adjust the max-width based on your requirements */
     }
-    
+
     .box {
         border-radius: 10px;
         background: rgba(255, 255, 255, 1);
@@ -189,7 +189,7 @@
                             Work Experience
                         </div>
                         <div class="col-12 fs-2 fw-bold text-muted mb-10">
-                           {{$response['experience']}}
+                            {{ $response['experience'] }}
                         </div>
                     </div>
 
@@ -231,12 +231,14 @@
                                                                 alt="image" style="height: 90px; width:90px; " />
                                                         </div>
                                                     @else
-                                                        <div
-                                                            class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                                            <img src="{{ asset('public/storage/' . $row->degree_image) }}"
-                                                                alt="image"
-                                                                style="height: 90px; width:90px; object-fit: cover;" />
-                                                        </div>
+                                                        <a href="{{ asset('public/storage/' . $row->degree_image) }}" target="_blank">
+                                                            <div
+                                                                class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                                                <img src="{{ asset('public/storage/' . $row->degree_image) }}"
+                                                                    alt="image"
+                                                                    style="height: 90px; width:90px; object-fit: cover;" />
+                                                            </div>
+                                                        </a>
                                                     @endif
                                                     <div class="ms-3">
                                                         <div class="fw-bold fs-2 text-dark">

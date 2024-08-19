@@ -183,9 +183,9 @@
                                 <!--end::User-->
                                 <!--begin::Actions-->
                                 <div class="d-flex ">
-                                    <a href="{{ URL::to('DeleteUser/' . $response['user']->id) }}">
-                                        <button type="button" class="btn btn-danger w-100 text-uppercase"
-                                            style="background-color:#EA4335;">Delete User</button>
+                                    <a href="#" data-url="{{ URL::to('DeleteUser/' . $response['user']->id) }}">
+                                        <button type="button" class="btn btn-danger w-100 text-uppercase btn-remove"
+                                            style="background-color:red;">Delete User</button>
                                     </a>
                                 </div>
                                 <!--end::Actions-->
@@ -246,16 +246,17 @@
                                     href="{{ URL::to('UserDetail/Appointments/' . $response['user']->id) }}">Appointments</a>
                             </li>
                             <!--end::Nav item-->
-                             <!--begin::Nav item-->
-                             <li class="nav-item">
+                            <!--begin::Nav item-->
+                            <li class="nav-item">
                                 <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
                                     href="{{ URL::to('UserDetail/UserEvents/' . $response['user']->id) }}">Events</a>
                             </li>
                             <!--end::Nav item-->
-                             <!--begin::Nav item-->
-                             <li class="nav-item">
+                            <!--begin::Nav item-->
+                            <li class="nav-item">
                                 <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEventsRequest/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/UserEventsRequest/' . $response['user']->id) }}">Events Request</a>
+                                    href="{{ URL::to('UserDetail/UserEventsRequest/' . $response['user']->id) }}">Events
+                                    Request</a>
                             </li>
                             <!--end::Nav item-->
                             @if ($response['user']->user_type == 'scholar')
@@ -287,12 +288,15 @@
                                                         alt="image" style="height: 90px; width:90px; " />
                                                 </div>
                                             @else
-                                                <div
-                                                    class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                                    <img src="{{ asset('public/storage/' . $row->degree_image) }}"
-                                                        alt="image"
-                                                        style="height: 90px; width:90px; object-fit: cover;" />
-                                                </div>
+                                                <a href="{{ asset('public/storage/' . $row->degree_image) }}"
+                                                    target="_blank">
+                                                    <div
+                                                        class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                                        <img src="{{ asset('public/storage/' . $row->degree_image) }}"
+                                                            alt="image"
+                                                            style="height: 90px; width:90px; object-fit: cover;" />
+                                                    </div>
+                                                </a>
                                             @endif
                                             <div class="ms-3">
                                                 <div class="fw-bold fs-2 text-dark">
@@ -307,7 +311,7 @@
 
                                     <div class="col-3 text-muted fs-3 d-flex justify-content-end align-content-end">
                                         {{ \Carbon\Carbon::parse($row->degree_startDate)->format('Y') }} -
-                                        {{ \Carbon\Carbon::parse($row->degree_endDate)->format('Y') }} 
+                                        {{ \Carbon\Carbon::parse($row->degree_endDate)->format('Y') }}
 
                                     </div>
                                 </div>
@@ -325,4 +329,78 @@
         <!--end::Container-->
     </div>
     <!--end::Content-->
+    <script type="module">
+        $(document).ready(function() {
+            $(document).on('click', '.btn-remove', function(e) {
+                e.preventDefault();
+
+                var button = $(this);
+                var url = button.closest('a').data(
+                'url'); 
+
+                Swal.fire({
+                    title: 'Delete User',
+                    text: "Are you sure you want to delete this User?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#38B89A',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Sure!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                'content'), 
+                            },
+                            success: function(response) {
+                                if (response.status === 'mufti') {
+                                    Swal.fire({
+                                        title: 'Success',
+                                        text: response.message,
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false,
+                                    }).then(() => {
+                                        window.location.href =
+                                            '{{ URL::to('AllScholars') }}';
+                                    });
+                                } else if (response.status === 'user') {
+                                    Swal.fire({
+                                        title: 'Success',
+                                        text: response.message,
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false,
+                                    }).then(() => {
+                                        window.location.href =
+                                            '{{ URL::to('AllUsers') }}';
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: response.message,
+                                        icon: 'error',
+                                        timer: 1500,
+                                        showConfirmButton: false,
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'An unexpected error occurred.',
+                                    icon: 'error',
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
 @endsection

@@ -176,10 +176,16 @@
                         <!--begin::Actions-->
                         @if ($event->event_status == 2)
                             <div class="d-flex ">
-                                <a href="{{ URL::to('EventRequestApprove/' . $event->id) }}">
+                                {{-- <a href="{{ URL::to('EventRequestApprove/' . $event->id) }}">
+                                    <button type="button" class="btn btn-md btn-success w-100"
+                                        style="background-color:#38B89A;">Accept</button>
+                                </a> --}}
+                                <a href="#" data-url="{{ URL::to('EventRequestApprove/' . $event->id) }}"
+                                    class="btn-approve">
                                     <button type="button" class="btn btn-md btn-success w-100"
                                         style="background-color:#38B89A;">Accept</button>
                                 </a>
+
                                 <a href="{{ URL::to('EventRequestDecline/' . $event->id) }}">
                                     <button type="button" class="btn btn-md btn-danger w-100 ms-5"
                                         style="background-color:#F52E2E;">Reject</button>
@@ -246,8 +252,8 @@
                         <div class="col-6 fs-2 fw-bold text-dark mb-5">
                             Scholars
                         </div>
-                        <div class="col-6 fs-5 fw-bold text-success text-end cursor-pointer"
-                        data-bs-toggle="modal" data-bs-target="#view_all_scholars">
+                        <div class="col-6 fs-5 fw-bold text-success text-end cursor-pointer" data-bs-toggle="modal"
+                            data-bs-target="#view_all_scholars">
                             See All
                         </div>
                     </div>
@@ -343,87 +349,135 @@
     </div>
     <!--end::Container-->
 
-        <!--begin::Modal Request Decline -->
-        <div class="modal fade" id="view_all_scholars" tabindex="-1" aria-hidden="true">
-            <!--begin::Modal dialog-->
-            <div class="modal-dialog mw-650px">
-                <!--begin::Modal content-->
-                <div class="modal-content">
-                    <!--begin::Modal header-->
-                    <div class="modal-header pb-0 border-0 d-f justify-content-between">
-                        <!--begin::Close-->
-                        <p>
+    <!--begin::Modal Request Decline -->
+    <div class="modal fade" id="view_all_scholars" tabindex="-1" aria-hidden="true">
+        <!--begin::Modal dialog-->
+        <div class="modal-dialog mw-650px">
+            <!--begin::Modal content-->
+            <div class="modal-content">
+                <!--begin::Modal header-->
+                <div class="modal-header pb-0 border-0 d-f justify-content-between">
+                    <!--begin::Close-->
+                    <p>
 
-                        </p>
-                        <p class="fs-1 fw-bolder text-dark">
-                            Event Scholars
-                        </p>
-                        <div class="btn btn-sm btn-icon btn-active-color-success" data-bs-dismiss="modal">
-                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-    
-                            <span class="svg-icon svg-icon-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21"
-                                    viewBox="0 0 21 21" fill="none">
-                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                        d="M17.4735 10.8068C17.4735 14.4887 14.4887 17.4735 10.8068 17.4735C7.1249 17.4735 4.14014 14.4887 4.14014 10.8068C4.14014 7.1249 7.1249 4.14014 10.8068 4.14014C14.4887 4.14014 17.4735 7.1249 17.4735 10.8068ZM8.78655 8.78657C8.98182 8.59131 9.2984 8.59131 9.49366 8.78657L10.8068 10.0997L12.1199 8.78658C12.3152 8.59132 12.6317 8.59132 12.827 8.78658C13.0223 8.98185 13.0223 9.29843 12.827 9.49369L11.5139 10.8068L12.827 12.1199C13.0222 12.3152 13.0222 12.6317 12.827 12.827C12.6317 13.0223 12.3151 13.0223 12.1199 12.827L10.8068 11.5139L9.49368 12.827C9.29841 13.0223 8.98183 13.0223 8.78657 12.827C8.59131 12.6317 8.59131 12.3152 8.78657 12.1199L10.0997 10.8068L8.78655 9.49368C8.59129 9.29841 8.59129 8.98183 8.78655 8.78657Z"
-                                        fill="#252F4A" />
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </div>
-                        <!--end::Close-->
+                    </p>
+                    <p class="fs-1 fw-bolder text-dark">
+                        Event Scholars
+                    </p>
+                    <div class="btn btn-sm btn-icon btn-active-color-success" data-bs-dismiss="modal">
+                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+
+                        <span class="svg-icon svg-icon-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21"
+                                fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M17.4735 10.8068C17.4735 14.4887 14.4887 17.4735 10.8068 17.4735C7.1249 17.4735 4.14014 14.4887 4.14014 10.8068C4.14014 7.1249 7.1249 4.14014 10.8068 4.14014C14.4887 4.14014 17.4735 7.1249 17.4735 10.8068ZM8.78655 8.78657C8.98182 8.59131 9.2984 8.59131 9.49366 8.78657L10.8068 10.0997L12.1199 8.78658C12.3152 8.59132 12.6317 8.59132 12.827 8.78658C13.0223 8.98185 13.0223 9.29843 12.827 9.49369L11.5139 10.8068L12.827 12.1199C13.0222 12.3152 13.0222 12.6317 12.827 12.827C12.6317 13.0223 12.3151 13.0223 12.1199 12.827L10.8068 11.5139L9.49368 12.827C9.29841 13.0223 8.98183 13.0223 8.78657 12.827C8.59131 12.6317 8.59131 12.3152 8.78657 12.1199L10.0997 10.8068L8.78655 9.49368C8.59129 9.29841 8.59129 8.98183 8.78655 8.78657Z"
+                                    fill="#252F4A" />
+                            </svg>
+                        </span>
+                        <!--end::Svg Icon-->
                     </div>
-                    <!--begin::Modal header-->
-                    <!--begin::Modal body-->
-                    <div class="modal-body  pt-0 mx-0">
-                        <div class="card-body pt-5" style="overflow-y: auto;">
-                            <div class="row">
-                                @foreach ($all_event_scholar as $row)
-                                    <div class="col-6 fs-2 fw-bolder text-dark d-flex pb-7">
-                                        @if ($row->image == '')
-                                            <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                                <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
-                                                    style="height: 80px; width:80px;" />
-                                            </div>
-                                        @else
-                                            <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                                <img src="{{ asset('public/storage/' . $row->image) }}" alt="image"
-                                                    style="height: 80px; width:80px; object-fit: cover;" />
-                                            </div>
-                                        @endif
-                                        <div class="ms-2">
-                                            <div class="fs-5 fw-normal text-success">
-                                                {{ $row->fiqa }}
-                                            </div>
-                                            <div class="fs-2 mb-1">
-                                                {{ $row->name }}
-                                            </div>
-                                            <div class="text-muted fs-5 fw-normal"
-                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
-                                                @foreach ($row->category as $data)
-                                                    {{ $data }}
-                                                    @if (!$loop->last)
-                                                        ,
-                                                    @endif
-                                                @endforeach
-                                            </div>
+                    <!--end::Close-->
+                </div>
+                <!--begin::Modal header-->
+                <!--begin::Modal body-->
+                <div class="modal-body  pt-0 mx-0">
+                    <div class="card-body pt-5" style="overflow-y: auto;">
+                        <div class="row">
+                            @foreach ($all_event_scholar as $row)
+                                <div class="col-6 fs-2 fw-bolder text-dark d-flex pb-7">
+                                    @if ($row->image == '')
+                                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
+                                                style="height: 80px; width:80px;" />
+                                        </div>
+                                    @else
+                                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                            <img src="{{ asset('public/storage/' . $row->image) }}" alt="image"
+                                                style="height: 80px; width:80px; object-fit: cover;" />
+                                        </div>
+                                    @endif
+                                    <div class="ms-2">
+                                        <div class="fs-5 fw-normal text-success">
+                                            {{ $row->fiqa }}
+                                        </div>
+                                        <div class="fs-2 mb-1">
+                                            {{ $row->name }}
+                                        </div>
+                                        <div class="text-muted fs-5 fw-normal"
+                                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                            @foreach ($row->category as $data)
+                                                {{ $data }}
+                                                @if (!$loop->last)
+                                                    ,
+                                                @endif
+                                            @endforeach
                                         </div>
                                     </div>
-                                @endforeach
-                            </div>
-                           
-
+                                </div>
+                            @endforeach
                         </div>
+
+
                     </div>
-                    <!--end::Modal body-->
                 </div>
-                <!--end::Modal content-->
+                <!--end::Modal body-->
             </div>
-            <!--end::Modal dialog-->
+            <!--end::Modal content-->
         </div>
-        <!--end::Modal - Request Decline-->
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Request Decline-->
     </div>
     <!--end::Content-->
+    <script type="module">
+        $(document).ready(function() {
+            $('.btn-approve').on('click', function(e) {
+                e.preventDefault();
+
+                var button = $(this);
+                var url = button.data('url'); // Use data-url attribute for the endpoint
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr(
+                        'content'), // Include CSRF token if needed
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: response.message,
+                                icon: 'error',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An unexpected error occurred.',
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

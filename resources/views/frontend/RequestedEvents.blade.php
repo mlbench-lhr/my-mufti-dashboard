@@ -166,9 +166,102 @@
         <!--end::Container-->
     </div>
     <!--end::Content-->
+    {{-- <script type="module">
+        $(document).ready(function() {
+            $('.btn-approve').on('click', function(e) {
+                e.preventDefault();
+    
+                var button = $(this);
+                var url = button.data('url'); // Use data-url attribute for the endpoint
+    
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr(
+                            'content'), // Include CSRF token if needed
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: response.message,
+                                icon: 'error',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An unexpected error occurred.',
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        });
+    </script> --}}
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // Handle click event for approval button
+    $(document).on('click', '.btn-approve', function(e) {
+        e.preventDefault();
+
+        var button = $(this);
+        var url = button.data('url'); // Use data-url attribute for the endpoint
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr(
+                    'content'), // Include CSRF token if needed
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.message,
+                        icon: 'error',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An unexpected error occurred.',
+                    icon: 'error',
+                });
+            }
+        });
+    });
+
     var currentPage = 1;
 
     function loadVerificationData(page, search = '', sortingOption = '') {
@@ -230,10 +323,10 @@
                         <td>
                             ${row.event_status == 2 ?
                                 `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <a href="{{ URL::to('EventRequestApprove') }}/${row.id}">
-                                        <button type="button" class="btn btn-sm btn-success w-100"
-                                        style="background-color:#38B89A;">Accept</button>
-                                    </a>
+                                   <a href="#" class="btn-approve" data-url="{{ URL::to('EventRequestApprove') }}/${row.id}">
+        <button type="button" class="btn btn-sm btn-success w-100"
+                style="background-color:#38B89A;">Accept</button>
+        </a>
                                     <a href="{{ URL::to('EventRequestDecline') }}/${row.id}">
                                         <button type="button" class="btn btn-sm btn-danger w-100 ms-5"
                                         style="background-color:#F52E2E;">Reject</button>

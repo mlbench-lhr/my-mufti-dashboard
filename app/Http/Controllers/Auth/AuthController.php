@@ -68,7 +68,7 @@ class AuthController extends Controller
         if (empty($user)) {
             return response()->json([
                 "status" => false,
-                "message" => "Invalid Credentials",
+                "message" => "Email is not registered",
                 "data" => null,
             ], 200);
         } else {
