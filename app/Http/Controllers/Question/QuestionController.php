@@ -125,14 +125,17 @@ class QuestionController extends Controller
             ];
             $voteQuestion->update($data);
             $userData = User::where('id', $question->user_id)->first();
-            $device_id = $userData->device_id;
-            $notifTitle = "Added Vote";
-            $notiBody = 'User ' . $user->name . ' has vote on your question.';
-            $message_type = "voting question";
-            $other_data = "voting question";
-            $notification_type = "2";
+            if ($question->user_id != $request->user_id) {
+                $device_id = $userData->device_id;
+                $notifTitle = "Added Vote";
+                $notiBody = 'User ' . $user->name . ' has vote on your question.';
+                $message_type = "voting question";
+                $other_data = "voting question";
+                $notification_type = "2";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+                $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+            }
+
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
         } else {
             $data = [
@@ -143,14 +146,16 @@ class QuestionController extends Controller
             QuestionVote::create($data);
 
             $userData = User::where('id', $question->user_id)->first();
-            $device_id = $userData->device_id;
-            $notifTitle = "Added Vote";
-            $notiBody = 'User ' . $user->name . ' has vote on your question.';
-            $message_type = "voting question";
-            $other_data = "voting question";
-            $notification_type = "2";
+            if ($question->user_id != $request->user_id) {
+                $device_id = $userData->device_id;
+                $notifTitle = "Added Vote";
+                $notiBody = 'User ' . $user->name . ' has vote on your question.';
+                $message_type = "voting question";
+                $other_data = "voting question";
+                $notification_type = "2";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+                $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+            }
 
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
         }
