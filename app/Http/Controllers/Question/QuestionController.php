@@ -302,16 +302,17 @@ class QuestionController extends Controller
             'question_id' => $request->question_id,
             'comment' => $request->comment,
         ];
+        if ($question->user_id != $request->user_id) {
+            $userData = User::where('id', $question->user_id)->first();
+            $device_id = $userData->device_id;
+            $notifTitle = "Added Comment";
+            $notiBody = 'User ' . $user->name . ' has comment on your question.';
+            $message_type = "question comment";
+            $other_data = "voting question";
+            $notification_type = "2";
 
-        $userData = User::where('id', $question->user_id)->first();
-        $device_id = $userData->device_id;
-        $notifTitle = "Added Comment";
-        $notiBody = 'User ' . $user->name . ' has comment on your question.';
-        $message_type = "question comment";
-        $other_data = "voting question";
-        $notification_type = "2";
-
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+        }
         $comment = QuestionComment::create($data);
 
         return ResponseHelper::jsonResponse(true, 'Comment added successfully!');

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Question, User, UserQuery, Interest, MuftiAppointment, UserAllQuery, Degree, Event, Experience, Mufti};
+use App\Models\{Question, User, UserQuery, Interest, MuftiAppointment, UserAllQuery, Degree, Event, Experience, Mufti, Notification};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -150,6 +150,22 @@ class UserController extends Controller
         $user->fiqa = $mufti->fiqa;
         $user->save();
 
+        $device_id = $user->device_id;
+        $notifTitle = "Scholar Request Update";
+
+        $notiBody = 'Congrats! Your request for become a scholar has been accepted. You are  a scholar now!!';
+        $body = 'Congrats! Your request for become a scholar has been accepted. You are  a scholar now!!';
+        $message_type = "Scholar Request Update";
+
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+        $data = [
+            'user_id' => $user->id,
+            'title' => $notifTitle,
+            'body' => $body,
+        ];
+        Notification::create($data);
+
         $mufti->delete();
 
         return redirect('ScholarsRequests');
@@ -164,6 +180,23 @@ class UserController extends Controller
         $experience = Experience::where('user_id', $id)->delete();
         $mufti = Mufti::where('user_id', $id)->delete();
         $interestes = Interest::where('user_id', $id)->delete();
+
+        $device_id = $user->device_id;
+        $notifTitle = "Scholar Request Update";
+
+        $notiBody = 'Sorry! Your request to become a scholar has been rejected due to the submission of incorrect information.';
+        $body = 'Sorry! Your request to become a scholar has been rejected due to the submission of incorrect information.';
+        $message_type = "Scholar Request Update";
+
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+        $data = [
+            'user_id' => $user->id,
+            'title' => $notifTitle,
+            'body' => $body,
+        ];
+        Notification::create($data);
+
         return redirect('ScholarsRequests');
     }
 
@@ -379,9 +412,54 @@ class UserController extends Controller
                 'message' => 'User deleted successfully.',
             );
         }
-        
+        $user->deleteWithRelated();
         $user->delete();
        
         return response()->json($data);
     }
+     // send notification
+     public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
+     {
+         $url = 'https://fcm.googleapis.com/fcm/send';
+         // server key
+         $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
+ 
+         $headers = [
+             'Content-Type:application/json',
+             'Authorization:key=' . $serverKey,
+         ];
+ 
+         // notification content
+         $notification = [
+             'title' => $notifTitle,
+             'body' => $notiBody,
+         ];
+         // optional
+         $dataPayLoad = [
+             'to' => '/topics/test',
+             'date' => '2019-01-01',
+             'other_data' => 'meeting',
+             'message_Type' => $message_type,
+             // 'notification' => $notification,
+         ];
+ 
+         // create Api body
+         $notifbody = [
+             'notification' => $notification,
+             'data' => $dataPayLoad,
+             'time_to_live' => 86400,
+             'to' => $device_id,
+             // 'registration_ids' => $arr,
+         ];
+         $ch = curl_init();
+         curl_setopt($ch, CURLOPT_URL, $url);
+         curl_setopt($ch, CURLOPT_POST, true);
+         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
+         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+ 
+         $result = curl_exec($ch);
+ 
+         curl_close($ch);
+     }
 }
