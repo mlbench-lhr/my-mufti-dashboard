@@ -264,6 +264,13 @@
 
     var currentPage = 1;
 
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
@@ -363,56 +370,94 @@
                         tableBody.append(newRow);
                         count++;
                     });
-                    // Update pagination links
+                }
+                var paginationLinks = $('#pagination-links');
+                paginationLinks.empty();
 
-                    var paginationLinks = $('#pagination-links');
-                    paginationLinks.empty();
+                var totalPages = users.last_page;
+                var currentPage = users.current_page;
 
-                    var totalPages = users.last_page;
 
-                    // Render "Previous" button
-                    var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
-                    </li>`;
-                    paginationLinks.append(previousLink);
+                var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
+                </li>`;
+                paginationLinks.append(previousLink);
 
-                    // Add pagination links to the page
-                    for (var i = 1; i <= totalPages; i++) {
-                        // Render ellipsis if there are many pages
-                        if (totalPages > 7 && (i < currentPage - 2 || i > currentPage + 2)) {
-                            if (i === 1 || i === totalPages) {
-                                var pageLink =
-                                    `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                                paginationLinks.append(pageLink);
-                            }
-                            continue;
+                for (var i = 1; i <= totalPages; i++) {
+                    if (totalPages > 7 && (i < currentPage - 2 || i > currentPage + 2)) {
+                        if (i === 1 || i === totalPages) {
+                            var pageLink =
+                                `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                            paginationLinks.append(pageLink);
                         }
-
-                        var pageLink = `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
-                    </li>`;
-                        paginationLinks.append(pageLink);
+                        continue;
                     }
 
-                    // Render "Next" button
-                    var nextLink = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
-                </li>`;
-                    paginationLinks.append(nextLink);
+                    var pageLink = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" data-page="${i}" style="background-color: #38B89A;">${i}</a>
+                      </li>`;
+                    paginationLinks.append(pageLink);
                 }
+
+                var nextLink = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
+                </li>`;
+                paginationLinks.append(nextLink);
+
+
                 $('#loader').addClass('d-none');
 
             },
         });
     }
 
-    // Handle page clicks
+    // $(document).on('click', '.page-link', function(e) {
+    //     e.preventDefault();
+    //     currentPage = $(this).data('page');
+    //     var searchTerm = $('#global-search').val();
+    //     loadVerificationData(currentPage, searchTerm);
+    // });
+    // $(document).on('click', '#apply-filter-button', function(e) {
+    //     e.preventDefault();
+    //     var searchTerm = $('#global-search').val();
+    //     var sortingOption = $('#request-date-filter').val();
+    //     loadVerificationData(currentPage, searchTerm, sortingOption);
+    // });
+    // $(document).on('click', '#reset-filter-button', function(e) {
+    //     e.preventDefault();
+    //     $('#request-date-filter').val('').trigger('change');
+    //     loadVerificationData(currentPage);
+    // });
+    // $(document).ready(function() {
+    //     // Handle global search input
+    //     $('#global-search').on('input', function() {
+    //         var searchTerm = $(this).val();
+    //         loadVerificationData(1, searchTerm);
+    //     });
+    // });
+    // $(document).ready(function() {
+    //     loadVerificationData(currentPage);
+    // });
+
+    function updateUrlParameter(key, value) {
+        var url = new URL(window.location.href);
+        url.searchParams.set(key, value);
+        window.history.pushState({
+            path: url.href
+        }, '', url.href);
+    }
+
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
-        currentPage = $(this).data('page');
-        var searchTerm = $('#global-search').val();
-        loadVerificationData(currentPage, searchTerm);
+        var page = $(this).data('page');
+        if (page && page !== currentPage) {
+            currentPage = page;
+            var searchTerm = $('#global-search').val();
+            loadVerificationData(currentPage, searchTerm);
+            updateUrlParameter('page', currentPage);
+        }
     });
+
     $(document).on('click', '#apply-filter-button', function(e) {
         e.preventDefault();
         var searchTerm = $('#global-search').val();
@@ -425,14 +470,16 @@
         $('#request-date-filter').val('').trigger('change');
         loadVerificationData(currentPage);
     });
+
     $(document).ready(function() {
-        // Handle global search input
         $('#global-search').on('input', function() {
             var searchTerm = $(this).val();
-            loadVerificationData(1, searchTerm);
+            currentPage = 1;
+            loadVerificationData(currentPage, searchTerm);
+            updateUrlParameter('page', currentPage);
         });
-    });
-    $(document).ready(function() {
+
+        currentPage = getUrlParameter('page') || 1;
         loadVerificationData(currentPage);
     });
 </script>

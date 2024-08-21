@@ -138,13 +138,12 @@ class EventsAndApptController extends Controller
         $eventDate = Carbon::parse($event->date);
         $currentDateTime = Carbon::now();
         if ($eventDate->greaterThanOrEqualTo($currentDateTime)) {
-
             $event->event_status = 1;
             $event->save();
             $event_date = Carbon::parse($event->date)->format('M d, Y');
             $user_id = $event->user_id;
-            $user = User::find($user_id);
-            $device_id = $user->device_id;
+            $user_data = User::find($user_id);
+            $device_id = $user_data->device_id;
             $notifTitle = "Event Request Update";
 
             $notiBody = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been approved.';
@@ -154,32 +153,52 @@ class EventsAndApptController extends Controller
             $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
             $data = [
-                'user_id' => $user->id,
+                'user_id' => $user_data->id,
                 'title' => $notifTitle,
                 'body' => $body,
             ];
             Notification::create($data);
 
-            // Event date is in the future or is now
+            // $eventScholars = EventScholar::where('event_id', $request->id)->pluck('user_id')->toArray();
+            $eventScholars = EventScholar::where('event_id', $request->id)
+                ->pluck('user_id')
+                ->filter(function ($value) {
+                    return $value != 0;
+                })
+                ->toArray();
+            array_walk($eventScholars, function ($value) use ($event_date, $user_data, $event) {
+                $user = User::find($value);
+                $device_id = $user->device_id;
+                $notifTitle = "You've Been Added to a New Event!";
+                $notiBody = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->title;
+                $body = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
+                $message_type = "You've Been Added to a New Event!";
+
+                $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+                $data = [
+                    'user_id' => $user->id,
+                    'title' => $notifTitle,
+                    'body' => $body,
+                ];
+
+                Notification::create($data);
+            });
+
             $data = array(
                 'status' => 'success',
                 'message' => 'Event accepted successfully.',
             );
-            // dd("The event date is not in the past.");
         } else {
 
             $data = array(
                 'response' => 'error',
                 'message' => 'Event date is passed, you are unable to accept the event.',
-
             );
-            // dd("The event date is in the past.");
         }
-
         // return back();
         // echo json_encode($data);
         return response()->json($data);
-
     }
 
     public function reject_request(Request $request, $id)

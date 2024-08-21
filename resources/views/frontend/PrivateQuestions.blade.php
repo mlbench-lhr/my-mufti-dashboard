@@ -72,24 +72,24 @@
                 <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Private questions
                 </h1>
                 <h3 class="mt-4" style=" font-weight:400; ">All Questions: <span class="fs-5" id="user-count"
-                    style="font-weight:500 "> </span> </h3>
+                        style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
             <div class="d-flex align-items-center position-relative ">
                 <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                 <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                        viewBox="0 0 24 24" fill="none">
-                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
-                            rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none">
+                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1"
+                            transform="rotate(45 17.0365 15.1223)" fill="black" />
                         <path
                             d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
                             fill="black" />
                     </svg>
                 </span>
                 <!--end::Svg Icon-->
-                <input type="text" id="global-search"
-                    class="form-control form-control-solid w-250px ps-14" placeholder="Search" />
+                <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
+                    placeholder="Search" />
             </div>
             <!--end::Page title=-->
 
@@ -154,6 +154,13 @@
 <script>
     var currentPage = 1;
 
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
@@ -187,7 +194,8 @@
 
                         var category = categoryName.join(', ');
 
-                        var modifiedSerialNumber = pad(count + 1, 2, '0'); // Calculate modified serial number
+                        var modifiedSerialNumber = pad(count + 1, 2,
+                            '0'); // Calculate modified serial number
                         var newRow = `
                     <tr>
                         <td>${modifiedSerialNumber}</td>
@@ -209,8 +217,8 @@
                         count++;
                     });
 
-                     // Function to pad numbers with zeros
-                     function pad(number, length, character) {
+                    // Function to pad numbers with zeros
+                    function pad(number, length, character) {
                         var str = '' + number;
                         while (str.length < length) {
                             str = character + str;
@@ -218,43 +226,42 @@
                         return str;
                     }
 
-                    // Update pagination links
+                }
 
-                    var paginationLinks = $('#pagination-links');
-                    paginationLinks.empty();
+                var paginationLinks = $('#pagination-links');
+                paginationLinks.empty();
 
-                    var totalPages = users.last_page;
+                var totalPages = users.last_page;
+                var currentPage = users.current_page;
 
-                    // Render "Previous" button
-                    var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
-                    </li>`;
-                    paginationLinks.append(previousLink);
 
-                    // Add pagination links to the page
-                    for (var i = 1; i <= totalPages; i++) {
-                        // Render ellipsis if there are many pages
-                        if (totalPages > 7 && (i < currentPage - 2 || i > currentPage + 2)) {
-                            if (i === 1 || i === totalPages) {
-                                var pageLink =
-                                    `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                                paginationLinks.append(pageLink);
-                            }
-                            continue;
+                var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
+                </li>`;
+                paginationLinks.append(previousLink);
+
+                for (var i = 1; i <= totalPages; i++) {
+                    if (totalPages > 7 && (i < currentPage - 2 || i > currentPage + 2)) {
+                        if (i === 1 || i === totalPages) {
+                            var pageLink =
+                                `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                            paginationLinks.append(pageLink);
                         }
-
-                        var pageLink = `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
-                    </li>`;
-                        paginationLinks.append(pageLink);
+                        continue;
                     }
 
-                    // Render "Next" button
-                    var nextLink = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
-                </li>`;
-                    paginationLinks.append(nextLink);
+                    var pageLink = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" data-page="${i}" style="background-color: #38B89A;">${i}</a>
+                      </li>`;
+                    paginationLinks.append(pageLink);
                 }
+
+                var nextLink = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
+                </li>`;
+                paginationLinks.append(nextLink);
+
+
                 $('#loader').addClass('d-none');
 
             },
@@ -262,11 +269,51 @@
     }
 
     // Handle page clicks
+    // $(document).on('click', '.page-link', function(e) {
+    //     e.preventDefault();
+    //     currentPage = $(this).data('page');
+    //     var searchTerm = $('#global-search').val();
+    //     loadVerificationData(currentPage, searchTerm);
+    // });
+    // $(document).on('click', '#apply-filter-button', function(e) {
+    //     e.preventDefault();
+    //     var searchTerm = $('#global-search').val();
+    //     var sortingOption = $('#request-date-filter').val();
+    //     loadVerificationData(currentPage, searchTerm, sortingOption);
+    // });
+
+    // $(document).on('click', '#reset-filter-button', function(e) {
+    //     e.preventDefault();
+    //     $('#request-date-filter').val('').trigger('change');
+    //     loadVerificationData(currentPage);
+    // });
+    // $(document).ready(function() {
+    //     // Handle global search input
+    //     $('#global-search').on('input', function() {
+    //         var searchTerm = $(this).val();
+    //         loadVerificationData(1, searchTerm);
+    //     });
+    // });
+    // $(document).ready(function() {
+    //     loadVerificationData(currentPage);
+    // });
+
+    function updateUrlParameter(key, value) {
+        var url = new URL(window.location.href);
+        url.searchParams.set(key, value);
+        window.history.pushState({
+            path: url.href
+        }, '', url.href);
+    }
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
-        currentPage = $(this).data('page');
-        var searchTerm = $('#global-search').val();
-        loadVerificationData(currentPage, searchTerm);
+        var page = $(this).data('page');
+        if (page && page !== currentPage) {
+            currentPage = page;
+            var searchTerm = $('#global-search').val();
+            loadVerificationData(currentPage, searchTerm);
+            updateUrlParameter('page', currentPage);
+        }
     });
     $(document).on('click', '#apply-filter-button', function(e) {
         e.preventDefault();
@@ -274,20 +321,20 @@
         var sortingOption = $('#request-date-filter').val();
         loadVerificationData(currentPage, searchTerm, sortingOption);
     });
-
     $(document).on('click', '#reset-filter-button', function(e) {
         e.preventDefault();
         $('#request-date-filter').val('').trigger('change');
         loadVerificationData(currentPage);
     });
     $(document).ready(function() {
-        // Handle global search input
         $('#global-search').on('input', function() {
             var searchTerm = $(this).val();
-            loadVerificationData(1, searchTerm);
+            currentPage = 1;
+            loadVerificationData(currentPage, searchTerm);
+            updateUrlParameter('page', currentPage);
         });
-    });
-    $(document).ready(function() {
+
+        currentPage = getUrlParameter('page') || 1;
         loadVerificationData(currentPage);
     });
 </script>
