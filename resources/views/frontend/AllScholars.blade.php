@@ -217,7 +217,7 @@
                         </td>
                         <td class="text-end">
                             <div class="fs-4 fw-bolder text-dark">
-                                <a href="{{ URL::to('UserDetail/PublicQuestions') }}/${row.id}" class="link-success fw-bold">
+                                <a href="{{ URL::to('ScholarDetail/PublicQuestions') }}/${row.id}" class="link-success fw-bold">
                                     View Profile
                                 </a>
                             </div>

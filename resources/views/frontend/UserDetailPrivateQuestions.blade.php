@@ -186,76 +186,64 @@
                     </div>
                     <!--end::Details-->
                     @if ($response['user']->user_type == 'scholar')
-                    <div class="row mb-5">
-                        <div class="col-2 fs-2 fw-bold text-dark">
-                        Category
-                        </div>
-                        <div class="col-10">
-                            <div class="row">
-                                @foreach ($response['user']['interests'] as $data)
-                                <div class="col-3 badge badge-light fw-normal fs-4 ms-3 mb-3"
-                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
-                                    {{$data->interest}}
-                                </div>
-                                @endforeach
+                        <div class="row mb-5">
+                            <div class="col-2 fs-2 fw-bold text-dark">
+                                Category
                             </div>
-        
+                            <div class="col-10">
+                                <div class="row">
+                                    @foreach ($response['user']['interests'] as $data)
+                                        <div class="col-3 badge badge-light fw-normal fs-4 ms-3 mb-3"
+                                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                            {{ $data->interest }}
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                            </div>
                         </div>
-                    </div>
                     @endif
-                    
+
                     <div class="d-flex overflow-auto h-55px">
                         <ul
                             class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/PublicQuestions/' . $response['user']->id) }}">Public
-                                    Questions</a>
-                            </li>
-                            <!--end::Nav item-->
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PrivateQuestions/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/PrivateQuestions/' . $response['user']->id) }}">Private
-                                    Questions</a>
-                            </li>
-                            <!--end::Nav item-->
+                            @php
+                                $routes = [
+                                    'PublicQuestions' => 'Public Questions',
+                                    'PrivateQuestions' => 'Private Questions',
+                                    'Appointments' => 'Appointments',
+                                    'UserEvents' => 'Events',
+                                    'UserEventsRequest' => 'Events Request',
+                                ];
+
+                                $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                            @endphp
+
+                            @foreach ($routes as $route => $displayName)
+                                @php
+                                    $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
+                                    $isActive = Request::is($fullUrl);
+                                @endphp
+                                <li class="nav-item">
+                                    <a class="nav-link text-active-success me-6 {{ $isActive ? 'active' : '' }}"
+                                        href="{{ URL::to($fullUrl) }}">
+                                        {{ $displayName }}
+                                    </a>
+                                </li>
+                            @endforeach
+
                             @if ($response['user']->user_type == 'scholar')
-                                <!--begin::Nav item-->
                                 <li class="nav-item">
                                     <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
                                         From Me</a>
                                 </li>
-                                <!--end::Nav item-->
-                            @endif
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Appointments/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/Appointments/' . $response['user']->id) }}">Appointments</a>
-                            </li>
-                            <!--end::Nav item-->
-                             <!--begin::Nav item-->
-                             <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/UserEvents/' . $response['user']->id) }}">Events</a>
-                            </li>
-                            <!--end::Nav item-->
-                             <!--begin::Nav item-->
-                             <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEventsRequest/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/UserEventsRequest/' . $response['user']->id) }}">Events Request</a>
-                            </li>
-                            <!--end::Nav item-->
-                            @if ($response['user']->user_type == 'scholar')
-                                <!--begin::Nav item-->
                                 <li class="nav-item">
                                     <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
                                 </li>
-                                <!--end::Nav item-->
                             @endif
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -267,8 +255,8 @@
                     <!--begin::Card title-->
                     <div class=" mb-5">
                         <!--begin::Title-->
-                        <h3 class="mt-4" style=" font-weight:400; ">Total Questions: <span class="fs-5" id="user-count"
-                                style="font-weight:500 "> </span> </h3>
+                        <h3 class="mt-4" style=" font-weight:400; ">Total Questions: <span class="fs-5"
+                                id="user-count" style="font-weight:500 "> </span> </h3>
                         <!--end::Title-->
                     </div>
 
@@ -357,7 +345,7 @@
 
                 var button = $(this);
                 var url = button.closest('a').data(
-                'url'); 
+                    'url');
 
                 Swal.fire({
                     title: 'Delete User',
@@ -375,7 +363,7 @@
                             type: 'GET',
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
-                                'content'), 
+                                    'content'),
                             },
                             success: function(response) {
                                 if (response.status === 'mufti') {
@@ -463,7 +451,8 @@
                         });
 
                         var category = categoryName.join(', ');
-                        var modifiedSerialNumber = pad(count + 1, 2, '0'); // Calculate modified serial number
+                        var modifiedSerialNumber = pad(count + 1, 2,
+                        '0'); // Calculate modified serial number
                         var newRow = `
                     <tr>
                         <td>${modifiedSerialNumber}</td>
@@ -485,8 +474,8 @@
                         count++;
                     });
 
-                     // Function to pad numbers with zeros
-                     function pad(number, length, character) {
+                    // Function to pad numbers with zeros
+                    function pad(number, length, character) {
                         var str = '' + number;
                         while (str.length < length) {
                             str = character + str;

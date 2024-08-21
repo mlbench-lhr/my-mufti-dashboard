@@ -23,17 +23,24 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('Reject/{id}', [UserController::class, 'reject_request'])->name('Reject');
 
     // Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions'); 
-    Route::get('UserDetail/PublicQuestions/{id}/{scholar?}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
-
-
+    Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
+    Route::get('ScholarDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('ScholarDetail/PublicQuestions');
     Route::get('getUserPublicQuestions/{id}', [UserController::class, 'get_public_questions_posted_by_user'])->name('getUserPublicQuestions');
-    Route::get('UserDetail/PrivateQuestions/{id}/{scholar?}', [UserController::class, 'user_detail_private_questons'])->name('UserDetail/PrivateQuestions');
+
+    Route::get('UserDetail/PrivateQuestions/{id}', [UserController::class, 'user_detail_private_questons'])->name('UserDetail/PrivateQuestions');
+    Route::get('ScholarDetail/PrivateQuestions/{id}', [UserController::class, 'user_detail_private_questons'])->name('ScholarDetail/PrivateQuestions');
     Route::get('getUserPrivateQuestions/{id}', [UserController::class, 'get_private_questions_asked_by_user'])->name('getUserPrivateQuestions');
-    Route::get('UserDetail/Appointments/{id}/{scholar?}', [UserController::class, 'user_detail_appointments'])->name('UserDetail/Appointments');
+
+    Route::get('UserDetail/Appointments/{id}', [UserController::class, 'user_detail_appointments'])->name('UserDetail/Appointments');
+    Route::get('ScholarDetail/Appointments/{id}', [UserController::class, 'user_detail_appointments'])->name('ScholarDetail/Appointments');
     Route::get('getUserAppointments/{id}', [UserController::class, 'get_appointments_of_user'])->name('getUserAppointments');
-    Route::get('UserDetail/UserEvents/{id}/{scholar?}', [UserController::class, 'user_events'])->name('UserDetail/UserEvents');
+
+    Route::get('UserDetail/UserEvents/{id}', [UserController::class, 'user_events'])->name('UserDetail/UserEvents');
+    Route::get('ScholarDetail/UserEvents/{id}', [UserController::class, 'user_events'])->name('ScholarDetail/UserEvents');
     Route::get('getUserEvents/{id}', [UserController::class, 'get_user_events'])->name('getUserEvents');
-    Route::get('UserDetail/UserEventsRequest/{id}/{scholar?}', [UserController::class, 'user_events_requests'])->name('UserDetail/UserEventsRequest');
+
+    Route::get('UserDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('UserDetail/UserEventsRequest');
+    Route::get('ScholarDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('ScholarDetail/UserEventsRequest');
     Route::get('getUserEventsRequests/{id}', [UserController::class, 'get_user_events_requests'])->name('getUserEventsRequests');
 
     

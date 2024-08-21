@@ -207,63 +207,44 @@
                     <div class="d-flex overflow-auto h-55px">
                         <ul
                             class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/PublicQuestions/' . $response['user']->id) }}">Public
-                                    Questions</a>
-                            </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PublicQuestions/' . $response['user']->id . ($response['user']->user_type == 'scholar' ? '/scholar' : '')) ? 'active' : null }}"
-                                   href="{{ route('UserDetail/PublicQuestions', ['id' => $response['user']->id, 'scholar' => $response['user']->user_type == 'scholar' ? 'scholar' : null]) }}">
-                                   Public Questions
-                                </a>
-                            </li> --}}
-                            
-                            <!--end::Nav item-->
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PrivateQuestions/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/PrivateQuestions/' . $response['user']->id) }}">Private
-                                    Questions</a>
-                            </li>
-                            <!--end::Nav item-->
+                            @php
+                                $routes = [
+                                    'PublicQuestions' => 'Public Questions',
+                                    'PrivateQuestions' => 'Private Questions',
+                                    'Appointments' => 'Appointments',
+                                    'UserEvents' => 'Events',
+                                    'UserEventsRequest' => 'Events Request',
+                                ];
+
+                                $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                            @endphp
+
+                            @foreach ($routes as $route => $displayName)
+                                @php
+                                    $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
+                                    $isActive = Request::is($fullUrl);
+                                @endphp
+                                <li class="nav-item">
+                                    <a class="nav-link text-active-success me-6 {{ $isActive ? 'active' : '' }}"
+                                        href="{{ URL::to($fullUrl) }}">
+                                        {{ $displayName }}
+                                    </a>
+                                </li>
+                            @endforeach
+
                             @if ($response['user']->user_type == 'scholar')
-                                <!--begin::Nav item-->
                                 <li class="nav-item">
                                     <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
                                         From Me</a>
                                 </li>
-                                <!--end::Nav item-->
-                            @endif
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Appointments/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/Appointments/' . $response['user']->id) }}">Appointments</a>
-                            </li>
-                            <!--end::Nav item-->
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/UserEvents/' . $response['user']->id) }}">Events</a>
-                            </li>
-                            <!--end::Nav item-->
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEventsRequest/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/UserEventsRequest/' . $response['user']->id) }}">Events
-                                    Request</a>
-                            </li>
-                            <!--end::Nav item-->
-                            @if ($response['user']->user_type == 'scholar')
-                                <!--begin::Nav item-->
                                 <li class="nav-item">
                                     <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
                                 </li>
-                                <!--end::Nav item-->
                             @endif
+                        </ul>
+
                     </div>
                 </div>
             </div>
@@ -574,3 +555,35 @@
         loadVerificationData(currentPage);
     });
 </script>
+{{--                             
+                            @if ($response['user']->user_type == 'scholar')
+                                <li class="nav-item">
+                                    <a class="nav-link text-active-success me-6 {{ Request::is('ScholarDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('ScholarDetail/PublicQuestions/' . $response['user']->id) }}">Public
+                                        Questions</a>
+                                </li>
+                            @else
+                                <li class="nav-item">
+                                    <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/PublicQuestions/' . $response['user']->id) }}">Public
+                                        Questions</a>
+                                </li>
+                            @endif 
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PrivateQuestions/' . $response['user']->id) ? 'active' : null }}"
+                                    href="{{ URL::to('UserDetail/PrivateQuestions/' . $response['user']->id) }}">Private
+                                    Questions</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Appointments/' . $response['user']->id) ? 'active' : null }}"
+                                    href="{{ URL::to('UserDetail/Appointments/' . $response['user']->id) }}">Appointments</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                    href="{{ URL::to('UserDetail/UserEvents/' . $response['user']->id) }}">Events</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEventsRequest/' . $response['user']->id) ? 'active' : null }}"
+                                    href="{{ URL::to('UserDetail/UserEventsRequest/' . $response['user']->id) }}">Events
+                                    Request</a>
+                            </li> --}}

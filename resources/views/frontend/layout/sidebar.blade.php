@@ -75,20 +75,22 @@
                                   <span class="bullet bullet-dot"></span>
                               </span>
                               @php
-                              $currentRoute = request()->path();
-                              $isActive1 = preg_match('/^AllScholars$/', $currentRoute);
-                              $isActive2 = preg_match('/^UserDetail\/AskedFromScholar(\/\d+)?$/', $currentRoute); 
-                              $isActive3 = preg_match('/^UserDetail\/Degrees(\/\d+)?$/', $currentRoute);
-                              $isActive4 = preg_match('/^UserDetail\/PublicQuestions\/\d+\/scholar$/', $currentRoute);
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^AllScholars$/', $currentRoute);
+                                  $isActive2 = preg_match('/^UserDetail\/AskedFromScholar(\/\d+)?$/', $currentRoute);
+                                  $isActive3 = preg_match('/^UserDetail\/Degrees(\/\d+)?$/', $currentRoute);
+                                  $isActive4 = preg_match('/^ScholarDetail\/PublicQuestions(\/\d+)?$/', $currentRoute);
+                                  $isActive5 = preg_match('/^ScholarDetail\/PrivateQuestions(\/\d+)?$/', $currentRoute);
+                                  $isActive6 = preg_match('/^ScholarDetail\/Appointments(\/\d+)?$/', $currentRoute);
+                                  $isActive7 = preg_match('/^ScholarDetail\/UserEvents(\/\d+)?$/', $currentRoute);
+                                  $isActive8 = preg_match('/^ScholarDetail\/UserEventsRequest(\/\d+)?$/', $currentRoute);
 
-                            //   $isActive5 = preg_match('/^UserDetail\/PrivateQuestions(\/\d+)?$/', $currentRoute); // sch
-                            //   $isActive6 = preg_match('/^UserDetail\/Appointments(\/\d+)?$/', $currentRoute); // sch
-                            //   $isActive7 = preg_match('/^UserDetail\/UserEvents(\/\d+)?$/', $currentRoute); // sch
-                            //   $isActive8 = preg_match('/^UserDetail\/UserEventsRequest(\/\d+)?$/', $currentRoute); // sch
-                          @endphp
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title" style="{{ $isActive1 || $isActive2 || $isActive3 || $isActive4  ? 'color:#000000;' : 'color:#7B849A;' }}">All Scholars</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 || $isActive3 || $isActive4 || $isActive5 || $isActive6 || $isActive7 || $isActive8 ? 'color:#000000;' : 'color:#7B849A;' }}">All
+                              Scholars</span>
                       </a>
                   </div>
 
