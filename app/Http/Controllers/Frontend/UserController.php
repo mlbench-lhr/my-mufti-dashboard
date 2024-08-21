@@ -200,17 +200,37 @@ class UserController extends Controller
         return redirect('ScholarsRequests');
     }
 
-    public function user_detail(Request $request, $id)
+    // public function user_detail(Request $request, $id)
+    // {
+    //     $user = User::with('interests')->where('id', $id)->first();
+    //     // posted questions 
+    //     $posted_questions = Question::where('user_id', $id)->get();
+    //     $response = [
+    //         'user' => $user,
+    //         'posted_questions' => $posted_questions
+    //     ];
+    //     return view('frontend.UserDetail', compact('response', 'id'));
+    // }
+
+    public function user_detail(Request $request, $id, $scholar = null)
     {
         $user = User::with('interests')->where('id', $id)->first();
-        // posted questions 
+        
+        // Fetch posted questions
         $posted_questions = Question::where('user_id', $id)->get();
+    
+        // Prepare the response
         $response = [
             'user' => $user,
-            'posted_questions' => $posted_questions
+            'posted_questions' => $posted_questions,
+            'scholar' => $scholar
         ];
+    
         return view('frontend.UserDetail', compact('response', 'id'));
     }
+    
+    
+    
 
     public function get_public_questions_posted_by_user(Request $request)
     {

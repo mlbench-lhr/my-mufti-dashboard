@@ -22,16 +22,20 @@
               <!--begin::Menu-->
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('Dashboard') ? 'active' : '' }}"
-                          href="{{ URL::to('Dashboard') }}">
+                      <a class="menu-link" href="{{ URL::to('Dashboard') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^Dashboard$/', $currentRoute);
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">Dashboard</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 ? 'color:#000000;' : 'color:#7B849A;' }}">Dashboard</span>
                       </a>
                   </div>
 
@@ -39,16 +43,24 @@
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('AllEvents') || request()->is('RequestedEvents') ? 'active' : '' }}"
-                          href="{{ URL::to('AllEvents') }}">
+                      <a class="menu-link" href="{{ URL::to('AllEvents') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^AllEvents$/', $currentRoute);
+                                  $isActive2 = preg_match('/^RequestedEvents$/', $currentRoute);
+                                  $isActive3 = preg_match('/^EventDetail(\/\d+)?$/', $currentRoute);
+                                  $isActive4 = preg_match('/^EventQuestionDetail(\/\d+)?$/', $currentRoute);
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">All Events</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 || $isActive3 || $isActive4 ? 'color:#000000;' : 'color:#7B849A;' }}">All
+                              Events</span>
                       </a>
                   </div>
 
@@ -56,16 +68,27 @@
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('AllScholars') ? 'active' : '' }}"
-                          href="{{ URL::to('AllScholars') }}">
+                      <a class="menu-link" href="{{ URL::to('AllScholars') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                              $currentRoute = request()->path();
+                              $isActive1 = preg_match('/^AllScholars$/', $currentRoute);
+                              $isActive2 = preg_match('/^UserDetail\/AskedFromScholar(\/\d+)?$/', $currentRoute); 
+                              $isActive3 = preg_match('/^UserDetail\/Degrees(\/\d+)?$/', $currentRoute);
+                              $isActive4 = preg_match('/^UserDetail\/PublicQuestions\/\d+\/scholar$/', $currentRoute);
+
+                            //   $isActive5 = preg_match('/^UserDetail\/PrivateQuestions(\/\d+)?$/', $currentRoute); // sch
+                            //   $isActive6 = preg_match('/^UserDetail\/Appointments(\/\d+)?$/', $currentRoute); // sch
+                            //   $isActive7 = preg_match('/^UserDetail\/UserEvents(\/\d+)?$/', $currentRoute); // sch
+                            //   $isActive8 = preg_match('/^UserDetail\/UserEventsRequest(\/\d+)?$/', $currentRoute); // sch
+                          @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">All Scholars</span>
+                          <span class="menu-title" style="{{ $isActive1 || $isActive2 || $isActive3 || $isActive4  ? 'color:#000000;' : 'color:#7B849A;' }}">All Scholars</span>
                       </a>
                   </div>
 
@@ -73,16 +96,22 @@
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('ScholarsRequests') ? 'active' : '' }}"
-                          href="{{ URL::to('ScholarsRequests') }}">
+                      <a class="menu-link" href="{{ URL::to('ScholarsRequests') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^ScholarsRequests$/', $currentRoute);
+                                  $isActive2 = preg_match('/^ScholarRequest\/Detail(\/\d+)?$/', $currentRoute);
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">Scholars Requests</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">Scholars
+                              Requests</span>
                       </a>
                   </div>
 
@@ -90,16 +119,26 @@
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('AllUsers') ? 'active' : '' }}"
-                          href="{{ URL::to('AllUsers') }}">
+                      <a class="menu-link" href="{{ URL::to('AllUsers') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^AllUsers$/', $currentRoute);
+                                  $isActive2 = preg_match('/^UserDetail\/PublicQuestions(\/\d+)?$/', $currentRoute);
+                                  $isActive3 = preg_match('/^UserDetail\/PrivateQuestions(\/\d+)?$/', $currentRoute);
+                                  $isActive4 = preg_match('/^UserDetail\/Appointments(\/\d+)?$/', $currentRoute);
+                                  $isActive5 = preg_match('/^UserDetail\/UserEvents(\/\d+)?$/', $currentRoute);
+                                  $isActive6 = preg_match('/^UserDetail\/UserEventsRequest(\/\d+)?$/', $currentRoute);
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">All Users</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 || $isActive3 || $isActive4 || $isActive5 || $isActive6 ? 'color:#000000;' : 'color:#7B849A;' }}">All
+                              Users</span>
                       </a>
                   </div>
 
@@ -107,16 +146,22 @@
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('PublicQuestions') ? 'active' : '' }}"
-                          href="{{ URL::to('PublicQuestions') }}">
+                      <a class="menu-link" href="{{ URL::to('PublicQuestions') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^PublicQuestions$/', $currentRoute);
+                                  $isActive2 = preg_match('/^PublicQuestionDetail(\/\d+)?$/', $currentRoute);
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">All Public Questions</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">All Public
+                              Questions</span>
                       </a>
                   </div>
 
@@ -124,16 +169,22 @@
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('PrivateQuestions') ? 'active' : '' }}"
-                          href="{{ URL::to('PrivateQuestions') }}">
+                      <a class="menu-link" href="{{ URL::to('PrivateQuestions') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^PrivateQuestions$/', $currentRoute);
+                                  $isActive2 = preg_match('/^PrivateQuestionDetail(\/\d+)?$/', $currentRoute);
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">All Private Questions</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">All Private
+                              Questions</span>
                       </a>
                   </div>
 
@@ -141,16 +192,22 @@
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
-                      <a class="menu-link  {{ request()->is('AllAppointments') ? 'active' : '' }}"
-                          href="{{ URL::to('AllAppointments') }}">
+                      <a class="menu-link" href="{{ URL::to('AllAppointments') }}">
                           <span class="menu-icon">
                               <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
                               <span class="menu-bullet">
                                   <span class="bullet bullet-dot"></span>
                               </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^AllAppointments$/', $currentRoute);
+                                  $isActive2 = preg_match('/^AppointmentDetail(\/\d+)?$/', $currentRoute);
+                              @endphp
                               <!--end::Svg Icon-->
                           </span>
-                          <span class="menu-title">All Appointments</span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">All
+                              Appointments</span>
                       </a>
                   </div>
 

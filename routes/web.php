@@ -7,19 +7,6 @@ use App\Http\Controllers\Frontend\QuestionsController;
 use App\Http\Controllers\Frontend\UserController;
 use Illuminate\Support\Facades\Route;
 
-
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 Route::group(['middleware' => 'admin'], function () {
     Route::get('/', [AdminController::class, 'login']);
     Route::get('Dashboard', [DashboardController::class, 'dashboard'])->name('Dashboard');
@@ -35,24 +22,26 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('Approve/{id}', [UserController::class, 'approve_request'])->name('Approve');
     Route::get('Reject/{id}', [UserController::class, 'reject_request'])->name('Reject');
 
-    Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
+    // Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions'); 
+    Route::get('UserDetail/PublicQuestions/{id}/{scholar?}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
+
+
     Route::get('getUserPublicQuestions/{id}', [UserController::class, 'get_public_questions_posted_by_user'])->name('getUserPublicQuestions');
-    Route::get('UserDetail/PrivateQuestions/{id}', [UserController::class, 'user_detail_private_questons'])->name('UserDetail/PrivateQuestions');
+    Route::get('UserDetail/PrivateQuestions/{id}/{scholar?}', [UserController::class, 'user_detail_private_questons'])->name('UserDetail/PrivateQuestions');
     Route::get('getUserPrivateQuestions/{id}', [UserController::class, 'get_private_questions_asked_by_user'])->name('getUserPrivateQuestions');
-    Route::get('UserDetail/Appointments/{id}', [UserController::class, 'user_detail_appointments'])->name('UserDetail/Appointments');
+    Route::get('UserDetail/Appointments/{id}/{scholar?}', [UserController::class, 'user_detail_appointments'])->name('UserDetail/Appointments');
     Route::get('getUserAppointments/{id}', [UserController::class, 'get_appointments_of_user'])->name('getUserAppointments');
+    Route::get('UserDetail/UserEvents/{id}/{scholar?}', [UserController::class, 'user_events'])->name('UserDetail/UserEvents');
+    Route::get('getUserEvents/{id}', [UserController::class, 'get_user_events'])->name('getUserEvents');
+    Route::get('UserDetail/UserEventsRequest/{id}/{scholar?}', [UserController::class, 'user_events_requests'])->name('UserDetail/UserEventsRequest');
+    Route::get('getUserEventsRequests/{id}', [UserController::class, 'get_user_events_requests'])->name('getUserEventsRequests');
+
+    
     Route::get('UserDetail/AskedFromScholar/{id}', [UserController::class, 'user_detail_asked_from_me'])->name('UserDetail/AskedFromScholar');
     Route::get('getUserAskedFromMe/{id}', [UserController::class, 'get_asked_from_me'])->name('getUserAskedFromMe');
-    Route::get('UserDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('UserDetail/Degrees');
-
-    Route::get('UserDetail/UserEvents/{id}', [UserController::class, 'user_events'])->name('UserDetail/UserEvents');
-    Route::get('getUserEvents/{id}', [UserController::class, 'get_user_events'])->name('getUserEvents');
-
-    Route::get('UserDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('UserDetail/UserEventsRequest');
-    Route::get('getUserEventsRequests/{id}', [UserController::class, 'get_user_events_requests'])->name('getUserEventsRequests');
+    Route::get('UserDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('UserDetail/Degrees');   
     
     Route::get('DeleteUser/{id}', [UserController::class, 'delete_user'])->name('DeleteUser');
-
 
 
     //Public Questions

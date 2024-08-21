@@ -208,11 +208,18 @@
                         <ul
                             class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
                             <!--begin::Nav item-->
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
                                     href="{{ URL::to('UserDetail/PublicQuestions/' . $response['user']->id) }}">Public
                                     Questions</a>
+                            </li> --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PublicQuestions/' . $response['user']->id . ($response['user']->user_type == 'scholar' ? '/scholar' : '')) ? 'active' : null }}"
+                                   href="{{ route('UserDetail/PublicQuestions', ['id' => $response['user']->id, 'scholar' => $response['user']->user_type == 'scholar' ? 'scholar' : null]) }}">
+                                   Public Questions
+                                </a>
                             </li>
+                            
                             <!--end::Nav item-->
                             <!--begin::Nav item-->
                             <li class="nav-item">
