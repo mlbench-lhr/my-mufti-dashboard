@@ -110,7 +110,7 @@ class EventController extends Controller
             'event_id' => 'required',
             'event_title' => 'required',
             'event_category' => 'required',
-            'date' => 'required',
+            // 'date' => 'required',
             'duration' => 'required',
             'location' => 'required',
             'latitude' => 'required',
@@ -132,6 +132,18 @@ class EventController extends Controller
         $allowedFields = ['user_id', 'image', 'event_title', 'event_category', 'date', 'duration', 'location', 'latitude', 'longitude', 'about'];
         if (isset($request->date)) {
             $parsedDate = Carbon::parse($request->date);
+            // $eventDate = Carbon::parse($event->date);
+
+            // if ($parsedDate->toDateString() !== $eventDate->toDateString() && $parsedDate->toTimeString() !== $eventDate->toTimeString()) {
+            //     dd('Date & Time changed');
+            // } elseif ($parsedDate->toDateString() !== $eventDate->toDateString()) {
+            //     dd('Date changed');
+            // } elseif ($parsedDate->toTimeString() !== $eventDate->toTimeString()) {
+            //     dd('Time changed');
+            // } else {
+            //     dd('No change');
+            // }
+
             $request->merge(['date' => $parsedDate]);
         }
 

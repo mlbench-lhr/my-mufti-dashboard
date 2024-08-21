@@ -254,9 +254,6 @@ class EditProfile extends Controller
         $perPage = 10;
         $totalPages = ceil(UserQuery::where('user_id', $request->user_id)->count() / $perPage);
 
-        // $myQueries = UserQuery::forPage($page, $perPage)
-        //     ->with('all_question.mufti_detail.interests')->where('question', 'LIKE', '%' . $search . '%')->where('user_id', $request->user_id)->get();
-
         $myQueries = UserQuery::forPage($page, $perPage)
             ->with('all_question.mufti_detail.interests')
             ->where('question', 'LIKE', '%' . $search . '%')

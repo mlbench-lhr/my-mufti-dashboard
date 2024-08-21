@@ -146,8 +146,8 @@ class EventsAndApptController extends Controller
             $device_id = $user_data->device_id;
             $notifTitle = "Event Request Update";
 
-            $notiBody = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been approved.';
-            $body = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been approved.';
+            $notiBody = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
+            $body = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
             $message_type = "Event Request Update";
 
             $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
@@ -170,7 +170,7 @@ class EventsAndApptController extends Controller
                 $user = User::find($value);
                 $device_id = $user->device_id;
                 $notifTitle = "You've Been Added to a New Event!";
-                $notiBody = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->title;
+                $notiBody = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
                 $body = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
                 $message_type = "You've Been Added to a New Event!";
 
