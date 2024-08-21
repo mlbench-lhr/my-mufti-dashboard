@@ -254,8 +254,15 @@ class EditProfile extends Controller
         $perPage = 10;
         $totalPages = ceil(UserQuery::where('user_id', $request->user_id)->count() / $perPage);
 
+        // $myQueries = UserQuery::forPage($page, $perPage)
+        //     ->with('all_question.mufti_detail.interests')->where('question', 'LIKE', '%' . $search . '%')->where('user_id', $request->user_id)->get();
+
         $myQueries = UserQuery::forPage($page, $perPage)
-            ->with('all_question.mufti_detail.interests')->where('question', 'LIKE', '%' . $search . '%')->where('user_id', $request->user_id)->get();
+            ->with('all_question.mufti_detail.interests')
+            ->where('question', 'LIKE', '%' . $search . '%')
+            ->where('user_id', $request->user_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json(
             [
@@ -324,7 +331,6 @@ class EditProfile extends Controller
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
             $message_type = "Question Accepted";
-            
 
             $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
@@ -469,7 +475,7 @@ class EditProfile extends Controller
 
         $userType = $user->user_type;
         $status = $user->mufti_status;
-        
+
         $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
             ->where('user_id', $request->user_id)->orWhere('mufti_id', $request->user_id)
             ->get();
