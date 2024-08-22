@@ -10,6 +10,7 @@ use App\Http\Requests\AddEventRequest;
 use App\Models\Event;
 use App\Models\EventQuestion;
 use App\Models\EventScholar;
+use App\Models\Notification;
 use App\Models\SaveEvent;
 use App\Models\User;
 use Carbon\Carbon;
@@ -132,18 +133,43 @@ class EventController extends Controller
         $allowedFields = ['user_id', 'image', 'event_title', 'event_category', 'date', 'duration', 'location', 'latitude', 'longitude', 'about'];
         if (isset($request->date)) {
             $parsedDate = Carbon::parse($request->date);
-            // $eventDate = Carbon::parse($event->date);
+            $eventDate = Carbon::parse($event->date);
 
-            // if ($parsedDate->toDateString() !== $eventDate->toDateString() && $parsedDate->toTimeString() !== $eventDate->toTimeString()) {
-            //     dd('Date & Time changed');
-            // } elseif ($parsedDate->toDateString() !== $eventDate->toDateString()) {
-            //     dd('Date changed');
-            // } elseif ($parsedDate->toTimeString() !== $eventDate->toTimeString()) {
-            //     dd('Time changed');
-            // } else {
-            //     dd('No change');
-            // }
+            if ($parsedDate->toDateTimeString() !== $eventDate->toDateTimeString()) {
 
+                $eventScholars = EventScholar::where('event_id', $event->id)
+                    ->pluck('user_id')
+                    ->filter(function ($value) {
+                        return $value != 0;
+                    })
+                    ->toArray();
+                $userData = User::where('id', $event->user_id)->first();
+                $userName = $userData->name ?? '';
+
+                $event_date = $event->date;
+                $change_date = $request->date;
+                $oldDateTime = Carbon::parse($event_date)->format('F j, Y, g:i A');
+                $newDateTime = Carbon::parse($change_date)->format('F j, Y, g:i A');
+
+                array_walk($eventScholars, function ($value) use ($oldDateTime, $newDateTime, $userName) {
+                    $user = User::find($value);
+                    $device_id = $user->device_id;
+                    $notifTitle = "Event Update";
+                    $notiBody = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '.';
+                    $body = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '.';
+                    $message_type = "Event Update";
+
+                    $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
+                    $data = [
+                        'user_id' => $user->id,
+                        'title' => $notifTitle,
+                        'body' => $body,
+                    ];
+
+                    Notification::create($data);
+                });
+            }
             $request->merge(['date' => $parsedDate]);
         }
 
@@ -705,5 +731,51 @@ class EventController extends Controller
 
         return ResponseHelper::jsonResponse(true, 'Event deleted Successfully!');
 
+    }
+
+    // send notification
+    public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
+    {
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        // server key
+        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
+
+        $headers = [
+            'Content-Type:application/json',
+            'Authorization:key=' . $serverKey,
+        ];
+
+        // notification content
+        $notification = [
+            'title' => $notifTitle,
+            'body' => $notiBody,
+        ];
+        // optional
+        $dataPayLoad = [
+            'to' => '/topics/test',
+            'date' => '2019-01-01',
+            'other_data' => 'meeting',
+            'message_Type' => $message_type,
+            // 'notification' => $notification,
+        ];
+
+        // create Api body
+        $notifbody = [
+            'notification' => $notification,
+            'data' => $dataPayLoad,
+            'time_to_live' => 86400,
+            'to' => $device_id,
+            // 'registration_ids' => $arr,
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
+
+        curl_close($ch);
     }
 }
