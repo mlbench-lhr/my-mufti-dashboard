@@ -137,6 +137,9 @@ class EventsAndApptController extends Controller
 
         $eventDate = Carbon::parse($event->date);
         $currentDateTime = Carbon::now();
+        // $timezone = 'Asia/Karachi';
+        // $currentDateTime = Carbon::now($timezone);
+        // $eventDateInCurrentTimezone = $eventDate->copy()->setTimezone($timezone);
         if ($eventDate->greaterThanOrEqualTo($currentDateTime)) {
             $event->event_status = 1;
             $event->save();
