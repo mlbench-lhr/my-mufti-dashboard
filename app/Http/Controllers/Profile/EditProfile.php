@@ -445,8 +445,21 @@ class EditProfile extends Controller
             'payment_method' => $request->payment_method ?? "",
             'consultation_fee' => $request->consultation_fee,
         ];
-
         $appointment = MuftiAppointment::create($data);
+
+        $device_id = $mufti->device_id;
+        $notifTitle = "New Appointment Request Received";
+        $notiBody = 'You have received a new appointment request from ' . $user->name . '.';
+        $body = 'You have received a new appointment request from ' . $user->name . '.';
+        $message_type = "Appointment Request";
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+        $data = [
+            'user_id' => $mufti->id,
+            'title' => $notifTitle,
+            'body' => $body,
+        ];
+        Notification::create($data);
+
         $user_id = $user->id;
         $message = "A new appointment booked by " . $user->name;
         $type = "booked appointment";
