@@ -248,18 +248,39 @@ class EditProfile extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        $search = $request->search;
 
         $page = $request->input('page', 1);
         $perPage = 10;
-        $totalPages = ceil(UserQuery::where('user_id', $request->user_id)->count() / $perPage);
 
-        $myQueries = UserQuery::forPage($page, $perPage)
-            ->with('all_question.mufti_detail.interests')
-            ->where('question', 'LIKE', '%' . $search . '%')
+        $search = $request->search;
+
+        $query = UserQuery::with('all_question.mufti_detail.interests')
             ->where('user_id', $request->user_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('created_at', 'desc');
+
+        if (!empty($search)) {
+            $query->where('question', 'LIKE', '%' . $search . '%');
+        }
+
+        $totalPages = ceil($query->count() / $perPage);
+        $myQueries = $query->forPage($page, $perPage)->get();
+
+        // if ($search == "") {
+
+        //     $data = UserQuery::with('all_question.mufti_detail.interests')->where('user_id', $request->user_id)
+        //         ->orderBy('created_at', 'desc');
+
+        //     $totalPages = ceil($data->count() / $perPage);
+        //     $myQueries = $data->forPage($page, $perPage)->get();
+        // } else {
+        //     $data = UserQuery::with('all_question.mufti_detail.interests')
+        //         ->where('question', 'LIKE', '%' . $search . '%')
+        //         ->where('user_id', $request->user_id)
+        //         ->orderBy('created_at', 'desc');
+
+        //     $totalPages = ceil($data->count() / $perPage);
+        //     $myQueries = $data->forPage($page, $perPage)->get();
+        // }
 
         return response()->json(
             [
