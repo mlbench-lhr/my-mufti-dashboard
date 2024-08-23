@@ -62,7 +62,7 @@ class AuthController extends Controller
     }
     // for user signin
     public function sign_in(LoginRequest $request)
-    {   
+    {
         $device_id = $request->device_id ?? "";
         $user = User::where('email', $request->email)->first();
         if (empty($user)) {
@@ -83,7 +83,11 @@ class AuthController extends Controller
             } else {
                 $user_data = User::where('id', $user->id)->first();
 
-                $user_data->update(['device_id' => $device_id]);
+                if ($device_id != "") {
+                    User::where('device_id', $device_id)->update(['device_id' => '']);
+                }
+
+                User::where('id', $user->id)->update(['device_id' => $device_id]);
 
                 if ($user_data->mufti_status == 2) {
                     $user_data->user_type = "scholar";
@@ -118,7 +122,14 @@ class AuthController extends Controller
             $check_user_social_token = User::where('g_code', $social_token)->first();
 
             if ($check_email) {
-                $check_email->update(['device_id' => $request->device_id]);
+
+                if ($device_id != "") {
+                    User::where('device_id', $device_id)->update(['device_id' => '']);
+                }
+
+                User::where('email', $request->email)->update(['device_id' => $device_id]);
+
+                // $check_email->update(['device_id' => $request->device_id]);
                 if ($check_email->mufti_status == 2) {
                     $check_email->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_email->id)->select('id', 'user_id', 'interest')->get();
@@ -135,7 +146,14 @@ class AuthController extends Controller
 
                 return response($data, 200);
             } else if ($check_user_social_token) {
-                $check_user_social_token->update(['device_id' => $request->device_id]);
+
+                if ($device_id != "") {
+                    User::where('device_id', $device_id)->update(['device_id' => '']);
+                }
+
+                User::where('g_code', $social_token)->update(['device_id' => $device_id]);
+
+                // $check_user_social_token->update(['device_id' => $request->device_id]);
                 if ($check_user_social_token->mufti_status == 2) {
                     $check_user_social_token->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_user_social_token->id)->select('id', 'user_id', 'interest')->get();
@@ -193,7 +211,14 @@ class AuthController extends Controller
             $check_user_social_token = User::where('a_code', $social_token)->first();
 
             if ($check_email) {
-                $check_email->update(['device_id' => $request->device_id]);
+
+                if ($device_id != "") {
+                    User::where('device_id', $device_id)->update(['device_id' => '']);
+                }
+
+                User::where('email', $request->email)->update(['device_id' => $device_id]);
+
+                // $check_email->update(['device_id' => $request->device_id]);
                 if ($check_email->mufti_status == 2) {
                     $check_email->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_email->id)->select('id', 'user_id', 'interest')->get();
@@ -209,7 +234,14 @@ class AuthController extends Controller
 
                 return response($data, 200);
             } else if ($check_user_social_token) {
-                $check_user_social_token->update(['device_id' => $request->device_id]);
+                // $check_user_social_token->update(['device_id' => $request->device_id]);
+
+                if ($device_id != "") {
+                    User::where('device_id', $device_id)->update(['device_id' => '']);
+                }
+
+                User::where('a_code', $social_token)->update(['device_id' => $device_id]);
+
                 if ($check_user_social_token->mufti_status == 2) {
                     $check_user_social_token->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_user_social_token->id)->select('id', 'user_id', 'interest')->get();
@@ -305,7 +337,7 @@ class AuthController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-        $user->update(['device_id' => '']);
+        // $user->update(['device_id' => '']);
         return ResponseHelper::jsonResponse(true, 'Logout Profile Successfully!');
 
     }
