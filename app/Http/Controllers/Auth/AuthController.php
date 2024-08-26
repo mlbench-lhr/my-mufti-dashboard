@@ -89,6 +89,8 @@ class AuthController extends Controller
 
                 User::where('id', $user->id)->update(['device_id' => $device_id]);
 
+                $user_data->refresh();
+
                 if ($user_data->mufti_status == 2) {
                     $user_data->user_type = "scholar";
                     $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
@@ -129,6 +131,8 @@ class AuthController extends Controller
 
                 User::where('email', $request->email)->update(['device_id' => $device_id]);
 
+                $check_email->refresh();
+
                 // $check_email->update(['device_id' => $request->device_id]);
                 if ($check_email->mufti_status == 2) {
                     $check_email->user_type = "scholar";
@@ -152,6 +156,8 @@ class AuthController extends Controller
                 }
 
                 User::where('g_code', $social_token)->update(['device_id' => $device_id]);
+
+                $check_user_social_token->refresh();
 
                 // $check_user_social_token->update(['device_id' => $request->device_id]);
                 if ($check_user_social_token->mufti_status == 2) {
@@ -218,6 +224,8 @@ class AuthController extends Controller
 
                 User::where('email', $request->email)->update(['device_id' => $device_id]);
 
+                $check_email->refresh();
+
                 // $check_email->update(['device_id' => $request->device_id]);
                 if ($check_email->mufti_status == 2) {
                     $check_email->user_type = "scholar";
@@ -241,6 +249,8 @@ class AuthController extends Controller
                 }
 
                 User::where('a_code', $social_token)->update(['device_id' => $device_id]);
+
+                $check_user_social_token->refresh();
 
                 if ($check_user_social_token->mufti_status == 2) {
                     $check_user_social_token->user_type = "scholar";
