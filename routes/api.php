@@ -109,8 +109,7 @@ Route::group([
 Route::group([
     'prefix' => 'notification',
 ], function () {
-
     Route::post('userAllNotification', [UserNotification::class, 'user_all_notification']);
     Route::post('deleteNotification', [UserNotification::class, 'delete_notification']);
-
+    Route::post('textNotification', [UserNotification::class, 'text_notification']);
 });

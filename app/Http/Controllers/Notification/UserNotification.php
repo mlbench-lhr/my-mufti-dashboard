@@ -63,4 +63,79 @@ class UserNotification extends Controller
         return ResponseHelper::jsonResponse(true, 'Notification deleted Successfully!');
 
     }
+
+    public function text_notification(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $user = User::where('id', $request->user_id)->first();
+
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
+        }
+
+        $device_id = $user->device_id;
+        $notifTitle = "Test";
+        $notiBody = 'User ' . $user->name . ' has test on your question.';
+        $message_type = "voting question";
+        $other_data = "voting question";
+        $notification_type = "2";
+        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
+
+        return ResponseHelper::jsonResponse(true, 'send notification successfully!');
+    }
+
+    // send notification
+    public function send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id = 0)
+    {
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        // server key
+        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
+
+        $headers = [
+            'Content-Type:application/json',
+            'Authorization:key=' . $serverKey,
+        ];
+
+        // notification content
+        $notification = [
+            'title' => $notifTitle,
+            'body' => $notiBody,
+        ];
+        // optional
+        $dataPayLoad = [
+            'to' => '/topics/test',
+            'date' => '2019-01-01',
+            'other_data' => $other_data,
+            'message_Type' => $message_type,
+            'notification_type' => $notification_type,
+            'question_id' => $question_id,
+        ];
+
+        // create Api body
+        $notifbody = [
+            'notification' => $notification,
+            'data' => $dataPayLoad,
+            'time_to_live' => 86400,
+            'to' => $device_id,
+            // 'registration_ids' => $arr,
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
+
+        curl_close($ch);
+    }
 }
