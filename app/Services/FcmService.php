@@ -11,52 +11,52 @@ class FcmService
 {
     protected $messaging;
 
-    public function __construct()
-    {
-        $this->messaging = (new Factory)
-            ->withServiceAccount(base_path('mymufti-ce4a6-firebase-adminsdk-ljivv-740bba83f5.json'))
-            ->createMessaging();
-    }
+    // public function __construct()
+    // {
+    //     $this->messaging = (new Factory)
+    //         ->withServiceAccount(base_path('mymufti-ce4a6-firebase-adminsdk-ljivv-740bba83f5.json'))
+    //         ->createMessaging();
+    // }
 
-    public function sendNotification($deviceToken, $title, $body, $messageType, $otherData, $notificationType, $questionId = 0)
-    {
+    // public function sendNotification($deviceToken, $title, $body, $messageType, $otherData, $notificationType, $questionId = 0)
+    // {
 
-        // Create a notification payload
-        $notification = FirebaseNotification::create($title, $body);
+    //     // Create a notification payload
+    //     $notification = FirebaseNotification::create($title, $body);
         
-        // Create a data payload
-        $data = [
-            'messageType' => $messageType,
-            'other_data' => $otherData,
-            'notification_type' => $notificationType,
-            'question_id' => $questionId,
-        ];
+    //     // Create a data payload
+    //     $data = [
+    //         'messageType' => $messageType,
+    //         'other_data' => $otherData,
+    //         'notification_type' => $notificationType,
+    //         'question_id' => $questionId,
+    //     ];
 
-       // Create the CloudMessage with notification and data payloads
-        $message = CloudMessage::withTarget('token', $deviceToken)
-            ->withNotification($notification)
-            ->withData($data);
+    //    // Create the CloudMessage with notification and data payloads
+    //     $message = CloudMessage::withTarget('token', $deviceToken)
+    //         ->withNotification($notification)
+    //         ->withData($data);
 
-        try {
-            return $this->messaging->send($message);
-        } catch (NotFound $e) {
-            // Handle the NotFound exception
-            error_log('Entity not found: ' . $deviceToken);
-            error_log($e->getMessage());
+    //     try {
+    //         return $this->messaging->send($message);
+    //     } catch (NotFound $e) {
+    //         // Handle the NotFound exception
+    //         error_log('Entity not found: ' . $deviceToken);
+    //         error_log($e->getMessage());
 
-            // Return a custom response or handle the error as needed
-            return response()->json([
-                'error' => 'The requested entity was not found.',
-                'details' => $e->getMessage(),
-            ], 404);
-        } catch (\Exception $e) {
-            // Handle other exceptions
-            error_log('An error occurred: ' . $e->getMessage());
+    //         // Return a custom response or handle the error as needed
+    //         return response()->json([
+    //             'error' => 'The requested entity was not found.',
+    //             'details' => $e->getMessage(),
+    //         ], 404);
+    //     } catch (\Exception $e) {
+    //         // Handle other exceptions
+    //         error_log('An error occurred: ' . $e->getMessage());
 
-            return response()->json([
-                'error' => 'An error occurred while sending the message.',
-                'details' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //         return response()->json([
+    //             'error' => 'An error occurred while sending the message.',
+    //             'details' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 }
