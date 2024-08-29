@@ -13,6 +13,7 @@ use App\Models\EventScholar;
 use App\Models\Notification;
 use App\Models\SaveEvent;
 use App\Models\User;
+use App\Services\FcmService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +22,13 @@ use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
+    protected $fcmService;
+
+    public function __construct(FcmService $fcmService)
+    {
+        $this->fcmService = $fcmService;
+    }
+
     private function processImage($base64File, $folder)
     {
         $fileData = base64_decode($base64File);
@@ -154,16 +162,22 @@ class EventController extends Controller
                 array_walk($eventScholars, function ($value) use ($oldDateTime, $newDateTime, $userName) {
                     $user = User::find($value);
                     $device_id = $user->device_id;
-                    $notifTitle = "Event Update";
+                    $title = "Event Update";
                     $notiBody = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '.';
                     $body = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '.';
-                    $message_type = "Event Update";
+                    $messageType = "Event Update";
+                    $otherData = "Event Update";
+                    $notificationType = "0";
+        
+                    if ($device_id != "") {
+                        $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                    }
 
-                    $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+                    // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
                     $data = [
                         'user_id' => $user->id,
-                        'title' => $notifTitle,
+                        'title' => $title,
                         'body' => $body,
                     ];
 
@@ -734,48 +748,48 @@ class EventController extends Controller
     }
 
     // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        // server key
-        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
+    // public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
+    // {
+    //     $url = 'https://fcm.googleapis.com/fcm/send';
+    //     // server key
+    //     $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
 
-        $headers = [
-            'Content-Type:application/json',
-            'Authorization:key=' . $serverKey,
-        ];
+    //     $headers = [
+    //         'Content-Type:application/json',
+    //         'Authorization:key=' . $serverKey,
+    //     ];
 
-        // notification content
-        $notification = [
-            'title' => $notifTitle,
-            'body' => $notiBody,
-        ];
-        // optional
-        $dataPayLoad = [
-            'to' => '/topics/test',
-            'date' => '2019-01-01',
-            'other_data' => 'meeting',
-            'message_Type' => $message_type,
-            // 'notification' => $notification,
-        ];
+    //     // notification content
+    //     $notification = [
+    //         'title' => $notifTitle,
+    //         'body' => $notiBody,
+    //     ];
+    //     // optional
+    //     $dataPayLoad = [
+    //         'to' => '/topics/test',
+    //         'date' => '2019-01-01',
+    //         'other_data' => 'meeting',
+    //         'message_Type' => $message_type,
+    //         // 'notification' => $notification,
+    //     ];
 
-        // create Api body
-        $notifbody = [
-            'notification' => $notification,
-            'data' => $dataPayLoad,
-            'time_to_live' => 86400,
-            'to' => $device_id,
-            // 'registration_ids' => $arr,
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //     // create Api body
+    //     $notifbody = [
+    //         'notification' => $notification,
+    //         'data' => $dataPayLoad,
+    //         'time_to_live' => 86400,
+    //         'to' => $device_id,
+    //         // 'registration_ids' => $arr,
+    //     ];
+    //     $ch = curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, $url);
+    //     curl_setopt($ch, CURLOPT_POST, true);
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $result = curl_exec($ch);
+    //     $result = curl_exec($ch);
 
-        curl_close($ch);
-    }
+    //     curl_close($ch);
+    // }
 }

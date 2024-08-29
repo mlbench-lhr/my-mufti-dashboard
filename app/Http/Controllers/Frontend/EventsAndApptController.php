@@ -9,11 +9,19 @@ use App\Models\EventScholar;
 use App\Models\MuftiAppointment;
 use App\Models\Notification;
 use App\Models\User;
+use App\Services\FcmService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EventsAndApptController extends Controller
 {
+    protected $fcmService;
+
+    public function __construct(FcmService $fcmService)
+    {
+        $this->fcmService = $fcmService;
+    }
+
     public function all_appointments()
     {
         $appts = MuftiAppointment::get();
@@ -147,17 +155,23 @@ class EventsAndApptController extends Controller
             $user_id = $event->user_id;
             $user_data = User::find($user_id);
             $device_id = $user_data->device_id;
-            $notifTitle = "Event Request Update";
+            $title = "Event Request Update";
 
             $notiBody = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
             $body = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
-            $message_type = "Event Request Update";
+            $messageType = "Event Request Update";
+            $otherData = "Event Request Update";
+            $notificationType = "0";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
+
+            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
             $data = [
                 'user_id' => $user_data->id,
-                'title' => $notifTitle,
+                'title' => $title,
                 'body' => $body,
             ];
             Notification::create($data);
@@ -172,16 +186,22 @@ class EventsAndApptController extends Controller
             array_walk($eventScholars, function ($value) use ($event_date, $user_data, $event) {
                 $user = User::find($value);
                 $device_id = $user->device_id;
-                $notifTitle = "You've Been Added to a New Event!";
+                $title = "You've Been Added to a New Event!";
                 $notiBody = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
                 $body = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
-                $message_type = "You've Been Added to a New Event!";
+                $messageType = "You've Been Added to a New Event!";
+                $otherData = "You've Been Added to a New Event!";
+                $notificationType = "0";
 
-                $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+                if ($device_id != "") {
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                }
+
+                // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
                 $data = [
                     'user_id' => $user->id,
-                    'title' => $notifTitle,
+                    'title' => $title,
                     'body' => $body,
                 ];
 
@@ -213,17 +233,23 @@ class EventsAndApptController extends Controller
         $user_id = $event->user_id;
         $user = User::find($user_id);
         $device_id = $user->device_id;
-        $notifTitle = "Event Request Update";
+        $title = "Event Request Update";
 
         $notiBody = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been rejected.';
         $body = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been rejected.';
-        $message_type = "Event Request Update";
+        $messageType = "Event Request Update";
+        $otherData = "Event Request Update";
+        $notificationType = "0";
 
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
+
+        // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
         $data = [
             'user_id' => $user->id,
-            'title' => $notifTitle,
+            'title' => $title,
             'body' => $body,
         ];
         Notification::create($data);
@@ -232,48 +258,48 @@ class EventsAndApptController extends Controller
     }
 
     // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        // server key
-        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
+    // public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
+    // {
+    //     $url = 'https://fcm.googleapis.com/fcm/send';
+    //     // server key
+    //     $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
 
-        $headers = [
-            'Content-Type:application/json',
-            'Authorization:key=' . $serverKey,
-        ];
+    //     $headers = [
+    //         'Content-Type:application/json',
+    //         'Authorization:key=' . $serverKey,
+    //     ];
 
-        // notification content
-        $notification = [
-            'title' => $notifTitle,
-            'body' => $notiBody,
-        ];
-        // optional
-        $dataPayLoad = [
-            'to' => '/topics/test',
-            'date' => '2019-01-01',
-            'other_data' => 'meeting',
-            'message_Type' => $message_type,
-            // 'notification' => $notification,
-        ];
+    //     // notification content
+    //     $notification = [
+    //         'title' => $notifTitle,
+    //         'body' => $notiBody,
+    //     ];
+    //     // optional
+    //     $dataPayLoad = [
+    //         'to' => '/topics/test',
+    //         'date' => '2019-01-01',
+    //         'other_data' => 'meeting',
+    //         'message_Type' => $message_type,
+    //         // 'notification' => $notification,
+    //     ];
 
-        // create Api body
-        $notifbody = [
-            'notification' => $notification,
-            'data' => $dataPayLoad,
-            'time_to_live' => 86400,
-            'to' => $device_id,
-            // 'registration_ids' => $arr,
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //     // create Api body
+    //     $notifbody = [
+    //         'notification' => $notification,
+    //         'data' => $dataPayLoad,
+    //         'time_to_live' => 86400,
+    //         'to' => $device_id,
+    //         // 'registration_ids' => $arr,
+    //     ];
+    //     $ch = curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, $url);
+    //     curl_setopt($ch, CURLOPT_POST, true);
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $result = curl_exec($ch);
+    //     $result = curl_exec($ch);
 
-        curl_close($ch);
-    }
+    //     curl_close($ch);
+    // }
 }

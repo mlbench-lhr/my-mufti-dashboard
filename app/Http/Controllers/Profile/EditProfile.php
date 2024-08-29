@@ -14,6 +14,7 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
+use App\Services\FcmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +23,12 @@ use Illuminate\Support\Str;
 
 class EditProfile extends Controller
 {
+    protected $fcmService;
+
+    public function __construct(FcmService $fcmService)
+    {
+        $this->fcmService = $fcmService;
+    }
     // get user profile
     public function my_profile(Request $request)
     {
@@ -344,17 +351,23 @@ class EditProfile extends Controller
             $user = User::where('id', $question->user_id)->first();
 
             $device_id = $user->device_id;
-            $notifTitle = "Question Request Update";
+            $title = "Question Request Update";
 
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
-            $message_type = "Question Accepted";
+            $messageType = "Question Accepted";
+            $otherData = "Question Accepted";
+            $notificationType = "0";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
+
+            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
             $data = [
                 'user_id' => $user->id,
-                'title' => $notifTitle,
+                'title' => $title,
                 'body' => $body,
             ];
             Notification::create($data);
@@ -364,16 +377,23 @@ class EditProfile extends Controller
             $user = User::where('id', $question->user_id)->first();
 
             $device_id = $user->device_id;
-            $notifTitle = "Question Request Update";
+            $title = "Question Request Update";
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
-            $message_type = "Question Rejected";
+            $messageType = "Question Rejected";
+            $otherData = "Question Rejected";
+            $notificationType = "0";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
+
+            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
 
             $data = [
                 'user_id' => $user->id,
-                'title' => $notifTitle,
+                'title' => $title,
                 'body' => $body,
             ];
             Notification::create($data);
@@ -469,14 +489,22 @@ class EditProfile extends Controller
         $appointment = MuftiAppointment::create($data);
 
         $device_id = $mufti->device_id;
-        $notifTitle = "New Appointment Request Received";
+        $title = "New Appointment Request Received";
         $notiBody = 'You have received a new appointment request from ' . $user->name . '.';
         $body = 'You have received a new appointment request from ' . $user->name . '.';
-        $message_type = "Appointment Request";
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+        $messageType = "Appointment Request";
+        $otherData = "Appointment Request";
+        $notificationType = "0";
+
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
+
+        // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
+
         $data = [
             'user_id' => $mufti->id,
-            'title' => $notifTitle,
+            'title' => $title,
             'body' => $body,
         ];
         Notification::create($data);
@@ -521,48 +549,48 @@ class EditProfile extends Controller
         );
     }
     // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        // server key
-        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
+    // public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
+    // {
+    //     $url = 'https://fcm.googleapis.com/fcm/send';
+    //     // server key
+    //     $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
 
-        $headers = [
-            'Content-Type:application/json',
-            'Authorization:key=' . $serverKey,
-        ];
+    //     $headers = [
+    //         'Content-Type:application/json',
+    //         'Authorization:key=' . $serverKey,
+    //     ];
 
-        // notification content
-        $notification = [
-            'title' => $notifTitle,
-            'body' => $notiBody,
-        ];
-        // optional
-        $dataPayLoad = [
-            'to' => '/topics/test',
-            'date' => '2019-01-01',
-            'other_data' => 'Request Notification',
-            'message_Type' => $message_type,
-            'notification_type' => "0",
-        ];
+    //     // notification content
+    //     $notification = [
+    //         'title' => $notifTitle,
+    //         'body' => $notiBody,
+    //     ];
+    //     // optional
+    //     $dataPayLoad = [
+    //         'to' => '/topics/test',
+    //         'date' => '2019-01-01',
+    //         'other_data' => 'Request Notification',
+    //         'message_Type' => $message_type,
+    //         'notification_type' => "0",
+    //     ];
 
-        // create Api body
-        $notifbody = [
-            'notification' => $notification,
-            'data' => $dataPayLoad,
-            'time_to_live' => 86400,
-            'to' => $device_id,
-            // 'registration_ids' => $arr,
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //     // create Api body
+    //     $notifbody = [
+    //         'notification' => $notification,
+    //         'data' => $dataPayLoad,
+    //         'time_to_live' => 86400,
+    //         'to' => $device_id,
+    //         // 'registration_ids' => $arr,
+    //     ];
+    //     $ch = curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, $url);
+    //     curl_setopt($ch, CURLOPT_POST, true);
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $result = curl_exec($ch);
+    //     $result = curl_exec($ch);
 
-        curl_close($ch);
-    }
+    //     curl_close($ch);
+    // }
 }

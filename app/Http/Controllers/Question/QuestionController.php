@@ -15,11 +15,19 @@ use App\Models\ScholarReply;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
+use App\Services\FcmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class QuestionController extends Controller
 {
+    protected $fcmService;
+
+    public function __construct(FcmService $fcmService)
+    {
+        $this->fcmService = $fcmService;
+    }
+
     public function post_question(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -118,7 +126,7 @@ class QuestionController extends Controller
         $questionVote = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id, 'vote' => $request->vote])->first();
         $voteQuestion = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id])->first();
 
-        $question_id = $request->question_id;
+        $questionId = $request->question_id;
         // dd(gettype($question_id));
 
         if ($questionVote) {
@@ -131,13 +139,17 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id = $userData->device_id;
-                $notifTitle = "Added Vote";
-                $notiBody = 'User ' . $user->name . ' has vote on your question.';
-                $message_type = "voting question";
-                $other_data = "voting question";
-                $notification_type = "2";
+                $title = "Added Vote";
+                $body = 'User ' . $user->name . ' has vote on your question.';
+                $messageType = "voting question";
+                $otherData = "voting question";
+                $notificationType = "2";
 
-                $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
+                if ($device_id != "") {
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+                }
+
+                // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
             }
 
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
@@ -152,13 +164,17 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id = $userData->device_id;
-                $notifTitle = "Added Vote";
-                $notiBody = 'User ' . $user->name . ' has vote on your question.';
-                $message_type = "voting question";
-                $other_data = "voting question";
-                $notification_type = "2";
+                $title = "Added Vote";
+                $body = 'User ' . $user->name . ' has vote on your question.';
+                $messageType = "voting question";
+                $otherData = "voting question";
+                $notificationType = "2";
 
-                $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
+                if ($device_id != "") {
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+                }
+
+                // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
             }
 
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
@@ -306,7 +322,7 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
-        $question_id = $request->question_id;
+        $questionId = $request->question_id;
 
         $data = [
             'user_id' => $request->user_id,
@@ -316,13 +332,16 @@ class QuestionController extends Controller
         if ($question->user_id != $request->user_id) {
             $userData = User::where('id', $question->user_id)->first();
             $device_id = $userData->device_id;
-            $notifTitle = "Added Comment";
-            $notiBody = 'User ' . $user->name . ' has comment on your question.';
-            $message_type = "question comment";
-            $other_data = "voting question";
-            $notification_type = "2";
+            $title = "Added Comment";
+            $body = 'User ' . $user->name . ' has comment on your question.';
+            $messageType = "question comment";
+            $otherData = "voting question";
+            $notificationType = "2";
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+            }
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
+            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
         }
         $comment = QuestionComment::create($data);
 
@@ -353,7 +372,7 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
-        $question_id = $request->question_id;
+        $questionId = $request->question_id;
 
         $data = [
             'user_id' => $request->user_id,
@@ -363,13 +382,17 @@ class QuestionController extends Controller
         ScholarReply::create($data);
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
-        $notifTitle = "Scholar Replied";
-        $notiBody = $user->name . ' has reply on your question.';
-        $message_type = "question reply";
-        $other_data = "voting question";
-        $notification_type = "2";
+        $title = "Scholar Replied";
+        $body = $user->name . ' has reply on your question.';
+        $messageType = "question reply";
+        $otherData = "voting question";
+        $notificationType = "2";
 
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+        }
+
+        // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
         return ResponseHelper::jsonResponse(true, 'Reply added successfully!');
     }
 
@@ -416,19 +439,23 @@ class QuestionController extends Controller
 
             $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
             $device_id = $user->device_id;
-            $notifTitle = "Question Request Sent";
+            $title = "Question Request Sent";
 
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $message_type = "Question Request Sent";
-            $other_data = "personal question";
-            $notification_type = "1";
+            $messageType = "Question Request Sent";
+            $otherData = "personal question";
+            $notificationType = "1";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
+
+            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
             $data = [
                 'user_id' => $user->id,
-                'title' => $notifTitle,
+                'title' => $title,
                 'body' => $body,
             ];
             Notification::create($data);
@@ -457,19 +484,23 @@ class QuestionController extends Controller
             $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
 
             $device_id = $user->device_id;
-            $notifTitle = "Question Request Sent";
+            $title = "Question Request Sent";
 
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $message_type = "Question Request Sent";
-            $other_data = "personal question";
-            $notification_type = "1";
+            $messageType = "Question Request Sent";
+            $otherData = "personal question";
+            $notificationType = "1";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
+
+            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
             $data = [
                 'user_id' => $user->id,
-                'title' => $notifTitle,
+                'title' => $title,
                 'body' => $body,
             ];
             Notification::create($data);
@@ -489,19 +520,23 @@ class QuestionController extends Controller
             $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
 
             $device_id = $user->device_id;
-            $notifTitle = "Question Request Sent";
+            $title = "Question Request Sent";
 
             $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
             $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $message_type = "Question Request Sent";
-            $other_data = "personal question";
-            $notification_type = "1";
+            $messageType = "Question Request Sent";
+            $otherData = "personal question";
+            $notificationType = "1";
 
-            $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
+
+            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
             $data = [
                 'user_id' => $user->id,
-                'title' => $notifTitle,
+                'title' => $title,
                 'body' => $body,
             ];
             Notification::create($data);
@@ -525,7 +560,6 @@ class QuestionController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
@@ -595,6 +629,7 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
 
         } else {
+            // dd('numan');
             $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
 
             $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
@@ -619,75 +654,91 @@ class QuestionController extends Controller
                 UserAllQuery::create($data);
             });
 
+            $device_id = $user->device_id;
+            $title = "Question Request Sent";
+            $notiBody = 'Your request for private question to has been sent.';
+            $body = 'Your request for private question to has been sent.';
+            $messageType = "Question Request Sent";
+            $otherData = "personal question";
+            $notificationType = "1";
+
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
+
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
         }
 
     }
 
-    // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id = 0)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        // server key
-        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
-
-        $headers = [
-            'Content-Type:application/json',
-            'Authorization:key=' . $serverKey,
-        ];
-
-        // notification content
-        $notification = [
-            'title' => $notifTitle,
-            'body' => $notiBody,
-        ];
-        // optional
-        $dataPayLoad = [
-            'to' => '/topics/test',
-            'date' => '2019-01-01',
-            'other_data' => $other_data,
-            'message_Type' => $message_type,
-            'notification_type' => $notification_type,
-            'question_id' => $question_id,
-        ];
-
-        // create Api body
-        $notifbody = [
-            'notification' => $notification,
-            'data' => $dataPayLoad,
-            'time_to_live' => 86400,
-            'to' => $device_id,
-            // 'registration_ids' => $arr,
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $result = curl_exec($ch);
-
-        curl_close($ch);
-    }
-
     public function send($deviceId, $title, $name, $muftiId)
     {
         $device_id = $deviceId;
-        $notifTitle = $title;
+        $title = $title;
         $notiBody = 'User' . ' ' . $name . ' wants to ask a question for you.';
         $body = 'User' . ' ' . $name . ' wants to ask a question for you.';
-        $message_type = $title;
-        $other_data = "personal question";
-        $notification_type = "1";
+        $messageType = $title;
+        $otherData = "personal question";
+        $notificationType = "1";
 
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
+
+        // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
         $data = [
             'user_id' => $muftiId,
-            'title' => $notifTitle,
+            'title' => $title,
             'body' => $body,
         ];
         Notification::create($data);
     }
+
+    // send notification
+    // public function send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id = 0)
+    // {
+    //     $url = 'https://fcm.googleapis.com/fcm/send';
+    //     // server key
+    //     $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
+
+    //     $headers = [
+    //         'Content-Type:application/json',
+    //         'Authorization:key=' . $serverKey,
+    //     ];
+
+    //     // notification content
+    //     $notification = [
+    //         'title' => $notifTitle,
+    //         'body' => $notiBody,
+    //     ];
+    //     // optional
+    //     $dataPayLoad = [
+    //         'to' => '/topics/test',
+    //         'date' => '2019-01-01',
+    //         'other_data' => $other_data,
+    //         'message_Type' => $message_type,
+    //         'notification_type' => $notification_type,
+    //         'question_id' => $question_id,
+    //     ];
+
+    //     // create Api body
+    //     $notifbody = [
+    //         'notification' => $notification,
+    //         'data' => $dataPayLoad,
+    //         'time_to_live' => 86400,
+    //         'to' => $device_id,
+    //         // 'registration_ids' => $arr,
+    //     ];
+    //     $ch = curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, $url);
+    //     curl_setopt($ch, CURLOPT_POST, true);
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    //     $result = curl_exec($ch);
+
+    //     curl_close($ch);
+    // }
 }

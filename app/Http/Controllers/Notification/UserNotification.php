@@ -7,11 +7,19 @@ use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User;
+use App\Services\FcmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UserNotification extends Controller
 {
+    protected $fcmService;
+
+    public function __construct(FcmService $fcmService)
+    {
+        $this->fcmService = $fcmService;
+    }
+
     public function user_all_notification(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -88,6 +96,37 @@ class UserNotification extends Controller
         $other_data = "voting question";
         $notification_type = "2";
         $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+
+        return ResponseHelper::jsonResponse(true, 'send notification successfully!');
+    }
+
+    public function new_text_notification(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $user = User::where('id', $request->user_id)->first();
+
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
+        }
+
+        $device_id = $user->device_id;
+        $title = "New Test";
+        $body = 'User ' . $user->name . ' has new test on your question.';
+        $messageType = "voting question";
+        $otherData = "voting question";
+        $notificationType = "2";
+
+        if ($user->device_id != "") {
+            $this->fcmService->sendNotification($user->device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
 
         return ResponseHelper::jsonResponse(true, 'send notification successfully!');
     }

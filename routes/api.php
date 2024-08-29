@@ -112,4 +112,5 @@ Route::group([
     Route::post('userAllNotification', [UserNotification::class, 'user_all_notification']);
     Route::post('deleteNotification', [UserNotification::class, 'delete_notification']);
     Route::post('textNotification', [UserNotification::class, 'text_notification']);
+    Route::post('newTextNotification', [UserNotification::class, 'new_text_notification']);
 });
