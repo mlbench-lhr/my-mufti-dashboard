@@ -90,12 +90,12 @@ class UserNotification extends Controller
         }
 
         $device_id = $user->device_id;
-        $notifTitle = "Test";
-        $notiBody = 'User ' . $user->name . ' has test on your question.';
-        $message_type = "voting question";
-        $other_data = "voting question";
-        $notification_type = "2";
-        $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
+        $title = "Test";
+        $body = 'User ' . $user->name . ' has test on your question.';
+        $messageType = "voting question";
+        $otherData = "voting question";
+        $notificationType = "2";
+        $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType);
 
         return ResponseHelper::jsonResponse(true, 'send notification successfully!');
     }
