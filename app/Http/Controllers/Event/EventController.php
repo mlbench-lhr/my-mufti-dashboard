@@ -169,9 +169,9 @@ class EventController extends Controller
                     $otherData = "Event Update";
                     $notificationType = "0";
         
-                    if ($device_id != "") {
-                        $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-                    }
+                    // if ($device_id != "") {
+                    //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                    // }
 
                     // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 

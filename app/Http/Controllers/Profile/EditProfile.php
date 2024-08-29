@@ -359,9 +359,9 @@ class EditProfile extends Controller
             $otherData = "Question Accepted";
             $notificationType = "0";
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
+            // if ($device_id != "") {
+            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            // }
 
             // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
@@ -384,9 +384,9 @@ class EditProfile extends Controller
             $otherData = "Question Rejected";
             $notificationType = "0";
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
+            // if ($device_id != "") {
+            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            // }
 
             // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
@@ -496,9 +496,9 @@ class EditProfile extends Controller
         $otherData = "Appointment Request";
         $notificationType = "0";
 
-        if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-        }
+        // if ($device_id != "") {
+        //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        // }
 
         // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 

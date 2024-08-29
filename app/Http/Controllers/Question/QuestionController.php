@@ -145,9 +145,9 @@ class QuestionController extends Controller
                 $otherData = "voting question";
                 $notificationType = "2";
 
-                if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
-                }
+                // if ($device_id != "") {
+                //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+                // }
 
                 // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
             }
@@ -170,9 +170,9 @@ class QuestionController extends Controller
                 $otherData = "voting question";
                 $notificationType = "2";
 
-                if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
-                }
+                // if ($device_id != "") {
+                //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+                // }
 
                 // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
             }
@@ -337,9 +337,9 @@ class QuestionController extends Controller
             $messageType = "question comment";
             $otherData = "voting question";
             $notificationType = "2";
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
-            }
+            // if ($device_id != "") {
+            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+            // }
 
             // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
         }
@@ -388,9 +388,9 @@ class QuestionController extends Controller
         $otherData = "voting question";
         $notificationType = "2";
 
-        if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
-        }
+        // if ($device_id != "") {
+        //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+        // }
 
         // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id);
         return ResponseHelper::jsonResponse(true, 'Reply added successfully!');
@@ -447,9 +447,9 @@ class QuestionController extends Controller
             $otherData = "personal question";
             $notificationType = "1";
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
+            // if ($device_id != "") {
+            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            // }
 
             // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
@@ -492,9 +492,9 @@ class QuestionController extends Controller
             $otherData = "personal question";
             $notificationType = "1";
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
+            // if ($device_id != "") {
+            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            // }
 
             // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
@@ -528,9 +528,9 @@ class QuestionController extends Controller
             $otherData = "personal question";
             $notificationType = "1";
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
+            // if ($device_id != "") {
+            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            // }
 
             // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
@@ -662,9 +662,9 @@ class QuestionController extends Controller
             $otherData = "personal question";
             $notificationType = "1";
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
+            // if ($device_id != "") {
+            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            // }
 
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
         }
@@ -681,9 +681,9 @@ class QuestionController extends Controller
         $otherData = "personal question";
         $notificationType = "1";
 
-        if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-        }
+        // if ($device_id != "") {
+        //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        // }
 
         // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type);
 
