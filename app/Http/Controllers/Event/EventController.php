@@ -170,11 +170,11 @@ class EventController extends Controller
                     $otherData = "Event Update";
                     $notificationType = "0";
 
-                    // if ($device_id != "") {
-                    //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-                    // }
+                    if ($device_id != "") {
+                        $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                    }
 
-                    $this->send_notification($device_id, $title, $notiBody, $messageType);
+                    // $this->send_notification($device_id, $title, $notiBody, $messageType);
 
                     $data = [
                         'user_id' => $user->id,
@@ -331,7 +331,6 @@ class EventController extends Controller
         $eventCategories = $event->event_category;
         $questionCategories = $event->question_category;
 
-
         $categoryCounts = collect($eventCategories)->map(function ($value) use ($request) {
             $count = EventQuestion::where(['event_id' => $request->event_id, 'category' => $value])->count();
             return (object) [$value => $count];
@@ -344,7 +343,6 @@ class EventController extends Controller
 
         $event->event_category = $categoryCounts;
         $event->question_category = $questionCounts;
-
 
         if (!$event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');

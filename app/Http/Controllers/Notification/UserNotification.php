@@ -124,9 +124,9 @@ class UserNotification extends Controller
         $otherData = "voting question";
         $notificationType = "2";
 
-        // if ($user->device_id != "") {
-        //     $this->fcmService->sendNotification($user->device_id, $title, $body, $messageType, $otherData, $notificationType);
-        // }
+        if ($user->device_id != "") {
+            $this->fcmService->sendNotification($user->device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
 
         return ResponseHelper::jsonResponse(true, 'send notification successfully!');
     }

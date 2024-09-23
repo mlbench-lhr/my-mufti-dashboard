@@ -163,9 +163,9 @@ class EventsAndApptController extends Controller
             $otherData = "Event Request Update";
             $notificationType = "0";
 
-            // if ($device_id != "") {
-            //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            // }
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            }
 
             // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
@@ -193,9 +193,9 @@ class EventsAndApptController extends Controller
                 $otherData = "You've Been Added to a New Event!";
                 $notificationType = "0";
 
-                // if ($device_id != "") {
-                //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-                // }
+                if ($device_id != "") {
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                }
 
                 // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
@@ -241,9 +241,9 @@ class EventsAndApptController extends Controller
         $otherData = "Event Request Update";
         $notificationType = "0";
 
-        // if ($device_id != "") {
-        //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-        // }
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
 
         // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 

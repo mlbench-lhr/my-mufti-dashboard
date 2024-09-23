@@ -176,11 +176,11 @@ class UserController extends Controller
         $otherData = "Scholar Request Update";
         $notificationType = "0";
 
-        // if ($device_id != "") {
-        //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-        // }
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
 
-        $this->send_notification($device_id, $title, $notiBody, $messageType);
+        // $this->send_notification($device_id, $title, $notiBody, $messageType);
 
         $data = [
             'user_id' => $user->id,
@@ -213,12 +213,12 @@ class UserController extends Controller
         $otherData = "Scholar Request Update";
         $notificationType = "0";
 
-        // if ($device_id != "") {
-        //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-        // }
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
 
 
-        $this->send_notification($device_id, $title, $notiBody, $messageType);
+        // $this->send_notification($device_id, $title, $notiBody, $messageType);
 
         $data = [
             'user_id' => $user->id,
