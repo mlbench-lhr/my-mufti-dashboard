@@ -51,6 +51,7 @@ class EventController extends Controller
             'image' => $request->image,
             'event_title' => $request->event_title,
             'event_category' => $request->event_category,
+            'question_category' => ["General", "Others"],
             'date' => Carbon::parse($request->date),
             'duration' => $request->duration,
             'location' => $request->location,
@@ -168,7 +169,7 @@ class EventController extends Controller
                     $messageType = "Event Update";
                     $otherData = "Event Update";
                     $notificationType = "0";
-        
+
                     // if ($device_id != "") {
                     //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                     // }
@@ -322,18 +323,28 @@ class EventController extends Controller
         $event = Event::with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
             $query->where('user_id', $userId);
         }])->where('id', $request->event_id)->first();
+
         if (!$event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
         $eventCategories = $event->event_category;
+        $questionCategories = $event->question_category;
+
 
         $categoryCounts = collect($eventCategories)->map(function ($value) use ($request) {
             $count = EventQuestion::where(['event_id' => $request->event_id, 'category' => $value])->count();
             return (object) [$value => $count];
         })->values()->all();
 
+        $questionCounts = collect($questionCategories)->map(function ($value) use ($request) {
+            $count = EventQuestion::where(['event_id' => $request->event_id, 'category' => $value])->count();
+            return (object) [$value => $count];
+        })->values()->all();
+
         $event->event_category = $categoryCounts;
+        $event->question_category = $questionCounts;
+
 
         if (!$event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');

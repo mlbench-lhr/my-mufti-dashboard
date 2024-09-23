@@ -17,6 +17,7 @@ class Event extends Model
         'image',
         'event_title',
         'event_category',
+        'question_category',
         'date',
         'duration',
         'location',
@@ -31,13 +32,15 @@ class Event extends Model
         'longitude' => 'double',
         'event_status' => 'integer',
         'event_category' => 'array',
+        'question_category' => 'array',
     ];
 
     protected $attributes = [
         'event_category' => "[]",
+        'question_category' => "[]",
         'about' => "",
     ];
-    
+
     protected static function boot()
     {
         parent::boot();

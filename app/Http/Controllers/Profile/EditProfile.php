@@ -320,6 +320,12 @@ class EditProfile extends Controller
 
         $myAllQueries = UserAllQuery::forPage($page, $perPage)->with('user_detail.interests')->where(['mufti_id' => $request->mufti_id])->orderBy('created_at', 'DESC')->get();
 
+        $fiqas = UserQuery::whereIn('id', $myAllQueries->pluck('query_id'))->pluck('fiqa', 'id');
+
+        $myAllQueries->each(function ($query) use ($fiqas) {
+            $query->fiqa = $fiqas->get($query->query_id, 'General');
+        });
+
         return response()->json(
             [
                 'status' => true,
@@ -387,7 +393,6 @@ class EditProfile extends Controller
             // }
 
             $this->send_notification($device_id, $title, $notiBody, $messageType);
-
 
             $data = [
                 'user_id' => $user->id,
