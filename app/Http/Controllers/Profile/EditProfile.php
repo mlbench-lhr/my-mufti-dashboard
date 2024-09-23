@@ -362,9 +362,7 @@ class EditProfile extends Controller
             // if ($device_id != "") {
             //     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
             // }
-
             $this->send_notification($device_id, $title, $notiBody, $messageType);
-
             $data = [
                 'user_id' => $user->id,
                 'title' => $title,
