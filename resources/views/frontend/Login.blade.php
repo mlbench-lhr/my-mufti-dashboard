@@ -92,7 +92,7 @@
                                 <div class=" pt-20 pb-20">
                                     <img src="public/frontend/media/loginLogo.svg" alt="">
                                 </div>
-                                <div class="welcome fw-bolder text-dark pt-10 pb-2 ">Sign In to your account My Mufti</div>
+                                <div class="welcome fw-bolder text-dark pt-10 pb-2 ">Sign In to your account</div>
                                 <div class="message pt-5">Sign in With your email and password and continue to
                                     CompaignBox</div>
                             </div>
