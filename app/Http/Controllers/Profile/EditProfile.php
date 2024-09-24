@@ -272,6 +272,13 @@ class EditProfile extends Controller
         $totalPages = ceil($query->count() / $perPage);
         $myQueries = $query->forPage($page, $perPage)->get();
 
+        $myQueries->each(function ($userQuery) {
+            $userQuery->all_question->each(function ($question) {
+                $fiqa = UserQuery::where('id', $question->query_id)->select('fiqa')->first();
+                $question->fiqa = $fiqa ? $fiqa->fiqa : "General";
+            });
+        });
+
         // if ($search == "") {
 
         //     $data = UserQuery::with('all_question.mufti_detail.interests')->where('user_id', $request->user_id)

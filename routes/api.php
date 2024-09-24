@@ -92,8 +92,13 @@ Route::group([
     Route::post('addEvent', [EventController::class, 'add_event']);
     Route::patch('updateEvent', [EventController::class, 'update_event']);
     Route::post('eventDetail', [EventController::class, 'event_detail']);
+
     Route::post('pastUpcomingEvents', [EventController::class, 'past_upcoming_events']);
+    Route::post('allPastUpcomingEvents', [EventController::class, 'all_past_upcoming_events']);
+
     Route::post('myPastUpcomingRequestedEvents', [EventController::class, 'my_past_upcoming_requested_events']);
+    Route::post('myAllPastUpcomingRequestedEvents', [EventController::class, 'my_all_past_upcoming_requested_events']);
+
     Route::post('addQuestionOnEvent', [EventController::class, 'add_question_on_event']);
     Route::post('addAnswerOnEvent', [EventController::class, 'add_answer_on_event']);
     Route::post('savaUnsaveEvent', [EventController::class, 'sava_unsave_event']);
