@@ -562,10 +562,10 @@ class EventController extends Controller
             }])->get();
 
             $pastEvents->each(function ($event) use ($request) {
-                $eventCategories = $event->event_category;
-                $questionCategories = $event->question_category;
+                // $eventCategories = $event->event_category;
+                // $event->event_category = getCategoryCounts($eventCategories, $event->id);
 
-                $event->event_category = getCategoryCounts($eventCategories, $event->id);
+                $questionCategories = $event->question_category;
                 $event->question_category = getCategoryCounts($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
@@ -588,10 +588,10 @@ class EventController extends Controller
             }])->get();
 
             $upcomingEvents->each(function ($event) use ($request) {
-                $eventCategories = $event->event_category;
+                // $eventCategories = $event->event_category;
                 $questionCategories = $event->question_category;
 
-                $event->event_category = getCategoryCounts($eventCategories, $event->id);
+                // $event->event_category = getCategoryCounts($eventCategories, $event->id);
                 $event->question_category = getCategoryCounts($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
@@ -645,10 +645,10 @@ class EventController extends Controller
             }])->get();
 
             $pastEvents->each(function ($event) use ($request) {
-                $eventCategories = $event->event_category;
+                // $eventCategories = $event->event_category;
                 $questionCategories = $event->question_category;
 
-                $event->event_category = getCategoryCounts1($eventCategories, $event->id);
+                // $event->event_category = getCategoryCounts1($eventCategories, $event->id);
                 $event->question_category = getCategoryCounts1($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
@@ -672,10 +672,10 @@ class EventController extends Controller
             }])->get();
 
             $upcomingEvents->each(function ($event) use ($request) {
-                $eventCategories = $event->event_category;
+                // $eventCategories = $event->event_category;
                 $questionCategories = $event->question_category;
 
-                $event->event_category = getCategoryCounts1($eventCategories, $event->id);
+                // $event->event_category = getCategoryCounts1($eventCategories, $event->id);
                 $event->question_category = getCategoryCounts1($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
@@ -697,10 +697,10 @@ class EventController extends Controller
             }])->get();
 
             $allUserEvents->each(function ($event) use ($request) {
-                $eventCategories = $event->event_category;
+                // $eventCategories = $event->event_category;
                 $questionCategories = $event->question_category;
 
-                $event->event_category = getCategoryCounts1($eventCategories, $event->id);
+                // $event->event_category = getCategoryCounts1($eventCategories, $event->id);
                 $event->question_category = getCategoryCounts1($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
@@ -774,34 +774,33 @@ class EventController extends Controller
 
         $page = $request->input('page', 1);
         $perPage = 20;
-        // $userId = $request->user_id;
+        $userId = $request->user_id;
 
-        // function getCategoryCounts2($categories, $eventId)
-        // {
-        //     return collect($categories)->map(function ($category) use ($eventId) {
-        //         $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
-        //         return (object) [$category => $count];
-        //     })->values()->all();
-        // }
+        function getCategoryCounts2($categories, $eventId)
+        {
+            return collect($categories)->map(function ($category) use ($eventId) {
+                $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
+                return (object) [$category => $count];
+            })->values()->all();
+        }
 
         $userSaveEvents = SaveEvent::where('user_id', $request->user_id)->pluck('event_id')->toArray();
 
-        $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
+        // $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
 
-        // $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-        //     $query->where('user_id', $userId);
-        // }])->get();
+        $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        }])->get();
 
-        // $userSaveEvents->each(function ($event) use ($request) {
-        //     $eventCategories = $event->event_category;
-        //     $questionCategories = $event->question_category;
+        $userSaveEvents->each(function ($event) use ($request) {
+            // $eventCategories = $event->event_category;
+            // $event->event_category = getCategoryCounts2($eventCategories, $event->id);
 
-        //     $event->event_category = getCategoryCounts2($eventCategories, $event->id);
-        //     $event->question_category = getCategoryCounts2($questionCategories, $event->id);
+            $questionCategories = $event->question_category;
+            $event->question_category = getCategoryCounts2($questionCategories, $event->id);
 
-        //     $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
-
-        // });
+            $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
+        });
 
         $totalPages = ceil(SaveEvent::forPage($page, $perPage)->where('user_id', $request->user_id)->get()->count() / $perPage);
         $response = [
@@ -829,24 +828,36 @@ class EventController extends Controller
         $todayDate = Carbon::now($request->time_zone);
         $search = $request->search;
 
-        // $userId = $request->user_id;
+        $userId = $request->user_id;
 
-        // function getCategoryCounts2($categories, $eventId)
-        // {
-        //     return collect($categories)->map(function ($category) use ($eventId) {
-        //         $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
-        //         return (object) [$category => $count];
-        //     })->values()->all();
-        // }
+        function getCategoryCounts3($categories, $eventId)
+        {
+            return collect($categories)->map(function ($category) use ($eventId) {
+                $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
+                return (object) [$category => $count];
+            })->values()->all();
+        }
+
+        $is_user_events = $request->is_user_events ?? false;
+
+        // $query = Event::where(function ($query) use ($search) {
+        //     $query->where('event_title', 'LIKE', '%' . $search . '%')
+        //         ->orWhere('location', 'LIKE', '%' . $search . '%')
+        //         ->orWhere('event_category', 'LIKE', "%{$search}%");
+        // })
+        //     ->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location');
 
         $query = Event::where(function ($query) use ($search) {
             $query->where('event_title', 'LIKE', '%' . $search . '%')
                 ->orWhere('location', 'LIKE', '%' . $search . '%')
                 ->orWhere('event_category', 'LIKE', "%{$search}%");
-        })
-            ->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location');
+        })->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        }]);
 
-        if ($request->user_id != 0) {
+       
+
+        if ($is_user_events == true) {
             $query->where('user_id', $request->user_id);
 
             if ($request->flag == 3) {
@@ -872,6 +883,15 @@ class EventController extends Controller
         }
 
         $events = $query->get();
+
+        $events->each(function ($event) use ($request) {
+            // $eventCategories = $event->event_category;
+            // $event->event_category = getCategoryCounts($eventCategories, $event->id);
+
+            $questionCategories = $event->question_category;
+            $event->question_category = getCategoryCounts3($questionCategories, $event->id);
+            $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
+        });
 
         if ($events->isEmpty()) {
             return response()->json([
