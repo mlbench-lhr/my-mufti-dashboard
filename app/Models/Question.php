@@ -54,4 +54,9 @@ class Question extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id','name','email', 'image', 'user_type');
     }
+
+    public function reports()
+    {
+        return $this->hasMany(ReportQuestion::class);
+    }
 }

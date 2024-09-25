@@ -84,6 +84,7 @@ Route::group([
     Route::post('scholarReply', [QuestionController::class, 'scholar_reply']);
     Route::post('postGeneralQuestion', [QuestionController::class, 'post_general_question']);
     Route::post('postFiqaWiseQuestion', [QuestionController::class, 'post_fiqa_wise_question']);
+    Route::post('reportQuestion', [QuestionController::class, 'report_question']);
 });
 
 Route::group([

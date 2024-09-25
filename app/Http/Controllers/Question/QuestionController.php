@@ -6,11 +6,13 @@ use App\Helpers\ActivityHelper;
 use App\Helpers\ResponseHelper;
 use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReportQuestion;
 use App\Models\Interest;
 use App\Models\Notification;
 use App\Models\Question;
 use App\Models\QuestionComment;
 use App\Models\QuestionVote;
+use App\Models\ReportQuestion as ReportQuestions;
 use App\Models\ScholarReply;
 use App\Models\User;
 use App\Models\UserAllQuery;
@@ -213,9 +215,9 @@ class QuestionController extends Controller
                 },
                 'comments as comments_count',
             ])
-            ->with('user_detail')
+            ->with('user_detail')->withCount('reports')->having('reports_count', '<', 10)
             ->orderBy('created_at', 'DESC')
-            ->get();
+            ->get()->makeHidden(['reports_count']);
 
         $questions->each(function ($question) use ($request) {
             $currentUserVote = QuestionVote::where(['question_id' => $question->id, 'user_id' => $request->user_id])->first();
@@ -230,7 +232,16 @@ class QuestionController extends Controller
             $question->totalYesVote = (integer) $question->totalYesVote ?? (integer) 0;
             $question->totalNoVote = (integer) $question->totalNoVote ?? (integer) 0;
             $question->comments_count = (integer) $question->comments_count ?? (integer) 0;
+        });
 
+        $userLikedQuestionIds = ReportQuestions::where('user_id', $request->user_id)
+            ->whereIn('question_id', $questions->pluck('id'))
+            ->pluck('question_id')
+            ->toArray();
+
+        $questions->transform(function ($question) use ($userLikedQuestionIds) {
+            $question->is_reported = in_array($question->id, $userLikedQuestionIds);
+            return $question;
         });
 
         $response = [
@@ -670,6 +681,39 @@ class QuestionController extends Controller
             }
 
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+        }
+
+    }
+    public function report_question(ReportQuestion $request)
+    {
+        $user = User::find($request->user_id);
+
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
+        }
+
+        $question = Question::find($request->question_id);
+
+        if (!$question) {
+            return ResponseHelper::jsonResponse(false, 'Question Not Found');
+        }
+
+        $check = ReportQuestions::where([
+            'user_id' => $request->user_id,
+            'question_id' => $request->question_id,
+        ])->first();
+        if ($check) {
+            return ResponseHelper::jsonResponse(false, 'Already Reported!');
+        } else {
+
+            $data = [
+                'user_id' => $request->user_id,
+                'question_id' => $request->question_id,
+            ];
+
+            ReportQuestions::create($data);
+
+            return ResponseHelper::jsonResponse(true, 'Reported Successfully');
         }
 
     }
