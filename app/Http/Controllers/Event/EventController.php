@@ -578,7 +578,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Past Events!',
-                'totalPastEventPages' => $totalPastPages,
+                'total_pages' => $totalPastPages,
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
@@ -604,7 +604,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Upcomig Events!',
-                'totalUpcomingEventPages' => $totalUpcomingPages,
+                'total_pages' => $totalUpcomingPages,
                 'data' => $upcomingEvents,
             ];
             return response()->json($response, 200);
@@ -661,7 +661,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Past Events!',
-                'totalPastEventPages' => $totalPastPages,
+                'total_pages' => $totalPastPages,
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
@@ -688,7 +688,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Upcomig Events!',
-                'totalUpcomingEventPages' => $totalUpcomingPages,
+                'total_pages' => $totalUpcomingPages,
                 'data' => $upcomingEvents,
             ];
             return response()->json($response, 200);
@@ -713,7 +713,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Total Events!',
-                'totalPastEventPages' => $totalEventsPages,
+                'total_pages' => $totalEventsPages,
                 'data' => $allUserEvents,
             ];
             return response()->json($response, 200);

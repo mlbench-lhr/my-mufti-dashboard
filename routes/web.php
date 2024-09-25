@@ -92,3 +92,6 @@ Route::get('/resetPassword', [AdminController::class, 'reset']);
 Route::get('resetAdminPassword', [AdminController::class, 'reset_password']);
 Route::get('fogetPasswordOTP', [AdminController::class, 'generate_otp']);
 Route::get('verifyOTP', [AdminController::class, 'verify_otp']);
+
+
+Route::get('questions/{id?}', [QuestionsController::class, 'show']);

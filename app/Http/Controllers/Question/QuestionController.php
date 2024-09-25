@@ -283,6 +283,8 @@ class QuestionController extends Controller
         $totalNoVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
         $question->totalNoVote = $totalNoVote;
 
+        $question->is_reported = ReportQuestions::where(['user_id'=> $request->user_id , 'question_id' => $request->question_id])->exists();
+
         $currentUserVote = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id])->first();
         if (!$currentUserVote) {
             $question->current_user_vote = 0;
@@ -301,6 +303,8 @@ class QuestionController extends Controller
         } else {
             $question->scholar_reply = (object) [];
         }
+
+      
 
         $response = [
             'status' => true,

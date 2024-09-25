@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Question, User, QuestionComment, QuestionVote, ScholarReply, UserQuery, UserAllQuery};
+
+use App\Models\Question;
+use App\Models\QuestionComment;
+use App\Models\QuestionVote;
+use App\Models\ScholarReply;
+use App\Models\User;
+use App\Models\UserAllQuery;
+use App\Models\UserQuery;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 
 class QuestionsController extends Controller
 {
-    public  function all_public_questions()
+    public function all_public_questions()
     {
         $questions = Question::get();
         return view('frontend.PublicQuestions', compact('questions'));
@@ -31,13 +36,12 @@ class QuestionsController extends Controller
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
 
-    public  function public_question_detail(Request $request)
+    public function public_question_detail(Request $request)
     {
         $type = $request->flag;
         $user_id = $request->uId;
         $question_id = $request->id;
         $question = Question::where('id', $request->id)->first();
-
 
         $totalVote = QuestionVote::where('question_id', $question_id)->count();
 
@@ -57,16 +61,12 @@ class QuestionsController extends Controller
         }
         $question->noVotesPercentage = $noVotesPercentage;
 
-
-
-
         $question->user_detail = User::where('id', $question->user_id)->select('name', 'image', 'email', 'user_type')->first();
 
         $question->comments = QuestionComment::with('user_detail')->where('question_id', $question->id)->get();
         $scholar_reply = ScholarReply::with('user_detail.interests')->where('question_id', $question->id)->first();
 
         $question->scholar_reply = $scholar_reply;
-
 
         // dd($question);
         return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id'));
@@ -79,7 +79,6 @@ class QuestionsController extends Controller
         $userCount = QuestionComment::with('user')->where('question_id', $request->id)->count();
         $query = QuestionComment::with('user')->where('question_id', $request->id);
 
-
         $user = $query->paginate(3);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('j \\ F Y');
@@ -91,22 +90,21 @@ class QuestionsController extends Controller
         $question = Question::where('id', $id)->first();
         // delete question comments
         $comments = QuestionComment::where('question_id', $id)->delete();
-        // delete question votes 
+        // delete question votes
         $vote = QuestionVote::where('question_id', $id)->delete();
-        // delete scholars reply 
+        // delete scholars reply
         $scholar_reply = ScholarReply::where('question_id', $id)->delete();
         $question->delete();
-        
+
         if ($request->flag === "1") {
             return redirect('PublicQuestions');
-        }else{
+        } else {
             return redirect("UserDetail/PublicQuestions/{$request->uId}");
         }
-        
+
     }
 
-
-    public  function all_private_questions()
+    public function all_private_questions()
     {
         $questions = UserQuery::get();
         return view('frontend.PrivateQuestions', compact('questions'));
@@ -128,8 +126,7 @@ class QuestionsController extends Controller
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
 
-
-    public  function private_question_detail(Request $request)
+    public function private_question_detail(Request $request)
     {
         $type = $request->flag;
         $user_id = $request->uId;
@@ -146,8 +143,39 @@ class QuestionsController extends Controller
         $question->delete();
         if ($request->flag === "1") {
             return redirect('PrivateQuestions');
-        }else{
+        } else {
             return redirect("UserDetail/PrivateQuestions/{$request->uId}");
         }
     }
+
+    public function show($id = null)
+    {
+        // If no ID is provided, return all questions (optional)
+        if (is_null($id)) {
+            $questions = Question::all(); // or use pagination
+            return view('questions.index', compact('questions'));
+        }
+
+        // $question = Question::with('comments')->find($id);
+
+        $question = Question::withCount([
+            'votes as totalYesVote' => function ($query) {
+                $query->where('vote', 1);
+            },
+            'votes as totalNoVote' => function ($query) {
+                $query->where('vote', 2);
+            },
+            'comments as comments_count',
+        ])
+            ->with('user_detail', 'comments.user_detail')
+            ->find($id);
+
+        if (!$question) {
+            return response()->json(['message' => 'Question not found'], 404);
+        }
+
+        // dd($question);
+        return view('question', compact('question'));
+    }
+
 }
