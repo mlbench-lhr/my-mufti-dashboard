@@ -578,7 +578,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Past Events!',
-                'total_pages' => $totalPastPages,
+                'totalPages' => $totalPastPages,
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
@@ -604,10 +604,12 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Upcomig Events!',
-                'total_pages' => $totalUpcomingPages,
+                'totalPages' => $totalUpcomingPages,
                 'data' => $upcomingEvents,
             ];
             return response()->json($response, 200);
+        }else{
+            return ResponseHelper::jsonResponse(false, 'Invalid flag!');
         }
     }
 
@@ -661,7 +663,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Past Events!',
-                'total_pages' => $totalPastPages,
+                'totalPages' => $totalPastPages,
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
@@ -688,7 +690,7 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Upcomig Events!',
-                'total_pages' => $totalUpcomingPages,
+                'totalPages' => $totalUpcomingPages,
                 'data' => $upcomingEvents,
             ];
             return response()->json($response, 200);
@@ -713,12 +715,15 @@ class EventController extends Controller
             $response = [
                 'status' => true,
                 'message' => 'Total Events!',
-                'total_pages' => $totalEventsPages,
+                'totalPages' => $totalEventsPages,
                 'data' => $allUserEvents,
             ];
             return response()->json($response, 200);
 
+        }else{
+            return ResponseHelper::jsonResponse(false, 'Invalid flag!');
         }
+
     }
 
     public function sava_unsave_event(Request $request)
