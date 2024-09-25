@@ -7,8 +7,10 @@ use App\Helpers\ResponseHelper;
 use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddEventRequest;
+use App\Http\Requests\EventQuestionLikeDislike;
 use App\Models\Event;
 use App\Models\EventQuestion;
+use App\Models\EventQuestionLike;
 use App\Models\EventScholar;
 use App\Models\Notification;
 use App\Models\SaveEvent;
@@ -855,8 +857,6 @@ class EventController extends Controller
             $query->where('user_id', $userId);
         }]);
 
-       
-
         if ($is_user_events == true) {
             $query->where('user_id', $request->user_id);
 
@@ -932,7 +932,15 @@ class EventController extends Controller
         $page = $request->input('page', 1);
         $perPage = 20;
         $totalPages = ceil(EventQuestion::where(['event_id' => $request->event_id, 'category' => $request->category])->get()->count() / $perPage);
-        $eventQuestions = EventQuestion::with('user_detail:id,name,image')->forPage($page, $perPage)->where(['event_id' => $request->event_id, 'category' => $request->category])->get();
+
+        // $eventQuestions = EventQuestion::with('user_detail:id,name,image')->forPage($page, $perPage)->where(['event_id' => $request->event_id, 'category' => $request->category])->get();
+
+        $eventQuestions = EventQuestion::with('user_detail:id,name,image')
+            ->withCount('likes')
+            ->where(['event_id' => $request->event_id, 'category' => $request->category])
+            ->orderBy('likes_count', 'desc')
+            ->forPage($page, $perPage)
+            ->get();
 
         $response = [
             'status' => true,
@@ -1046,4 +1054,37 @@ class EventController extends Controller
 
         curl_close($ch);
     }
+
+    public function like_dislike_event_question(EventQuestionLikeDislike $request)
+    {
+        $user = User::find($request->user_id);
+
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
+        }
+
+        $question = EventQuestion::find($request->event_question_id);
+
+        if (!$question) {
+            return ResponseHelper::jsonResponse(false, 'Question Not Found');
+        }
+
+        $check = EventQuestionLike::where([
+            'user_id' => $request->user_id,
+            'event_question_id' => $request->event_question_id,
+        ])->first();
+        if ($check) {
+            $check->delete();
+            return ResponseHelper::jsonResponse(true, 'Unlike Successfully');
+        }
+
+        $data = [
+            'user_id' => $request->user_id,
+            'event_question_id' => $request->event_question_id,
+        ];
+        EventQuestionLike::create($data);
+        return ResponseHelper::jsonResponse(true, 'Like Successfully');
+
+    }
+
 }

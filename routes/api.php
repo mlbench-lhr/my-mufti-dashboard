@@ -109,6 +109,7 @@ Route::group([
     Route::post('addEventScholars', [EventController::class, 'add_event_scholars']);
     Route::post('removeEventScholar', [EventController::class, 'remove_event_scholar']);
 
+    Route::post('likeDislikeEventQuestion', [EventController::class, 'like_dislike_event_question']);
 });
 
 Route::group([
