@@ -490,6 +490,8 @@ class EditProfile extends Controller
             'mufti_id' => $request->mufti_id,
             'category' => $request->category,
             'description' => $request->description,
+            'contact_number' => $request->contact_number ?? "",
+            'email' => $request->email ?? "",
             'date' => $request->date,
             'duration' => $request->duration,
             'payment_id' => $request->payment_id ?? "",

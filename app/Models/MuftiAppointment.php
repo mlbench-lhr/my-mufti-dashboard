@@ -16,6 +16,8 @@ class MuftiAppointment extends Model
         'description',
         'date',
         'duration',
+        'contact_number',
+        'email',
         'consultation_fee',
         'payment_method',
         'payment_id',
