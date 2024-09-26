@@ -88,7 +88,7 @@
         }
 
         .comment-user-image {
-            width: 50px;
+            width: 70px;
             height: 50px;
             border-radius: 50%;
             background-color: #e0e0e0;
@@ -100,7 +100,9 @@
         }
 
         .app-download {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-top: 20px;
         }
 
@@ -128,6 +130,20 @@
 
             .comment {
                 flex-direction: column;
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .app-download {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .store-buttons img {
+                width: 140px;
+                /* Slightly reduce the size on smaller screens */
+                margin: 10px 0;
             }
         }
     </style>
@@ -168,7 +184,7 @@
         <div class="comments-section">
             <h4>Comments</h4>
             <div class="comment">
-                <img src="comment-user1.png" alt="User" class="comment-user-image">
+                <img src="{{ asset('storage/' . $question->user_detail->image) }}" alt="User" class="comment-user-image">
                 <div class="comment-content">
                     <p><strong>Amyrobson</strong> <span>1 month ago</span></p>
                     <p>Impressive! Though it seems the drag feature could be improved. But overall it looks incredible.
@@ -177,7 +193,7 @@
             </div>
 
             <div class="comment">
-                <img src="comment-user2.png" alt="User" class="comment-user-image">
+                <img src="{{ asset('storage/' . $question->user_detail->image) }}" alt="User" class="comment-user-image">
                 <div class="comment-content">
                     <p><strong>Hamza Naeem</strong> <span>1 month ago</span></p>
                     <p>All Scholar on our platform are verified and background checked. Feel free to ask any type of
@@ -186,11 +202,15 @@
             </div>
         </div>
 
+        <hr>
+
         <div class="app-download">
-            <p>Download The App</p>
+            <div>
+                <p>Download The App</p>
+            </div>
             <div class="store-buttons">
-                <img src="playstore.png" alt="Google Play">
-                <img src="appstore.png" alt="App Store">
+                <img src="{{ url('frontend/media/google.svg') }}" alt="Google Play">
+                <img src="{{ url('frontend/media/app.svg') }}" alt="App Store">
             </div>
         </div>
     </div>

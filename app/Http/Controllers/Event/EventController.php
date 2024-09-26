@@ -549,12 +549,20 @@ class EventController extends Controller
         $perPage = 20;
         $userId = $request->user_id;
 
+        // function getCategoryCounts($categories, $eventId)
+        // {
+        //     return collect($categories)->map(function ($category) use ($eventId) {
+        //         $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
+        //         return (object) [$category => $count];
+        //     })->values()->all();
+        // }
+
         function getCategoryCounts($categories, $eventId)
         {
-            return collect($categories)->map(function ($category) use ($eventId) {
+            return collect($categories)->mapWithKeys(function ($category) use ($eventId) {
                 $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
-                return (object) [$category => $count];
-            })->values()->all();
+                return [$category => $count];
+            })->toArray();
         }
 
         if ($request->flag == 1) {
@@ -608,7 +616,7 @@ class EventController extends Controller
                 'data' => $upcomingEvents,
             ];
             return response()->json($response, 200);
-        }else{
+        } else {
             return ResponseHelper::jsonResponse(false, 'Invalid flag!');
         }
     }
@@ -635,13 +643,22 @@ class EventController extends Controller
         $perPage = 20;
         $userId = $request->user_id;
 
+        // function getCategoryCounts1($categories, $eventId)
+        // {
+        //     return collect($categories)->map(function ($category) use ($eventId) {
+        //         $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
+        //         return (object) [$category => $count];
+        //     })->values()->all();
+        // }
+
         function getCategoryCounts1($categories, $eventId)
         {
-            return collect($categories)->map(function ($category) use ($eventId) {
+            return collect($categories)->mapWithKeys(function ($category) use ($eventId) {
                 $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
-                return (object) [$category => $count];
-            })->values()->all();
+                return [$category => $count];
+            })->toArray();
         }
+
 
         if ($request->flag == 1) {
             $pastEvents = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
@@ -720,7 +737,7 @@ class EventController extends Controller
             ];
             return response()->json($response, 200);
 
-        }else{
+        } else {
             return ResponseHelper::jsonResponse(false, 'Invalid flag!');
         }
 
@@ -783,12 +800,20 @@ class EventController extends Controller
         $perPage = 20;
         $userId = $request->user_id;
 
+        // function getCategoryCounts2($categories, $eventId)
+        // {
+        //     return collect($categories)->map(function ($category) use ($eventId) {
+        //         $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
+        //         return (object) [$category => $count];
+        //     })->values()->all();
+        // }
+
         function getCategoryCounts2($categories, $eventId)
         {
-            return collect($categories)->map(function ($category) use ($eventId) {
+            return collect($categories)->mapWithKeys(function ($category) use ($eventId) {
                 $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
-                return (object) [$category => $count];
-            })->values()->all();
+                return [$category => $count];
+            })->toArray();
         }
 
         $userSaveEvents = SaveEvent::where('user_id', $request->user_id)->pluck('event_id')->toArray();
@@ -837,12 +862,20 @@ class EventController extends Controller
 
         $userId = $request->user_id;
 
+        // function getCategoryCounts3($categories, $eventId)
+        // {
+        //     return collect($categories)->map(function ($category) use ($eventId) {
+        //         $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
+        //         return (object) [$category => $count];
+        //     })->values()->all();
+        // }
+
         function getCategoryCounts3($categories, $eventId)
         {
-            return collect($categories)->map(function ($category) use ($eventId) {
+            return collect($categories)->mapWithKeys(function ($category) use ($eventId) {
                 $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
-                return (object) [$category => $count];
-            })->values()->all();
+                return [$category => $count];
+            })->toArray();
         }
 
         $is_user_events = $request->is_user_events ?? false;
