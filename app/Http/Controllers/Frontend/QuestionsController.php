@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Question;
 use App\Models\QuestionComment;
 use App\Models\QuestionVote;
@@ -150,13 +149,9 @@ class QuestionsController extends Controller
 
     public function show($id = null)
     {
-        // If no ID is provided, return all questions (optional)
         if (is_null($id)) {
-            $questions = Question::all(); // or use pagination
-            return view('questions.index', compact('questions'));
+            $id = 1;
         }
-
-        // $question = Question::with('comments')->find($id);
 
         $question = Question::withCount([
             'votes as totalYesVote' => function ($query) {
@@ -171,10 +166,25 @@ class QuestionsController extends Controller
             ->find($id);
 
         if (!$question) {
-            return response()->json(['message' => 'Question not found'], 404);
+            $message = 'The question you are looking for does not exist.';
+            $html = '
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Question Not Found</title>
+                </head>
+                <body>
+                    <h1>Question Not Found</h1>
+                    <p>' . $message . '</p>
+                </body>
+                </html>';
+
+            return response($html, 404)
+                ->header('Content-Type', 'text/html');
         }
 
-        // dd($question);
         return view('question', compact('question'));
     }
 
