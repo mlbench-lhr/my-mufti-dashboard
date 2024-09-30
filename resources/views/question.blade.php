@@ -264,7 +264,7 @@
                             a 15.9155 15.9155 0 0 1 0 31.831
                             a 15.9155 15.9155 0 0 1 0 -31.831" />
                     </svg>
-                    <div class="percentage">{{ $tureVotes }}%</div>
+                    <div class="percentage">{{ round($tureVotes) }}%</div>
                 </div>
                 <div class="label-container">
                     <div class="label1">
@@ -283,7 +283,7 @@
                             a 15.9155 15.9155 0 0 1 0 31.831
                             a 15.9155 15.9155 0 0 1 0 -31.831" />
                     </svg>
-                    <div class="percentage">{{ $falseVotes }}%</div>
+                    <div class="percentage">{{ round($falseVotes) }}%</div>
                 </div>
                 <div class="label-container">
                     <div class="label2">
