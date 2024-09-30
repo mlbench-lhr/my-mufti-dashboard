@@ -238,7 +238,9 @@
     <div class="container">
         <div class="profile">
             <img src="{{ url('public/frontend/media/emptyUser.svg') }}" alt="Profile" class="profile-image">
-            <h1>{{ $question->user_detail->name || $question->user_detail ?? 'Anonymous' }}</h1>
+            {{-- <h1>{{ $question->user_detail->name || $question->user_detail ?? 'Anonymous' }}</h1> --}}
+            <h1>{{ $question->user_detail && $question->user_detail->name ? $question->user_detail->name : 'Anonymous' }}</h1>
+
         </div>
 
         <div class="question-box">
