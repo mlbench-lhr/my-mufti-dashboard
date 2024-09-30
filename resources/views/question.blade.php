@@ -182,12 +182,14 @@
         .label1 {
             background-color: #38B89A;
             color: white;
+            border: 1px solid #38B89A;
+
         }
 
         .label2 {
             background-color: #FFFFFF;
             color: red;
-            border: 2px solid #ea4335;
+            border: 1px solid #ea4335;
         }
 
         .label1 img,
