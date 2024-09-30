@@ -237,7 +237,7 @@
 <body>
     <div class="container">
         <div class="profile">
-            <img src="{{ url('frontend/media/emptyUser.svg') }}" alt="Profile" class="profile-image">
+            <img src="{{ url('public/frontend/media/emptyUser.svg') }}" alt="Profile" class="profile-image">
             <h1>{{ $question->user_detail->name ?? 'Anonymous' }}</h1>
         </div>
 
@@ -268,7 +268,7 @@
                 </div>
                 <div class="label-container">
                     <div class="label1">
-                        <img src="{{ url('frontend/media/circleCheck1.svg') }}" alt="circle"> True
+                        <img src="{{ url('public/frontend/media/circleCheck1.svg') }}" alt="circle"> True
                     </div>
                 </div>
             </div>
@@ -287,7 +287,7 @@
                 </div>
                 <div class="label-container">
                     <div class="label2">
-                        <img src="{{ url('frontend/media/close.svg') }}" alt="circle"> False
+                        <img src="{{ url('public/frontend/media/close.svg') }}" alt="circle"> False
                     </div>
                 </div>
             </div>
@@ -305,8 +305,8 @@
                             <div style="display: flex; align-items: center;">
                                 <div>
                                     <img src="{{ $item->user_detail && $item->user_detail->image
-                                        ? asset('storage/' . $item->user_detail->image)
-                                        : url('frontend/media/emptyUser.svg') }}"
+                                        ? asset('public/storage/' . $item->user_detail->image)
+                                        : url('public/frontend/media/emptyUser.svg') }}"
                                         alt="User" class="comment-user-image">
                                 </div>
                                 <div
@@ -330,10 +330,10 @@
             </div>
             <div class="store-buttons">
                 <a href="https://apps.apple.com/us/app/my-mufti/id6446103667">
-                    <img src="{{ url('frontend/media/app.svg') }}" alt="App Store">
+                    <img src="{{ url('public/frontend/media/app.svg') }}" alt="App Store">
                 </a>
                 <a href="https://play.google.com/store/apps/details?id=com.mlbranch.mymufti&hl=en&gl=US">
-                    <img src="{{ url('frontend/media/google.svg') }}" alt="Google Play">
+                    <img src="{{ url('public/frontend/media/google.svg') }}" alt="Google Play">
                 </a>
             </div>
         </div>
