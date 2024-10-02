@@ -113,7 +113,30 @@ class EventController extends Controller
 
         ActivityHelper::store_avtivity($user_id, $message, $type);
 
-        return ResponseHelper::jsonResponse(true, 'Event Added Successfully!');
+        function getCategoryCounts12($categories, $eventId)
+        {
+            return collect($categories)->mapWithKeys(function ($category) use ($eventId) {
+                $count = EventQuestion::where(['event_id' => $eventId, 'category' => $category])->count();
+                return [$category => $count];
+            })->toArray();
+        }
+
+        $event_data = Event::where('id', $eventId)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        }])->first();
+
+        $questionCategories = $event_data->question_category;
+        $event_data->question_category = getCategoryCounts12($questionCategories, $eventId);
+        $event_data->save = SaveEvent::where(['user_id' => $user_id, 'event_id' => $eventId])->exists();
+
+        $response = [
+            'status' => true,
+            'message' => 'Event Added Successfully!',
+            'data' => $event_data,
+        ];
+        return response()->json($response, 200);
+
+        // return ResponseHelper::jsonResponse(true, 'Event Added Successfully!');
     }
 
     public function update_event(Request $request)
@@ -658,7 +681,6 @@ class EventController extends Controller
                 return [$category => $count];
             })->toArray();
         }
-
 
         if ($request->flag == 1) {
             $pastEvents = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
