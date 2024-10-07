@@ -48,17 +48,13 @@ class EventController extends Controller
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $format = Carbon::createFromFormat('d-m-Y H:i:s', $request->date);
-        // dd($format->format('d-m-Y H:i:s'));
-
         $data = [
             'user_id' => $request->user_id,
             'image' => $request->image,
             'event_title' => $request->event_title,
             'event_category' => $request->event_category,
             'question_category' => ["General", "Others"],
-            // 'date' => Carbon::parse($request->date),
-            'date' => $format->format('d-m-Y H:i:s'),
+            'date' => Carbon::parse($request->date),
             'duration' => $request->duration,
             'location' => $request->location,
             'latitude' => $request->latitude,
@@ -173,9 +169,6 @@ class EventController extends Controller
             $parsedDate = Carbon::parse($request->date);
             $eventDate = Carbon::parse($event->date);
 
-            $format = Carbon::createFromFormat('d-m-Y H:i:s', $request->date);
-            $parsedDate1 = $format->format('d-m-Y H:i:s');
-
             if ($parsedDate->toDateTimeString() !== $eventDate->toDateTimeString()) {
 
                 $eventScholars = EventScholar::where('event_id', $event->id)
@@ -217,8 +210,7 @@ class EventController extends Controller
                     Notification::create($data);
                 });
             }
-
-            $request->merge(['date' => $parsedDate1]);
+            $request->merge(['date' => $parsedDate]);
         }
 
         $data = $request->only($allowedFields);
