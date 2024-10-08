@@ -547,8 +547,14 @@ class EditProfile extends Controller
         $userType = $user->user_type;
         $status = $user->mufti_status;
 
+        // $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
+        //     ->where('user_id', $request->user_id)->orWhere('mufti_id', $request->user_id)->orderBy('created_at', 'desc')->get();
+
         $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
-            ->where('user_id', $request->user_id)->orWhere('mufti_id', $request->user_id)->orderBy('created_at', 'desc')->get();
+            ->where('user_id', $request->user_id)
+            ->orWhere('mufti_id', $request->user_id)
+            ->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC")
+            ->get();
 
         return response()->json(
             [
