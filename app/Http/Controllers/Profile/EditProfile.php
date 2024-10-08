@@ -548,8 +548,7 @@ class EditProfile extends Controller
         $status = $user->mufti_status;
 
         $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
-            ->where('user_id', $request->user_id)->orWhere('mufti_id', $request->user_id)
-            ->get();
+            ->where('user_id', $request->user_id)->orWhere('mufti_id', $request->user_id)->orderBy('created_at', 'desc')->get();
 
         return response()->json(
             [
