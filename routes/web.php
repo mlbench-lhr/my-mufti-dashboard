@@ -59,6 +59,12 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('DeletePublicQuestion/{id}', [QuestionsController::class, 'delete_public_question'])->name('DeletePublicQuestion');
 
 
+    //Reported Questions
+    Route::get('ReportedQuestions', [QuestionsController::class, 'all_reported_questions'])->name('ReportedQuestions');
+    Route::get('getReportedQuestions', [QuestionsController::class, 'get_all_reported_questions'])->name('getReportedQuestions');
+    Route::get('ReportedQuestionDetail/{id}', [QuestionsController::class, 'reported_question_detail'])->name('ReportedQuestionDetail');
+
+
     //Private Questions
     Route::get('PrivateQuestions', [QuestionsController::class, 'all_private_questions'])->name('PrivateQuestions');
     Route::get('getPrivateQuestions', [QuestionsController::class, 'get_all_private_questions'])->name('getPrivateQuestions');

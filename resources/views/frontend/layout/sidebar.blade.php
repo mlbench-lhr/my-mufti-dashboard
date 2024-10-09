@@ -83,7 +83,10 @@
                                   $isActive5 = preg_match('/^ScholarDetail\/PrivateQuestions(\/\d+)?$/', $currentRoute);
                                   $isActive6 = preg_match('/^ScholarDetail\/Appointments(\/\d+)?$/', $currentRoute);
                                   $isActive7 = preg_match('/^ScholarDetail\/UserEvents(\/\d+)?$/', $currentRoute);
-                                  $isActive8 = preg_match('/^ScholarDetail\/UserEventsRequest(\/\d+)?$/', $currentRoute);
+                                  $isActive8 = preg_match(
+                                      '/^ScholarDetail\/UserEventsRequest(\/\d+)?$/',
+                                      $currentRoute,
+                                  );
 
                               @endphp
                               <!--end::Svg Icon-->
@@ -168,6 +171,29 @@
                   </div>
 
               </div>
+
+              {{-- <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
+                  <div class="menu-item">
+                      <a class="menu-link" href="{{ URL::to('PrivateQuestions') }}">
+                          <span class="menu-icon">
+                              <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
+                              <span class="menu-bullet">
+                                  <span class="bullet bullet-dot"></span>
+                              </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^PrivateQuestions$/', $currentRoute);
+                                  $isActive2 = preg_match('/^PrivateQuestionDetail(\/\d+)?$/', $currentRoute);
+                              @endphp
+                              <!--end::Svg Icon-->
+                          </span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">All
+                              Reported Questions</span>
+                      </a>
+                  </div>
+
+              </div> --}}
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">

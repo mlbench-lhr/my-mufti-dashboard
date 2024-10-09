@@ -21,7 +21,7 @@ class UserQuery extends Model
     protected $casts = [
         'user_id' => 'integer',
         'category' => 'array',
-
+        'created_at' => "datetime:Y-m-d\TH:i:s",
     ];
 
     protected $attributes = [
