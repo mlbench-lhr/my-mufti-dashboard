@@ -22,7 +22,7 @@ class UserAllQuery extends Model
         'mufti_id' => 'integer',
         'user_id' => 'integer',
         'query_id' => 'integer',
-        'created_at' => "datetime:Y-m-d\TH:i:s",
+        'created_at' => "datetime:Y-m-d H:i:s",
     ];
 
     protected $attributes = [
