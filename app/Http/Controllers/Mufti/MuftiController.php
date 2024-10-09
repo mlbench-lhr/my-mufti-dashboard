@@ -114,7 +114,7 @@ class MuftiController extends Controller
         $user_id = $request->user_id;
         $user = User::where(['id' => $request->user_id])->first();
         if (!$user) {
-            return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $search = $request->search;
 
