@@ -72,6 +72,47 @@ class UserNotification extends Controller
 
     }
 
+    public function message_notification(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'receiver_id' => 'required',
+            'sender_id' => 'required',
+            'message' => 'required',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $receiver = User::where('id', $request->receiver_id)->first();
+
+
+        if (!$receiver) {
+            return ResponseHelper::jsonResponse(false, 'Receiver Not Found');
+        }
+
+        $sender = User::where('id', $request->sender_id)->first();
+
+        if (!$sender) {
+            return ResponseHelper::jsonResponse(false, 'Sender Not Found');
+        }
+        $device_id = $receiver->device_id;
+        $notifTitle = $sender->name;
+        $notiBody = $request->message;
+        $message_type = "chat";
+        $notificationType = "chat";
+        $otherData = "";
+        $sender_id = $request->sender_id;
+
+        if ($device_id != "") {
+            
+            $this->fcmService->sendNotification($device_id, $notifTitle, $notiBody, $message_type, $otherData, $notificationType, $sender_id);
+        }
+        return ResponseHelper::jsonResponse(true, 'Notification Send Successfully!');
+
+    }
+
     public function text_notification(Request $request)
     {
         $validator = Validator::make($request->all(), [
