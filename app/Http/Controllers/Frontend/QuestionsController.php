@@ -11,6 +11,10 @@ use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use Illuminate\Http\Request;
+use App\Models\ReportQuestion;
+
+
+
 
 class QuestionsController extends Controller
 {
@@ -84,6 +88,44 @@ class QuestionsController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
+
+    public function reported_question_detail(Request $request)
+    {
+        $type = $request->flag;
+        $user_id = $request->uId;
+        $question_id = $request->id;
+
+        $question = Question::where('id', $question_id)->first();
+
+        $reportedQuestion = ReportQuestion::where('question_id', $question_id)
+            ->with('user_detail')
+            ->first();
+
+        $totalVote = QuestionVote::where('question_id', $question_id)->count();
+        $totalYesVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
+        $totalNoVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
+
+        $question->yesVotesPercentage = $totalVote > 0 ? round(($totalYesVote / $totalVote) * 100, 0) : 0;
+        $question->noVotesPercentage = $totalVote > 0 ? round(($totalNoVote / $totalVote) * 100, 0) : 0;
+
+        $question->user_detail = User::where('id', $question->user_id)
+            ->select('name', 'image', 'email', 'user_type')
+            ->first();
+
+        $question->comments = QuestionComment::with('user_detail')
+            ->where('question_id', $question->id)
+            ->get();
+
+        $scholar_reply = ScholarReply::with('user_detail.interests')
+            ->where('question_id', $question->id)
+            ->first();
+
+        $question->scholar_reply = $scholar_reply;
+
+        return view('frontend.ReportedQuestionDetail', compact('question', 'reportedQuestion', 'question_id', 'type', 'user_id'));
+    }
+
+
     public function delete_public_question(Request $request, $id)
     {
         $question = Question::where('id', $id)->first();
@@ -93,14 +135,17 @@ class QuestionsController extends Controller
         $vote = QuestionVote::where('question_id', $id)->delete();
         // delete scholars reply
         $scholar_reply = ScholarReply::where('question_id', $id)->delete();
+        ReportQuestion::where('question_id', $id)->delete();
+
         $question->delete();
 
         if ($request->flag === "1") {
             return redirect('PublicQuestions');
+        } else if ($request->flag === "3") {
+            return redirect('ReportedQuestions');
         } else {
             return redirect("UserDetail/PublicQuestions/{$request->uId}");
         }
-
     }
 
     public function all_private_questions()
@@ -188,4 +233,40 @@ class QuestionsController extends Controller
         return view('question', compact('question'));
     }
 
+    public function all_reported_questions()
+    {
+        $reportedQuestions = ReportQuestion::with('user_detail', 'question.user_detail')->get();
+        // dd($reportedQuestions);
+
+        return view('frontend.AllReportedQuestions', compact('reportedQuestions'));
+    }
+
+    public function get_all_reported_questions(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $userCount = ReportQuestion::count();
+
+        $query = ReportQuestion::with('user_detail', 'question.user_detail');
+
+        if ($searchTerm) {
+            $query->where(function ($query) use ($searchTerm) {
+                $query->whereHas('user_detail', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                })
+                    ->orWhereHas('question.question_poster_detail', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                    });
+            });
+        }
+
+        $query->orderBy('created_at', 'desc');
+
+        $reportedQuestions = $query->paginate(10);
+
+        foreach ($reportedQuestions as $row) {
+            $row->registration_date = $row->created_at->format('j \\ F Y');
+        }
+
+        return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);
+    }
 }
