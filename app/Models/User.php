@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Activity;
 use App\Models\Degree;
 use App\Models\Event;
+use App\Models\ReportQuestion;
 use App\Models\EventQuestion;
 use App\Models\EventScholar;
 use App\Models\Experience;
@@ -78,7 +79,9 @@ class User extends Authenticatable
         'mufti_status' => 'integer',
         'email_code' => 'integer',
     ];
+
     protected $dates = ['deleted_at'];
+
     public function getDeletedAtAttribute($value)
     {
         return $value !== null ? $value : '';
@@ -91,6 +94,7 @@ class User extends Authenticatable
         static::deleting(function ($model) {
 
             UserAllQuery::where('user_id', $model->id)->delete();
+            ReportQuestion::where('user_id', $model->id)->delete();
             UserAllQuery::where('mufti_id', $model->id)->delete();
             ScholarReply::where('user_id', $model->id)->delete();
             SaveEvent::where('user_id', $model->id)->delete();
@@ -142,6 +146,7 @@ class User extends Authenticatable
         QuestionComment::whereIn('question_id', $questionIdsToDelete)->delete();
         QuestionVote::whereIn('question_id', $questionIdsToDelete)->delete();
         ScholarReply::whereIn('question_id', $questionIdsToDelete)->delete();
+        ReportQuestion::whereIn('question_id', $questionIdsToDelete)->delete();
 
         EventScholar::whereIn('event_id', $eventIdsToDelete)->delete();
         EventQuestion::whereIn('event_id', $eventIdsToDelete)->delete();
