@@ -16,7 +16,6 @@ use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use App\Services\FcmService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -335,6 +334,9 @@ class EditProfile extends Controller
 
         $myAllQueries->each(function ($query) use ($fiqas) {
             $query->fiqa = $fiqas->get($query->query_id, 'General');
+            if ($query->reason === null) {
+                unset($query->reason);
+            }
         });
 
         return response()->json(
