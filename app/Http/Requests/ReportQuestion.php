@@ -24,6 +24,7 @@ class ReportQuestion extends FormRequest
         return [
             'user_id' => 'required',
             'question_id' => 'required',
+            'reason' => 'required',
         ];
     }
 }

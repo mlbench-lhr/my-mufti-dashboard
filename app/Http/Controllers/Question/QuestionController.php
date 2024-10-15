@@ -182,7 +182,6 @@ class QuestionController extends Controller
 
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
         }
-
     }
 
     public function all_question(Request $request)
@@ -229,9 +228,9 @@ class QuestionController extends Controller
             } else if ($currentUserVote->vote == 2) {
                 $question->current_user_vote = 2;
             }
-            $question->totalYesVote = (integer) $question->totalYesVote ?? (integer) 0;
-            $question->totalNoVote = (integer) $question->totalNoVote ?? (integer) 0;
-            $question->comments_count = (integer) $question->comments_count ?? (integer) 0;
+            $question->totalYesVote = (int) $question->totalYesVote ?? (int) 0;
+            $question->totalNoVote = (int) $question->totalNoVote ?? (int) 0;
+            $question->comments_count = (int) $question->comments_count ?? (int) 0;
         });
 
         $userLikedQuestionIds = ReportQuestions::where('user_id', $request->user_id)
@@ -283,7 +282,7 @@ class QuestionController extends Controller
         $totalNoVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
         $question->totalNoVote = $totalNoVote;
 
-        $question->is_reported = ReportQuestions::where(['user_id'=> $request->user_id , 'question_id' => $request->question_id])->exists();
+        $question->is_reported = ReportQuestions::where(['user_id' => $request->user_id, 'question_id' => $request->question_id])->exists();
 
         $currentUserVote = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id])->first();
         if (!$currentUserVote) {
@@ -304,7 +303,7 @@ class QuestionController extends Controller
             $question->scholar_reply = (object) [];
         }
 
-      
+
 
         $response = [
             'status' => true,
@@ -479,7 +478,6 @@ class QuestionController extends Controller
             Notification::create($data);
             UserAllQuery::create($data2);
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-
         } elseif ($request->mufti_id != 9 && $request->user_id != 9) {
 
             $data1 = [
@@ -561,7 +559,6 @@ class QuestionController extends Controller
             UserAllQuery::create($data1);
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
         }
-
     }
     public function post_fiqa_wise_question(Request $request)
     {
@@ -627,7 +624,6 @@ class QuestionController extends Controller
             UserAllQuery::create($data2);
 
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-
         }
 
         if ($request->user_id == 9) {
@@ -645,7 +641,6 @@ class QuestionController extends Controller
             });
 
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-
         } else {
             // dd('numan');
             $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
@@ -686,9 +681,8 @@ class QuestionController extends Controller
 
             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
         }
-
     }
-    public function report_question(ReportQuestion $request)
+    public function report_question(Request $request)
     {
         $user = User::find($request->user_id);
 
@@ -706,21 +700,22 @@ class QuestionController extends Controller
             'user_id' => $request->user_id,
             'question_id' => $request->question_id,
         ])->first();
+
         if ($check) {
             return ResponseHelper::jsonResponse(false, 'Already Reported!');
         } else {
-
             $data = [
                 'user_id' => $request->user_id,
                 'question_id' => $request->question_id,
+                'reason' => $request->reason
             ];
 
             ReportQuestions::create($data);
 
             return ResponseHelper::jsonResponse(true, 'Reported Successfully');
         }
-
     }
+
 
     public function send($deviceId, $title, $name, $muftiId)
     {

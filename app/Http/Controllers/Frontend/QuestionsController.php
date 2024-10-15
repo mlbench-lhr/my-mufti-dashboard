@@ -235,8 +235,8 @@ class QuestionsController extends Controller
 
     public function all_reported_questions()
     {
-        $reportedQuestions = ReportQuestion::with('user_detail', 'question.user_detail')->get();
-        // dd($reportedQuestions);
+        $reportedQuestions = ReportQuestion::with('user_detail', 'question.user_detail')
+            ->get();
 
         return view('frontend.AllReportedQuestions', compact('reportedQuestions'));
     }
@@ -244,24 +244,23 @@ class QuestionsController extends Controller
     public function get_all_reported_questions(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = ReportQuestion::count();
 
-        $query = ReportQuestion::with('user_detail', 'question.user_detail');
+        $userCount = ReportQuestion::count('question_id');
+
+        $query = ReportQuestion::with('user_detail', 'question.user_detail')
+            ->orderBy('created_at', 'desc');
 
         if ($searchTerm) {
-            $query->where(function ($query) use ($searchTerm) {
-                $query->whereHas('user_detail', function ($subQuery) use ($searchTerm) {
-                    $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
-                })
-                    ->orWhereHas('question.question_poster_detail', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
-                    });
+            $query->whereHas('question', function ($subQuery) use ($searchTerm) {
+                $subQuery->where('question', 'LIKE', '%' . $searchTerm . '%');
             });
         }
 
-        $query->orderBy('created_at', 'desc');
-
         $reportedQuestions = $query->paginate(10);
+
+        if ($reportedQuestions->isEmpty()) {
+            return response()->json(['message' => 'No reported questions found', 'reportedQuestions' => []]);
+        }
 
         foreach ($reportedQuestions as $row) {
             $row->registration_date = $row->created_at->format('j \\ F Y');
@@ -269,4 +268,6 @@ class QuestionsController extends Controller
 
         return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);
     }
+
+
 }

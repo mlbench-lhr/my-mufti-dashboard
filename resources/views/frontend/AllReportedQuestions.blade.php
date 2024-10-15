@@ -33,6 +33,7 @@
         max-width: 100px;
         /* Adjust the max-width based on your requirements */
     }
+
 </style>
 @section('content')
     <!--begin::Header-->
@@ -117,6 +118,7 @@
                                         <th class="min-w-175px">Reported By</th>
                                         <th class="min-w-175px">Posted By</th>
                                         <th class="min-w-125px">Question</th>
+                                        <th class="min-w-125px">Reason</th>
                                         <th class="text-end min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -205,7 +207,7 @@
                                 </div>`}
 
                             <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                <div class="text-gray-800 mb-1">
                                     ${row.user_detail.name}
                                 </div>
                                 <span>${row.user_detail.email}</span>
@@ -224,8 +226,8 @@
                                              <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
                                          </div>
                                     </div>`}
-                                     <div class="d-flex flex-column">
-                                        <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                     <div class="d-flex flex-column ">
+                                        <div class="text-gray-800 mb-1">
                                         ${row.question.user_detail.name}
                                     </div>
                                     <span>${row.question.user_detail.email}</span>
@@ -233,6 +235,9 @@
                            </div>
                         </td>
                         <td>${row.question.question}</td>
+                        <td>
+                            ${row.reason ? truncateWords(row.reason, 6) : 'No reason provided'}
+                        </td>
                         <td class="text-end">
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('ReportedQuestionDetail') }}/${row.question_id}?flag=3" class="link-success fw-bold">
@@ -317,6 +322,13 @@
     //     loadVerificationData(currentPage);
     // });
 
+    function truncateWords(text, maxWords) {
+        const words = text.split(' ');
+        if (words.length > maxWords) {
+            return words.slice(0, maxWords).join(' ') + '...';
+        }
+        return text;
+    }
 
     function updateUrlParameter(key, value) {
         var url = new URL(window.location.href);

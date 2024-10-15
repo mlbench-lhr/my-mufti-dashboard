@@ -33,6 +33,20 @@
         max-width: 100px;
         /* Adjust the max-width based on your requirements */
     }
+
+    .line-container {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+
+    .content-line {
+        border: none;
+        border-top: 2px solid #4a4a4a;
+        width: calc(100% - 20px);
+        margin-left: 10px;
+        margin-right: 0;
+    }
 </style>
 @section('content')
     <!--begin::Header-->
@@ -163,8 +177,17 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="fs-2 fw-bolder text-dark pb-2">
+                    Reason for Report:
+                </div>
+                <div class="fs-6 fw-normal text-dark">
+                    {{ $reportedQuestion->reason ? $reportedQuestion->reason : 'No reason provided' }}
+                </div>
+                <div class="line-container">
+                    <hr class="content-line">
+                </div>
             </div>
+
             <div class="row mb-5">
                 <div class="col-3 fs-2 fw-bold text-dark">
                     Question Categories

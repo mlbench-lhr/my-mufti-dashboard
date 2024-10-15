@@ -14,6 +14,7 @@ class ReportQuestion extends Model
     protected $fillable = [
         'question_id',
         'user_id',
+        'reason',
     ];
 
     public function user_detail()
