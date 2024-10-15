@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_all_queries', function (Blueprint $table) {
-            $table->longText('reason')->nullable()->default("")->after('status');
-
+            $table->longText('reason')->nullable()->after('status');
         });
     }
 
