@@ -421,7 +421,7 @@
         $('#loader').removeClass('d-none');
         $.ajax({
             url: '{{ route('getUserPublicQuestions', ['id' => ':id']) }}'.replace(':id', user_id) + '?page=' +
-                page + '&search=' + search + '&sorting=' +
+                page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',

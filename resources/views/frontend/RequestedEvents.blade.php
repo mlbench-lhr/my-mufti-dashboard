@@ -274,7 +274,7 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getRequestedEvents') }}?page=' + page + '&search=' + search + '&sorting=' +
+            url: '{{ route('getRequestedEvents') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',

@@ -16,6 +16,7 @@ use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use App\Services\FcmService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -276,6 +277,9 @@ class EditProfile extends Controller
             $userQuery->all_question->each(function ($question) {
                 $fiqa = UserQuery::where('id', $question->query_id)->select('fiqa')->first();
                 $question->fiqa = $fiqa ? $fiqa->fiqa : "General";
+                if ($question->reason === null) {
+                    unset($question->reason);
+                }
             });
         });
 
@@ -359,60 +363,72 @@ class EditProfile extends Controller
         if (!$question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
-        $mufti = User::where('id', $question->mufti_id)->first();
-        if ($request->status == 1) {
-            $user = User::where('id', $question->user_id)->first();
 
-            $device_id = $user->device_id;
-            $title = "Question Request Update";
+        if ($request->status != 1 && $request->status != 2) {
+            return ResponseHelper::jsonResponse(true, 'Invalid Status!');
+        } else {
 
-            $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
-            $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
-            $messageType = "Question Accepted";
-            $otherData = "Question Accepted";
-            $notificationType = "0";
+            $mufti = User::where('id', $question->mufti_id)->first();
+            if ($request->status == 1) {
+                $user = User::where('id', $question->user_id)->first();
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                $device_id = $user->device_id;
+                $title = "Question Request Update";
+
+                $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
+                $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
+                $messageType = "Question Accepted";
+                $otherData = "Question Accepted";
+                $notificationType = "0";
+
+                if ($device_id != "") {
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                }
+                // $this->send_notification($device_id, $title, $notiBody, $messageType);
+                $data = [
+                    'user_id' => $user->id,
+                    'title' => $title,
+                    'body' => $body,
+                ];
+                Notification::create($data);
+
+                UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status]);
+
+                return ResponseHelper::jsonResponse(true, 'Question Status Updated');
+
             }
-            // $this->send_notification($device_id, $title, $notiBody, $messageType);
-            $data = [
-                'user_id' => $user->id,
-                'title' => $title,
-                'body' => $body,
-            ];
-            Notification::create($data);
+            if ($request->status == 2) {
+                $user = User::where('id', $question->user_id)->first();
+
+                $device_id = $user->device_id;
+                $title = "Question Request Update";
+                $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
+                $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
+                $messageType = "Question Rejected";
+                $otherData = "Question Rejected";
+                $notificationType = "0";
+
+                if ($device_id != "") {
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                }
+
+                // $this->send_notification($device_id, $title, $notiBody, $messageType);
+
+                $data = [
+                    'user_id' => $user->id,
+                    'title' => $title,
+                    'body' => $body,
+                ];
+                Notification::create($data);
+
+                UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status, 'reason' => $request->reason ? $request->reason : ""]);
+
+                return ResponseHelper::jsonResponse(true, 'Question Status Updated');
+
+            }
 
         }
-        if ($request->status == 2) {
-            $user = User::where('id', $question->user_id)->first();
 
-            $device_id = $user->device_id;
-            $title = "Question Request Update";
-            $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
-            $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
-            $messageType = "Question Rejected";
-            $otherData = "Question Rejected";
-            $notificationType = "0";
-
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
-
-            // $this->send_notification($device_id, $title, $notiBody, $messageType);
-
-            $data = [
-                'user_id' => $user->id,
-                'title' => $title,
-                'body' => $body,
-            ];
-            Notification::create($data);
-
-        }
-
-        UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status]);
-
-        return ResponseHelper::jsonResponse(true, 'Question Status Updated');
     }
     // get user profile
     public function my_all_queries(Request $request)

@@ -488,7 +488,7 @@
         $('#loader').removeClass('d-none');
         $.ajax({
             url: '{{ route('getEventsQuestions', ['id' => ':id']) }}'.replace(':id', event_id) + '?page=' +
-                page + '&search=' + search + '&sorting=' +
+                page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
