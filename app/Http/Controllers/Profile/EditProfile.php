@@ -16,6 +16,7 @@ use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use App\Services\FcmService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -276,6 +277,9 @@ class EditProfile extends Controller
             $userQuery->all_question->each(function ($question) {
                 $fiqa = UserQuery::where('id', $question->query_id)->select('fiqa')->first();
                 $question->fiqa = $fiqa ? $fiqa->fiqa : "General";
+                if ($question->reason === null) {
+                    unset($question->reason);
+                }
             });
         });
 
@@ -416,7 +420,6 @@ class EditProfile extends Controller
                     'body' => $body,
                 ];
                 Notification::create($data);
-
 
                 UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status, 'reason' => $request->reason ? $request->reason : ""]);
 
