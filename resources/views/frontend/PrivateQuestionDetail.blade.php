@@ -43,6 +43,12 @@
         flex-wrap: wrap;
 
     }
+
+    .tooltip-inner {
+        max-width: 1000px !important;
+        white-space: pre-wrap !important;
+        font-size: 15px !important;
+    }
 </style>
 @section('content')
     <!--begin::Header-->
@@ -86,7 +92,8 @@
             </div>
             <!--end::Page title=-->
             <div class="d-flex ">
-                <a href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{$user_id}}">
+                <a
+                    href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{ $user_id }}">
                     <button type="button" class="btn btn-danger w-100 text-uppercase"
                         style="background-color:#EA4335;">Delete</button>
                 </a>
@@ -136,22 +143,22 @@
                 <div class="col-9">
                     <div class="row">
                         @foreach ($detail->category as $data)
-                        <div class="col-3 badge badge-light fw-normal fs-4 ms-3 mb-3"
-                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
-                            {{$data}}
-                        </div>
+                            <div class="col-3 badge badge-light fw-normal fs-4 ms-3 mb-3"
+                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                {{ $data }}
+                            </div>
                         @endforeach
                     </div>
 
                 </div>
             </div>
-            
+
             <div class="row mb-5">
                 <div class="col-3 fs-2 fw-bold text-dark">
                     Fiqa
                 </div>
                 <div class="col-9 fs-2 fw-bold text-muted">
-                    {{$detail->fiqa}}
+                    {{ $detail->fiqa }}
                 </div>
             </div>
 
@@ -179,59 +186,65 @@
 
             <div class="row">
                 @foreach ($question_from as $row)
-                <div class="col-6 mb-6">
-                    <div class="box">
-                        <div class="row pb-5">
-                            <div class="col-9">
-                                <div class="d-flex">
-                                    @if ($row->mufti_detail->image == '')
-                                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
-                                                style="height: 80px; width:80px;" />
-                                        </div>
-                                    @else
-                                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                            <img src="{{ asset('public/storage/' . $row->mufti_detail->image) }}"
-                                                alt="image" style="height: 80px; width:80px; object-fit: cover;" />
-                                        </div>
-                                    @endif
-                                    <div class="ms-3">
-                                        <div class="fw-bold fs-3 text-success">
-                                           {{$row->mufti_detail->fiqa}}
-                                        </div>
-                                        <div class="fw-bolder fs-1 text-black pt-1">
-                                            {{$row->mufti_detail->name}}
-                                        </div>
-                                        <div class="text-muted fs-6 pt-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;">
-                                            @foreach ($row->mufti_detail['interests'] as $data)
-                                            {{ $data['interest'] }}
-                                            @if (!$loop->last)
-                                                ,
-                                            @endif
-                                        @endforeach
+                    <div class="col-6 mb-6">
+                        <div class="box">
+                            <div class="row pb-5">
+                                <div class="col-9">
+                                    <div class="d-flex">
+                                        @if ($row->mufti_detail->image == '')
+                                            <div
+                                                class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                                <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
+                                                    style="height: 80px; width:80px;" />
+                                            </div>
+                                        @else
+                                            <div
+                                                class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                                <img src="{{ asset('public/storage/' . $row->mufti_detail->image) }}"
+                                                    alt="image" style="height: 80px; width:80px; object-fit: cover;" />
+                                            </div>
+                                        @endif
+                                        <div class="ms-3">
+                                            <div class="fw-bold fs-3 text-success">
+                                                {{ $row->mufti_detail->fiqa }}
+                                            </div>
+                                            <div class="fw-bolder fs-1 text-black pt-1">
+                                                {{ $row->mufti_detail->name }}
+                                            </div>
+                                            <div class="text-muted fs-6 pt-1"
+                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;">
+                                                @foreach ($row->mufti_detail['interests'] as $data)
+                                                    {{ $data['interest'] }}
+                                                    @if (!$loop->last)
+                                                        ,
+                                                    @endif
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            @if ($row->status == 0)
-                            <div class="col-3 badge badge-light-warning fs-3 d-flex justify-content-end align-content-end" style="height:fit-content; width: fit-content;">
-                                Pending
-                            </div>
+                                @if ($row->status == 0)
+                                    <div class="col-3 badge badge-light-warning fs-3 d-flex justify-content-end align-content-end"
+                                        style="height:fit-content; width: fit-content;">
+                                        Pending
+                                    </div>
+                                @elseif($row->status == 1)
+                                    <div class="col-3 badge badge-light-success fs-3 d-flex justify-content-end align-content-end"
+                                        style="height:fit-content; width: fit-content;">
+                                        Accepted
+                                    </div>
+                                @else
+                                    <div class="col-3 badge badge-light-danger fs-3 d-flex justify-content-end align-content-end"
+                                        style="height:fit-content; width: fit-content;" data-bs-html="true"  data-bs-toggle="tooltip"
+                                        title="<strong>Reason:</strong> {{ $row->reason }}">
+                                        Rejected
+                                    </div>
+                                @endif
 
-                            @elseif($row->status == 1)
-                            <div class="col-3 badge badge-light-success fs-3 d-flex justify-content-end align-content-end" style="height:fit-content; width: fit-content;">
-                                Accepted
                             </div>
-                            @else
-                            <div class="col-3 badge badge-light-danger fs-3 d-flex justify-content-end align-content-end" style="height:fit-content; width: fit-content;">
-                                Rejected
-                            </div>
-                            @endif
-                           
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
             {{-- <div class=" d-flex justify-content-end pb-5">
@@ -245,6 +258,15 @@
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // Initialize all tooltips on the page with HTML support
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            html: true
+        });
+    });
+</script>
+<script>
     var question_id = @json($question_id);
     var currentPage = 1;
 
@@ -252,7 +274,7 @@
         $('#loader').removeClass('d-none');
         $.ajax({
             url: '{{ route('getQuestionComments', ['id' => ':id']) }}'.replace(':id', question_id) + '?page=' +
-                page + '&search=' + search + '&sorting=' +
+                page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',

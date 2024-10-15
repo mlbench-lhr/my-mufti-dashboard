@@ -379,7 +379,7 @@
         $('#loader').removeClass('d-none');
         $.ajax({
             url: '{{ route('getUserEventsRequests', ['id' => ':id']) }}'.replace(':id', user_id) + '?page=' +
-                page + '&search=' + search + '&sorting=' +
+                page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',

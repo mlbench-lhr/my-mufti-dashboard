@@ -163,7 +163,7 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getUsers') }}?page=' + page + '&search=' + search + '&sorting=' +
+            url: '{{ route('getUsers') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
