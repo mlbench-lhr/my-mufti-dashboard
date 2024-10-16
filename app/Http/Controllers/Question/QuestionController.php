@@ -261,7 +261,7 @@ class QuestionController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'All Public questions!',
+            'message' => 'User All Public questions!',
             'totalpages' => $totalPages,
             'data' => $questions->items(),
         ], 200);
