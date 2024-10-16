@@ -240,7 +240,7 @@
                         </td>
                         <td class="text-end">
                             <div class="fs-4 fw-bolder text-dark">
-                                <a href="{{ URL::to('ReportedQuestionDetail') }}/${row.question_id}?flag=3" class="link-success fw-bold">
+                                <a href="{{ URL::to('ReportedQuestionDetail') }}/${row.question_id}/${row.id}?flag=3" class="link-success fw-bold">
                                     View detail
                                 </a>
                             </div>

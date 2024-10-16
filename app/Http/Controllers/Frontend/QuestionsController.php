@@ -94,13 +94,11 @@ class QuestionsController extends Controller
         $type = $request->flag;
         $user_id = $request->uId;
         $question_id = $request->id;
+        $reported_id =$request->reportedId;
 
         $question = Question::where('id', $question_id)->first();
 
-        $reportedQuestion = ReportQuestion::where('question_id', $question_id)
-            ->with('user_detail')
-            ->first();
-
+        $reportedQuestion = ReportQuestion::where('id', $reported_id)->with('user_detail')->first();
         $totalVote = QuestionVote::where('question_id', $question_id)->count();
         $totalYesVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
         $totalNoVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();

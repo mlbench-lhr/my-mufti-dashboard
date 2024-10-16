@@ -183,11 +183,11 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
         }
     }
-
-    public function all_question(Request $request)
+    public function User_AllPublicQuestions(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
+            'search' => 'nullable|string',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -195,44 +195,60 @@ class QuestionController extends Controller
             return $validationError;
         }
 
-        $user = User::where('id', $request->user_id)->first();
+        $user = User::find($request->user_id);
 
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
+
         $page = $request->input('page', 1);
         $perPage = 10;
-        $totalPages = ceil(Question::all()->count() / $perPage);
 
-        $questions = Question::forPage($page, $perPage)
-            ->withCount([
-                'votes as totalYesVote' => function ($query) {
-                    $query->where('vote', 1);
-                },
-                'votes as totalNoVote' => function ($query) {
-                    $query->where('vote', 2);
-                },
-                'comments as comments_count',
-            ])
-            ->with('user_detail')->withCount('reports')->having('reports_count', '<', 10)
-            ->orderBy('created_at', 'DESC')
-            ->get()->makeHidden(['reports_count']);
+        $baseQuery = Question::withCount([
+            'votes as totalYesVote' => function ($query) {
+                $query->where('vote', 1);
+            },
+            'votes as totalNoVote' => function ($query) {
+                $query->where('vote', 2);
+            },
+            'comments as comments_count',
+        ])
+            ->with('user_detail')
+            ->withCount('reports')
+            ->having('reports_count', '<', 10)
+            ->where('user_id', $request->user_id)
+            ->orderBy('created_at', 'DESC');
+
+        if ($request->filled('search')) {
+            $searchTerm = trim($request->search);
+            $baseQuery->where('question', 'LIKE', '%' . $searchTerm . '%');
+        }
+        $totalPages = ceil($baseQuery->count() / $perPage);
+
+        $questions = $baseQuery->paginate($perPage, ['*'], 'page', $page);
+
+
+        if ($questions->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No questions found!',
+                'totalpages' => (int) 0,
+                'data' => []
+            ], 200);
+        }
 
         $questions->each(function ($question) use ($request) {
-            $currentUserVote = QuestionVote::where(['question_id' => $question->id, 'user_id' => $request->user_id])->first();
+            $question->current_user_vote = QuestionVote::where([
+                'question_id' => $question->id,
+                'user_id' => $request->user_id
+            ])->value('vote') ?? 0;
 
-            if (!$currentUserVote) {
-                $question->current_user_vote = 0;
-            } else if ($currentUserVote->vote == 1) {
-                $question->current_user_vote = 1;
-            } else if ($currentUserVote->vote == 2) {
-                $question->current_user_vote = 2;
-            }
-            $question->totalYesVote = (int) $question->totalYesVote ?? (int) 0;
-            $question->totalNoVote = (int) $question->totalNoVote ?? (int) 0;
-            $question->comments_count = (int) $question->comments_count ?? (int) 0;
+            $question->totalYesVote = (int) $question->totalYesVote;
+            $question->totalNoVote = (int) $question->totalNoVote;
+            $question->comments_count = (int) $question->comments_count;
+
+            unset($question->reports_count);
         });
-
         $userLikedQuestionIds = ReportQuestions::where('user_id', $request->user_id)
             ->whereIn('question_id', $questions->pluck('id'))
             ->pluck('question_id')
@@ -243,13 +259,98 @@ class QuestionController extends Controller
             return $question;
         });
 
-        $response = [
+        return response()->json([
             'status' => true,
             'message' => 'All Public questions!',
             'totalpages' => $totalPages,
-            'data' => $questions,
-        ];
-        return response()->json($response, 200);
+            'data' => $questions->items(),
+        ], 200);
+    }
+
+
+    public function all_question(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'search' => 'nullable|string',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $user = User::find($request->user_id);
+
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
+        }
+
+        $page = $request->input('page', 1);
+        $perPage = 10;
+
+        $baseQuery = Question::withCount([
+            'votes as totalYesVote' => function ($query) {
+                $query->where('vote', 1);
+            },
+            'votes as totalNoVote' => function ($query) {
+                $query->where('vote', 2);
+            },
+            'comments as comments_count',
+        ])
+            ->with('user_detail')
+            ->withCount('reports')
+            ->having('reports_count', '<', 10)
+            ->orderBy('created_at', 'DESC');
+
+        if ($request->filled('search')) {
+            $searchTerm = trim($request->search);
+            $baseQuery->where('question', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        $totalPages = ceil($baseQuery->count() / $perPage);
+
+
+        $questions = $baseQuery->paginate($perPage, ['*'], 'page', $page);
+
+
+        if ($questions->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No questions found!',
+                'totalpages' => (int) 0,
+                'data' => []
+            ], 200);
+        }
+
+        $questions->each(function ($question) use ($request) {
+            $question->current_user_vote = QuestionVote::where([
+                'question_id' => $question->id,
+                'user_id' => $request->user_id
+            ])->value('vote') ?? 0;
+
+            $question->totalYesVote = (int) $question->totalYesVote;
+            $question->totalNoVote = (int) $question->totalNoVote;
+            $question->comments_count = (int) $question->comments_count;
+
+            unset($question->reports_count);
+        });
+        $userLikedQuestionIds = ReportQuestions::where('user_id', $request->user_id)
+            ->whereIn('question_id', $questions->pluck('id'))
+            ->pluck('question_id')
+            ->toArray();
+
+        $questions->transform(function ($question) use ($userLikedQuestionIds) {
+            $question->is_reported = in_array($question->id, $userLikedQuestionIds);
+            return $question;
+        });
+
+        return response()->json([
+            'status' => true,
+            'message' => 'All Public questions!',
+            'totalpages' => $totalPages,
+            'data' => $questions->items(),
+        ], 200);
     }
 
     public function question_detail(Request $request)
@@ -696,6 +797,7 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
+        // Check if the question is already reported by this user
         $check = ReportQuestions::where([
             'user_id' => $request->user_id,
             'question_id' => $request->question_id,
