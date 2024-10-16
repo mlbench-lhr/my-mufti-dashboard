@@ -79,7 +79,7 @@ Route::group([
     Route::post('postQuestion', [QuestionController::class, 'post_question']);
     Route::post('voteQuestion', [QuestionController::class, 'vote_on_question']);
     Route::post('allQuestion', [QuestionController::class, 'all_question']);
-    Route::post('/UserAllPublicQuestions', [QuestionController::class, 'User_AllPublicQuestions']);
+    Route::post('/userAllPublicQuestions', [QuestionController::class, 'User_AllPublicQuestions']);
     Route::post('questionDetail', [QuestionController::class, 'question_detail']);
     Route::post('addComment', [QuestionController::class, 'add_comment']);
     Route::post('scholarReply', [QuestionController::class, 'scholar_reply']);
