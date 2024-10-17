@@ -12,6 +12,7 @@ use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use Illuminate\Http\Request;
 use App\Models\ReportQuestion;
+use App\Models\Mufti;
 
 
 
@@ -94,7 +95,7 @@ class QuestionsController extends Controller
         $type = $request->flag;
         $user_id = $request->uId;
         $question_id = $request->id;
-        $reported_id =$request->reportedId;
+        $reported_id = $request->reportedId;
 
         $question = Question::where('id', $question_id)->first();
 
@@ -173,10 +174,24 @@ class QuestionsController extends Controller
         $type = $request->flag;
         $user_id = $request->uId;
         $question_id = $request->id;
+
         $detail = UserQuery::with('questioned_by')->where('id', $question_id)->first();
-        $question_from = UserAllQuery::with('mufti_detail.interests')->where('query_id', $question_id)->get();
+
+        if (!$detail) {
+            return response()->json(['error' => 'Question not found'], 404);
+        }
+
+        $muftiOmarId = 9;
+
+        $question_from = UserAllQuery::with('mufti_detail.interests')
+            ->where('query_id', $question_id)
+            ->where('mufti_id', $muftiOmarId)
+            ->get();
+
         return view('frontend.PrivateQuestionDetail', compact('detail', 'question_id', 'question_from', 'type', 'user_id'));
     }
+
+
 
     public function delete_private_question(Request $request, $id)
     {
@@ -266,6 +281,4 @@ class QuestionsController extends Controller
 
         return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);
     }
-
-
 }

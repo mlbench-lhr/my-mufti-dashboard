@@ -323,7 +323,6 @@ class EventController extends Controller
         $scholar->delete();
 
         return ResponseHelper::jsonResponse(true, 'Scholar deleted Successfully!');
-
     }
 
     public function event_detail(Request $request)
@@ -417,7 +416,6 @@ class EventController extends Controller
 
         EventQuestion::create($data);
         return ResponseHelper::jsonResponse(true, 'Question Added Successfully!');
-
     }
 
     public function add_answer_on_event(Request $request)
@@ -452,7 +450,6 @@ class EventController extends Controller
 
         $question->update(['answer' => $request->answer]);
         return ResponseHelper::jsonResponse(true, 'Answer Added Successfully!');
-
     }
 
     public function past_upcoming_events(Request $request)
@@ -480,7 +477,6 @@ class EventController extends Controller
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
-
         }
         if ($request->flag == 2) {
             $upcomingEvents = Event::forPage($page, $perPage)->where('date', '>', $todayDate)->where('event_status', 1)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
@@ -527,7 +523,6 @@ class EventController extends Controller
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
-
         }
         if ($request->flag == 2) {
             $upcomingEvents = Event::forPage($page, $perPage)->where('date', '>', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
@@ -551,7 +546,6 @@ class EventController extends Controller
                 'data' => $allUserEvents,
             ];
             return response()->json($response, 200);
-
         }
     }
 
@@ -589,10 +583,15 @@ class EventController extends Controller
         }
 
         if ($request->flag == 1) {
-
-            $pastEvents = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where('event_status', 1)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }])->get();
+            $pastEvents = Event::where('date', '<', $todayDate)
+                ->where('event_status', 1)
+                ->orderBy('date', 'desc')
+                ->forPage($page, $perPage)
+                ->with('scholars', 'hosted_by.interests')
+                ->with(['event_questions' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }])
+                ->get();
 
             $pastEvents->each(function ($event) use ($request) {
                 // $eventCategories = $event->event_category;
@@ -602,7 +601,6 @@ class EventController extends Controller
                 $event->question_category = getCategoryCounts($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
-
             });
 
             $totalPastPages = ceil(Event::where('date', '<', $todayDate)->where('event_status', 1)->get()->count() / $perPage);
@@ -613,12 +611,17 @@ class EventController extends Controller
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
-
         }
         if ($request->flag == 2) {
-            $upcomingEvents = Event::forPage($page, $perPage)->where('date', '>', $todayDate)->where('event_status', 1)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }])->get();
+            $upcomingEvents = Event::where('date', '>', $todayDate)
+                ->where('event_status', 1)
+                ->orderBy('date', 'asc')
+                ->forPage($page, $perPage)
+                ->with('scholars', 'hosted_by.interests')
+                ->with(['event_questions' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }])
+                ->get();
 
             $upcomingEvents->each(function ($event) use ($request) {
                 // $eventCategories = $event->event_category;
@@ -628,7 +631,6 @@ class EventController extends Controller
                 $event->question_category = getCategoryCounts($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
-
             });
 
             $totalUpcomingPages = ceil(Event::where('date', '>', $todayDate)->where('event_status', 1)->get()->count() / $perPage);
@@ -683,9 +685,16 @@ class EventController extends Controller
         }
 
         if ($request->flag == 1) {
-            $pastEvents = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }])->get();
+            $pastEvents = Event::where('date', '<', $todayDate)
+                ->where(['event_status' => 1, 'user_id' => $request->user_id])
+                ->orderBy('date', 'desc')
+                ->forPage($page, $perPage)
+                ->with('scholars', 'hosted_by.interests')
+                ->with(['event_questions' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }])
+                ->get();
+
 
             $pastEvents->each(function ($event) use ($request) {
                 // $eventCategories = $event->event_category;
@@ -695,7 +704,6 @@ class EventController extends Controller
                 $event->question_category = getCategoryCounts1($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
-
             });
 
             $totalPastPages = ceil(Event::where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->get()->count() / $perPage);
@@ -706,13 +714,18 @@ class EventController extends Controller
                 'data' => $pastEvents,
             ];
             return response()->json($response, 200);
-
         }
         if ($request->flag == 2) {
+            $upcomingEvents = Event::where('date', '>', $todayDate)
+                ->where(['event_status' => 1, 'user_id' => $request->user_id])
+                ->orderBy('date', 'asc')
+                ->forPage($page, $perPage)
+                ->with('scholars', 'hosted_by.interests')
+                ->with(['event_questions' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }])
+                ->get();
 
-            $upcomingEvents = Event::forPage($page, $perPage)->where('date', '>', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }])->get();
 
             $upcomingEvents->each(function ($event) use ($request) {
                 // $eventCategories = $event->event_category;
@@ -722,7 +735,6 @@ class EventController extends Controller
                 $event->question_category = getCategoryCounts1($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
-
             });
 
             $totalUpcomingPages = ceil(Event::where('date', '>', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->get()->count() / $perPage);
@@ -747,7 +759,6 @@ class EventController extends Controller
                 $event->question_category = getCategoryCounts1($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
-
             });
 
             $totalEventsPages = ceil(Event::where(['event_status' => 2, 'user_id' => $request->user_id])->get()->count() / $perPage);
@@ -758,11 +769,9 @@ class EventController extends Controller
                 'data' => $allUserEvents,
             ];
             return response()->json($response, 200);
-
         } else {
             return ResponseHelper::jsonResponse(false, 'Invalid flag!');
         }
-
     }
 
     public function sava_unsave_event(Request $request)
@@ -790,7 +799,6 @@ class EventController extends Controller
         if ($save_event) {
             $save_event->delete();
             return ResponseHelper::jsonResponse(true, 'Event Unsave Successfully!');
-
         } else {
             $save = new SaveEvent;
             $save->create([
@@ -799,7 +807,6 @@ class EventController extends Controller
             ]);
 
             return ResponseHelper::jsonResponse(true, 'Event Save Successfully!');
-
         }
     }
 
@@ -864,7 +871,6 @@ class EventController extends Controller
             'data' => $userSaveEvents,
         ];
         return response()->json($response, 200);
-
     }
 
     public function search_event(Request $request)
@@ -921,7 +927,6 @@ class EventController extends Controller
             $query->where('user_id', $request->user_id);
 
             if ($request->flag == 3) {
-
             } else {
 
                 if ($request->flag == 1) {
@@ -968,7 +973,6 @@ class EventController extends Controller
         ];
 
         return response()->json($response, 200);
-
     }
 
     public function all_questions_belongs_to_events(Request $request)
@@ -1022,7 +1026,6 @@ class EventController extends Controller
             ];
 
             return response()->json($response, 200);
-
         } else {
             $eventQuestions = EventQuestion::with('user_detail:id,name,image')
                 ->withCount('likes')
@@ -1040,7 +1043,6 @@ class EventController extends Controller
 
             return response()->json($response, 200);
         }
-
     }
 
     public function all_category_belongs_to_events(Request $request)
@@ -1074,7 +1076,6 @@ class EventController extends Controller
         ];
 
         return response()->json($response, 200);
-
     }
 
     public function delete_event(Request $request)
@@ -1096,7 +1097,6 @@ class EventController extends Controller
         $event->delete();
 
         return ResponseHelper::jsonResponse(true, 'Event deleted Successfully!');
-
     }
 
     // send notification
@@ -1174,7 +1174,5 @@ class EventController extends Controller
         ];
         EventQuestionLike::create($data);
         return ResponseHelper::jsonResponse(true, 'Like Successfully');
-
     }
-
 }

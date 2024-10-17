@@ -514,6 +514,154 @@ class QuestionController extends Controller
         return ResponseHelper::jsonResponse(true, 'Reply added successfully!');
     }
 
+    // public function post_general_question(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'user_id' => 'required',
+    //         'mufti_id' => 'required',
+    //         'question' => 'required',
+    //     ]);
+
+    //     $validationError = ValidationHelper::handleValidationErrors($validator);
+    //     if ($validationError !== null) {
+    //         return $validationError;
+    //     }
+
+    //     $user = User::where('id', $request->user_id)->first();
+
+    //     if (!$user) {
+    //         return ResponseHelper::jsonResponse(false, 'User Not Found');
+    //     }
+    //     $mufti = User::where(['id' => $request->mufti_id, 'mufti_status' => 2])->first();
+
+    //     if (!$mufti) {
+    //         return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+    //     }
+    //     $categories = Interest::where('user_id', $request->mufti_id)->pluck('interest')->toArray();
+    //     $data = [
+    //         'user_id' => $request->user_id,
+    //         'question' => $request->question,
+    //         'fiqa' => "General",
+    //         'category' => $categories,
+    //     ];
+
+    //     $question = UserQuery::create($data);
+    //     if ($request->mufti_id == 9) {
+    //         $data2 = [
+    //             'query_id' => $question->id,
+    //             'user_id' => $request->user_id,
+    //             'mufti_id' => 9,
+    //             'question' => $request->question,
+    //         ];
+    //         $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
+
+    //         $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+    //         $device_id = $user->device_id;
+    //         $title = "Question Request Sent";
+
+    //         $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $messageType = "Question Request Sent";
+    //         $otherData = "personal question";
+    //         $notificationType = "1";
+
+    //         if ($device_id != "") {
+    //             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+    //         }
+
+    //         // $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+
+    //         $data = [
+    //             'user_id' => $user->id,
+    //             'title' => $title,
+    //             'body' => $body,
+    //         ];
+    //         Notification::create($data);
+    //         UserAllQuery::create($data2);
+    //         return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+    //     } elseif ($request->mufti_id != 9 && $request->user_id != 9) {
+
+    //         $data1 = [
+    //             'query_id' => $question->id,
+    //             'user_id' => $request->user_id,
+    //             'mufti_id' => $request->mufti_id,
+    //             'question' => $request->question,
+    //         ];
+    //         $data2 = [
+    //             'query_id' => $question->id,
+    //             'user_id' => $request->user_id,
+    //             'mufti_id' => 9,
+    //             'question' => $request->question,
+    //         ];
+
+    //         $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
+
+    //         $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
+
+    //         $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+
+    //         $device_id = $user->device_id;
+    //         $title = "Question Request Sent";
+
+    //         $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $messageType = "Question Request Sent";
+    //         $otherData = "personal question";
+    //         $notificationType = "1";
+
+    //         if ($device_id != "") {
+    //             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+    //         }
+
+    //         // $this->send_notification($device_id, $title, $notiBody, $messageType, $otherData, $notificationType);
+
+    //         $data = [
+    //             'user_id' => $user->id,
+    //             'title' => $title,
+    //             'body' => $body,
+    //         ];
+    //         Notification::create($data);
+
+    //         UserAllQuery::create($data1);
+    //         UserAllQuery::create($data2);
+
+    //         return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+    //     } elseif ($request->mufti_id != 9 && $request->user_id == 9) {
+    //         $data1 = [
+    //             'query_id' => $question->id,
+    //             'user_id' => $request->user_id,
+    //             'mufti_id' => $request->mufti_id,
+    //             'question' => $request->question,
+    //         ];
+
+    //         $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
+
+    //         $device_id = $user->device_id;
+    //         $title = "Question Request Sent";
+
+    //         $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $messageType = "Question Request Sent";
+    //         $otherData = "personal question";
+    //         $notificationType = "1";
+
+    //         if ($device_id != "") {
+    //             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+    //         }
+
+    //         // $this->send_notification($device_id, $title, $notiBody, $messageType, $otherData, $notificationType);
+
+    //         $data = [
+    //             'user_id' => $user->id,
+    //             'title' => $title,
+    //             'body' => $body,
+    //         ];
+    //         Notification::create($data);
+    //         UserAllQuery::create($data1);
+    //         return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+    //     }
+    // }
+
     public function post_general_question(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -528,16 +676,17 @@ class QuestionController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-
         if (!$user) {
-            return ResponseHelper::jsonResponse(false, 'User Not Found');
+            return ResponseHelper::jsonResponse(false, 'User  Not Found');
         }
-        $mufti = User::where(['id' => $request->mufti_id, 'mufti_status' => 2])->first();
 
+        $mufti_id = 9;
+        $mufti = User::where(['id' => $mufti_id, 'mufti_status' => 2])->first();
         if (!$mufti) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
-        $categories = Interest::where('user_id', $request->mufti_id)->pluck('interest')->toArray();
+
+        $categories = Interest::where('user_id', $mufti_id)->pluck('interest')->toArray();
         $data = [
             'user_id' => $request->user_id,
             'question' => $request->question,
@@ -546,121 +695,161 @@ class QuestionController extends Controller
         ];
 
         $question = UserQuery::create($data);
-        if ($request->mufti_id == 9) {
-            $data2 = [
-                'query_id' => $question->id,
-                'user_id' => $request->user_id,
-                'mufti_id' => 9,
-                'question' => $request->question,
-            ];
-            $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
 
-            $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
-            $device_id = $user->device_id;
-            $title = "Question Request Sent";
+        $data1 = [
+            'query_id' => $question->id,
+            'user_id' => $request->user_id,
+            'mufti_id' => $mufti_id,
+            'question' => $request->question,
+        ];
 
-            $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $messageType = "Question Request Sent";
-            $otherData = "personal question";
-            $notificationType = "1";
+        $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
 
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
+        $device_id = $user->device_id;
+        $title = "Question Request Sent";
+        $body = 'Your request for a private question to Mufti ' . $mufti->name . ' has been sent.';
+        $messageType = "Question Request Sent";
+        $otherData = "personal question";
+        $notificationType = "1";
 
-            // $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-
-            $data = [
-                'user_id' => $user->id,
-                'title' => $title,
-                'body' => $body,
-            ];
-            Notification::create($data);
-            UserAllQuery::create($data2);
-            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-        } elseif ($request->mufti_id != 9 && $request->user_id != 9) {
-
-            $data1 = [
-                'query_id' => $question->id,
-                'user_id' => $request->user_id,
-                'mufti_id' => $request->mufti_id,
-                'question' => $request->question,
-            ];
-            $data2 = [
-                'query_id' => $question->id,
-                'user_id' => $request->user_id,
-                'mufti_id' => 9,
-                'question' => $request->question,
-            ];
-
-            $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
-
-            $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
-
-            $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
-
-            $device_id = $user->device_id;
-            $title = "Question Request Sent";
-
-            $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $messageType = "Question Request Sent";
-            $otherData = "personal question";
-            $notificationType = "1";
-
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
-
-            // $this->send_notification($device_id, $title, $notiBody, $messageType, $otherData, $notificationType);
-
-            $data = [
-                'user_id' => $user->id,
-                'title' => $title,
-                'body' => $body,
-            ];
-            Notification::create($data);
-
-            UserAllQuery::create($data1);
-            UserAllQuery::create($data2);
-
-            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-        } elseif ($request->mufti_id != 9 && $request->user_id == 9) {
-            $data1 = [
-                'query_id' => $question->id,
-                'user_id' => $request->user_id,
-                'mufti_id' => $request->mufti_id,
-                'question' => $request->question,
-            ];
-
-            $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
-
-            $device_id = $user->device_id;
-            $title = "Question Request Sent";
-
-            $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-            $messageType = "Question Request Sent";
-            $otherData = "personal question";
-            $notificationType = "1";
-
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
-
-            // $this->send_notification($device_id, $title, $notiBody, $messageType, $otherData, $notificationType);
-
-            $data = [
-                'user_id' => $user->id,
-                'title' => $title,
-                'body' => $body,
-            ];
-            Notification::create($data);
-            UserAllQuery::create($data1);
-            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
+
+        $notificationData = [
+            'user_id' => $user->id,
+            'title' => $title,
+            'body' => $body,
+        ];
+        Notification::create($notificationData);
+
+        UserAllQuery::create($data1);
+
+        return ResponseHelper::jsonResponse(true, 'Added question successfully!');
     }
+    // public function post_fiqa_wise_question(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'user_id' => 'required',
+    //         'fiqa' => 'required',
+    //         'question' => 'required',
+    //         'category' => 'required',
+    //     ]);
+
+    //     $validationError = ValidationHelper::handleValidationErrors($validator);
+    //     if ($validationError !== null) {
+    //         return $validationError;
+    //     }
+
+    //     $user = User::where('id', $request->user_id)->first();
+    //     if (!$user) {
+    //         return ResponseHelper::jsonResponse(false, 'User Not Found');
+    //     }
+
+    //     $muftisUser = User::where('mufti_status', 2)->inRandomOrder()->limit(5)->pluck('id')->toArray();
+
+    //     $valueToRemove = 9;
+
+    //     $filteredArray = array_filter($muftisUser, function ($item) use ($valueToRemove) {
+    //         return $item !== $valueToRemove;
+    //     });
+
+    //     $muftisUser = array_values($filteredArray);
+
+    //     $muftis = Interest::whereIn('user_id', $muftisUser)->where(['fiqa' => $request->fiqa, 'interest' => $request->category])->distinct()->inRandomOrder()->limit(5)->pluck('user_id')->toArray();
+
+    //     $data = [
+    //         'user_id' => $request->user_id,
+    //         'question' => $request->question,
+    //         'fiqa' => $request->fiqa,
+    //         'category' => (array) $request->category,
+    //     ];
+
+    //     $muftiDeviceId = User::whereIn('id', $muftisUser)->select('id', 'device_id')->get();
+
+    //     $muftiDeviceId->each(function ($value) use ($user) {
+    //         $this->send($value->device_id, "Asked Question", $user->name, $value->id);
+    //     });
+
+    //     $question = UserQuery::create($data);
+
+    //     if (count($muftis) <= 0) {
+    //         if ($request->user_id == 9) {
+    //             return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+    //         }
+
+    //         $data2 = [
+    //             'query_id' => $question->id,
+    //             'user_id' => $request->user_id,
+    //             'mufti_id' => 9,
+    //             'question' => $request->question,
+    //         ];
+
+    //         $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
+    //         $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+
+    //         UserAllQuery::create($data2);
+
+    //         return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+    //     }
+
+    //     if ($request->user_id == 9) {
+
+    //         $questionId = $question->id;
+    //         collect($muftis)->map(function ($value) use ($request, $questionId) {
+    //             return [
+    //                 'query_id' => $questionId,
+    //                 'user_id' => $request->user_id,
+    //                 'mufti_id' => $value,
+    //                 'question' => $request->question,
+    //             ];
+    //         })->each(function ($data) {
+    //             UserAllQuery::create($data);
+    //         });
+
+    //         return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+    //     } else {
+    //         // dd('numan');
+    //         $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
+
+    //         $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+
+    //         $data2 = [
+    //             'query_id' => $question->id,
+    //             'user_id' => $request->user_id,
+    //             'mufti_id' => 9,
+    //             'question' => $request->question,
+    //         ];
+    //         UserAllQuery::create($data2);
+
+    //         $questionId = $question->id;
+    //         collect($muftis)->map(function ($value) use ($request, $questionId) {
+    //             return [
+    //                 'query_id' => $questionId,
+    //                 'user_id' => $request->user_id,
+    //                 'mufti_id' => $value,
+    //                 'question' => $request->question,
+    //             ];
+    //         })->each(function ($data) {
+    //             UserAllQuery::create($data);
+    //         });
+
+    //         $device_id = $user->device_id;
+    //         $title = "Question Request Sent";
+    //         $notiBody = 'Your request for private question to has been sent.';
+    //         $body = 'Your request for private question to has been sent.';
+    //         $messageType = "Question Request Sent";
+    //         $otherData = "personal question";
+    //         $notificationType = "1";
+
+    //         if ($device_id != "") {
+    //             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+    //         }
+
+    //         return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+    //     }
+    // }
+
     public function post_fiqa_wise_question(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -680,109 +869,53 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $muftisUser = User::where('mufti_status', 2)->inRandomOrder()->limit(5)->pluck('id')->toArray();
-
-        $valueToRemove = 9;
-
-        $filteredArray = array_filter($muftisUser, function ($item) use ($valueToRemove) {
-            return $item !== $valueToRemove;
-        });
-
-        $muftisUser = array_values($filteredArray);
-
-        $muftis = Interest::whereIn('user_id', $muftisUser)->where(['fiqa' => $request->fiqa, 'interest' => $request->category])->distinct()->inRandomOrder()->limit(5)->pluck('user_id')->toArray();
+        $mufti_id = 9;
+        $mufti = User::where(['id' => $mufti_id, 'mufti_status' => 2])->first();
+        if (!$mufti) {
+            return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+        }
 
         $data = [
             'user_id' => $request->user_id,
             'question' => $request->question,
             'fiqa' => $request->fiqa,
-            'category' => (array) $request->category,
+            'category' => (array)$request->category,
         ];
-
-        $muftiDeviceId = User::whereIn('id', $muftisUser)->select('id', 'device_id')->get();
-
-        $muftiDeviceId->each(function ($value) use ($user) {
-            $this->send($value->device_id, "Asked Question", $user->name, $value->id);
-        });
 
         $question = UserQuery::create($data);
 
-        if (count($muftis) <= 0) {
-            if ($request->user_id == 9) {
-                return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-            }
+        $data2 = [
+            'query_id' => $question->id,
+            'user_id' => $request->user_id,
+            'mufti_id' => $mufti_id,
+            'question' => $request->question,
+        ];
 
-            $data2 = [
-                'query_id' => $question->id,
-                'user_id' => $request->user_id,
-                'mufti_id' => 9,
-                'question' => $request->question,
-            ];
+        $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
 
-            $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
-            $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
+        UserAllQuery::create($data2);
 
-            UserAllQuery::create($data2);
+        $device_id = $user->device_id;
+        $title = "Question Request Sent";
+        $body = 'Your request for a private question to Mufti ' . $mufti->name . ' has been sent.';
+        $messageType = "Question Request Sent";
+        $otherData = "personal question";
+        $notificationType = "1";
 
-            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
-        if ($request->user_id == 9) {
+        $notificationData = [
+            'user_id' => $user->id,
+            'title' => $title,
+            'body' => $body,
+        ];
+        Notification::create($notificationData);
 
-            $questionId = $question->id;
-            collect($muftis)->map(function ($value) use ($request, $questionId) {
-                return [
-                    'query_id' => $questionId,
-                    'user_id' => $request->user_id,
-                    'mufti_id' => $value,
-                    'question' => $request->question,
-                ];
-            })->each(function ($data) {
-                UserAllQuery::create($data);
-            });
-
-            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-        } else {
-            // dd('numan');
-            $defaultMufti = User::where(['id' => 9, 'mufti_status' => 2])->first();
-
-            $this->send($defaultMufti->device_id, "Asked Question", $user->name, $defaultMufti->id);
-
-            $data2 = [
-                'query_id' => $question->id,
-                'user_id' => $request->user_id,
-                'mufti_id' => 9,
-                'question' => $request->question,
-            ];
-            UserAllQuery::create($data2);
-
-            $questionId = $question->id;
-            collect($muftis)->map(function ($value) use ($request, $questionId) {
-                return [
-                    'query_id' => $questionId,
-                    'user_id' => $request->user_id,
-                    'mufti_id' => $value,
-                    'question' => $request->question,
-                ];
-            })->each(function ($data) {
-                UserAllQuery::create($data);
-            });
-
-            $device_id = $user->device_id;
-            $title = "Question Request Sent";
-            $notiBody = 'Your request for private question to has been sent.';
-            $body = 'Your request for private question to has been sent.';
-            $messageType = "Question Request Sent";
-            $otherData = "personal question";
-            $notificationType = "1";
-
-            if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-            }
-
-            return ResponseHelper::jsonResponse(true, 'Added question successfully!');
-        }
+        return ResponseHelper::jsonResponse(true, 'Added question successfully!');
     }
+
     public function report_question(Request $request)
     {
         $user = User::find($request->user_id);
