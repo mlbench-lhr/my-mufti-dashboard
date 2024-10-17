@@ -705,6 +705,7 @@ class EventController extends Controller
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
             });
+            // comment added by ammar;
 
             $totalPastPages = ceil(Event::where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->get()->count() / $perPage);
             $response = [
