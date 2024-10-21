@@ -32,7 +32,6 @@ class FcmService
             'question_id' => $questionId,
         ];
 
-        // Create the CloudMessage with notification and data payloads
         $message = CloudMessage::withTarget('token', $deviceToken)
             ->withNotification($notification)
             ->withData($data)
@@ -42,6 +41,18 @@ class FcmService
             ->withApnsConfig([
                 'headers' => [
                     'apns-priority' => '10',
+                    'apns-push-type' => 'alert',
+                ],
+                'payload' => [
+                    'aps' => [
+                        'alert' => [
+                            'title' => $title,
+                            'body' => $body,
+                        ],
+                        'sound' => 'default',
+                        'badge' => 1,
+                        'content-available' => 1,
+                    ],
                 ],
             ]);
 
