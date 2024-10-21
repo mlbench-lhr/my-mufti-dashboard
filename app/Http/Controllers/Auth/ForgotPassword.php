@@ -27,7 +27,6 @@ class ForgotPassword extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
-        // generate random code
         $otp_code = mt_rand(1000, 9999);
         $user = User::where('email', $request->email)->update(['email_code' => $otp_code]);
         if ($user) {

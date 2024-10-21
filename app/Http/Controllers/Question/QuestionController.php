@@ -129,7 +129,6 @@ class QuestionController extends Controller
         $voteQuestion = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id])->first();
 
         $questionId = $request->question_id;
-        // dd(gettype($question_id));
 
         if ($questionVote) {
             return ResponseHelper::jsonResponse(false, 'Voted Already at this question');
@@ -151,7 +150,6 @@ class QuestionController extends Controller
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
                 }
 
-                // $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
 
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
@@ -176,7 +174,6 @@ class QuestionController extends Controller
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
                 }
 
-                // $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
 
             }
 
@@ -457,7 +454,6 @@ class QuestionController extends Controller
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
 
-            // $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
 
         }
         $comment = QuestionComment::create($data);
@@ -509,7 +505,6 @@ class QuestionController extends Controller
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
         }
 
-        // $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
 
         return ResponseHelper::jsonResponse(true, 'Reply added successfully!');
     }
@@ -569,8 +564,6 @@ class QuestionController extends Controller
     //             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
     //         }
 
-    //         // $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType);
-
     //         $data = [
     //             'user_id' => $user->id,
     //             'title' => $title,
@@ -613,8 +606,6 @@ class QuestionController extends Controller
     //             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
     //         }
 
-    //         // $this->send_notification($device_id, $title, $notiBody, $messageType, $otherData, $notificationType);
-
     //         $data = [
     //             'user_id' => $user->id,
     //             'title' => $title,
@@ -648,8 +639,6 @@ class QuestionController extends Controller
     //         if ($device_id != "") {
     //             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
     //         }
-
-    //         // $this->send_notification($device_id, $title, $notiBody, $messageType, $otherData, $notificationType);
 
     //         $data = [
     //             'user_id' => $user->id,
@@ -930,7 +919,6 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
-        // Check if the question is already reported by this user
         $check = ReportQuestions::where([
             'user_id' => $request->user_id,
             'question_id' => $request->question_id,
@@ -966,7 +954,6 @@ class QuestionController extends Controller
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
-        // $this->send_notification($device_id, $title, $notiBody, $messageType, $otherData, $notificationType);
 
         $data = [
             'user_id' => $muftiId,
@@ -976,50 +963,5 @@ class QuestionController extends Controller
         Notification::create($data);
     }
 
-    // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type, $other_data, $notification_type, $question_id = 0)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        // server key
-        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
-
-        $headers = [
-            'Content-Type:application/json',
-            'Authorization:key=' . $serverKey,
-        ];
-
-        // notification content
-        $notification = [
-            'title' => $notifTitle,
-            'body' => $notiBody,
-        ];
-        // optional
-        $dataPayLoad = [
-            'to' => '/topics/test',
-            'date' => '2019-01-01',
-            'other_data' => $other_data,
-            'message_Type' => $message_type,
-            'notification_type' => $notification_type,
-            'question_id' => $question_id,
-        ];
-
-        // create Api body
-        $notifbody = [
-            'notification' => $notification,
-            'data' => $dataPayLoad,
-            'time_to_live' => 86400,
-            'to' => $device_id,
-            // 'registration_ids' => $arr,
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $result = curl_exec($ch);
-
-        curl_close($ch);
-    }
+  
 }

@@ -386,7 +386,6 @@ class EditProfile extends Controller
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                 }
-                // $this->send_notification($device_id, $title, $notiBody, $messageType);
                 $data = [
                     'user_id' => $user->id,
                     'title' => $title,
@@ -414,7 +413,6 @@ class EditProfile extends Controller
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                 }
 
-                // $this->send_notification($device_id, $title, $notiBody, $messageType);
 
                 $data = [
                     'user_id' => $user->id,
@@ -530,7 +528,6 @@ class EditProfile extends Controller
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
-        // $this->send_notification($device_id, $title, $notiBody, $messageType);
 
         $data = [
             'user_id' => $mufti->id,
@@ -565,9 +562,6 @@ class EditProfile extends Controller
         $userType = $user->user_type;
         $status = $user->mufti_status;
 
-        // $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
-        //     ->where('user_id', $request->user_id)->orWhere('mufti_id', $request->user_id)->orderBy('created_at', 'desc')->get();
-
         $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
             ->where('user_id', $request->user_id)
             ->orWhere('mufti_id', $request->user_id)
@@ -582,50 +576,5 @@ class EditProfile extends Controller
             ],
             200
         );
-    }
-    // send notification
-    public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        // server key
-        $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
-
-        $headers = [
-            'Content-Type:application/json',
-            'Authorization:key=' . $serverKey,
-        ];
-
-        // notification content
-        $notification = [
-            'title' => $notifTitle,
-            'body' => $notiBody,
-        ];
-        // optional
-        $dataPayLoad = [
-            'to' => '/topics/test',
-            'date' => '2019-01-01',
-            'other_data' => 'Request Notification',
-            'message_Type' => $message_type,
-            'notification_type' => "0",
-        ];
-
-        // create Api body
-        $notifbody = [
-            'notification' => $notification,
-            'data' => $dataPayLoad,
-            'time_to_live' => 86400,
-            'to' => $device_id,
-            // 'registration_ids' => $arr,
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $result = curl_exec($ch);
-
-        curl_close($ch);
     }
 }

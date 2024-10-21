@@ -59,7 +59,6 @@ class EventsAndApptController extends Controller
     }
 
     // Events
-
     public function all_events()
     {
         $events = Event::where('event_status', 1)->get();
@@ -167,7 +166,6 @@ class EventsAndApptController extends Controller
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
             }
 
-            // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
             $data = [
                 'user_id' => $user_data->id,
@@ -176,7 +174,6 @@ class EventsAndApptController extends Controller
             ];
             Notification::create($data);
 
-            // $eventScholars = EventScholar::where('event_id', $request->id)->pluck('user_id')->toArray();
             $eventScholars = EventScholar::where('event_id', $request->id)
                 ->pluck('user_id')
                 ->filter(function ($value) {
@@ -197,7 +194,6 @@ class EventsAndApptController extends Controller
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                 }
 
-                // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
                 $data = [
                     'user_id' => $user->id,
@@ -219,8 +215,6 @@ class EventsAndApptController extends Controller
                 'message' => 'Event date is passed, you are unable to accept the event.',
             );
         }
-        // return back();
-        // echo json_encode($data);
         return response()->json($data);
     }
 
@@ -245,7 +239,6 @@ class EventsAndApptController extends Controller
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
-        // $this->send_notification($device_id, $notifTitle, $notiBody, $message_type);
 
         $data = [
             'user_id' => $user->id,
@@ -256,50 +249,4 @@ class EventsAndApptController extends Controller
 
         return back();
     }
-
-    // send notification
-    // public function send_notification($device_id, $notifTitle, $notiBody, $message_type)
-    // {
-    //     $url = 'https://fcm.googleapis.com/fcm/send';
-    //     // server key
-    //     $serverKey = 'AAAAnAue4jY:APA91bHIxmuujE5JyCVtm9i6rci5o9i3mQpijhqzCCQYUuwLPqwtKSU9q47u3Q2iUDiOaxN7-WMoOH-qChlvSec5rqXW2WthIXaV4lCi4Ps00qmLLFeI-VV8O_hDyqV6OqJRpL1n-k_e';
-
-    //     $headers = [
-    //         'Content-Type:application/json',
-    //         'Authorization:key=' . $serverKey,
-    //     ];
-
-    //     // notification content
-    //     $notification = [
-    //         'title' => $notifTitle,
-    //         'body' => $notiBody,
-    //     ];
-    //     // optional
-    //     $dataPayLoad = [
-    //         'to' => '/topics/test',
-    //         'date' => '2019-01-01',
-    //         'other_data' => 'meeting',
-    //         'message_Type' => $message_type,
-    //         // 'notification' => $notification,
-    //     ];
-
-    //     // create Api body
-    //     $notifbody = [
-    //         'notification' => $notification,
-    //         'data' => $dataPayLoad,
-    //         'time_to_live' => 86400,
-    //         'to' => $device_id,
-    //         // 'registration_ids' => $arr,
-    //     ];
-    //     $ch = curl_init();
-    //     curl_setopt($ch, CURLOPT_URL, $url);
-    //     curl_setopt($ch, CURLOPT_POST, true);
-    //     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notifbody));
-    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    //     $result = curl_exec($ch);
-
-    //     curl_close($ch);
-    // }
 }

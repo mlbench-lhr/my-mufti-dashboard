@@ -72,7 +72,6 @@ class QuestionsController extends Controller
 
         $question->scholar_reply = $scholar_reply;
 
-        // dd($question);
         return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id'));
     }
 
@@ -128,11 +127,8 @@ class QuestionsController extends Controller
     public function delete_public_question(Request $request, $id)
     {
         $question = Question::where('id', $id)->first();
-        // delete question comments
         $comments = QuestionComment::where('question_id', $id)->delete();
-        // delete question votes
         $vote = QuestionVote::where('question_id', $id)->delete();
-        // delete scholars reply
         $scholar_reply = ScholarReply::where('question_id', $id)->delete();
         ReportQuestion::where('question_id', $id)->delete();
 
