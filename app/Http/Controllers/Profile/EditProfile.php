@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use App\Services\FcmService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -80,16 +81,15 @@ class EditProfile extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        // decode the base64 image
-        $base64File = request('image');
 
-        // store orignal image
-        $fileData = base64_decode($base64File);
-
-        $name = 'users_profile/' . Str::random(15) . '.png';
-
-        Storage::put('public/' . $name, $fileData);
-
+        try {
+            $base64File = request('image');
+            $fileData = base64_decode($base64File);
+            $name = 'users_profile/' . Str::random(15) . '.png';
+            Storage::put('public/' . $name, $fileData);
+        } catch (Exception $e) {
+            return ResponseHelper::jsonResponse(false, 'An error occurred while uploading the image: ' . $e->getMessage());
+        }
         // update the user's profile_pic
         $user->image = $name;
         $user->save();
@@ -413,7 +413,6 @@ class EditProfile extends Controller
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                 }
 
-
                 $data = [
                     'user_id' => $user->id,
                     'title' => $title,
@@ -527,7 +526,6 @@ class EditProfile extends Controller
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
-
 
         $data = [
             'user_id' => $mufti->id,
