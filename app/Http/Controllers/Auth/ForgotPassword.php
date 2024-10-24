@@ -10,6 +10,7 @@ use App\Http\Requests\VerifyOTPRequest;
 use App\Mail\GenerateOTPMail;
 use App\Models\Interest;
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -29,6 +30,7 @@ class ForgotPassword extends Controller
         }
         $otp_code = mt_rand(1000, 9999);
         $user = User::where('email', $request->email)->update(['email_code' => $otp_code]);
+        // $user = Admin::where('email', $request->email)->update(['email_code' => $otp_code]);
         if ($user) {
             $main_data = ['message' => $otp_code];
             Mail::to($request->email)->send(new GenerateOTPMail($main_data));

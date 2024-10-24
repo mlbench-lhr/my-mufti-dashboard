@@ -148,7 +148,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="fs-2 fw-bolder text-dark pb-2">
+                    <div class="fs-2 fw-bolder text-dark pb-2"> 
                         Reported By
                     </div>
                     <div class="d-flex align-items-center pb-5">

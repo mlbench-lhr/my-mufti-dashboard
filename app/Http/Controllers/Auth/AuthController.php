@@ -343,13 +343,11 @@ class AuthController extends Controller
         $user = User::where('id', $request->user_id)->first();
 
         if (!$user) {
-            return ResponseHelper::jsonResponse(false, 'User Not Found');
+            return ResponseHelper::jsonResponse(false, 'User  Not Found');
         }
+        $user->update(['device_id' => '']);
 
-        $user = User::where('id', $request->user_id)->first();
-        // $user->update(['device_id' => '']);
         return ResponseHelper::jsonResponse(true, 'Logout Profile Successfully!');
-
     }
     // for stripe payment
     public function payment_record_test(Request $request)

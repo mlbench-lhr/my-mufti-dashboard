@@ -705,6 +705,7 @@ class QuestionController extends Controller
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
+
         $notificationData = [
             'user_id' => $user->id,
             'title' => $title,
@@ -963,5 +964,5 @@ class QuestionController extends Controller
         Notification::create($data);
     }
 
-  
+
 }
