@@ -461,7 +461,6 @@ class EditProfile extends Controller
             200
         );
     }
-    // delete user account
     public function delete_account(Request $request)
     {
 
@@ -486,6 +485,22 @@ class EditProfile extends Controller
 
         }
     }
+
+    public function deleteSpecificUsers(Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+        ]);
+
+        $userIds = $request->input('user_ids');
+        UserAllQuery::whereIn('user_id', $userIds)->delete();
+
+        User::whereIn('id', $userIds)->delete();
+
+        return ResponseHelper::jsonResponse(true, 'Users and their associated records deleted successfully!');
+    }
+
+
     public function book_an_appointment(BookAppointment $request)
     {
 

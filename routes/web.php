@@ -71,6 +71,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('PrivateQuestionDetail/{id}', [QuestionsController::class, 'private_question_detail'])->name('PrivateQuestionDetail');
     Route::get('DeletePrivateQuestion/{id}', [QuestionsController::class, 'delete_private_question'])->name('DeletePrivateQuestion');
 
+
     // Appointments & Events
     Route::get('AllAppointments', [EventsAndApptController::class, 'all_appointments'])->name('AllAppointments');
     Route::get('getAppts', [EventsAndApptController::class, 'get_all_appointments'])->name('getAppts');

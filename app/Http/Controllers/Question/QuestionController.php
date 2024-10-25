@@ -149,7 +149,6 @@ class QuestionController extends Controller
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
                 }
-
             }
 
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
@@ -173,8 +172,6 @@ class QuestionController extends Controller
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
                 }
-
-
             }
 
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
@@ -453,8 +450,6 @@ class QuestionController extends Controller
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
-
-
         }
         $comment = QuestionComment::create($data);
 
@@ -962,6 +957,22 @@ class QuestionController extends Controller
             'body' => $body,
         ];
         Notification::create($data);
+    }
+    public function deleteAllPrivateQuestionsByUserIds(Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+        ]);
+
+        $questionIds = UserQuery::whereIn('user_id', $request->user_ids)->pluck('id');
+
+        if ($questionIds->isEmpty()) {
+            return response()->json(['message' => 'No questions found for the provided user IDs.'], 200);
+        }
+
+        UserAllQuery::whereIn('query_id', $questionIds)->delete();
+        UserQuery::whereIn('id', $questionIds)->delete();
+        return response()->json(['message' => 'All private questions for specified users have been deleted.'], 200);
     }
 
 
