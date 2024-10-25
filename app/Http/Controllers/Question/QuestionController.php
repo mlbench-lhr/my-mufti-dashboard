@@ -964,16 +964,14 @@ class QuestionController extends Controller
             'user_ids' => 'required|array',
         ]);
 
-        $questionIds = UserQuery::whereIn('user_id', $request->user_ids)->pluck('id');
-
-        if ($questionIds->isEmpty()) {
-            return response()->json(['message' => 'No questions found for the provided user IDs.'], 200);
+        if (empty($request->user_ids)) {
+            return response()->json(['message' => 'No user IDs provided.'], 200);
         }
-
-        UserAllQuery::whereIn('query_id', $questionIds)->delete();
-        UserQuery::whereIn('id', $questionIds)->delete();
+        $ids = $request->user_ids;
+        $userquestion= UserQuery::whereIn('user_id',$ids)->pluck('id')->toArray();
+        UserAllQuery::whereIn('query_id',$userquestion)->delete();
+        UserQuery::whereIn('user_id',$ids)->delete();
         return response()->json(['message' => 'All private questions for specified users have been deleted.'], 200);
     }
-
 
 }

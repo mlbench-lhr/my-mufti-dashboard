@@ -51,7 +51,6 @@ Route::group([
     Route::put('/updatePassword', [EditProfile::class, 'update_password']);
     Route::post('/helpFeedback', [EditProfile::class, 'help_feedback']);
     Route::post('/delete', [EditProfile::class, 'delete_account']);
-    Route::post('/delete-specific-users', [EditProfile::class, 'deleteSpecificUsers']);
     Route::post('/userQueries', [EditProfile::class, 'my_queries']);
     Route::post('/userAllQueries', [EditProfile::class, 'my_all_queries']);
     Route::post('/askForMe', [EditProfile::class, 'ask_for_me']);
