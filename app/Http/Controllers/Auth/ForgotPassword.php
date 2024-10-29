@@ -76,7 +76,7 @@ class ForgotPassword extends Controller
         if ($user !== null) {
             $user->password = Hash::make($request->password);
             $user->save();
-            return ResponseHelper::jsonResponse(true, 'Password update successfully');
+            return ResponseHelper::jsonResponse(true, 'Reset Password Successfully');
 
         } else {
 

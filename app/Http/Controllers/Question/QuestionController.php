@@ -390,21 +390,30 @@ class QuestionController extends Controller
 
         $question->user_detail = User::where('id', $question->user_id)->select('name', 'image')->first();
 
-        $question->comments = QuestionComment::with('user_detail')->where('question_id', $question->id)->get();
+        $page = $request->input('page', 1);
+        $perPage = 20;
+
+        $baseQuery = QuestionComment::with('user_detail')
+            ->where('question_id', $question->id);
+
+        $totalComments = $baseQuery->count();
+        $totalPages = ceil($totalComments / $perPage);
+
+        $paginatedComments = $baseQuery->paginate($perPage, ['*'], 'page', $page);
+
+        $question->comments = $paginatedComments->items();
+
+
         $scholar_reply = ScholarReply::with('user_detail')->where('question_id', $question->id)->first();
-        if ($scholar_reply) {
-            $question->scholar_reply = $scholar_reply;
-        } else {
-            $question->scholar_reply = (object) [];
-        }
-
-
+        $question->scholar_reply = $scholar_reply ? $scholar_reply : (object) [];
 
         $response = [
             'status' => true,
-            'message' => 'question detail!',
+            'message' => 'Question detail!',
+            'total_pages' => $totalPages,
             'data' => $question,
         ];
+
         return response()->json($response, 200);
     }
 
@@ -968,10 +977,9 @@ class QuestionController extends Controller
             return response()->json(['message' => 'No user IDs provided.'], 200);
         }
         $ids = $request->user_ids;
-        $userquestion= UserQuery::whereIn('user_id',$ids)->pluck('id')->toArray();
-        UserAllQuery::whereIn('query_id',$userquestion)->delete();
-        UserQuery::whereIn('user_id',$ids)->delete();
+        $userquestion = UserQuery::whereIn('user_id', $ids)->pluck('id')->toArray();
+        UserAllQuery::whereIn('query_id', $userquestion)->delete();
+        UserQuery::whereIn('user_id', $ids)->delete();
         return response()->json(['message' => 'All private questions for specified users have been deleted.'], 200);
     }
-
 }

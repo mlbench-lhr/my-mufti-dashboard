@@ -8,7 +8,6 @@ use App\Models\UserAllQuery;
 
 class DeleteUserQuestions extends Command
 {
-    // Define the name and description of your command
     protected $signature = 'questions:delete';
     protected $description = 'Delete all questions for specific users';
 
