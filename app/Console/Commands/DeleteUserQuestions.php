@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Console\Commands;
-
-use App\Http\Requests\ReportQuestion;
+use App\Models\ReportQuestion; 
 use App\Models\AdminReply;
 use App\Models\ScholarReply;
 use Illuminate\Console\Command;
