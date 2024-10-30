@@ -19,7 +19,7 @@ class DeleteUserQuestions extends Command
 
     public function handle()
     {
-        $specificUserIds = [380, 385, 253, 15, 206, 269, 24, 285, 9, 76, 348, 243];
+        $specificUserIds = [380, 385, 253, 15, 206, 269, 24, 285, 9, 76, 348, 243,28];
 
         $questions = UserQuery::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
         $public_questions = Question::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
