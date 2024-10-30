@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Question;
 
 class AdminReply extends Model
 {
@@ -28,5 +29,10 @@ class AdminReply extends Model
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id', 'name', 'image', 'fiqa');
+    }
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
     }
 }

@@ -29,6 +29,7 @@
     <link href="{{ ' ../../public/frontend/css/style.bundle.css ' }}" rel="stylesheet" type="text/css" />
 </head>
 <!--end::Head-->
+
 <!--begin::Javascript-->
 <!--begin::Global Javascript Bundle(used by all pages)-->
 <script src="{{ ' ../../public/frontend/js/custom/pages/projects/list/list.js' }}"></script>

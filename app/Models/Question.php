@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\QuestionVote;
 use App\Models\QuestionComment;
+use App\Models\AdminReply;
 
 
 class Question extends Model
@@ -47,16 +48,21 @@ class Question extends Model
     }
     public function user_detail()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id')->select('id','name', 'image','email');
+        return $this->belongsTo(User::class, 'user_id', 'id')->select('id', 'name', 'image', 'email');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id')->select('id','name','email', 'image', 'user_type');
+        return $this->belongsTo(User::class, 'user_id', 'id')->select('id', 'name', 'email', 'image', 'user_type');
     }
 
     public function reports()
     {
         return $this->hasMany(ReportQuestion::class);
+    }
+
+    public function adminReply()
+    {
+        return $this->hasOne(AdminReply::class, 'question_id');
     }
 }

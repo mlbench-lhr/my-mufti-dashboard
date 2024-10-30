@@ -305,8 +305,8 @@ class QuestionsController extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
-
-        $question = Question::with('user')->find($request->question_id);
+        
+        $question = Question::with(['user', 'adminReply'])->find($request->question_id);
         if (!$question) {
             return redirect()->back()->withErrors(['error' => 'Question not found.']);
         }
