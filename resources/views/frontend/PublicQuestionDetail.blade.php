@@ -71,18 +71,84 @@
                 <!--begin::Heading-->
                 <h1 class="d-flex flex-column text-dark fw-bolder my-0 fs-1">Question Detail
                 </h1>
-               
+
                 <!--end::Heading-->
             </div>
             <!--end::Page title=-->
             <div class="d-flex">
-                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{$user_id}}">
+                <!-- Reply Button with Modal Trigger -->
+                <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
+                    data-bs-toggle="modal" data-bs-target="#replyModal">
+                    Reply
+                </button>
+
+                <!-- Delete Button -->
+                <a
+                    href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}">
                     <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;">
                         Delete
                     </button>
                 </a>
             </div>
-            
+
+            <!-- Admin's Reply Modal -->
+            <div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
+                <!--begin::Modal dialog-->
+                <div class="modal-dialog mw-500px">
+                    <!--begin::Modal content-->
+                    <div class="modal-content">
+                        <!--begin::Modal header-->
+                        <div class="modal-header pb-0 border-0 d-f justify-content-between">
+                            <p>
+                            </p>
+                            <p class="fs-1 fw-bold mx-auto">Admin's Reply</p>
+                            <!--begin::Close-->
+                            <div class="btn btn-lg btn-icon btn-active-color-dark" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <span class="svg-icon svg-icon-1 w-25">
+                                    <svg width="34" height="34" viewBox="0 0 34 34" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M33.6663 17.0002C33.6663 26.2049 26.2044 33.6668 16.9997 33.6668C7.79493 33.6668 0.333008 26.2049 0.333008 17.0002C0.333008 7.79542 7.79493 0.333496 16.9997 0.333496C26.2044 0.333496 33.6663 7.79542 33.6663 17.0002ZM11.9491 11.9496C12.4372 11.4614 13.2287 11.4614 13.7168 11.9496L16.9996 15.2324L20.2824 11.9496C20.7705 11.4615 21.562 11.4615 22.0502 11.9496C22.5383 12.4378 22.5383 13.2292 22.0502 13.7174L18.7674 17.0001L22.0501 20.2829C22.5383 20.771 22.5383 21.5625 22.0501 22.0506C21.562 22.5388 20.7705 22.5388 20.2824 22.0506L16.9996 18.7679L13.7169 22.0507C13.2287 22.5388 12.4372 22.5388 11.9491 22.0507C11.4609 21.5625 11.4609 20.7711 11.9491 20.2829L15.2319 17.0001L11.9491 13.7173C11.4609 13.2292 11.4609 12.4377 11.9491 11.9496Z"
+                                            fill="#1C274C" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <!--end::Close-->
+                        </div>
+                        <!--end::Modal header-->
+
+                        <!--begin::Modal body-->
+                        <div class="modal-body pt-4">
+                            <!-- Form for Admin's Reply -->
+                            <form action="{{ route('admin.reply') }}" method="POST" class="form" id="replyForm">
+                                @csrf
+                                <input type="hidden" name="question_id" value="{{ $question->id }}">
+
+                                <div class="mb-5">
+                                    <label for="replyInput" class="form-label fw-bold fs-3">Add Reply</label>
+                                    <textarea id="replyInput" name="reply" class="form-control form-control-solid" placeholder="Add Reply" rows="7"
+                                        style="resize: none;" required></textarea>
+                                </div>
+                                <div class="d-flex justify-content-center align-content-center pt-2 mt-10">
+                                    <button type="submit" class="btn btn-lg col-12"
+                                        style="background-color: #38B89A; color:#FFFFFF;">
+                                        <span class="indicator-label">Send</span>
+                                        <span class="indicator-progress">Please wait...
+                                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- End Form -->
+                        </div>
+                        <!--end::Modal body-->
+                    </div>
+                    <!--end::Modal content-->
+                </div>
+                <!--end::Modal dialog-->
+            </div>
+            <!--end::Modal-->
         </div>
         <!--end::Container-->
     </div>
@@ -213,6 +279,22 @@
 
             </div>
 
+            {{-- Admin's Reply --}}
+            <div class="col-12 fs-2 fw-bolder text-dark pb-2">
+                Admin's Reply
+            </div>
+            @if ($question->adminReply)
+                <div class="col-12 fs-4 fw-bold text-muted pb-10">
+                    {{ $question->adminReply->reply }}
+                </div>
+            @else
+                <div class="col-12 fs-1 fw-bold text-muted pb-10 text-center mt-10 mb-10">
+                    You haven't replied to this question!
+                </div>
+            @endif
+
+
+
             {{-- Scholars Reply --}}
             <div class="col-12 fs-2 fw-bolder text-dark pb-2">
                 Scholar's Reply
@@ -282,8 +364,6 @@
                 </div>
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
-
-
 
 
                     @if (count($question['comments']))
@@ -475,5 +555,40 @@
     });
     $(document).ready(function() {
         loadVerificationData(currentPage);
+    });
+
+    document.getElementById('replyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+        const actionUrl = form.getAttribute('action');
+
+        fetch(actionUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    const replyDiv = document.createElement('div');
+                    replyDiv.classList.add('col-12', 'fs-4', 'fw-bold', 'text-muted', 'pb-10');
+                    replyDiv.textContent = data.data.reply;
+
+                    const replyContainer = document.getElementById('adminReplyContainer');
+                    replyContainer.appendChild(replyDiv);
+
+                    form.reset();
+                } else {
+                    alert('Failed to send reply. ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An unexpected error occurred.');
+            });
     });
 </script>

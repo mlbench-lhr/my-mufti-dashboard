@@ -7,11 +7,17 @@ use App\Models\Question;
 use App\Models\QuestionComment;
 use App\Models\QuestionVote;
 use App\Models\ScholarReply;
+use App\Models\AdminReply;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use Illuminate\Http\Request;
 use App\Models\ReportQuestion;
+use App\Services\FcmService;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Notification;
+use App\Helpers\ResponseHelper;
+use App\Helpers\ValidationHelper;
 use App\Models\Mufti;
 
 
@@ -19,6 +25,14 @@ use App\Models\Mufti;
 
 class QuestionsController extends Controller
 {
+
+    protected $fcmService;
+
+    public function __construct(FcmService $fcmService)
+    {
+        $this->fcmService = $fcmService;
+    }
+
     public function all_public_questions()
     {
         $questions = Question::get();
@@ -276,5 +290,58 @@ class QuestionsController extends Controller
         }
 
         return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);
+    }
+
+
+
+    public function adminReply(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'question_id' => 'required|exists:questions,id',
+            'reply' => 'required|string',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $question = Question::with('user')->find($request->question_id);
+        if (!$question) {
+            return redirect()->back()->withErrors(['error' => 'Question not found.']);
+        }
+
+        $user = $question->user;
+
+        $replyData = [
+            'question_id' => $request->question_id,
+            'user_id' => $user->id,
+            'reply' => $request->reply,
+        ];
+
+        AdminReply::create($replyData);
+        $title = "New Reply to Your Question";
+        $body = "Your question has been answered by the admin.";
+        $messageType = "Reply Notification";
+
+        if (!empty($user->device_id)) {
+            $this->fcmService->sendNotification(
+                $user->device_id,
+                $title,
+                $body,
+                $messageType,
+                ['question_id' => $question->id],
+                "1"
+            );
+        }
+
+        Notification::create([
+            'user_id' => $user->id,
+            'title' => $title,
+            'body' => $body,
+        ]);
+
+         return redirect()->to('/PublicQuestionDetail/' . $question->id . '?flag=1');
+
     }
 }

@@ -19,8 +19,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('questions:delete')->everyMinute();
     }
 
-
-
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
