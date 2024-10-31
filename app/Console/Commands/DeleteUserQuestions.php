@@ -36,7 +36,6 @@ class DeleteUserQuestions extends Command
         ScholarReply::whereIn('user_id', $specificUserIds)->delete();
 
         UserAllQuery::whereIn('user_id', $specificUserIds)->delete();
-        UserQuery::whereIn('user_id', $specificUserIds)->delete();
 
         EventScholar::whereIn('user_id', $specificUserIds)->delete();
         SaveEvent::whereIn('user_id', $specificUserIds)->delete();
