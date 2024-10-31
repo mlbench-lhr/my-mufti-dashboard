@@ -2,11 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Activity;
 use App\Models\AdminReply;
 use App\Models\Event;
 use App\Models\EventQuestion;
 use App\Models\EventQuestionLike;
 use App\Models\EventScholar;
+use App\Models\MuftiAppointment;
+use App\Models\Notification;
 use App\Models\Question;
 use App\Models\QuestionComment;
 use App\Models\QuestionVote;
@@ -24,11 +27,15 @@ class DeleteUserQuestions extends Command
 
     public function handle()
     {
-        $specificUserIds = [380, 385, 253, 15, 206, 269, 24, 285, 9, 76, 348, 243, 28];
+        $specificUserIds = [380, 385, 253, 15, 206, 269, 24, 285, 9, 76, 348, 243, 28, 320, 324];
 
         $questions = UserQuery::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
         $public_questions = Question::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
         $events = Event::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
+        MuftiAppointment::whereIn('user_id', $specificUserIds)->delete();
+        Activity::whereIn('data_id', $specificUserIds)->delete();
+        Notification::whereIn('user_id', $specificUserIds)->delete();
+
 
         if (empty($public_questions) && empty($questions) && empty($events)) {
             $this->info('No data found for the specified users.');
