@@ -19,9 +19,11 @@ use App\Models\Question;
 use App\Models\QuestionComment;
 use App\Models\QuestionVote;
 use App\Models\SaveEvent;
+use App\Models\EventQuestionLike;
 use App\Models\ScholarReply;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
+use App\Models\AdminReply;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -94,7 +96,9 @@ class User extends Authenticatable
         static::deleting(function ($model) {
 
             UserAllQuery::where('user_id', $model->id)->delete();
+            EventQuestionLike::where('user_id', $model->id)->delete();
             ReportQuestion::where('user_id', $model->id)->delete();
+            AdminReply::where('user_id', $model->id)->delete();
             UserAllQuery::where('mufti_id', $model->id)->delete();
             ScholarReply::where('user_id', $model->id)->delete();
             SaveEvent::where('user_id', $model->id)->delete();
@@ -149,6 +153,9 @@ class User extends Authenticatable
         ReportQuestion::whereIn('question_id', $questionIdsToDelete)->delete();
 
         EventScholar::whereIn('event_id', $eventIdsToDelete)->delete();
+        EventQuestion::whereIn('event_id', $eventIdsToDelete)->delete();
+        $eventQuestions = EventQuestion::whereIn('event_id', $eventIdsToDelete)->pluck('id')->toArray();
+        EventQuestionLike::whereIn('event_question_id', $eventQuestions)->delete();
         EventQuestion::whereIn('event_id', $eventIdsToDelete)->delete();
         SaveEvent::whereIn('event_id', $eventIdsToDelete)->delete();
 
