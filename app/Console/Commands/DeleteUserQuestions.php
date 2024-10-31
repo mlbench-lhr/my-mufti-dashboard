@@ -27,23 +27,40 @@ class DeleteUserQuestions extends Command
 
     public function handle()
     {
-        $specificUserIds = [380, 385, 253, 15, 206, 269, 24, 285, 9, 76, 348, 243, 28, 320, 324];
+        $specificUserIds = [380, 385, 253, 15, 206, 269, 24, 285, 76, 348, 243, 28, 320, 324];
+        $defaultMufti = [9];
+
+        QuestionComment::whereIn('user_id', $specificUserIds)->delete();
+        QuestionVote::whereIn('user_id', $specificUserIds)->delete();
+        ReportQuestion::whereIn('user_id', $specificUserIds)->delete();
+        ScholarReply::whereIn('user_id', $specificUserIds)->delete();
+
+        UserAllQuery::whereIn('user_id', $specificUserIds)->delete();
+        UserQuery::whereIn('user_id', $specificUserIds)->delete();
+
+        EventScholar::whereIn('user_id', $specificUserIds)->delete();
+        SaveEvent::whereIn('user_id', $specificUserIds)->delete();
+        EventQuestionLike::whereIn('user_id', $specificUserIds)->delete();
 
         $questions = UserQuery::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
+        $muftiQuestions = UserQuery::whereIn('user_id', $defaultMufti)->pluck('id')->toArray();
+
         $public_questions = Question::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
         $events = Event::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
         MuftiAppointment::whereIn('user_id', $specificUserIds)->delete();
         Activity::whereIn('data_id', $specificUserIds)->delete();
         Notification::whereIn('user_id', $specificUserIds)->delete();
 
-
-        if (empty($public_questions) && empty($questions) && empty($events)) {
+        if (empty($public_questions) && empty($questions) && empty($events) && empty($muftiQuestions)) {
             $this->info('No data found for the specified users.');
             return;
         }
 
         UserAllQuery::whereIn('query_id', $questions)->delete();
         UserQuery::whereIn('user_id', $specificUserIds)->delete();
+
+        UserAllQuery::whereIn('query_id', $muftiQuestions)->delete();
+        UserQuery::whereIn('user_id', $defaultMufti)->delete();
 
         QuestionComment::whereIn('question_id', $public_questions)->delete();
         QuestionVote::whereIn('question_id', $public_questions)->delete();
