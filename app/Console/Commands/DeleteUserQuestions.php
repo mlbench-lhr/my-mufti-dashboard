@@ -41,6 +41,10 @@ class DeleteUserQuestions extends Command
         SaveEvent::whereIn('user_id', $specificUserIds)->delete();
         EventQuestionLike::whereIn('user_id', $specificUserIds)->delete();
 
+        $eventQuestions = EventQuestion::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
+        EventQuestionLike::whereIn('event_question_id', $eventQuestions)->delete();
+        EventQuestion::whereIn('user_id', $specificUserIds)->delete();
+
         $questions = UserQuery::whereIn('user_id', $specificUserIds)->pluck('id')->toArray();
         $muftiQuestions = UserQuery::whereIn('user_id', $defaultMufti)->pluck('id')->toArray();
 
