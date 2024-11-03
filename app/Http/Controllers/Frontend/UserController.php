@@ -97,7 +97,7 @@ class UserController extends Controller
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
         }
-        $sortingOption = $request->input('sorting'); 
+        $sortingOption = $request->input('sorting');
 
         if ($sortingOption === 'newest') {
             $query->orderBy('created_at', 'desc');
@@ -179,7 +179,6 @@ class UserController extends Controller
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
-
         $data = [
             'user_id' => $user->id,
             'title' => $title,
@@ -214,8 +213,6 @@ class UserController extends Controller
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
-
-
 
         $data = [
             'user_id' => $user->id,
@@ -421,20 +418,29 @@ class UserController extends Controller
 
     public function delete_user(Request $request, $id)
     {
+
         $user = User::where('id', $id)->first();
-        if ($user->mufti_status == 2) {
+
+        if ($id == 9 || $id == "9") {
             $data = array(
                 'status' => 'mufti',
-                'message' => 'User deleted successfully.',
+                'message' => 'You cannot delete default mufti.',
             );
         } else {
-            $data = array(
-                'status' => 'user',
-                'message' => 'User deleted successfully.',
-            );
+            if ($user->mufti_status == 2) {
+                $data = array(
+                    'status' => 'mufti',
+                    'message' => 'User deleted successfully.',
+                );
+            } else {
+                $data = array(
+                    'status' => 'user',
+                    'message' => 'User deleted successfully.',
+                );
+            }
+            $user->deleteWithRelated();
+            $user->delete();
         }
-        $user->deleteWithRelated();
-        $user->delete();
 
         return response()->json($data);
     }

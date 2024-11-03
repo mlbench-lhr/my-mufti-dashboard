@@ -474,6 +474,10 @@ class EditProfile extends Controller
         }
         $user = User::find($request->user_id);
 
+        if ($request->user_id == 9 || $request->user_id == "9") {
+            return ResponseHelper::jsonResponse(false, 'You cannot delete default mufti.');
+        }
+
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
@@ -482,7 +486,6 @@ class EditProfile extends Controller
             $user->deleteWithRelated();
             $user->delete();
             return ResponseHelper::jsonResponse(true, 'User deleted Successfully!');
-
         }
     }
     public function book_an_appointment(BookAppointment $request)
