@@ -74,7 +74,7 @@ class AuthController extends Controller
             ], 200);
         } else {
             $password = $user['password'];
-            if (!empty($password) && !$password) {
+            if (!empty($password) &&  $password != "") {
                 if (!Hash::check($request->password, $password)) {
                     return response()->json(
                         [
