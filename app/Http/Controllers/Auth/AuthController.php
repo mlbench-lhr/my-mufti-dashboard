@@ -360,19 +360,19 @@ class AuthController extends Controller
         }
 
         // dd($questions->count());
-        $questions = UserQuery::get()->unique('question');
+        // $questions = UserQuery::get()->unique('question');
 
-        $data = $questions->map(function ($value) {
-            return [
-                'query_id' => $value->id,
-                'user_id' => $value->user_id,
-                'mufti_id' => 9,
-                'question' => $value->question,
-                'status' => 1,
-            ];
-        })->toArray();
+        // $data = $questions->map(function ($value) {
+        //     return [
+        //         'query_id' => $value->id,
+        //         'user_id' => $value->user_id,
+        //         'mufti_id' => 9,
+        //         'question' => $value->question,
+        //         'status' => 1,
+        //     ];
+        // })->toArray();
 
-        UserAllQuery::insert($data);
+        // UserAllQuery::insert($data);
 
         $user->update(['device_id' => '']);
 
