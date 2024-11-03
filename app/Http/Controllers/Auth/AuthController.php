@@ -11,6 +11,8 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SocialRequest;
 use App\Models\Interest;
 use App\Models\User;
+use App\Models\UserAllQuery;
+use App\Models\UserQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -74,7 +76,7 @@ class AuthController extends Controller
             ], 200);
         } else {
             $password = $user['password'];
-            if (!empty($password) &&  $password != "") {
+            if (!empty($password) && $password != "") {
                 if (!Hash::check($request->password, $password)) {
                     return response()->json(
                         [
@@ -356,6 +358,22 @@ class AuthController extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User  Not Found');
         }
+
+        // dd($questions->count());
+        $questions = UserQuery::get()->unique('question');
+
+        $data = $questions->map(function ($value) {
+            return [
+                'query_id' => $value->id,
+                'user_id' => $value->user_id,
+                'mufti_id' => 9,
+                'question' => $value->question,
+                'status' => 1,
+            ];
+        })->toArray();
+
+        UserAllQuery::insert($data);
+
         $user->update(['device_id' => '']);
 
         return ResponseHelper::jsonResponse(true, 'Logout Profile Successfully!');
