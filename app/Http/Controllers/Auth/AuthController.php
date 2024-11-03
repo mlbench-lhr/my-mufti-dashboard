@@ -65,6 +65,7 @@ class AuthController extends Controller
     {
         $device_id = $request->device_id ?? "";
         $user = User::where('email', $request->email)->first();
+
         if (empty($user)) {
             return response()->json([
                 "status" => false,
@@ -73,39 +74,49 @@ class AuthController extends Controller
             ], 200);
         } else {
             $password = $user['password'];
-            if (!Hash::check($request->password, $password)) {
+            if (!empty($password) && !$password) {
+                if (!Hash::check($request->password, $password)) {
+                    return response()->json(
+                        [
+                            "status" => false,
+                            "message" => "Incorrect Password",
+                            "data" => null,
+                        ], 200);
+                } else {
+                    $user_data = User::where('id', $user->id)->first();
+
+                    if ($device_id != "") {
+                        User::where('device_id', $device_id)->update(['device_id' => '']);
+                    }
+
+                    User::where('id', $user->id)->update(['device_id' => $device_id]);
+
+                    $user_data->refresh();
+
+                    if ($user_data->mufti_status == 2) {
+                        $user_data->user_type = "scholar";
+                        $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
+                        $user_data->interests = $interests;
+                    } else {
+                        $user_data->interests = [];
+                    }
+                    $response = [
+                        'status' => true,
+                        'message' => 'Successfully logged In!',
+                        'data' => $user_data,
+                    ];
+                    return response()->json($response, 200);
+
+                }
+            } else {
                 return response()->json(
                     [
                         "status" => false,
-                        "message" => "Incorrect Password",
+                        "message" => "user register through social signup",
                         "data" => null,
                     ], 200);
-            } else {
-                $user_data = User::where('id', $user->id)->first();
-
-                if ($device_id != "") {
-                    User::where('device_id', $device_id)->update(['device_id' => '']);
-                }
-
-                User::where('id', $user->id)->update(['device_id' => $device_id]);
-
-                $user_data->refresh();
-
-                if ($user_data->mufti_status == 2) {
-                    $user_data->user_type = "scholar";
-                    $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
-                    $user_data->interests = $interests;
-                } else {
-                    $user_data->interests = [];
-                }
-                $response = [
-                    'status' => true,
-                    'message' => 'Successfully logged In!',
-                    'data' => $user_data,
-                ];
-                return response()->json($response, 200);
-
             }
+
         }
 
     }
