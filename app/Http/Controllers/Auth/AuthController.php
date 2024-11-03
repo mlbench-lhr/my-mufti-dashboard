@@ -36,7 +36,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'device_id' => $request->device_id,
+            'device_id' => $request->device_id ?? "",
 
         ];
         $user = User::create($data);
@@ -127,7 +127,7 @@ class AuthController extends Controller
         $social_token = $request->social_token;
         $email = $request->email;
         $name = $request->name;
-        $device_id = $request->device_id;
+        $device_id = $request->device_id ?? "";
 
         if ($social_key == 'google') {
 
