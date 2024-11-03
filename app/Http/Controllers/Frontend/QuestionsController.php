@@ -86,7 +86,9 @@ class QuestionsController extends Controller
 
         $question->scholar_reply = $scholar_reply;
 
-        return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id'));
+        $isReplied = AdminReply::where('question_id', $question_id)->exists();
+
+        return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id','isReplied'));
     }
 
     public function get_question_comments(Request $request)
@@ -305,7 +307,7 @@ class QuestionsController extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
-        
+
         $question = Question::with(['user', 'adminReply'])->find($request->question_id);
         if (!$question) {
             return redirect()->back()->withErrors(['error' => 'Question not found.']);

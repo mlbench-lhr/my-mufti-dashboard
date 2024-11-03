@@ -76,21 +76,22 @@
             </div>
             <!--end::Page title=-->
             <div class="d-flex">
-                <!-- Reply Button with Modal Trigger -->
-                <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
-                    data-bs-toggle="modal" data-bs-target="#replyModal">
-                    Reply
-                </button>
-
-                <!-- Delete Button -->
-                <a
-                    href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}">
+                @if($isReplied)
+                    <button style="background-color: #38B89A1A; color:#38B89A;" type="button" class="btn me-3" disabled>
+                        Replied
+                    </button>
+                @else
+                    <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
+                            data-bs-toggle="modal" data-bs-target="#replyModal">
+                        Reply
+                    </button>
+                @endif
+                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}">
                     <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;">
                         Delete
                     </button>
                 </a>
             </div>
-
             <!-- Admin's Reply Modal -->
             <div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
                 <!--begin::Modal dialog-->
