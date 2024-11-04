@@ -14,7 +14,7 @@
         font-size: 38.03px;
         font-style: normal;
         font-weight: 600;
-        line-height: 24.05px;
+        /* line-height: 24.05px; */
         /* 66.667% */
     }
 
@@ -33,9 +33,14 @@
         height: 100vh;
     }
 
-    @media only screen and (max-width: 1400px) {
+    @media only screen and (max-width: 768px) {
         .login-right {
-            height: 130vh;
+            display: none;
+            height: 0vh;
+        }
+
+        .login-right img {
+            display: none;
         }
     }
 
@@ -75,26 +80,28 @@
 
 <body>
     <div class="container-fluid mx-0 px-4">
-        <div class="row ">
-            <div class="col-5 d-flex justify-content-center align-items-center  login-right" style=" background: #ffff;">
+        <div class="row g-xl-10">
+            {{-- <div class="col-5 d-flex justify-content-center align-items-center  login-right" style=" background: #ffff;">
                 <div class="px-1" style="width:100%; margin-left:0% ">
                     <div style="position: relative; width:100%; padding-bottom:100%">
                         <img src="public/frontend/media/loginform.svg" alt=""
                             class="position-absolute top-0 right-0 bottom-0 left-0  h-100 img-fluid">
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-6 d-flex justify-content-center align-items-start  login-right">
+                <img src="public/frontend/media/loginform.svg" alt="image" class="img-fluid">
             </div>
-            <div class="col-7 d-flex">
-                <form class="ms-10" style="width: 75% ">
-                    <div class="row mt-5  p-4">
+            <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-6 d-flex justify-content-center">
+                <form class="" style="width: 75%">
+                    <div class="row mt-5">
                         <div style="pb-5">
                             <div class="logo pb-10">
                                 <div class=" pt-20 pb-20">
-                                    <img src="public/frontend/media/loginLogo.svg" alt="">
+                                    <img src="public/frontend/media/loginLogo.svg" alt="image">
                                 </div>
-                                <div class="welcome fw-bolder text-dark pt-10 pb-2 ">Sign In to your account</div>
-                                <div class="message pt-5">Sign in With your email and password and continue to
-                                    CompaignBox</div>
+                                <div class="welcome fw-bolder text-dark pt-10 pb-2 ">Reset Password</div>
+                                <div class="message pt-5">Enter your new password and continue to My Mufti</div>
                             </div>
                         </div>
                         @if (Session::has('success'))
@@ -177,8 +184,6 @@
             </div>
 
         </div>
-
-
     </div>
 
     <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
@@ -301,7 +306,6 @@
                             var data = $.parseJSON(response);
                             if (data.response == "success") {
                                 localStorage.clear('myData');
-
                                 Swal.fire({
                                     title: 'Success',
                                     text: 'Password Update Successfully!',
