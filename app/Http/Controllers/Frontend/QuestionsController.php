@@ -147,6 +147,8 @@ class QuestionsController extends Controller
         $vote = QuestionVote::where('question_id', $id)->delete();
         $scholar_reply = ScholarReply::where('question_id', $id)->delete();
         ReportQuestion::where('question_id', $id)->delete();
+        AdminReply::where('question_id', $id)->delete();
+
 
         $question->delete();
 

@@ -507,27 +507,29 @@ class DashboardController extends Controller
             $all_rejected = 1;
         }
 
+        // dd(count($current_month));
+
         if ($all_accepted > 0 || $all_rejected > 0) {
 
             $data = [
                 'all_accepted' => $all_accepted,
                 'all_rejected' => $all_rejected,
 
-                'current_month' => round(((count($current_month) / $all_accepted) * 100), 0),
-                'one_month_before' => round(((count($one_month_before) / $all_accepted) * 100), 0),
-                'two_months_before' => round(((count($two_months_before) / $all_accepted) * 100), 0),
-                'three_months_before' => round(((count($three_months_before) / $all_accepted) * 100), 0),
-                'four_months_before' => round(((count($four_months_before) / $all_accepted) * 100), 0),
-                'five_months_before' => round(((count($five_months_before) / $all_accepted) * 100), 0),
-                'six_months_before' => round(((count($six_months_before) / $all_accepted) * 100), 0),
+                'current_month' => round(((count($current_month) / $all_rejected) * 100), 0),
+                'one_month_before' => round(((count($one_month_before) / $all_rejected) * 100), 0),
+                'two_months_before' => round(((count($two_months_before) / $all_rejected) * 100), 0),
+                'three_months_before' => round(((count($three_months_before) / $all_rejected) * 100), 0),
+                'four_months_before' => round(((count($four_months_before) / $all_rejected) * 100), 0),
+                'five_months_before' => round(((count($five_months_before) / $all_rejected) * 100), 0),
+                'six_months_before' => round(((count($six_months_before) / $all_rejected) * 100), 0),
 
-                'current_month1' => round(((count($current_month1) / $all_rejected) * 100), 0),
-                'one_month_before1' => round(((count($one_month_before1) / $all_rejected) * 100), 0),
-                'two_months_before1' => round(((count($two_months_before1) / $all_rejected) * 100), 0),
-                'three_months_before1' => round(((count($three_months_before1) / $all_rejected) * 100), 0),
-                'four_months_before1' => round(((count($four_months_before1) / $all_rejected) * 100), 0),
-                'five_months_before1' => round(((count($five_months_before1) / $all_rejected) * 100), 0),
-                'six_months_before1' => round(((count($six_months_before1) / $all_rejected) * 100), 0),
+                'current_month1' => round(((count($current_month1) / $all_accepted) * 100), 0),
+                'one_month_before1' => round(((count($one_month_before1) / $all_accepted) * 100), 0),
+                'two_months_before1' => round(((count($two_months_before1) / $all_accepted) * 100), 0),
+                'three_months_before1' => round(((count($three_months_before1) / $all_accepted) * 100), 0),
+                'four_months_before1' => round(((count($four_months_before1) / $all_accepted) * 100), 0),
+                'five_months_before1' => round(((count($five_months_before1) / $all_accepted) * 100), 0),
+                'six_months_before1' => round(((count($six_months_before1) / $all_accepted) * 100), 0),
             ];
         } else {
             $data = [

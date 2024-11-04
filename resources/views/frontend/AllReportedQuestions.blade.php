@@ -33,7 +33,6 @@
         max-width: 100px;
         /* Adjust the max-width based on your requirements */
     }
-
 </style>
 @section('content')
     <!--begin::Header-->
@@ -164,7 +163,8 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getReportedQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
+            url: '{{ route('getReportedQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+                '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
@@ -190,10 +190,13 @@
                         'bg-light-success'
                     ];
                     var count = 0;
+                    // row.question.user_detail.image
                     $.each(reportedQuestions.data, function(index, row) {
                         var newRow = `
                     <tr>
-                        <td class="d-flex align-items-center">
+
+                        <td>
+                            <div class="d-flex align-items-center">
                             ${row.user_detail.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
                                     <div class="symbol-label">
@@ -212,28 +215,31 @@
                                 </div>
                                 <span>${row.user_detail.email}</span>
                             </div>
+                            </div>
                         </td>
                         <td>
-                            <div class = "d-flex align-items-center">
-                                ${row.question.user_detail.image ? `
-                                    <div class="symbol symbol-50px overflow-hidden me-3">
-                                         <div class="symbol-label">
-                                            <img src="{{ asset('public/storage/') }}/${row.question.user_detail.image}" alt="image" class="w-100" />
-                                        </div>
-                                    </div>` : `
-                                    <div class="symbol symbol-50px overflow-hidden me-3">
-                                        <div class="symbol-label">
-                                             <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
-                                         </div>
-                                    </div>`}
-                                     <div class="d-flex flex-column ">
-                                        <div class="text-gray-800 mb-1">
-                                        ${row.question.user_detail.name}
+                           <div class="d-flex align-items-center">
+                            ${row.question.user_detail.image ? `
+                                <div class="symbol symbol-50px overflow-hidden me-3">
+                                    <div class="symbol-label">
+                                        <img src="{{ asset('public/storage/') }}/${row.question.user_detail.image}" alt="image" class="w-100" />
                                     </div>
-                                    <span>${row.question.user_detail.email}</span>
+                                </div>` : `
+                                <div class="symbol symbol-50px overflow-hidden me-3">
+                                    <div class="symbol-label">
+                                        <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
                                     </div>
-                           </div>
+                                </div>`}
+
+                            <div class="d-flex flex-column">
+                                <div class="text-gray-800 mb-1">
+                                    ${row.question.user_detail.name}
+                                </div>
+                                <span>${row.question.user_detail.email}</span>
+                            </div>
+                            </div>
                         </td>
+
                         <td>${row.question.question}</td>
                         <td>
                             ${row.reason ? truncateWords(row.reason, 6) : 'No reason provided'}

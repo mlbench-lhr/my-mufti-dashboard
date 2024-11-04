@@ -787,15 +787,18 @@
                         labels: {
                             style: {
                                 colors: a,
-                                fontSize: "12px",
+                                fontSize: "15px",
                             },
                         },
                     },
                     yaxis: {
+                        min: 0, 
+                        max: 100,
+                        tickAmount: 4,
                         labels: {
                             style: {
                                 colors: a,
-                                fontSize: "12px",
+                                fontSize: "15px",
                             },
                         },
                     },
@@ -829,7 +832,7 @@
                         },
                         y: {
                             formatter: function(e) {
-                                return e + " Cal";
+                                return e + "%";
                             },
                         },
                     },

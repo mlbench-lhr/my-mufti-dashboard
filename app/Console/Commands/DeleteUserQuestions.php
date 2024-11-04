@@ -34,6 +34,8 @@ class DeleteUserQuestions extends Command
         QuestionVote::whereIn('user_id', $specificUserIds)->delete();
         ReportQuestion::whereIn('user_id', $specificUserIds)->delete();
         ScholarReply::whereIn('user_id', $specificUserIds)->delete();
+        AdminReply::whereIn('user_id', $specificUserIds)->delete();
+
 
         UserAllQuery::whereIn('user_id', $specificUserIds)->delete();
 

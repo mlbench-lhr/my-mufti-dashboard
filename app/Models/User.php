@@ -4,10 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Activity;
+use App\Models\AdminReply;
 use App\Models\Degree;
 use App\Models\Event;
-use App\Models\ReportQuestion;
 use App\Models\EventQuestion;
+use App\Models\EventQuestionLike;
 use App\Models\EventScholar;
 use App\Models\Experience;
 use App\Models\HelpFeedBack;
@@ -18,12 +19,11 @@ use App\Models\Notification;
 use App\Models\Question;
 use App\Models\QuestionComment;
 use App\Models\QuestionVote;
+use App\Models\ReportQuestion;
 use App\Models\SaveEvent;
-use App\Models\EventQuestionLike;
 use App\Models\ScholarReply;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
-use App\Models\AdminReply;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -151,6 +151,7 @@ class User extends Authenticatable
         QuestionVote::whereIn('question_id', $questionIdsToDelete)->delete();
         ScholarReply::whereIn('question_id', $questionIdsToDelete)->delete();
         ReportQuestion::whereIn('question_id', $questionIdsToDelete)->delete();
+        AdminReply::whereIn('question_id', $questionIdsToDelete)->delete();
 
         EventScholar::whereIn('event_id', $eventIdsToDelete)->delete();
         EventQuestion::whereIn('event_id', $eventIdsToDelete)->delete();
