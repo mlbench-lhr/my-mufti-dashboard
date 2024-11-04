@@ -285,16 +285,18 @@
             <div class="col-12 fs-2 fw-bolder text-dark pb-2 d-flex justify-content-between align-items-center">
                 <span>Admin's Reply</span>
                 <div>
-                    <a href="#" class="link-primary fw-bolder"
-                        onclick="confirmDelete({{ $question->adminReply ? $question->adminReply->id : 'null' }})">
-                        <img src="{{ url('public/frontend/media/svg/deleteIcon.svg') }}" alt="Delete"
-                            style="width: 30px; height: 30px;">
-                    </a>
-                    <a href="#" class="link-primary fw-bolder"
-                        onclick="editReply({{ $question->adminReply ? $question->adminReply->id : 'null' }}, '{{ $question->adminReply ? addslashes($question->adminReply->reply) : '' }}')">
-                        <img src="{{ url('public/frontend/media/svg/editPen.svg') }}" alt="Edit"
-                            style="width: 30px; height: 30px;">
-                    </a>
+                    @if ($question->adminReply)
+                        <a href="#" class="link-primary fw-bolder"
+                            onclick="confirmDelete({{ $question->adminReply->id }})">
+                            <img src="{{ url('public/frontend/media/svg/deleteIcon.svg') }}" alt="Delete"
+                                style="width: 30px; height: 30px;">
+                        </a>
+                        <a href="#" class="link-primary fw-bolder"
+                            onclick="editReply({{ $question->adminReply->id }}, '{{ addslashes($question->adminReply->reply) }}')">
+                            <img src="{{ url('public/frontend/media/svg/editPen.svg') }}" alt="Edit"
+                                style="width: 30px; height: 30px;">
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -307,6 +309,7 @@
                     You haven't replied to this question!
                 </div>
             @endif
+
 
             {{-- Scholars Reply --}}
             <div class="col-12 fs-2 fw-bolder text-dark pb-2">
