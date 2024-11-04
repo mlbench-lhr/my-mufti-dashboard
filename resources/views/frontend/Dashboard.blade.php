@@ -250,7 +250,6 @@
                             <!--begin::Body-->
                             @if ($response['countActivities'] == 0)
                                 <div class="card-body pt-5">
-
                                     <div class="d-flex justify-content-center align-items-center">
                                         <img src="{{ '../../public/frontend/media/noActivity.png' }}" alt="image">
                                     </div>
