@@ -286,12 +286,12 @@
                 <span>Admin's Reply</span>
                 <div>
                     @if ($question->adminReply)
-                        <a href="#" class="link-primary fw-bolder"
+                        <a href="javascript:void(0)" class="link-primary fw-bolder"
                             onclick="confirmDelete({{ $question->adminReply->id }})">
                             <img src="{{ url('public/frontend/media/svg/deleteIcon.svg') }}" alt="Delete"
                                 style="width: 30px; height: 30px;">
                         </a>
-                        <a href="#" class="link-primary fw-bolder"
+                        <a href="javascript:void(0)" class="link-primary fw-bolder"
                             onclick="editReply({{ $question->adminReply->id }}, '{{ addslashes($question->adminReply->reply) }}')">
                             <img src="{{ url('public/frontend/media/svg/editPen.svg') }}" alt="Edit"
                                 style="width: 30px; height: 30px;">
