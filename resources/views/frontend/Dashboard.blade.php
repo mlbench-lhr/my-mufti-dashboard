@@ -410,42 +410,49 @@
                     <div class="card card-flush mt-5">
                         <!--begin::Header-->
                         <div class="card-header border-0 pt-5">
-                            <div class="d-flex justify-content-between align-items-center col-12">
-                                <span class="d-flex flex-column g-0">
-                                    <p class="fw-bolder fs-3 mb-0" style="color: #38B89A;">
-                                        {{ $response['questionCount'] }} <span
-                                            class="badge badge-light-success fw-bolder pt-2">
-                                            {{ $response['count'] }}%
-                                        </span>
-                                    </p>
-                                    <p style="color:#B5B5C3;">
+                            <div class="d-flex justify-content-between align-items-start col-12">
 
-                                        Question requests
-
+                                <span class="d-flex justify-content-between align-items-start flex-column g-0">
+                                    <p style="color:#B5B5C3;" class="fs-4">
+                                        Question Requests <span class="fw-bolder fs-4 mb-0" style="color: #38B89A;">
+                                            {{ $response['questionCount'] }}</span>
                                     </p>
                                 </span>
-                                <span class="d-flex align-items-center justify-content-end">
+                                <span class="d-flex align-items-center justify-content-start">
+                                    <div class="d-flex justify-content-center align-items-center flex-column">
+                                        <div class="d-flex">
+                                            <div class="fs-6 d-flex text-gray-400 fs-6 fw-bold ms-7">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="menu-bullet-circle  d-flex align-items-center me-2">
+                                                        <span class="bullet-dot bg-success"
+                                                            style="width: 10px;height:10px;">
+                                                        </span>
+                                                    </span>
+                                                    Accepted
+                                                </div>
+                                            </div>
+                                            <div class="fs-6 d-flex text-gray-400 fs-6 fw-bold ms-2">
+                                                <!--begin::Label-->
+                                                <div class="d-flex align-items-center">
+                                                    <span class="menu-bullet d-flex align-items-center me-2">
+                                                        <span class="bullet-dot bg-danger"
+                                                            style="width: 10px;height:10px;"></span> </span>Rejected
+                                                </div>
+                                                <!--end::Label-->
+                                            </div>
+                                        </div>
 
-                                    <div class="d-flex">
-                                        <div class="fs-6 d-flex text-gray-400 fs-6 fw-bold ms-7">
-                                            <div class="d-flex align-items-center">
-                                                <span class="menu-bullet-circle  d-flex align-items-center me-2">
-                                                    <span class="bullet-dot bg-success"
-                                                        style="width: 10px;height:10px;"></span>
-                                                </span>Accepted
-                                            </div>
+                                        <div>
+                                            <p class="d-flex justify-content-between gap-8 fw-bolder fs-3 mb-0" style="color: #38B89A;">
+                                                <span class="badge badge-light-success fw-bolder pt-2 me-8">
+                                                    {{ $response['count'] }}%
+                                                </span>
+                                                <span class="badge badge-light-danger fw-bolder pt-2">
+                                                    {{ $response['count1'] }}%
+                                                </span>
+                                            </p>
                                         </div>
-                                        <!--begin::Labels-->
-                                        <div class="fs-6 d-flex text-gray-400 fs-6 fw-bold ms-2">
-                                            <!--begin::Label-->
-                                            <div class="d-flex align-items-center">
-                                                <span class="menu-bullet d-flex align-items-center me-2">
-                                                    <span class="bullet-dot bg-danger"
-                                                        style="width: 10px;height:10px;"></span> </span>Rejected
-                                            </div>
-                                            <!--end::Label-->
-                                        </div>
-                                        <!--end::Labels-->
+
                                     </div>
                                 </span>
 
@@ -792,9 +799,8 @@
                         },
                     },
                     yaxis: {
-                        min: 0, 
-                        max: 100,
-                        tickAmount: 4,
+                        min: 0,
+                        tickAmount: 5,
                         labels: {
                             style: {
                                 colors: a,
@@ -832,7 +838,7 @@
                         },
                         y: {
                             formatter: function(e) {
-                                return e + "%";
+                                return e;
                             },
                         },
                     },

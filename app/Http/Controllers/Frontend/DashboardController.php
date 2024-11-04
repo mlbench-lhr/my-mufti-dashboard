@@ -39,11 +39,15 @@ class DashboardController extends Controller
         $appointmentCount = MuftiAppointment::count();
         $questionCount = UserAllQuery::count();
         if ($questionCount != 0) {
-            $count = floor((($get_all_questions['all_accepted']) / $questionCount) * 100);
+            $count = round(((($get_all_questions['all_accepted']) / $questionCount)  * 100),0);
+        }
+        if ($questionCount != 0) {
+            $count1 = round(((($get_all_questions['all_rejected']) / $questionCount) * 100),0);
         }
 
         $response = [
             'count' => $count ?? 0,
+            'count1' => $count1 ?? 0,
             'countActivities' => $activities['countActivities'],
             'activities' => $activities['activities'],
             'get_all_users' => $get_all_users,
@@ -514,22 +518,34 @@ class DashboardController extends Controller
             $data = [
                 'all_accepted' => $all_accepted,
                 'all_rejected' => $all_rejected,
-
-                'current_month' => round(((count($current_month) / $all_rejected) * 100), 0),
-                'one_month_before' => round(((count($one_month_before) / $all_rejected) * 100), 0),
-                'two_months_before' => round(((count($two_months_before) / $all_rejected) * 100), 0),
-                'three_months_before' => round(((count($three_months_before) / $all_rejected) * 100), 0),
-                'four_months_before' => round(((count($four_months_before) / $all_rejected) * 100), 0),
-                'five_months_before' => round(((count($five_months_before) / $all_rejected) * 100), 0),
-                'six_months_before' => round(((count($six_months_before) / $all_rejected) * 100), 0),
-
-                'current_month1' => round(((count($current_month1) / $all_accepted) * 100), 0),
-                'one_month_before1' => round(((count($one_month_before1) / $all_accepted) * 100), 0),
-                'two_months_before1' => round(((count($two_months_before1) / $all_accepted) * 100), 0),
-                'three_months_before1' => round(((count($three_months_before1) / $all_accepted) * 100), 0),
-                'four_months_before1' => round(((count($four_months_before1) / $all_accepted) * 100), 0),
-                'five_months_before1' => round(((count($five_months_before1) / $all_accepted) * 100), 0),
-                'six_months_before1' => round(((count($six_months_before1) / $all_accepted) * 100), 0),
+                // 'current_month' => round(((count($current_month) / $all_rejected) * 100), 0),
+                // 'one_month_before' => round(((count($one_month_before) / $all_rejected) * 100), 0),
+                // 'two_months_before' => round(((count($two_months_before) / $all_rejected) * 100), 0),
+                // 'three_months_before' => round(((count($three_months_before) / $all_rejected) * 100), 0),
+                // 'four_months_before' => round(((count($four_months_before) / $all_rejected) * 100), 0),
+                // 'five_months_before' => round(((count($five_months_before) / $all_rejected) * 100), 0),
+                // 'six_months_before' => round(((count($six_months_before) / $all_rejected) * 100), 0),
+                // 'current_month1' => round(((count($current_month1) / $all_accepted) * 100), 0),
+                // 'one_month_before1' => round(((count($one_month_before1) / $all_accepted) * 100), 0),
+                // 'two_months_before1' => round(((count($two_months_before1) / $all_accepted) * 100), 0),
+                // 'three_months_before1' => round(((count($three_months_before1) / $all_accepted) * 100), 0),
+                // 'four_months_before1' => round(((count($four_months_before1) / $all_accepted) * 100), 0),
+                // 'five_months_before1' => round(((count($five_months_before1) / $all_accepted) * 100), 0),
+                // 'six_months_before1' => round(((count($six_months_before1) / $all_accepted) * 100), 0),
+                'current_month' => count($current_month),
+                'one_month_before' => count($one_month_before),
+                'two_months_before' => count($two_months_before),
+                'three_months_before' => count($three_months_before),
+                'four_months_before' => count($four_months_before),
+                'five_months_before' => count($five_months_before),
+                'six_months_before' => count($six_months_before),
+                'current_month1' => count($current_month1),
+                'one_month_before1' => count($one_month_before1),
+                'two_months_before1' => count($two_months_before1),
+                'three_months_before1' => count($three_months_before1),
+                'four_months_before1' => count($four_months_before1),
+                'five_months_before1' => count($five_months_before1),
+                'six_months_before1' => count($six_months_before1),
             ];
         } else {
             $data = [
