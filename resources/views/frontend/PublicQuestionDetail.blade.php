@@ -76,23 +76,23 @@
             </div>
             <!--end::Page title=-->
             <div class="d-flex">
-                @if($isReplied)
+                @if ($isReplied)
                     <button style="background-color: #38B89A1A; color:#38B89A;" type="button" class="btn me-3" disabled>
                         Replied
                     </button>
                 @else
                     <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
-                            data-bs-toggle="modal" data-bs-target="#replyModal">
+                        data-bs-toggle="modal" data-bs-target="#replyModal">
                         Reply
                     </button>
                 @endif
-                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}">
+                <a
+                    href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}">
                     <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;">
                         Delete
                     </button>
                 </a>
             </div>
-            <!-- Admin's Reply Modal -->
             <div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
                 <!--begin::Modal dialog-->
                 <div class="modal-dialog mw-500px">
@@ -100,9 +100,9 @@
                     <div class="modal-content">
                         <!--begin::Modal header-->
                         <div class="modal-header pb-0 border-0 d-f justify-content-between">
-                            <p>
-                            </p>
-                            <p class="fs-1 fw-bold mx-auto">Admin's Reply</p>
+                            <p></p>
+                            <p class="fs-1 fw-bold mx-auto" id="modalTitle">Admin's Reply</p>
+                            <!-- Title dynamically updated -->
                             <!--begin::Close-->
                             <div class="btn btn-lg btn-icon btn-active-color-dark" data-bs-dismiss="modal"
                                 aria-label="Close">
@@ -125,6 +125,7 @@
                             <form action="{{ route('admin.reply') }}" method="POST" class="form" id="replyForm">
                                 @csrf
                                 <input type="hidden" name="question_id" value="{{ $question->id }}">
+                                <input type="hidden" name="reply_id" id="replyId"> <!-- Hidden field for reply ID -->
 
                                 <div class="mb-5">
                                     <label for="replyInput" class="form-label fw-bold fs-3">Add Reply</label>
@@ -132,15 +133,16 @@
                                         style="resize: none;" required></textarea>
                                 </div>
                                 <div class="d-flex justify-content-center align-content-center pt-2 mt-10">
-                                    <button type="submit" class="btn btn-lg col-12"
+                                    <button type="submit" class="btn btn-lg col-12" id="submitButton"
                                         style="background-color: #38B89A; color:#FFFFFF;">
-                                        <span class="indicator-label">Send</span>
+                                        <span class="indicator-label" id="submitLabel">Send</span>
+                                        <!-- Button label dynamically updated -->
                                         <span class="indicator-progress">Please wait...
-                                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                        </span>
                                     </button>
                                 </div>
                             </form>
-
                             <!-- End Form -->
                         </div>
                         <!--end::Modal body-->
@@ -279,13 +281,25 @@
                 </div>
 
             </div>
-
             {{-- Admin's Reply --}}
-            <div class="col-12 fs-2 fw-bolder text-dark pb-2">
-                Admin's Reply
+            <div class="col-12 fs-2 fw-bolder text-dark pb-2 d-flex justify-content-between align-items-center">
+                <span>Admin's Reply</span>
+                <div>
+                    <a href="#" class="link-primary fw-bolder"
+                        onclick="confirmDelete({{ $question->adminReply ? $question->adminReply->id : 'null' }})">
+                        <img src="{{ url('public/frontend/media/svg/deleteIcon.svg') }}" alt="Delete"
+                            style="width: 30px; height: 30px;">
+                    </a>
+                    <a href="#" class="link-primary fw-bolder"
+                        onclick="editReply({{ $question->adminReply ? $question->adminReply->id : 'null' }}, '{{ $question->adminReply ? addslashes($question->adminReply->reply) : '' }}')">
+                        <img src="{{ url('public/frontend/media/svg/editPen.svg') }}" alt="Edit"
+                            style="width: 30px; height: 30px;">
+                    </a>
+                </div>
             </div>
+
             @if ($question->adminReply)
-                <div class="col-12 fs-4 fw-bold text-muted pb-10">
+                <div class="col-12 fs-4 fw-bold text-muted pb-10" data-reply-id="{{ $question->adminReply->id }}">
                     {{ $question->adminReply->reply }}
                 </div>
             @else
@@ -293,8 +307,6 @@
                     You haven't replied to this question!
                 </div>
             @endif
-
-
 
             {{-- Scholars Reply --}}
             <div class="col-12 fs-2 fw-bolder text-dark pb-2">
@@ -593,4 +605,65 @@
                 alert('An unexpected error occurred.');
             });
     });
+
+    function editReply(replyId, replyContent) {
+        document.getElementById('modalTitle').innerText = "Edit Admin's Reply";
+        document.getElementById('submitLabel').innerText = "Update";
+
+        document.getElementById('replyInput').value = replyContent;
+
+        document.getElementById('replyId').value = replyId;
+
+        $('#replyModal').modal('show');
+    }
+
+    function confirmDelete(replyId) {
+        if (replyId !== null) {
+            Swal.fire({
+                title: 'Delete Admin’s Reply',
+                text: 'Are you sure you want to delete your reply on this public question?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#38B89A',
+                cancelButtonColor: '#38B89A1A',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                willOpen: () => {
+                    const cancelButton = Swal.getCancelButton();
+                    cancelButton.style.color = '#7B849A';
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteAdminReply(replyId);
+                }
+            });
+        }
+    }
+
+    function deleteAdminReply(replyId) {
+        $.ajax({
+            url: '/admin/reply/delete',
+            type: 'POST',
+            data: {
+                reply_id: replyId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                Swal.fire(
+                    'Deleted!',
+                    'Your reply has been deleted.',
+                    'success'
+                ).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(error) {
+                Swal.fire(
+                    'Error!',
+                    'There was an error deleting your reply.',
+                    'error'
+                );
+            }
+        });
+    }
 </script>

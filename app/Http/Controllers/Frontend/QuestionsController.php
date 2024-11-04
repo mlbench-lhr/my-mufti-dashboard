@@ -88,7 +88,7 @@ class QuestionsController extends Controller
 
         $isReplied = AdminReply::where('question_id', $question_id)->exists();
 
-        return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id','isReplied'));
+        return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id', 'isReplied'));
     }
 
     public function get_question_comments(Request $request)
@@ -296,12 +296,9 @@ class QuestionsController extends Controller
         return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);
     }
 
-
-
     public function adminReply(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'question_id' => 'required|exists:questions,id',
             'reply' => 'required|string',
         ]);
 
@@ -317,16 +314,31 @@ class QuestionsController extends Controller
 
         $user = $question->user;
 
-        $replyData = [
-            'question_id' => $request->question_id,
-            'user_id' => $user->id,
-            'reply' => $request->reply,
-        ];
+        if ($request->filled('reply_id')) {
+            $adminReply = AdminReply::find($request->reply_id);
+            if (!$adminReply) {
+                return redirect()->back()->withErrors(['error' => 'Reply not found.']);
+            }
 
-        AdminReply::create($replyData);
-        $title = "New Reply to Your Question";
-        $body = "Your question has been answered by the admin.";
-        $messageType = "Reply Notification";
+            $adminReply->reply = $request->reply;
+            $adminReply->save();
+
+            $title = "Reply Updated to Your Question";
+            $body = "Your question has been updated by the admin.";
+            $messageType = "Reply Update Notification";
+        } else {
+            $replyData = [
+                'question_id' => $request->question_id,
+                'user_id' => $user->id,
+                'reply' => $request->reply,
+            ];
+
+            AdminReply::create($replyData);
+
+            $title = "New Reply to Your Question";
+            $body = "Your question has been answered by the admin.";
+            $messageType = "Reply Notification";
+        }
 
         if (!empty($user->device_id)) {
             $this->fcmService->sendNotification(
@@ -345,7 +357,47 @@ class QuestionsController extends Controller
             'body' => $body,
         ]);
 
-         return redirect()->to('/PublicQuestionDetail/' . $question->id . '?flag=1');
+        return redirect()->to('/PublicQuestionDetail/' . $question->id . '?flag=1');
+    }
 
+
+    // public function editAdminReply(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'reply' => 'required|string', // Only validate the reply content
+    //     ]);
+
+    //     $validationError = ValidationHelper::handleValidationErrors($validator);
+    //     if ($validationError !== null) {
+    //         return $validationError;
+    //     }
+
+    //     $adminReply = AdminReply::find($request->reply_id);
+    //     if (!$adminReply) {
+    //         return redirect()->back()->withErrors(['error' => 'Reply not found.']);
+    //     }
+
+    //     $adminReply->reply = $request->reply;
+    //     $adminReply->save();
+
+    //     return redirect()->to('/PublicQuestionDetail/' . $adminReply->question_id . '?flag=1');
+    // }
+
+
+    public function deleteAdminReply(Request $request)
+    {
+        $request->validate([
+            'reply_id' => 'required',
+        ]);
+
+        $adminReply = AdminReply::find($request->reply_id);
+
+        if (!$adminReply) {
+            return response()->json(['error' => 'Reply not found.'], 200);
+        }
+
+        $adminReply->delete();
+
+        return response()->json(['success' => 'Reply deleted successfully.']);
     }
 }

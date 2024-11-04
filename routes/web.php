@@ -69,9 +69,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('PrivateQuestionDetail/{id}', [QuestionsController::class, 'private_question_detail'])->name('PrivateQuestionDetail');
     Route::get('DeletePrivateQuestion/{id}', [QuestionsController::class, 'delete_private_question'])->name('DeletePrivateQuestion');
 
-    //Admin Reply route
+    // Route for creating an admin reply
     Route::post('/admin/reply', [QuestionsController::class, 'adminReply'])->name('admin.reply');
 
+    // Route for editing an admin reply
+    Route::post('/admin/reply/edit', [QuestionsController::class, 'editAdminReply'])->name('admin.reply.edit');
+
+    // Route for deleting an admin reply
+    Route::post('/admin/reply/delete', [QuestionsController::class, 'deleteAdminReply'])->name('admin.reply.delete');
     // Appointments & Events
     Route::get('AllAppointments', [EventsAndApptController::class, 'all_appointments'])->name('AllAppointments');
     Route::get('getAppts', [EventsAndApptController::class, 'get_all_appointments'])->name('getAppts');
@@ -87,8 +92,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('getEventsQuestions/{id}', [EventsAndApptController::class, 'get_event_questions'])->name('getEventsQuestions');
     Route::get('EventQuestionDetail/{id}', [EventsAndApptController::class, 'event_question_detail'])->name('EventQuestionDetail');
     Route::get('getEventScholars/{id}', [EventsAndApptController::class, 'get_event_questions'])->name('getEventScholars');
-
-
 });
 
 // Auth module
