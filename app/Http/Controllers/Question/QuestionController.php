@@ -497,6 +497,7 @@ class QuestionController extends Controller
             'reply' => $request->reply,
         ];
         ScholarReply::create($data);
+        
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
         $title = "Scholar Replied";
