@@ -313,6 +313,7 @@ class QuestionsController extends Controller
         }
 
         $user = $question->user;
+        $questionId = $request->question_id;
 
         if ($request->filled('reply_id')) {
             $adminReply = AdminReply::find($request->reply_id);
@@ -322,41 +323,28 @@ class QuestionsController extends Controller
 
             $adminReply->reply = $request->reply;
             $adminReply->save();
-
-            $title = "Reply Updated to Your Question";
-            $body = "Your question has been updated by the admin.";
-            $messageType = "Reply Update Notification";
         } else {
             $replyData = [
                 'question_id' => $request->question_id,
-                'user_id' => $user->id,
+                'user_id' => 0,
                 'reply' => $request->reply,
             ];
 
             AdminReply::create($replyData);
+            $userData = User::where('id', $question->user_id)->first();
+            $device_id = $userData->device_id;
+            $title = "Admin Replied";
+            $body = 'My Mufti Admin has reply on your question.';
+            $messageType = "Admin reply";
+            $otherData = "Admin reply";
+            $notificationType = "2";
 
-            $title = "New Reply to Your Question";
-            $body = "Your question has been answered by the admin.";
-            $messageType = "Reply Notification";
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+            }
+
+
         }
-
-        if (!empty($user->device_id)) {
-            $this->fcmService->sendNotification(
-                $user->device_id,
-                $title,
-                $body,
-                $messageType,
-                ['question_id' => $question->id],
-                "1"
-            );
-        }
-
-        Notification::create([
-            'user_id' => $user->id,
-            'title' => $title,
-            'body' => $body,
-        ]);
-
         return redirect()->to('/PublicQuestionDetail/' . $question->id . '?flag=1');
     }
 

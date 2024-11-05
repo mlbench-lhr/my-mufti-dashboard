@@ -130,7 +130,7 @@
                                 <div class="mb-5">
                                     <label for="replyInput" class="form-label fw-bold fs-3">Add Reply</label>
                                     <textarea id="replyInput" name="reply" class="form-control form-control-solid" placeholder="Add Reply" rows="7"
-                                        style="resize: none;" required></textarea>
+                                        style="resize: none;" required oninput="validateInput(this)"></textarea>
                                 </div>
                                 <div class="d-flex justify-content-center align-content-center pt-2 mt-10">
                                     <button type="submit" class="btn btn-lg col-12" id="submitButton"
@@ -301,7 +301,7 @@
             </div>
 
             @if ($question->adminReply)
-                <div class="col-12 fs-4 fw-bold text-muted pb-10" data-reply-id="{{ $question->adminReply->id }}">
+                <div class="col-12 fs-4 fw-bold text-black pb-10" data-reply-id="{{ $question->adminReply->id }}">
                     {{ $question->adminReply->reply }}
                 </div>
             @else
@@ -563,7 +563,6 @@
         loadVerificationData(currentPage);
     });
     $(document).ready(function() {
-        // Handle global search input
         $('#global-search').on('input', function() {
             var searchTerm = $(this).val();
             loadVerificationData(1, searchTerm);
@@ -573,7 +572,7 @@
         loadVerificationData(currentPage);
     });
 
-    //admin's Reply
+    // add admin reply
     document.getElementById('replyForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -608,6 +607,7 @@
                 alert('An unexpected error occurred.');
             });
     });
+
 
     function editReply(replyId, replyContent) {
         document.getElementById('modalTitle').innerText = "Edit Admin's Reply";
@@ -668,5 +668,12 @@
                 );
             }
         });
+
+
+    }
+
+    function validateInput(input) {
+        input.value = input.value.replace(/^\s+/, '');
+        input.value = input.value.replace(/[^0-9a-zA-Z\s]/g, '');
     }
 </script>
