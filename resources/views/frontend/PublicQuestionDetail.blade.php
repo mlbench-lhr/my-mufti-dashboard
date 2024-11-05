@@ -301,7 +301,7 @@
             </div>
 
             @if ($question->adminReply)
-                <div class="col-12 fs-4 fw-bold text-muted pb-10" data-reply-id="{{ $question->adminReply->id }}">
+                <div class="col-12 fs-4 fw-bold text-black pb-10" data-reply-id="{{ $question->adminReply->id }}">
                     {{ $question->adminReply->reply }}
                 </div>
             @else
