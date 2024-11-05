@@ -421,7 +421,7 @@ class QuestionController extends Controller
                 'user_detail' => (object) [
                     'id' => $admin_reply ->user_id,
                     'name' => 'My Mufti Admin',
-                    'image' => 'frontend/media/adminLogo.svg',
+                    'image' => '',
                     'fiqa' => '',
                 ],
             ];
