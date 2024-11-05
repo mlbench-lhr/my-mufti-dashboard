@@ -329,7 +329,7 @@ class QuestionsController extends Controller
         } else {
             $replyData = [
                 'question_id' => $request->question_id,
-                'user_id' => $user->id,
+                'user_id' => 0,
                 'reply' => $request->reply,
             ];
 

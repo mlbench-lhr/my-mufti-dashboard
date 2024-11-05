@@ -7,6 +7,7 @@ use App\Helpers\ResponseHelper;
 use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReportQuestion;
+use App\Models\AdminReply;
 use App\Models\Interest;
 use App\Models\Notification;
 use App\Models\Question;
@@ -406,6 +407,28 @@ class QuestionController extends Controller
 
         $scholar_reply = ScholarReply::with('user_detail')->where('question_id', $question->id)->first();
         $question->scholar_reply = $scholar_reply ? $scholar_reply : (object) [];
+
+        $admin_reply = AdminReply::where('question_id', $question->id)->first();
+
+        if ($admin_reply) {
+            $question->admin_reply = (object) [
+                'id' => $admin_reply->id,
+                'question_id' => $admin_reply->question_id,
+                'user_id' => $admin_reply ->user_id,
+                'reply' => $admin_reply->reply,
+                'created_at' => $admin_reply->created_at,
+                'updated_at' => $admin_reply->updated_at,
+                'user_detail' => (object) [
+                    'id' => $admin_reply ->user_id,
+                    'name' => 'My Mufti Admin',
+                    'image' => 'frontend/media/adminLogo.svg',
+                    'fiqa' => '',
+                ],
+            ];
+        } else {
+            $question->admin_reply = (object) [];
+        }
+
 
         $response = [
             'status' => true,
