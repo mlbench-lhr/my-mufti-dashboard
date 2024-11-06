@@ -18,7 +18,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('acceptRequestDeletion/{id}', [UserController::class, 'accept_request_deletion']);
 
 
-
     // users & scholars
     Route::get('AllUsers', [UserController::class, 'all_users'])->name('AllUsers');
     Route::get('getUsers', [UserController::class, 'get_all_users'])->name('getUsers');

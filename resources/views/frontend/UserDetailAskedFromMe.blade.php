@@ -447,7 +447,8 @@
                     $.each(users.data, function(index, row) {
                         var newRow = `
                     <tr>
-                        <td class="d-flex align-items-center">
+                        <td>
+                        <div class="d-flex align-items-center justify-content-start">
                             ${row.user_detail.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
                                     <div class="symbol-label">
@@ -459,13 +460,13 @@
                                         <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
                                     </div>
                                 </div>`}
-
-                            <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
-                                    ${row.user_detail.name}
+                                <div class="d-flex flex-column">
+                                    <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                        ${row.user_detail.name}
+                                    </div>
+                                    <span> #${row.user_detail.email}</span>
                                 </div>
-                                <span> #${row.user_detail.email}</span>
-                            </div>
+                        </div>
                         </td>
                         <td style = "" >${row.user_detail.user_type}</td>
                         <td>${row.registration_date}</td>

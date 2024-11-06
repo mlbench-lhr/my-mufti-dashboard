@@ -369,6 +369,8 @@ class UserController extends Controller
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
         }
+        $query->orderBy('created_at', 'DESC');
+
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('j \\ F Y');
@@ -437,6 +439,8 @@ class UserController extends Controller
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
         }
+        $query->orderBy('created_at', 'DESC');
+
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = Carbon::parse($row->created_at)->format('M d, Y');
