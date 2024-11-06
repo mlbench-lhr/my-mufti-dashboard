@@ -7,6 +7,7 @@ use App\Helpers\ResponseHelper;
 use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BookAppointment;
+use App\Models\DeleteAccountRequest;
 use App\Models\HelpFeedBack;
 use App\Models\Interest;
 use App\Models\MuftiAppointment;
@@ -488,6 +489,51 @@ class EditProfile extends Controller
             return ResponseHelper::jsonResponse(true, 'User deleted Successfully!');
         }
     }
+    public function request_for_delete_account(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+        $user = User::find($request->user_id);
+
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
+        }
+
+        if ($request->flag == 1) {
+
+            $data = DeleteAccountRequest::where('user_id', $request->user_id)->first();
+            return response()->json(
+                [
+                    'status' => true,
+                    'message' => 'Request status',
+                    'data' => $data,
+                ],
+                200
+            );
+
+        } else {
+            $data = [
+                'user_id' => $request->user_id,
+                'reason' => "",
+                'status' => 1,
+            ];
+
+            DeleteAccountRequest::updateOrCreate(
+                ['user_id' => $request->user_id],
+                $data
+            );
+            return ResponseHelper::jsonResponse(true, 'Request send Successfully!');
+        }
+
+    }
+
     public function book_an_appointment(BookAppointment $request)
     {
 

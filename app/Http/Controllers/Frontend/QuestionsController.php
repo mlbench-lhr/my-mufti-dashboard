@@ -98,6 +98,8 @@ class QuestionsController extends Controller
         $userCount = QuestionComment::with('user')->where('question_id', $request->id)->count();
         $query = QuestionComment::with('user')->where('question_id', $request->id);
 
+        $query->orderBy('created_at', 'DESC');
+
         $user = $query->paginate(3);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('j \\ F Y');

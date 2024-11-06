@@ -218,7 +218,6 @@
                                 </a>
                             </div>
                         </td>
-                       
                     </tr>
                 `;
                         tableBody.append(newRow);

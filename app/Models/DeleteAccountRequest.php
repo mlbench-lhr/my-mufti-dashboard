@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Degree extends Model
+class DeleteAccountRequest extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $fillable = [
-        'degree_image',
-        'degree_title',
-        'institute_name',
-        'degree_startDate',
-        'degree_endDate',
+        'reason',
+        'status',
         'user_id',
     ];
     protected $casts = [
