@@ -164,14 +164,15 @@
                                 <!--end::User-->
                                 <!--begin::Actions-->
                                 <div class="d-flex">
-                                    {{-- <a href="{{ URL::to('Approve/' . $response['user']->id) }}" style="pointer-events: none; cursor: default;">
+                                    <a href="{{ URL::to('Approve/' . $response['user']->id) }}"
+                                        style="pointer-events: none; cursor: default;">
                                         <button type="button" class="btn btn-success w-100 text-uppercase"
                                             style="background-color:#38B89A;" disabled>Approve</button>
-                                    </a> --}}
-                                    <a href="{{ URL::to('Approve/' . $response['user']->id) }}">
+                                    </a>
+                                    {{-- <a href="{{ URL::to('Approve/' . $response['user']->id) }}">
                                         <button type="button" class="btn btn-success w-100 text-uppercase"
                                             style="background-color:#38B89A;">Approve</button>
-                                    </a>
+                                    </a> --}}
                                     <a href="{{ URL::to('Reject/' . $response['user']->id) }}">
                                         <button type="button" class="btn btn-danger w-100 text-uppercase ms-5"
                                             style="background-color:#F52E2E;">Reject</button>
