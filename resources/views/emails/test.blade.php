@@ -14,7 +14,7 @@
         Use the following One-Time Password (OTP) to complete your process:
     </p>
     <h3 style="font-family: Arial, sans-serif; color: #007bff;">
-        {{ $data['otp_code'] }}
+        {{ $data['message'] }}
     </h3>
     <p style="font-family: Arial, sans-serif; color: #555;">
         This code is valid for the next 10 minutes. Please do not share it with anyone.
