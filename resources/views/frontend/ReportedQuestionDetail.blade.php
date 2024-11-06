@@ -243,7 +243,8 @@
                             '0');
                         var newRow = `
                     <tr>
-                        <td class="d-flex align-items-center">
+                        <td>
+                           <div class="d-flex align-items-center justify-content-start">
                             ${row.user.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
                                     <div class="symbol-label">
@@ -255,13 +256,13 @@
                                         <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
                                     </div>
                                 </div>`}
-
-                            <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
-                                    ${row.user.name}
+                                <div class="d-flex flex-column">
+                                    <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                        ${row.user.name}
+                                    </div>
+                                    <span> #${row.user.email}</span>
                                 </div>
-                                <span> #${row.user.email}</span>
-                            </div>
+                        </div>
                         </td>
 
                         <td style = "padding-left: 50px;" >${row.user.user_type}</td>
