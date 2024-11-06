@@ -20,7 +20,6 @@ class GenerateOTPMail extends Mailable
     public function __construct($data)
     {
         $this->data = $data;
-
     }
 
     /**
@@ -29,7 +28,7 @@ class GenerateOTPMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Mail from My Mufti Team ',
+            subject: 'Your OTP Code for My Mufti',
         );
     }
 
