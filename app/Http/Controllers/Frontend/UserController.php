@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Degree;
+use App\Models\DeleteAccountRequest;
 use App\Models\Event;
 use App\Models\Experience;
 use App\Models\Interest;
@@ -26,7 +27,6 @@ class UserController extends Controller
     {
         $this->fcmService = $fcmService;
     }
-
     public function all_users()
     {
         $users = User::where('user_type', 'user')->get();
@@ -56,6 +56,111 @@ class UserController extends Controller
             $row->posted_questions = Question::where('user_id', $row->id)->count();
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
+    }
+    public function deletion_requests()
+    {
+        $userRequests = DeleteAccountRequest::where('status', 1)->pluck('user_id')->toArray();
+        $users = User::whereIn('id', $userRequests)->get();
+        return view('frontend.DeletionRequests', compact('users'));
+    }
+
+    public function get_deletion_requests(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $sortingOption = $request->input('sorting');
+
+        $deletionRequests = DeleteAccountRequest::where('status', 1)
+            ->pluck('updated_at', 'user_id')
+            ->toArray();
+
+        $userCount = User::whereIn('id', array_keys($deletionRequests))->count();
+        $query = User::whereIn('id', array_keys($deletionRequests));
+
+        if ($searchTerm) {
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        if ($sortingOption === 'newest') {
+            $query->orderBy('created_at', 'desc');
+        } elseif ($sortingOption === 'earliest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $users = $query->paginate(10);
+        foreach ($users as $user) {
+            $user->requested_date = isset($deletionRequests[$user->id])
+            ? \Carbon\Carbon::parse($deletionRequests[$user->id])->format('M d, Y')
+            : null;
+        }
+
+        return response()->json(['userCount' => $userCount, 'users' => $users]);
+    }
+
+    public function reject_request_deletion(Request $request)
+    {
+        $userId = $request->user_id;
+        $data = [
+            'status' => 3,
+            'reason' => $request->reason ?? "",
+        ];
+        DeleteAccountRequest::where('user_id', $userId)->update($data);
+
+        $user = User::where('id', $userId)->first();
+
+        $device_id = $user->device_id;
+        $title = "Deletion Request Update";
+
+        $notiBody = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
+        $body = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
+        $messageType = "Deletion Request Update";
+        $otherData = "Deletion Request Update";
+        $notificationType = "0";
+
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
+
+        $data = [
+            'user_id' => $userId,
+            'title' => $title,
+            'body' => $body,
+        ];
+        Notification::create($data);
+
+        return redirect('DeletionRequests');
+    }
+
+    public function accept_request_deletion($id)
+    {
+        $data = [
+            'status' => 2,
+            'reason' => "",
+        ];
+        DeleteAccountRequest::where('user_id', $id)->update($data);
+        DeleteAccountRequest::where('user_id', $id)->delete();
+
+        $user = User::where('id', $id)->first();
+
+        $device_id = $user->device_id;
+        $title = "Deletion Request Update";
+
+        $notiBody = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
+        $body = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
+        $messageType = "Deletion Request Update";
+        $otherData = "Deletion Request Update";
+        $notificationType = "0";
+
+        if ($device_id != "") {
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+        }
+
+        $user->deleteWithRelated();
+        $user->delete();
+
+        return redirect('DeletionRequests');
+
     }
 
     public function all_scholars()
@@ -113,7 +218,6 @@ class UserController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
-
     public function scholar_request_detail(Request $request, $id)
     {
         $user = User::with('interests', 'mufti_detail')->where('id', $id)->first();
@@ -154,7 +258,6 @@ class UserController extends Controller
         ];
         return view('frontend.ScholarRequestDetail', compact('response', 'id'));
     }
-
     public function approve_request(Request $request, $id)
     {
         $mufti = Mufti::where('user_id', $id)->first();
@@ -190,7 +293,6 @@ class UserController extends Controller
 
         return redirect('ScholarsRequests');
     }
-
     public function reject_request(Request $request, $id)
     {
         $user = User::where('id', $id)->first();
@@ -223,7 +325,6 @@ class UserController extends Controller
 
         return redirect('ScholarsRequests');
     }
-
     public function user_detail(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
@@ -234,7 +335,6 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetail', compact('response', 'id'));
     }
-
     public function get_public_questions_posted_by_user(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -250,7 +350,6 @@ class UserController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
-
     public function user_detail_private_questons(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
@@ -261,7 +360,6 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailPrivateQuestions', compact('response', 'id'));
     }
-
     public function get_private_questions_asked_by_user(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -277,7 +375,6 @@ class UserController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
-
     public function user_detail_appointments(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
@@ -295,7 +392,6 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailAppointments', compact('response', 'id'));
     }
-
     public function get_appointments_of_user(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -320,7 +416,6 @@ class UserController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
-
     public function user_detail_asked_from_me(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
@@ -334,7 +429,6 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailAskedFromMe', compact('response', 'id'));
     }
-
     public function get_asked_from_me(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -349,7 +443,6 @@ class UserController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
-
     public function user_detail_degrees(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
@@ -361,7 +454,6 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailDegrees', compact('response', 'id'));
     }
-
     public function user_events(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
@@ -372,7 +464,6 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailEvents', compact('response', 'id'));
     }
-
     public function get_user_events(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -388,7 +479,6 @@ class UserController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
-
     public function user_events_requests(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
@@ -399,7 +489,6 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailEventsRequests', compact('response', 'id'));
     }
-
     public function get_user_events_requests(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -415,7 +504,6 @@ class UserController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
-
     public function delete_user(Request $request, $id)
     {
 

@@ -195,7 +195,7 @@
                         var category = categoryName.join(', ');
 
                         var modifiedSerialNumber = pad(count + 1, 2,
-                            '0'); // Calculate modified serial number
+                            '0');
                         var newRow = `
                     <tr>
                         <td>${modifiedSerialNumber}</td>

@@ -164,7 +164,7 @@
                                 <!--end::User-->
                                 <!--begin::Actions-->
                                 <div class="d-flex">
-                                    <a href="{{ URL::to('Approve/' . $response['user']->id) }}">
+                                    <a href="{{ URL::to('Approve/' . $response['user']->id) }}" style="pointer-events: none; cursor: default;">
                                         <button type="button" class="btn btn-success w-100 text-uppercase"
                                             style="background-color:#38B89A;" disabled>Approve</button>
                                     </a>

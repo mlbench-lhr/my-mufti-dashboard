@@ -69,9 +69,9 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">Events
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Users
                 </h1>
-                <h3 class="mt-4" style=" font-weight:400; ">All Events: <span class="fs-5" id="user-count"
+                <h3 class="mt-4" style=" font-weight:400; ">Total Users: <span class="fs-5" id="user-count"
                         style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
@@ -106,25 +106,7 @@
             <div class="card">
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
-                    <div class="d-flex overflow-auto h-55px">
-                        <ul
-                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('AllEvents') ? 'active' : null }}"
-                                    href="{{ URL::to('AllEvents') }}">All Events</a>
-                            </li>
-                            <!--end::Nav item-->
-                            <!--begin::Nav item-->
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('RequestedEvents') ? 'active' : null }}"
-                                    href="{{ URL::to('RequestedEvents') }}">Requested Events</a>
-                            </li>
-                            <!--end::Nav item-->
-                    </div>
-
-
-                    @if (count($events))
+                    @if (count($users))
                         <!--begin::Table-->
                         <div class="table-responsive">
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
@@ -132,11 +114,11 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-100px">Event Name</th>
-                                        <th class="min-w-125px">Date</th>
-                                        <th class="min-w-125px">Time</th>
-                                        <th class="min-w-125px">Duration</th>
-                                        <th class="text-center min-w-225px">Action</th>
+                                        <th class="min-w-80px">Sr No</th>
+                                        <th class="min-w-125px">Scholar</th>
+                                        <th class="min-w-125px">Email Address</th>
+                                        <th class="min-w-125px">Requested On</th>
+                                        <th class="min-w-100px text-center">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -155,7 +137,7 @@
                     @else
                         <div class=" text-center">
                             <img alt="Logo" style="align-items: center; margin-top:50px"
-                                src="{{ url('public/frontend/media/noRequestedEvents.svg') }}" class="img-fluid ">
+                                src="{{ url('public/frontend/media/noDeletionRequest.svg') }}" class="img-fluid ">
                         </div>
                     @endif
                 </div>
@@ -164,104 +146,140 @@
             <!--end::Card-->
         </div>
         <!--end::Container-->
+        <!--begin::Modal - interests - Update-->
+        <div class="modal fade" id="kt_modal_update_interests" tabindex="-1" aria-hidden="true">
+            <!--begin::Modal dialog-->
+            <div class="modal-dialog mw-500px">
+                <!--begin::Modal content-->
+                <div class="modal-content">
+                    <!--begin::Modal header-->
+                    <div class="modal-header pb-0 border-0 d-f justify-content-between">
+                        <!--begin::Close-->
+                        <p>
+
+                        </p>
+                        <p class="fs-2 fw-bold">
+                            Reason For Not Accepted
+                        </p>
+                        <div class="btn btn-sm btn-icon btn-active-color-dark" data-bs-dismiss="modal">
+                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+
+                            <span class="">
+                                <svg width="35" height="35" viewBox="0 0 40 40" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M33.3307 20.0013C33.3307 27.3651 27.3612 33.3346 19.9974 33.3346C12.6336 33.3346 6.66406 27.3651 6.66406 20.0013C6.66406 12.6375 12.6336 6.66797 19.9974 6.66797C27.3612 6.66797 33.3307 12.6375 33.3307 20.0013ZM15.9569 15.9608C16.3474 15.5703 16.9806 15.5703 17.3711 15.9608L19.9974 18.5871L22.6236 15.9609C23.0141 15.5703 23.6473 15.5703 24.0378 15.9609C24.4283 16.3514 24.4283 16.9846 24.0378 17.3751L21.4116 20.0013L24.0378 22.6275C24.4283 23.018 24.4283 23.6512 24.0378 24.0417C23.6472 24.4322 23.0141 24.4322 22.6235 24.0417L19.9974 21.4155L17.3711 24.0417C16.9806 24.4322 16.3475 24.4322 15.9569 24.0417C15.5664 23.6512 15.5664 23.018 15.9569 22.6275L18.5831 20.0013L15.9569 17.375C15.5664 16.9845 15.5664 16.3514 15.9569 15.9608Z"
+                                        fill="#303030" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--begin::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body  pt-4 mx-0">
+                        <!--begin::Input group-->
+                        <form action="{{ route('rejectRequestDeletion') }}" method="POST" class="form"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <!-- Add a hidden input field to carry the interest ID -->
+                            <input type="hidden" name="user_id" id="userId" value="">
+                            <div class="fv-row mb-5">
+                                <!--begin::Input-->
+                                <label for="name" class="fw-bold fs-4 pb-2 fw-600">Reason</label>
+                                <textarea style="background-color:#F0F1F3; font-size: 1.3rem;" type="text" placeholder="Add Reason"
+                                    name="reason" class="form-control form-control-solid mb-3 border" id="productDescription" cols="20"
+                                    rows="6" oninput="validateInput(this)" required></textarea>
+                                <!--end::Input-->
+                            </div>
+
+                            <div class="d-flex justify-content-center align-content-center pt-2 ">
+                                <!--begin::Button-->
+                                <button type="submit" id="kt_modal_add_customer_submit" class="btn col-12"
+                                    style="background-color: #38B89A; color:#FFFFFF">
+                                    <span class="indicator-label fs-4">Send</span>
+                                    <span class="indicator-progress">Please wait...
+                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                </button>
+                                <!--end::Button-->
+                            </div>
+                            <!--end::Input group-->
+                        </form>
+                    </div>
+                    <!--end::Modal body-->
+                </div>
+                <!--end::Modal content-->
+            </div>
+            <!--end::Modal dialog-->
+        </div>
+        <!--end::Modal - interests - Update-->
     </div>
     <!--end::Content-->
-    {{-- <script type="module">
-        $(document).ready(function() {
-            $('.btn-approve').on('click', function(e) {
-                e.preventDefault();
-    
-                var button = $(this);
-                var url = button.data('url'); // Use data-url attribute for the endpoint
-    
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr(
-                            'content'), // Include CSRF token if needed
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            Swal.fire({
-                                title: 'Success',
-                                text: response.message,
-                                icon: 'success',
-                                timer: 1500,
-                                showConfirmButton: false,
-                            }).then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error',
-                                text: response.message,
-                                icon: 'error',
-                                timer: 1500,
-                                showConfirmButton: false,
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'An unexpected error occurred.',
-                            icon: 'error',
-                        });
-                    }
-                });
-            });
-        });
-    </script> --}}
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Handle click event for approval button
-    $(document).on('click', '.btn-approve', function(e) {
-        e.preventDefault();
+    $(document).ready(function() {
+        $('#kt_modal_update_interests').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var userId = button.data('user-id');
 
-        var button = $(this);
-        var url = button.data('url'); // Use data-url attribute for the endpoint
+            var modal = $(this);
 
-        $.ajax({
-            url: url,
-            type: 'GET',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr(
-                    'content'), // Include CSRF token if needed
-            },
-            success: function(response) {
-                if (response.status === 'success') {
-                    Swal.fire({
-                        title: 'Success',
-                        text: response.message,
-                        icon: 'success',
-                        timer: 1500,
-                        showConfirmButton: false,
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error',
-                        text: response.message,
-                        icon: 'error',
-                        timer: 1500,
-                        showConfirmButton: false,
+            modal.find('#userId').val(userId);
+
+            var form = modal.find('form');
+            var actionUrl = form.attr('action');
+            actionUrl = actionUrl.replace('user-id', userId);
+            form.attr('action', actionUrl);
+        });
+    });
+    $(document).ready(function() {
+        $(document).on('click', '.delete-interest', function() {
+            var interestId = $(this).data('interest-id');
+            Swal.fire({
+                title: 'Accept the Request',
+                text: "Are you sure you want to Accept the Request?",
+                icon: 'warning',
+                iconColor: '#38B89A',
+                showCancelButton: true,
+                confirmButtonColor: '#38B89A',
+                cancelButtonColor: '#d4d5d6',
+                confirmButtonText: 'Approved',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'acceptRequestDeletion/' + interestId,
+                        type: "GET",
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Accepted!',
+                                text: 'Scholar has been deleted.',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 700,
+                                willClose: () => {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(error) {
+                            Swal.fire('Error', 'Something went wrong.', 'error');
+                        }
                     });
                 }
-            },
-            error: function(xhr) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'An unexpected error occurred.',
-                    icon: 'error',
-                });
-            }
+            });
         });
     });
 
+    function validateInput(input) {
+        // Only allow alphanumeric characters, spaces, and some basic punctuation (.,!?)
+        const regex = /[^a-zA-Z0-9 .,!?'"()-]/g;
+        input.value = input.value.replace(regex, '');
+        input.value = input.value.replace(/^\s*/, '');
+    }
+</script>
+<script>
     var currentPage = 1;
 
     function getUrlParameter(name) {
@@ -274,7 +292,8 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getRequestedEvents') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
+            url: '{{ route('getDeletionRequests') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+                '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
@@ -288,24 +307,31 @@
 
                 if (users.data.length === 0) {
                     // If no users found, display a message in a new row
+
+
                     var noUserRow = `
             <tr>
-                <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No Events found</td>
+                <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No user found</td>
             </tr>
         `;
                     tableBody.append(noUserRow);
                 } else {
+                    var badgeColors = ['text-warning', 'text-danger', 'text-primary', 'text-success'];
+                    var bgColors = ['bg-light-warning', 'bg-light-danger', 'bg-light-primary',
+                        'bg-light-success'
+                    ];
                     var count = 0;
                     $.each(users.data, function(index, row) {
-                        var categoryName = row.event_category.map(function(category) {
-                            return category;
-                        });
 
-                        var category = categoryName.join(', ');
+                        var modifiedSerialNumber = pad(count + 1, 2,
+                            '0');
+
                         var newRow = `
                     <tr>
+                        <td class="text-center">${modifiedSerialNumber}</td>
+
                         <td class="d-flex align-items-center">
-                            ${row.image? `
+                            ${row.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
                                     <div class="symbol-label">
                                         <img src="{{ asset('public/storage/') }}/${row.image}" alt="image" class="w-100" />
@@ -316,53 +342,32 @@
                                         <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
                                     </div>
                                 </div>`}
-
-                            <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
-                                    ${row.event_title}
+                            <a href="{{ URL::to('UserDetail/PublicQuestions') }}/${row.id}" class="cursor-pointer text-gray-800 text-hover-success">
+                            <div class="d-flex flex-column text-hover-success">
+                                <div class="mb-1">
+                                    ${row.name}
                                 </div>
-                                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 230px;">${categoryName}</span>
+                                <span> #${row.id}</span>
                             </div>
+                             </a>
                         </td>
-                        <td>${row.event_date}</td>
-                        <td>${row.event_time}</td>
-                        <td>${row.duration} Hours</td>
-                        <td>
-                            ${row.event_status == 2 ?
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                   <a href="#" class="btn-approve" data-url="{{ URL::to('EventRequestApprove') }}/${row.id}">
-                                        <button type="button" class="btn btn-sm btn-success w-100"
-                                            style="background-color:#38B89A;">Accept</button>
+
+                        <td>${row.email}</td>
+                        <td>${row.requested_date}</td>
+                        <td class="center">
+                            <div class="fs-4 fw-bolder text-dark d-flex align-content-center justify-content-center gap-3">
+                                    <a class="btn-approve">
+                                        <button type="button" class="btn btn-sm w-100 delete-interest" data-interest-id="${row.id}"
+                                        style="background-color:#38B89A; color:white;">Accept</button>
                                     </a>
-                                    <a href="{{ URL::to('EventRequestDecline') }}/${row.id}">
-                                        <button type="button" class="btn btn-sm btn-danger w-100 ms-5"
-                                        style="background-color:#F52E2E;">Reject</button>
+
+                                    <a>
+                                        <button type="button" class="btn btn-sm w-100"
+                                        style="background-color:#F52E2E; color:white;" data-bs-toggle="modal"
+                                        data-bs-target="#kt_modal_update_interests"
+                                        data-user-id="${row.id}" >Reject</button>
                                     </a>
-                                    <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
-                                        View detail
-                                    </a>
-                                </div>` 
-                            :
-                            row.event_status == 1 ?
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <div class="fw-bold fs-4 badge badge-light-success fw-normal">
-                                                Accepted
-                                    </div>
-                                    <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
-                                        View detail
-                                    </a>
-                                </div>`
-                            :
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <div class="fw-bold fs-4 badge badge-light-danger fw-normal">
-                                                Rejected
-                                    </div>
-                                    <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
-                                        View detail
-                                    </a>
-                                </div>`       
-                        }
-                           
+                                </div>
                         </td>
                        
                     </tr>
@@ -370,6 +375,16 @@
                         tableBody.append(newRow);
                         count++;
                     });
+
+                    // Function to pad numbers with zeros
+                    function pad(number, length, character) {
+                        var str = '' + number;
+                        while (str.length < length) {
+                            str = character + str;
+                        }
+                        return str;
+                    }
+
                 }
                 var paginationLinks = $('#pagination-links');
                 paginationLinks.empty();
@@ -404,40 +419,10 @@
                 </li>`;
                 paginationLinks.append(nextLink);
 
-
                 $('#loader').addClass('d-none');
-
             },
         });
     }
-
-    // $(document).on('click', '.page-link', function(e) {
-    //     e.preventDefault();
-    //     currentPage = $(this).data('page');
-    //     var searchTerm = $('#global-search').val();
-    //     loadVerificationData(currentPage, searchTerm);
-    // });
-    // $(document).on('click', '#apply-filter-button', function(e) {
-    //     e.preventDefault();
-    //     var searchTerm = $('#global-search').val();
-    //     var sortingOption = $('#request-date-filter').val();
-    //     loadVerificationData(currentPage, searchTerm, sortingOption);
-    // });
-    // $(document).on('click', '#reset-filter-button', function(e) {
-    //     e.preventDefault();
-    //     $('#request-date-filter').val('').trigger('change');
-    //     loadVerificationData(currentPage);
-    // });
-    // $(document).ready(function() {
-    //     // Handle global search input
-    //     $('#global-search').on('input', function() {
-    //         var searchTerm = $(this).val();
-    //         loadVerificationData(1, searchTerm);
-    //     });
-    // });
-    // $(document).ready(function() {
-    //     loadVerificationData(currentPage);
-    // });
 
     function updateUrlParameter(key, value) {
         var url = new URL(window.location.href);
@@ -446,7 +431,6 @@
             path: url.href
         }, '', url.href);
     }
-
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
         var page = $(this).data('page');
@@ -457,20 +441,17 @@
             updateUrlParameter('page', currentPage);
         }
     });
-
     $(document).on('click', '#apply-filter-button', function(e) {
         e.preventDefault();
         var searchTerm = $('#global-search').val();
         var sortingOption = $('#request-date-filter').val();
         loadVerificationData(currentPage, searchTerm, sortingOption);
     });
-
     $(document).on('click', '#reset-filter-button', function(e) {
         e.preventDefault();
         $('#request-date-filter').val('').trigger('change');
         loadVerificationData(currentPage);
     });
-
     $(document).ready(function() {
         $('#global-search').on('input', function() {
             var searchTerm = $(this).val();
