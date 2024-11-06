@@ -17,6 +17,15 @@ class ReportQuestion extends Model
         'reason',
     ];
 
+    protected $casts = [
+        'user_id' => 'integer',
+        'question_id' => 'integer',
+    ];
+
+    protected $attributes = [
+        'reason' => "",
+    ];
+
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id', 'name', 'image', 'email');
@@ -25,5 +34,10 @@ class ReportQuestion extends Model
     public function question()
     {
         return $this->belongsTo(Question::class, 'question_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id')->select('id', 'name', 'image', 'email', 'user_type');
     }
 }

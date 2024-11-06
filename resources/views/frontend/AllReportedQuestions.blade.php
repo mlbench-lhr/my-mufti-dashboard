@@ -114,10 +114,8 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-175px">Reported By</th>
                                         <th class="min-w-175px">Posted By</th>
                                         <th class="min-w-125px">Question</th>
-                                        <th class="min-w-125px">Reason</th>
                                         <th class="text-end min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -194,9 +192,8 @@
                     $.each(reportedQuestions.data, function(index, row) {
                         var newRow = `
                     <tr>
-
                         <td>
-                            <div class="d-flex align-items-center">
+                           <div class="d-flex align-items-center">
                             ${row.user_detail.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
                                     <div class="symbol-label">
@@ -218,35 +215,11 @@
                             </div>
                         </td>
                         <td>
-                           <div class="d-flex align-items-center">
-                            ${row.question.user_detail.image ? `
-                                <div class="symbol symbol-50px overflow-hidden me-3">
-                                    <div class="symbol-label">
-                                        <img src="{{ asset('public/storage/') }}/${row.question.user_detail.image}" alt="image" class="w-100" />
-                                    </div>
-                                </div>` : `
-                                <div class="symbol symbol-50px overflow-hidden me-3">
-                                    <div class="symbol-label">
-                                        <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
-                                    </div>
-                                </div>`}
-
-                            <div class="d-flex flex-column">
-                                <div class="text-gray-800 mb-1">
-                                    ${row.question.user_detail.name}
-                                </div>
-                                <span>${row.question.user_detail.email}</span>
-                            </div>
-                            </div>
-                        </td>
-
-                        <td>${row.question.question}</td>
-                        <td>
-                            ${row.reason ? truncateWords(row.reason, 6) : 'No reason provided'}
+                            ${truncateWords(row.question, 25)}
                         </td>
                         <td class="text-end">
                             <div class="fs-4 fw-bolder text-dark">
-                                <a href="{{ URL::to('ReportedQuestionDetail') }}/${row.question_id}/${row.id}?flag=3" class="link-success fw-bold">
+                                <a href="{{ URL::to('ReportedQuestionDetail') }}/${row.id}/${row.id}?flag=3" class="link-success fw-bold">
                                     View detail
                                 </a>
                             </div>

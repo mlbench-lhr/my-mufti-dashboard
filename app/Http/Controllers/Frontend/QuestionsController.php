@@ -104,6 +104,37 @@ class QuestionsController extends Controller
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
+    public function get_question_reports(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        $reportCount = ReportQuestion::with('user')->where('question_id', $request->id)->count();
+
+        $query = ReportQuestion::with('user')->where('question_id', $request->id);
+
+        if ($searchTerm) {
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('reason', 'LIKE', '%' . $searchTerm . '%')
+                      ->orWhereHas('user_detail', function ($subQuery) use ($searchTerm) {
+                          $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                      });
+            });
+        }
+
+        $reports = $query->paginate(5);
+
+        if ($reports->isEmpty()) {
+            $reports = collect();
+        }
+
+        foreach ($reports as $report) {
+            $report->reported_at = $report->created_at->format('j \\ F Y');
+        }
+        return response()->json([
+            'reportCount' => $reportCount,
+            'reports' => $reports
+        ]);
+    }
 
     public function reported_question_detail(Request $request)
     {
@@ -133,6 +164,7 @@ class QuestionsController extends Controller
         $scholar_reply = ScholarReply::with('user_detail.interests')
             ->where('question_id', $question->id)
             ->first();
+
 
         $question->scholar_reply = $scholar_reply;
 
@@ -262,8 +294,7 @@ class QuestionsController extends Controller
 
     public function all_reported_questions()
     {
-        $reportedQuestions = ReportQuestion::with('user_detail', 'question.user_detail')
-            ->get();
+        $reportedQuestions = ReportQuestion::with('user_detail', 'question.user_detail')->paginate(10);
 
         return view('frontend.AllReportedQuestions', compact('reportedQuestions'));
     }
@@ -272,16 +303,17 @@ class QuestionsController extends Controller
     {
         $searchTerm = $request->input('search');
 
-        $userCount = ReportQuestion::count('question_id');
+        $userCount = ReportQuestion::distinct('question_id')->count();
+        $data = ReportQuestion::distinct()->pluck('question_id');
 
-        $query = ReportQuestion::with('user_detail', 'question.user_detail')
-            ->orderBy('created_at', 'desc');
+        $query = Question::whereIn('id', $data)->with('user_detail');
 
         if ($searchTerm) {
             $query->whereHas('question', function ($subQuery) use ($searchTerm) {
                 $subQuery->where('question', 'LIKE', '%' . $searchTerm . '%');
             });
         }
+        $query->orderBy('created_at', 'desc');
 
         $reportedQuestions = $query->paginate(10);
 
@@ -295,6 +327,8 @@ class QuestionsController extends Controller
 
         return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);
     }
+
+
 
     public function adminReply(Request $request)
     {
@@ -342,8 +376,6 @@ class QuestionsController extends Controller
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
-
-
         }
         return redirect()->to('/PublicQuestionDetail/' . $question->id . '?flag=1');
     }

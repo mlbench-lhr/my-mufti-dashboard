@@ -83,7 +83,7 @@
                 @else
                     <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
                         data-bs-toggle="modal" data-bs-target="#replyModal">
-                        Reply
+                        Reply as a Admin
                     </button>
                 @endif
                 <a

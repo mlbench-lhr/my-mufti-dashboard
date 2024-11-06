@@ -62,6 +62,9 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('ReportedQuestions', [QuestionsController::class, 'all_reported_questions'])->name('ReportedQuestions');
     Route::get('getReportedQuestions', [QuestionsController::class, 'get_all_reported_questions'])->name('getReportedQuestions');
     Route::get('ReportedQuestionDetail/{id}/{reportedId}', [QuestionsController::class, 'reported_question_detail'])->name('ReportedQuestionDetail');
+    Route::get('/question/{id}/reports', [QuestionsController::class, 'get_question_reports'])->name('getQuestionReports');
+
+
 
     //Private Questions
     Route::get('PrivateQuestions', [QuestionsController::class, 'all_private_questions'])->name('PrivateQuestions');

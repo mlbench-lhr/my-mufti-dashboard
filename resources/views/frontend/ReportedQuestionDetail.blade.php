@@ -31,7 +31,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100px;
-        /* Adjust the max-width based on your requirements */
     }
 
     .line-container {
@@ -43,7 +42,7 @@
     .content-line {
         border: none;
         border-top: 2px solid #4a4a4a;
-        width: calc(100% - 20px);
+        width: calc(100% - 10px);
         margin-left: 10px;
         margin-right: 0;
     }
@@ -147,226 +146,48 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="fs-2 fw-bolder text-dark pb-2"> 
-                        Reported By
-                    </div>
-                    <div class="d-flex align-items-center pb-5">
-                        @if ($reportedQuestion->user_detail->image == '')
-                            <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
-                                    style="height: 80px; width:80px;" />
-                            </div>
-                        @else
-                            <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                <img src="{{ asset('public/storage/' . $reportedQuestion->user_detail->image) }}"
-                                    alt="image" style="height: 80px; width:80px; object-fit: cover;" />
-                            </div>
-                        @endif
-
-                        <div class="ms-2">
-                            <div class="fs-5 fw-normal text-success">
-                                {{ $reportedQuestion->user_detail->user_type }}
-                            </div>
-                            <div class="fs-4 fw-bold">
-                                {{ $reportedQuestion->user_detail->name }}
-                            </div>
-                            <div class="fs-6 fw-normal text-muted">
-                                {{ $reportedQuestion->user_detail->email }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="fs-2 fw-bolder text-dark pb-2">
-                    Reason for Report:
-                </div>
-                <div class="fs-6 fw-normal text-dark">
-                    {{ $reportedQuestion->reason ? $reportedQuestion->reason : 'No reason provided' }}
-                </div>
                 <div class="line-container">
                     <hr class="content-line">
                 </div>
-            </div>
-
-            <div class="row mb-5">
-                <div class="col-3 fs-2 fw-bold text-dark">
-                    Question Categories
-                </div>
-                <div class="col-9">
-                    <div class="row">
-                        @foreach ($question->question_category as $data)
-                            <div class="col-3 badge badge-light fw-normal fs-4 mb-3 ms-2"
-                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
-                                {{ $data }}
-                            </div>
-                        @endforeach
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="row flex-col mb-7">
-                <div class="col-12 fs-2 fw-bolder text-dark mb-5">
-                    Public Feedback
-                </div>
-                <div class="row mb-5">
-                    <div class="col-6 d-flex justify-content-center align-content-center">
-                        <div class="fs-3 fw-bold text-success">
-                            {{ $question->yesVotesPercentage }}%
-                        </div>
-                        <div class="progress h-15px w-100 ms-3 mt-2">
-                            <div class="progress-bar" role="progressbar"
-                                style="width: {{ $question->yesVotesPercentage }}% ;  background-color:#38B89A;"
-                                aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="fs-3 fw-bold text-success ms-3 d-flex">
-                            <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.5"
-                                    d="M19.9581 12.3257C19.9581 16.7335 16.3849 20.3067 11.9771 20.3067C7.56932 20.3067 3.99609 16.7335 3.99609 12.3257C3.99609 7.91794 7.56932 4.34473 11.9771 4.34473C16.3849 4.34473 19.9581 7.91794 19.9581 12.3257Z"
-                                    fill="#38B89A" />
-                                <path
-                                    d="M15.1867 9.90676C15.4204 10.1405 15.4204 10.5195 15.1867 10.7533L11.1962 14.7438C10.9624 14.9775 10.5834 14.9775 10.3496 14.7438L8.75344 13.1476C8.51969 12.9138 8.51969 12.5348 8.75344 12.3011C8.9872 12.0673 9.3662 12.0673 9.59996 12.3011L10.7729 13.474L12.5565 11.6904L14.3402 9.90676C14.5739 9.67301 14.9529 9.67301 15.1867 9.90676Z"
-                                    fill="#38B89A" />
-                            </svg>
-                            @if ($question->voting_option == 1)
-                                Yes
-                            @else
-                                True
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6 d-flex justify-content-center align-content-center">
-                        <div class="fs-3 fw-bold text-danger">
-                            {{ $question->noVotesPercentage }}%
-                        </div>
-                        <div class="progress h-15px w-100 ms-3 mt-2">
-                            <div class="progress-bar" role="progressbar"
-                                style="width: {{ $question->noVotesPercentage }}%;  background-color:#F52E2E;"
-                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="fs-3 fw-bold text-danger ms-3 d-flex">
-                            <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.5"
-                                    d="M19.9581 12.9742C19.9581 17.3819 16.3849 20.9552 11.9771 20.9552C7.56932 20.9552 3.99609 17.3819 3.99609 12.9742C3.99609 8.56638 7.56932 4.99316 11.9771 4.99316C16.3849 4.99316 19.9581 8.56638 19.9581 12.9742Z"
-                                    fill="#F52E2E" />
-                                <path
-                                    d="M9.55423 10.5562C9.78798 10.3224 10.167 10.3224 10.4007 10.5562L11.9727 12.1282L13.5447 10.5562C13.7785 10.3224 14.1575 10.3224 14.3913 10.5562C14.625 10.79 14.625 11.1689 14.3913 11.4027L12.8193 12.9747L14.3912 14.5467C14.625 14.7804 14.625 15.1594 14.3912 15.3932C14.1575 15.6269 13.7785 15.6269 13.5447 15.3932L11.9727 13.8212L10.4008 15.3932C10.167 15.6269 9.788 15.6269 9.55424 15.3932C9.32048 15.1594 9.32048 14.7804 9.55424 14.5467L11.1262 12.9747L9.55423 11.4027C9.32047 11.1689 9.32047 10.7899 9.55423 10.5562Z"
-                                    fill="#F52E2E" />
-                            </svg>
-                            @if ($question->voting_option == 1)
-                                No
-                            @else
-                                False
-                            @endif
-                        </div>
-                    </div>
-                </div>
 
             </div>
 
-            {{-- Scholars Reply --}}
-            <div class="col-12 fs-2 fw-bolder text-dark pb-2">
-                Scholar's Reply
-            </div>
-            @if (!empty($question->scholar_reply))
-                <div class="col-12 fs-2 fw-bolder text-dark d-flex pb-5">
-                    @if ($question->scholar_reply->user_detail->image == '')
-                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
-                                style="height: 80px; width:80px;" />
-                        </div>
-                    @else
-                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                            <img src="{{ asset('public/storage/' . $question->scholar_reply->user_detail->image) }}"
-                                alt="image" style="height: 80px; width:80px; object-fit: cover;" />
-                        </div>
-                    @endif
-
-
-                    <div class="ms-2">
-                        <div class="fs-5 fw-normal text-success">
-                            {{ $question->scholar_reply->user_detail->fiqa }}
-                        </div>
-                        <div class="fs-4">
-                            {{ $question->scholar_reply->user_detail->name }}
-                        </div>
-                        <div class="text-muted fs-5 fw-normal"
-                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;">
-                            @foreach ($question->scholar_reply->user_detail->interests as $data)
-                                {{ $data->interest }}
-                                @if (!$loop->last)
-                                    ,
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 fs-4 fw-bold text-muted pb-10">
-                    {{ $question->scholar_reply->reply }}
-                </div>
-            @else
-                <div class="col-12 fs-1  fw-bold text-muted pb-10 text-center mt-10 mb-10">
-                    No Scholar’s Reply!!
-                </div>
-            @endif
-
-
-            {{-- question comments --}}
+            {{-- reported users and their reasons --}}
 
             <div class="card">
                 <div class="card-header border-0 pt-6">
-                    <!--begin::Card title-->
                     <div class=" mb-5">
-                        <!--begin::Title-->
-                        <h3 class="mt-4 fs-1 fw-bolder ">Comments </h3>
-                        <!--end::Title-->
+                        <h3 class="mt-4 fs-1 fw-bolder ">Reports</h3>
                     </div>
-                    <!--begin::Card title-->
-                    <!--begin::Card toolbar-->
                     <div class="card-toolbar mb-5">
-                        <!--begin::Toolbar-->
-                        <h3 class="mt-4 fs-2 text-muted fw-normal">Total Comments: <span class="fs-5" id="user-count"
+                        <h3 class="mt-4 fs-2 text-muted fw-normal">Total Reports: <span class="fs-5" id="user-count"
                                 style="font-weight:500 "> </span> </h3>
-                        <!--end::Toolbar-->
                     </div>
-                    <!--end::Card toolbar-->
                 </div>
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
-
-
-
-
-                    @if (count($question['comments']))
-                        <!--begin::Table-->
+                    @if (count($question['reports']))
                         <div class="table-responsive">
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-125px">User name</th>
+                                        <th class="min-w-125px">Reported By</th>
                                         <th class="min-w-175px text-center">Account Type</th>
                                         <th class="min-w-175px text-center">Date</th>
-                                        <th class="min-w-175px text-center">Comment</th>
+                                        <th class="min-w-175px text-center">Reason</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
-                                <!--end::Table head-->
-                                <!--begin::Table body-->
                                 <tbody class="text-gray-600 fw-bold" id="verification-table-body">
-                                    {{-- ajax data is appending here  --}}
-                                    {{-- <div id="loader" class="loader"></div> --}}
+                                    <div id="loader" class="loader"></div>
 
                                 </tbody>
-                                <!--end::Table body-->
+
                             </table>
                         </div>
-                        <!--end::Table-->
+
                         <div class="pagination d-flex justify-content-end" id="pagination-links"></div>
                     @else
                         <div class=" text-center">
@@ -375,8 +196,9 @@
                         </div>
                     @endif
                 </div>
-                <!--end::Card body-->
+
             </div>
+
         </div>
     </div>
     <!--end::Container-->
@@ -391,34 +213,34 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getQuestionComments', ['id' => ':id']) }}'.replace(':id', question_id) + '?page=' +
+            url: '{{ route('getQuestionReports', ['id' => ':id']) }}'.replace(':id', question_id) + '?page=' +
                 page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
             success: function(response) {
                 console.log(response);
-                var users = response.users;
-                var userCount = response.userCount;
-                $('#user-count').text(userCount);
+                var reports = response.reports;
+                var reportCount = response.reportCount;
+                $('#user-count').text(reportCount);
                 var tableBody = $('#verification-table-body');
 
                 tableBody.empty();
 
-                if (users.data.length === 0) {
-                    // If no users found, display a message in a new row
+                if (reports.data.length === 0) {
                     var noUserRow = `
             <tr>
-                <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No Questions found</td>
+                <td colspan="6" class="text-center pt-10 fw-bolder fs-2">Reports found</td>
             </tr>
         `;
                     tableBody.append(noUserRow);
                 } else {
 
-                    var count = (users.data.length > 0) ? (users.current_page - 1) * users.per_page : 0;
-                    $.each(users.data, function(index, row) {
+                    var count = (reports.data.length > 0) ? (reports.current_page - 1) * reports.per_page :
+                        0;
+                    $.each(reports.data, function(index, row) {
                         var modifiedSerialNumber = pad(count + 1, 2,
-                            '0'); // Calculate modified serial number
+                            '0');
                         var newRow = `
                     <tr>
                         <td class="d-flex align-items-center">
@@ -443,8 +265,8 @@
                         </td>
 
                         <td style = "padding-left: 50px;" >${row.user.user_type}</td>
-                        <td style = "padding-left: 50px;">${row.registration_date}</td>
-                        <td style = "">${row.comment}</td>
+                        <td style = "padding-left: 50px;">${row.reported_at}</td>
+                        <td style="padding-left: 50px;">${row.reason ? row.reason : 'No reason provided'}</td>
                     </tr>
                 `;
                         tableBody.append(newRow);
@@ -464,7 +286,7 @@
                     var paginationLinks = $('#pagination-links');
                     paginationLinks.empty();
 
-                    var totalPages = users.last_page;
+                    var totalPages = reports.last_page;
 
                     // Render "Previous" button
                     var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
