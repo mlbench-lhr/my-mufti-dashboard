@@ -92,10 +92,10 @@
             </div>
             <!--end::Page title=-->
             <div class="d-flex ">
-                <a
-                    href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{ $user_id }}">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase"
-                        style="background-color:#EA4335;">Delete</button>
+                <a href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{ $user_id }}" id="delete-btn">
+                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;" onclick="confirmDeletePrivate(event)">
+                        Delete
+                    </button>
                 </a>
             </div>
         </div>
@@ -413,4 +413,33 @@
     $(document).ready(function() {
         loadVerificationData(currentPage);
     });
+
+    function confirmDeletePrivate(event) {
+        event.preventDefault();  // Prevent the default link behavior
+
+        Swal.fire({
+            title: 'Delete Private Question',  // Title of the alert
+            text: 'Are you sure you want to delete this private question?',  // Body text
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#38B89A',  
+            cancelButtonColor: '#38B89A1A', 
+            confirmButtonText: 'Delete',  
+            cancelButtonText: 'Cancel',  
+            willOpen: () => {
+                const cancelButton = Swal.getCancelButton();
+                cancelButton.style.color = '#7B849A';  
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Deleted!',
+                    'The private question has been deleted.',
+                    'success'
+                ).then(() => {
+                    window.location.href = event.target.closest('a').href;
+                });
+            }
+        });
+    }
 </script>
