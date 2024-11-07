@@ -239,37 +239,75 @@
                     var count = (reports.data.length > 0) ? (reports.current_page - 1) * reports.per_page :
                         0;
                     $.each(reports.data, function(index, row) {
-                        var modifiedSerialNumber = pad(count + 1, 2,
-                            '0');
-                        var newRow = `
-                    <tr>
-                        <td>
-                           <div class="d-flex align-items-center justify-content-start">
-                            ${row.user.image ? `
-                                <div class="symbol symbol-50px overflow-hidden me-3">
-                                    <div class="symbol-label">
-                                        <img src="{{ asset('public/storage/') }}/${row.user.image}" alt="image" class="w-100" />
-                                    </div>
-                                </div>` : `
-                                <div class="symbol symbol-50px overflow-hidden me-3">
-                                    <div class="symbol-label">
-                                        <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
-                                    </div>
-                                </div>`}
-                                <div class="d-flex flex-column">
-                                    <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
-                                        ${row.user.name}
-                                    </div>
-                                    <span> #${row.user.email}</span>
-                                </div>
-                        </div>
-                        </td>
+                        var modifiedSerialNumber = pad(count + 1, 2, '0');
+                        var reasonText = row.reason || 'No reason provided';
+                        var words = reasonText.split(" ");
+                        var truncatedText = words.length > 25 ? words.slice(0, 25).join(" ") +
+                            "..." : reasonText;
 
-                        <td style = "padding-left: 50px;" >${row.user.user_type}</td>
-                        <td style = "padding-left: 50px;">${row.reported_at}</td>
-                        <td style="padding-left: 50px;">${row.reason ? row.reason : 'No reason provided'}</td>
-                    </tr>
-                `;
+                        var newRow = `
+                        <tr>
+                            <td>
+                            <div class="d-flex align-items-center justify-content-start">
+                                ${row.user.image ? `
+                                    <div class="symbol symbol-50px overflow-hidden me-3">
+                                        <div class="symbol-label">
+                                            <img src="{{ asset('public/storage/') }}/${row.user.image}" alt="image" class="w-100" />
+                                        </div>
+                                    </div>` : `
+                                    <div class="symbol symbol-50px overflow-hidden me-3">
+                                        <div class="symbol-label">
+                                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
+                                        </div>
+                                    </div>`}
+                                    <div class="d-flex flex-column">
+                                        <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                            ${row.user.name}
+                                        </div>
+                                        <span> #${row.user.email}</span>
+                                    </div>
+                            </div>
+                            </td>
+
+                            <td style="padding-left: 50px;">${row.user.user_type}</td>
+                            <td style="padding-left: 50px;">${row.reported_at}</td>
+                            <td style="padding-left: 50px;">
+                                <span id="truncated-text-${row.id}">
+                                    ${truncatedText}
+                                </span>
+                                ${words.length > 25 ? `
+                                <button type="button" class="btn btn-link" style="color: #38B89A;" data-bs-toggle="modal" data-bs-target="#reasonModal-${row.id}">
+                                    Read More
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="reasonModal-${row.id}" tabindex="-1" role="dialog" aria-labelledby="reasonModalLabel-${row.id}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header" style="display: flex; justify-content: center; align-items: center;">
+                                                <h3 class="modal-title" id="reasonModalLabel-${row.id}">Reason</h3>
+                                                <div class="btn btn-lg btn-icon btn-active-color-dark" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;">
+                                                    <span class="svg-icon svg-icon-1 w-25">
+                                                        <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M33.6663 17.0002C33.6663 26.2049 26.2044 33.6668 16.9997 33.6668C7.79493 33.6668 0.333008 26.2049 0.333008 17.0002C0.333008 7.79542 7.79493 0.333496 16.9997 0.333496C26.2044 0.333496 33.6663 7.79542 33.6663 17.0002ZM11.9491 11.9496C12.4372 11.4614 13.2287 11.4614 13.7168 11.9496L16.9996 15.2324L20.2824 11.9496C20.7705 11.4615 21.562 11.4615 22.0502 11.9496C22.5383 12.4378 22.5383 13.2292 22.0502 13.7174L18.7674 17.0001L22.0501 20.2829C22.5383 20.771 22.5383 21.5625 22.0501 22.0506C21.562 22.5388 20.7705 22.5388 20.2824 22.0506L16.9996 18.7679L13.7169 22.0507C13.2287 22.5388 12.4372 22.5388 11.9491 22.0507C11.4609 21.5625 11.4609 20.7711 11.9491 20.2829L15.2319 17.0001L11.9491 13.7173C11.4609 13.2292 11.4609 12.4377 11.9491 11.9496Z" fill="#1C274C" />
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                         </div>
+                                            <div class="modal-body">
+                                                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                                                    ${reasonText}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>` : ''}
+                            </td>
+                        </tr>
+                    `;
                         tableBody.append(newRow);
                         count++;
                     });
