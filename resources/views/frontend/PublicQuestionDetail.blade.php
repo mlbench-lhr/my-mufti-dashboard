@@ -86,9 +86,10 @@
                         Reply as a Admin
                     </button>
                 @endif
-                <a
-                    href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;">
+                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}"
+                    id="delete-btn">
+                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;"
+                        onclick="confirmDelete(event)">
                         Delete
                     </button>
                 </a>
@@ -670,6 +671,35 @@
         });
 
 
+    }
+
+    function confirmDelete(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Delete Public Question',
+            text: 'Are you sure you want to delete this public question?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#38B89A',
+            cancelButtonColor: '#38B89A1A',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            willOpen: () => {
+                const cancelButton = Swal.getCancelButton();
+                cancelButton.style.color = '#7B849A';
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Deleted!',
+                    'The public question has been deleted.',
+                    'success'
+                ).then(() => {
+                    window.location.href = event.target.closest('a').href;
+                });
+            }
+        });
     }
 
     function validateInput(input) {

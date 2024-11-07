@@ -89,9 +89,8 @@
             </div>
             <!--end::Page title=-->
             <div class="d-flex">
-                <a
-                    href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;">
+                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}" id="delete-btn">
+                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;" onclick="confirmDeletePublic(event)">
                         Delete
                     </button>
                 </a>
@@ -173,10 +172,10 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-125px">Reported By</th>
-                                        <th class="min-w-175px text-center">Account Type</th>
-                                        <th class="min-w-175px text-center">Date</th>
-                                        <th class="min-w-175px text-center">Reason</th>
+                                        <th class="min-w-150px">Reported By</th>
+                                        <th class="min-w-250px">Account Type</th>
+                                        <th class="min-w-250px">Date</th>
+                                        <th class="min-w-300px">Reason</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -242,12 +241,12 @@
                         var modifiedSerialNumber = pad(count + 1, 2, '0');
                         var reasonText = row.reason || 'No reason provided';
                         var words = reasonText.split(" ");
-                        var truncatedText = words.length > 25 ? words.slice(0, 25).join(" ") +
-                            "..." : reasonText;
+                        var truncatedText = words.length > 25 ? words.slice(0, 25).join(" ")
+                        .trim() + "..." : reasonText.trim();
 
                         var newRow = `
                         <tr>
-                            <td>
+                            <td class="px-4">
                             <div class="d-flex align-items-center justify-content-start">
                                 ${row.user.image ? `
                                     <div class="symbol symbol-50px overflow-hidden me-3">
@@ -269,9 +268,9 @@
                             </div>
                             </td>
 
-                            <td style="padding-left: 50px;">${row.user.user_type}</td>
-                            <td style="padding-left: 50px;">${row.reported_at}</td>
-                            <td style="padding-left: 50px;">
+                            <td class="px-4">${row.user.user_type}</td>
+                            <td class="px-4">${row.reported_at}</td>
+                            <td class="px-4">
                                 <span id="truncated-text-${row.id}">
                                     ${truncatedText}
                                 </span>
@@ -392,4 +391,33 @@
     $(document).ready(function() {
         loadVerificationData(currentPage);
     });
+
+    function confirmDeletePublic(event) {
+        event.preventDefault();  
+
+        Swal.fire({
+            title: 'Delete Public Question', 
+            text: 'Are you sure you want to delete this public question?',  
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#38B89A',
+            cancelButtonColor: '#38B89A1A', 
+            confirmButtonText: 'Delete', 
+            cancelButtonText: 'Cancel',  
+            willOpen: () => {
+                const cancelButton = Swal.getCancelButton();
+                cancelButton.style.color = '#7B849A';  
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Deleted!',
+                    'The public question has been deleted.',
+                    'success'
+                ).then(() => {
+                    window.location.href = event.target.closest('a').href;
+                });
+            }
+        });
+    }
 </script>
