@@ -98,9 +98,18 @@ class EditProfile extends Controller
         if ($user->mufti_status == 2) {
             $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
             $user->interests = $interests;
+
+            $muftiId = $user->id;
+            $message = "Mufti " . $user->name . " has edited his profile.";
+            $type = "edited profile";
+    
+            ActivityHelper::store_avtivity($muftiId, $message, $type);
+
         } else {
             $user->interests = [];
         }
+
+       
 
         //return a response as json assuming you are building a restful API
         return response()->json(
@@ -387,6 +396,13 @@ class EditProfile extends Controller
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                 }
+
+                $muftiId = $mufti->id;
+                $message = "Mufti " . $mufti->name . " accepted the private question.";
+                $type = "accept question";
+
+                ActivityHelper::store_avtivity($muftiId, $message, $type);
+
                 $data = [
                     'user_id' => $user->id,
                     'title' => $title,
@@ -413,6 +429,12 @@ class EditProfile extends Controller
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                 }
+
+                $muftiId = $mufti->id;
+                $message = "Mufti " . $mufti->name . " declined the private question.";
+                $type = "decline question";
+
+                ActivityHelper::store_avtivity($muftiId, $message, $type);
 
                 $data = [
                     'user_id' => $user->id,
@@ -484,6 +506,13 @@ class EditProfile extends Controller
         }
 
         if ($user) {
+
+            $user_id = $user->id;
+            $type = "added private question";
+            $message = "User " . $user->name . " has deleted his account.";
+
+            ActivityHelper::store_avtivity($user_id, $message, $type);
+
             $user->deleteWithRelated();
             $user->delete();
             return ResponseHelper::jsonResponse(true, 'User deleted Successfully!');
@@ -524,6 +553,12 @@ class EditProfile extends Controller
                 'reason' => "",
                 'status' => 1,
             ];
+
+            $muftiId = $user->id;
+            $message = "Mufti " . $user->name . " requested to delete the account.";
+            $type = "deletion request";
+
+            ActivityHelper::store_avtivity($muftiId, $message, $type);
 
             DeleteAccountRequest::updateOrCreate(
                 ['user_id' => $request->user_id],

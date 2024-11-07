@@ -107,8 +107,14 @@ class EventController extends Controller
             EventScholar::create($data);
         });
 
+        if ($user->mufti_status == 2) {
+            $message = "Mufti " . $user->name . " added a new event.";
+        } else {
+            $message = $user->name . " added a new event.";
+        }
+
+
         $user_id = $user->id;
-        $message = $user->name . " added a new event.";
         $type = "event added";
 
         ActivityHelper::store_avtivity($user_id, $message, $type);
@@ -717,7 +723,7 @@ class EventController extends Controller
             return response()->json($response, 200);
         }
         if ($request->flag == 3) {
-            $allUserEvents = Event::forPage($page, $perPage)->where(['event_status' => 2, 'user_id' => $request->user_id])->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
+            $allUserEvents = Event::forPage($page, $perPage)->whereIn('event_status', [0, 2])->where(['user_id' => $request->user_id])->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             }])->orderBy('date', 'desc')->get();
 

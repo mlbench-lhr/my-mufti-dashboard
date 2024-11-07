@@ -6,7 +6,6 @@ use App\Helpers\ActivityHelper;
 use App\Helpers\ResponseHelper;
 use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ReportQuestion;
 use App\Models\AdminReply;
 use App\Models\Interest;
 use App\Models\Notification;
@@ -89,8 +88,14 @@ class QuestionController extends Controller
         } else {
             $question->scholar_reply = (object) [];
         }
+
+        if ($user->mufti_status == 2) {
+            $message = "Mufti " . $user->name . " posted a new question.";
+        } else {
+            $message = $user->name . " posted a new question.";
+        }
+
         $user_id = $user->id;
-        $message = $user->name . " posted a new question.";
         $type = "posted question";
 
         ActivityHelper::store_avtivity($user_id, $message, $type);
@@ -222,20 +227,19 @@ class QuestionController extends Controller
 
         $questions = $baseQuery->paginate($perPage, ['*'], 'page', $page);
 
-
         if ($questions->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => 'No questions found!',
                 'totalpages' => (int) 0,
-                'data' => []
+                'data' => [],
             ], 200);
         }
 
         $questions->each(function ($question) use ($request) {
             $question->current_user_vote = QuestionVote::where([
                 'question_id' => $question->id,
-                'user_id' => $request->user_id
+                'user_id' => $request->user_id,
             ])->value('vote') ?? 0;
 
             $question->totalYesVote = (int) $question->totalYesVote;
@@ -261,7 +265,6 @@ class QuestionController extends Controller
             'data' => $questions->items(),
         ], 200);
     }
-
 
     public function all_question(Request $request)
     {
@@ -305,23 +308,21 @@ class QuestionController extends Controller
 
         $totalPages = ceil($baseQuery->count() / $perPage);
 
-
         $questions = $baseQuery->paginate($perPage, ['*'], 'page', $page);
-
 
         if ($questions->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => 'No questions found!',
                 'totalpages' => (int) 0,
-                'data' => []
+                'data' => [],
             ], 200);
         }
 
         $questions->each(function ($question) use ($request) {
             $question->current_user_vote = QuestionVote::where([
                 'question_id' => $question->id,
-                'user_id' => $request->user_id
+                'user_id' => $request->user_id,
             ])->value('vote') ?? 0;
 
             $question->totalYesVote = (int) $question->totalYesVote;
@@ -404,7 +405,6 @@ class QuestionController extends Controller
 
         $question->comments = $paginatedComments->items();
 
-
         $scholar_reply = ScholarReply::with('user_detail')->where('question_id', $question->id)->first();
         $question->scholar_reply = $scholar_reply ? $scholar_reply : (object) [];
 
@@ -414,12 +414,12 @@ class QuestionController extends Controller
             $question->admin_reply = (object) [
                 'id' => $admin_reply->id,
                 'question_id' => $admin_reply->question_id,
-                'user_id' => $admin_reply ->user_id,
+                'user_id' => $admin_reply->user_id,
                 'reply' => $admin_reply->reply,
                 'created_at' => $admin_reply->created_at,
                 'updated_at' => $admin_reply->updated_at,
                 'user_detail' => (object) [
-                    'id' => $admin_reply ->user_id,
+                    'id' => $admin_reply->user_id,
                     'name' => 'My Mufti Admin',
                     'image' => '',
                     'fiqa' => '',
@@ -428,7 +428,6 @@ class QuestionController extends Controller
         } else {
             $question->admin_reply = (object) [];
         }
-
 
         $response = [
             'status' => true,
@@ -520,7 +519,7 @@ class QuestionController extends Controller
             'reply' => $request->reply,
         ];
         ScholarReply::create($data);
-        
+
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
         $title = "Scholar Replied";
@@ -532,7 +531,6 @@ class QuestionController extends Controller
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
         }
-
 
         return ResponseHelper::jsonResponse(true, 'Reply added successfully!');
     }
@@ -733,13 +731,19 @@ class QuestionController extends Controller
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
-
         $notificationData = [
             'user_id' => $user->id,
             'title' => $title,
             'body' => $body,
         ];
         Notification::create($notificationData);
+
+
+        $user_id = $user->id;
+        $type = "added private question";
+        $message = $user->name . " added a private question.";
+        
+        ActivityHelper::store_avtivity($user_id, $message, $type);
 
         UserAllQuery::create($data1);
 
@@ -897,7 +901,7 @@ class QuestionController extends Controller
             'user_id' => $request->user_id,
             'question' => $request->question,
             'fiqa' => $request->fiqa,
-            'category' => (array)$request->category,
+            'category' => (array) $request->category,
         ];
 
         $question = UserQuery::create($data);
@@ -959,15 +963,25 @@ class QuestionController extends Controller
             $data = [
                 'user_id' => $request->user_id,
                 'question_id' => $request->question_id,
-                'reason' => $request->reason
+                'reason' => $request->reason,
             ];
 
             ReportQuestions::create($data);
 
+            if ($user->mufti_status == 2) {
+                $message = "Mufti " . $user->name . " reported public question.";
+            } else {
+                $message = $user->name . " reported public question.";
+            }
+
+            $user_id = $request->user_id;
+            $type = "reported question";
+
+            ActivityHelper::store_avtivity($user_id, $message, $type);
+
             return ResponseHelper::jsonResponse(true, 'Reported Successfully');
         }
     }
-
 
     public function send($deviceId, $title, $name, $muftiId)
     {
@@ -982,7 +996,6 @@ class QuestionController extends Controller
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
-
 
         $data = [
             'user_id' => $muftiId,
