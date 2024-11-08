@@ -634,7 +634,6 @@
                 cancelButtonText: 'Cancel',
                 willOpen: () => {
                     const cancelButton = Swal.getCancelButton();
-                    cancelButton.style.color = '#7B849A';
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
