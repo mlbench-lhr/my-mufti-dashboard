@@ -104,7 +104,7 @@
                                     @endif
                                     <!--begin::Name-->
                                     <div class="d-flex align-items-center mb-0">
-                                        <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1">
+                                        <a class="text-gray-900  fs-2 fw-bolder me-1">
                                             {{ $response['user']->name }}
                                         </a>
                                     </div>
@@ -113,8 +113,8 @@
 
                                     @if ($response['user']->user_type == 'scholar')
                                         <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                            <a href="#"
-                                                class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                            <a
+                                                class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -131,8 +131,8 @@
                                     @endif
 
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a href="#"
-                                            class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                        <a
+                                            class="d-flex align-items-center text-gray-400  me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
@@ -148,8 +148,8 @@
                                     </div>
                                     @if ($response['user']->user_type == 'user')
                                         <div class="d-flex flex-wrap fw-bold fs-6 pe-2 mt-2">
-                                            <a href="#"
-                                                class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                            <a
+                                                class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -474,7 +474,7 @@
                                 </div>`}
 
                             <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                <div class="text-gray-800 mb-1">
                                     ${row.event_title}
                                 </div>
                                 <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 230px;">${categoryName}</span>
@@ -486,9 +486,9 @@
                         <td>
                             ${row.event_status == 2 ?
                                 `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <a href="{{ URL::to('EventRequestApprove') }}/${row.id}">
+                                    <a href="#" class="btn-approve" data-url="{{ URL::to('EventRequestApprove') }}/${row.id}">
                                         <button type="button" class="btn btn-sm btn-success w-100"
-                                        style="background-color:#38B89A;">Approve</button>
+                                            style="background-color:#38B89A;">Approve</button>
                                     </a>
                                     <a href="{{ URL::to('EventRequestDecline') }}/${row.id}">
                                         <button type="button" class="btn btn-sm btn-danger w-100 ms-5"
@@ -582,7 +582,6 @@
         var sortingOption = $('#request-date-filter').val();
         loadVerificationData(currentPage, searchTerm, sortingOption);
     });
-
     $(document).on('click', '#reset-filter-button', function(e) {
         e.preventDefault();
         $('#request-date-filter').val('').trigger('change');

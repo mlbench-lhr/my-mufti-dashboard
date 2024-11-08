@@ -96,7 +96,7 @@
                         <div class="d-flex flex-column">
                             <!--begin::Name-->
                             <div class="d-flex align-items-center mb-3">
-                                <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1">
+                                <a class="text-gray-900  fs-2 fw-bolder me-1">
                                     {{ $event->event_title }}
                                 </a>
                             </div>
@@ -104,7 +104,7 @@
                             <!--begin::Info-->
 
                             <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 mb-3">
-                                <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                <a class="d-flex align-items-center text-gray-400  me-5 ">
                                     <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                     <span class="  me-2">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -121,7 +121,7 @@
                                     <!--end::Svg Icon-->
                                     {{ \Carbon\Carbon::parse($event->date)->format('M d, Y') }}
                                 </a>
-                                <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                <a class="d-flex align-items-center text-gray-400  me-5 ">
                                     <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                     <span class="  me-2">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -137,7 +137,7 @@
                                     <!--end::Svg Icon-->
                                     {{ \Carbon\Carbon::parse($event->date)->format('H:i A') }}
                                 </a>
-                                <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                <a class="d-flex align-items-center text-gray-400  me-5 ">
                                     <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                     <span class="  me-2">
                                         <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
@@ -156,7 +156,7 @@
                             </div>
 
                             <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                <a class="d-flex align-items-center text-gray-400  me-5 ">
                                     <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                     <span class="  me-2">
                                         <svg width="15" height="18" viewBox="0 0 15 18" fill="none"
@@ -543,7 +543,7 @@
                                 </div>`}
 
                             <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                <div class="text-gray-800  mb-1">
                                     ${row.user_detail.name}
                                 </div>
                                 <span>${row.user_detail.email}</span>

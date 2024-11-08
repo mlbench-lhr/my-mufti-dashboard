@@ -58,7 +58,7 @@
                 </div>
                 <!--end::Aside mobile toggle-->
                 <!--begin::Logo-->
-                <a href="" class="d-flex align-items-center">
+                <a class="d-flex align-items-center">
                     <img alt="Logo" src="{{ '../../public/frontend/media/sidebarLogo.svg' }}" class="h-20px" />
                 </a>
                 <!--end::Logo-->
@@ -207,7 +207,7 @@
                                 </div>`}
 
                             <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                <div class="text-gray-800 mb-1">
                                     ${row.user_detail.name}
                                 </div>
                                 <span>${row.user_detail.email}</span>
@@ -227,7 +227,7 @@
                                          </div>
                                     </div>`}
                                      <div class="d-flex flex-column">
-                                        <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                        <div class="text-gray-800 mb-1">
                                         ${row.mufti_detail.name}
                                     </div>
                                     <span>${row.mufti_detail.email}</span>
