@@ -207,7 +207,8 @@
                                   $currentRoute = request()->path();
                                   $isActive1 = preg_match('/^ReportedQuestions$/', $currentRoute);
                                 //   $isActive2 = preg_match('/^ReportedQuestionDetail(\/\d+)?$/', $currentRoute);
-                                  $isActive2 = preg_match('/^ReportedQuestionDetail(\/\d+)?(\?flag=\d+)?$/', $currentRoute);
+                                  $isActive2 = preg_match('/^ReportedQuestionDetail(\/\d+){2}(\?flag=\d+)?$/', $currentRoute);
+
                               @endphp
                               <!--end::Svg Icon-->
                           </span>
