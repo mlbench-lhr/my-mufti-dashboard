@@ -318,7 +318,7 @@
                                 </div>`}
 
                             <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                <div class="text-gray-800 mb-1">
                                     ${row.event_title}
                                 </div>
                                 <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 230px;">${categoryName}</span>

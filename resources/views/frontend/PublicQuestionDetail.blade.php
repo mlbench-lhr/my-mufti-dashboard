@@ -477,7 +477,7 @@
                                 </div>`}
 
                             <div class="d-flex flex-column">
-                                <div class="text-gray-800 text-hover-primary cursor-pointer mb-1">
+                                <div class="text-gray-800 mb-1">
                                     ${row.user.name}
                                 </div>
                                 <span> #${row.user.email}</span>

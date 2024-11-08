@@ -344,6 +344,8 @@ class UserController extends Controller
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
         }
+        $query->orderBy('created_at', 'DESC');
+
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = Carbon::parse($row->created_at)->format('M d, Y');
@@ -413,6 +415,8 @@ class UserController extends Controller
                 $q->where('name', 'LIKE', '%' . $searchTerm . '%');
             });
         }
+        $query->orderBy('created_at', 'DESC');
+
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = Carbon::parse($row->created_at)->format('M d, Y');
@@ -483,6 +487,8 @@ class UserController extends Controller
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
         }
+        $query->orderBy('created_at', 'DESC');
+
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->event_date = Carbon::parse($row->date)->format('M d, Y');
@@ -508,6 +514,8 @@ class UserController extends Controller
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
         }
+        $query->orderBy('created_at', 'DESC');
+
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->event_date = Carbon::parse($row->date)->format('M d, Y');

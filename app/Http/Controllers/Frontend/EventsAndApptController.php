@@ -61,7 +61,7 @@ class EventsAndApptController extends Controller
     // Events
     public function all_events()
     {
-        $events = Event::whereIn('event_status', [0, 1])->get();
+        $events = Event::whereIn('event_status', [0, 1, 2])->get();
         return view('frontend.AllEvents', compact('events'));
     }
     public function get_all_events(Request $request)
@@ -73,7 +73,7 @@ class EventsAndApptController extends Controller
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
         }
-        $query->whereIn('event_status', [0, 1]);
+        $query->whereIn('event_status', [0, 1, 2]);
         $query->orderBy('created_at', 'desc');
 
         $user = $query->paginate(10);
@@ -112,6 +112,8 @@ class EventsAndApptController extends Controller
         $userCount = EventQuestion::with('user_detail')->where('event_id', $request->id)->count();
         $query = EventQuestion::with('user_detail')->where('event_id', $request->id);
 
+        $query->orderBy('created_at', 'desc');
+
         $user = $query->paginate(3);
         foreach ($user as $row) {
             $row->posted_at = Carbon::parse($row->created_at)->format('M d, Y');
@@ -130,6 +132,7 @@ class EventsAndApptController extends Controller
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
         }
         $query->orderBy('created_at', 'desc');
+
         $query->where('event_status', 2);
         $user = $query->paginate(10);
         foreach ($user as $row) {
@@ -145,10 +148,12 @@ class EventsAndApptController extends Controller
 
         $eventDate = Carbon::parse($event->date);
         $currentDateTime = Carbon::now();
+
         // $timezone = 'Asia/Karachi';
         // $currentDateTime = Carbon::now($timezone);
         // $eventDateInCurrentTimezone = $eventDate->copy()->setTimezone($timezone);
         if ($eventDate->greaterThanOrEqualTo($currentDateTime)) {
+
             $event->event_status = 1;
             $event->save();
             $event_date = Carbon::parse($event->date)->format('M d, Y');
@@ -205,7 +210,7 @@ class EventsAndApptController extends Controller
 
             $data = array(
                 'status' => 'success',
-                'message' => 'Event accepted successfully.',
+                'message' => 'Event approved successfully.',
             );
         } else {
 

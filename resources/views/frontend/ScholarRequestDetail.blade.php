@@ -121,15 +121,14 @@
                                     </div>
                                     <!--begin::Name-->
                                     <div class="d-flex align-items-center mb-0">
-                                        <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1">
+                                        <a class="text-gray-900 fs-2 fw-bolder me-1">
                                             {{ $response['user']->mufti_detail->name }}
                                         </a>
                                     </div>
                                     <!--end::Name-->
                                     <!--begin::Info-->
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a href="#"
-                                            class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                        <a class="d-flex align-items-center text-gray-400 me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -144,8 +143,7 @@
                                         </a>
                                     </div>
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a href="#"
-                                            class="d-flex align-items-center text-gray-400 text-hover-primary me-5 ">
+                                        <a class="d-flex align-items-center text-gray-400  me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
