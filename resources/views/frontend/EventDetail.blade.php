@@ -175,7 +175,7 @@
                         <!--end::User-->
                         <!--begin::Actions-->
                         @if ($event->event_status == 2)
-                            <div class="d-flex ">
+                            <div class="d-flex">
                                 {{-- <a href="{{ URL::to('EventRequestApprove/' . $event->id) }}">
                                     <button type="button" class="btn btn-md btn-success w-100"
                                         style="background-color:#38B89A;">Accept</button>
@@ -190,6 +190,18 @@
                                     <button type="button" class="btn btn-md btn-danger w-100 ms-5"
                                         style="background-color:#F52E2E;">Reject</button>
                                 </a>
+                            </div>
+                        @elseif($event->event_status == 1)
+                            <div class="d-flex">
+                                <p class='badge px-5 py-4 fs-5 fw-bold' style='background: #e4f9f4;color: #38B89A;'>
+                                    Accepted
+                                </p>
+                            </div>
+                        @elseif($event->event_status == 0)
+                            <div class="d-flex">
+                                <p class='badge px-5 py-4 fs-5 fw-bold' style='background: #EA43351A;color: #EA4335;'>
+                                    Rejected
+                                </p>
                             </div>
                         @endif
                         <!--end::Actions-->
@@ -443,7 +455,7 @@
                     type: 'GET',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr(
-                        'content'), // Include CSRF token if needed
+                            'content'), // Include CSRF token if needed
                     },
                     success: function(response) {
                         if (response.status === 'success') {

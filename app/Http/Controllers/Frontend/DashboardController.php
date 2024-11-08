@@ -364,7 +364,7 @@ class DashboardController extends Controller
     {
 
         $data = [
-            'activities' => Activity::orderBy('created_at', 'desc')->skip(0)->take(12)->get(),
+            'activities' => Activity::orderBy('created_at', 'desc')->skip(0)->take(50)->get(),
             'countActivities' => count(Activity::all()),
         ];
 

@@ -12,6 +12,7 @@ use App\Models\Mufti;
 use App\Models\MuftiAppointment;
 use App\Models\Notification;
 use App\Models\Question;
+use App\Models\EventScholar;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
@@ -461,18 +462,24 @@ class UserController extends Controller
     public function user_events(Request $request, $id)
     {
         $user = User::with('interests')->where('id', $id)->first();
-        $events = Event::where('user_id', $id)->where('event_status', 1)->get();
+        $eventsIds = EventScholar::where('user_id', $id)->pluck('event_id')->toArray();
+        $events = Event::whereIn('id', $eventsIds)->where('event_status', 1)->get();
+
         $response = [
             'user' => $user,
             'events' => $events,
         ];
         return view('frontend.UserDetailEvents', compact('response', 'id'));
     }
+
     public function get_user_events(Request $request)
     {
         $searchTerm = $request->input('search');
-        $query = Event::where('event_status', 1)->where('user_id', $request->id);
-        $userCount = Event::where('event_status', 1)->where('user_id', $request->id)->count();
+
+        $eventsIds = EventScholar::where('user_id', $request->id)->pluck('event_id')->toArray();
+        $query = Event::whereIn('id', $eventsIds)->where('event_status', 1);
+        $userCount = Event::whereIn('id', $eventsIds)->where('event_status', 1)->count();
+
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
         }

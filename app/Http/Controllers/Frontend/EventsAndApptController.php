@@ -61,20 +61,21 @@ class EventsAndApptController extends Controller
     // Events
     public function all_events()
     {
-        $events = Event::where('event_status', 1)->get();
+        $events = Event::whereIn('event_status', [0, 1])->get();
         return view('frontend.AllEvents', compact('events'));
     }
     public function get_all_events(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = Event::where('event_status', 1)->count();
+        $userCount = Event::whereIn('event_status', [0, 1])->count();
         $query = Event::with('scholars', 'hosted_by', 'event_questions');
 
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
         }
+        $query->whereIn('event_status', [0, 1]);
         $query->orderBy('created_at', 'desc');
-        $query->where('event_status', 1);
+
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->event_date = Carbon::parse($row->date)->format('M d, Y');
@@ -166,7 +167,6 @@ class EventsAndApptController extends Controller
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
             }
 
-
             $data = [
                 'user_id' => $user_data->id,
                 'title' => $title,
@@ -193,7 +193,6 @@ class EventsAndApptController extends Controller
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
                 }
-
 
                 $data = [
                     'user_id' => $user->id,
@@ -238,7 +237,6 @@ class EventsAndApptController extends Controller
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
-
 
         $data = [
             'user_id' => $user->id,

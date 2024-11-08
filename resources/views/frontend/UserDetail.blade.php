@@ -212,8 +212,8 @@
                                     'PublicQuestions' => 'Public Questions',
                                     'PrivateQuestions' => 'Private Questions',
                                     'Appointments' => 'Appointments',
-                                    'UserEvents' => 'Events',
-                                    'UserEventsRequest' => 'Events Request',
+                                    // 'UserEvents' => 'Events',
+                                    'UserEventsRequest' => 'All Events',
                                 ];
 
                                 $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
@@ -233,6 +233,11 @@
                             @endforeach
 
                             @if ($response['user']->user_type == 'scholar')
+                                <li class="nav-item">
+                                    <a class="nav-link text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
+                                        Events</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked

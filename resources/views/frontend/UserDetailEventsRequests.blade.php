@@ -212,8 +212,8 @@
                                     'PublicQuestions' => 'Public Questions',
                                     'PrivateQuestions' => 'Private Questions',
                                     'Appointments' => 'Appointments',
-                                    'UserEvents' => 'Events',
-                                    'UserEventsRequest' => 'Events Request',
+                                    // 'UserEvents' => 'Events',
+                                    'UserEventsRequest' => 'All Events',
                                 ];
 
                                 $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
@@ -233,6 +233,11 @@
                             @endforeach
 
                             @if ($response['user']->user_type == 'scholar')
+                                <li class="nav-item">
+                                    <a class="nav-link text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
+                                        Events</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
@@ -371,8 +376,54 @@
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+    // Handle click event for approval button
+    $(document).on('click', '.btn-approve', function(e) {
+        e.preventDefault();
+
+        var button = $(this);
+        var url = button.data('url'); 
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr(
+                    'content'),
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.message,
+                        icon: 'error',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An unexpected error occurred.',
+                    icon: 'error',
+                });
+            }
+        });
+    });
+
     var user_id = @json($id);
-    console.log(user_id);
+    // console.log(user_id);
     var currentPage = 1;
 
     function loadVerificationData(page, search = '', sortingOption = '') {

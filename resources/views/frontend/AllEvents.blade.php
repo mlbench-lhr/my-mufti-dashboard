@@ -136,8 +136,8 @@
                                         <th class="min-w-125px">Date</th>
                                         <th class="min-w-125px">Time</th>
                                         <th class="min-w-125px">Duration</th>
-                                        <th class="min-w-175px">Location</th>
-                                        <th class="text-end min-w-125px">Action</th>
+                                        <th class="min-w-125px">Location</th>
+                                        <th class="text-center min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>

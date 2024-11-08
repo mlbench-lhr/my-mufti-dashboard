@@ -222,14 +222,14 @@
         e.preventDefault();
 
         var button = $(this);
-        var url = button.data('url'); // Use data-url attribute for the endpoint
+        var url = button.data('url'); 
 
         $.ajax({
             url: url,
             type: 'GET',
             data: {
                 _token: $('meta[name="csrf-token"]').attr(
-                    'content'), // Include CSRF token if needed
+                    'content'),
             },
             success: function(response) {
                 if (response.status === 'success') {
