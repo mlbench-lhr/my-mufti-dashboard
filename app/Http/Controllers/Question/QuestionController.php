@@ -500,6 +500,10 @@ class QuestionController extends Controller
             return $validationError;
         }
 
+        if ($request->user_id != 9) {
+            return ResponseHelper::jsonResponse(false, 'Only Mufti Omer can reply to question.');
+        }
+
         $user = User::where('id', $request->user_id)->first();
 
         if (!$user) {
@@ -518,7 +522,11 @@ class QuestionController extends Controller
             'question_id' => $request->question_id,
             'reply' => $request->reply,
         ];
-        ScholarReply::create($data);
+    
+        ScholarReply::updateOrCreate(
+            ['user_id' => $request->user_id, 'question_id' => $request->question_id],
+            $data
+        );
 
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;

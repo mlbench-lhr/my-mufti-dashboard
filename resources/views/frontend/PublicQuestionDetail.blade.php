@@ -349,7 +349,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 fs-4 fw-bold text-muted pb-10">
+                <div class="col-12 fs-4 fw-bold text-black pb-10">
                     {{ $question->scholar_reply->reply }}
                 </div>
             @else
@@ -391,10 +391,10 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-125px">User name</th>
-                                        <th class="min-w-175px text-center">Account Type</th>
-                                        <th class="min-w-175px text-center">Date</th>
-                                        <th class="min-w-175px text-center">Comment</th>
+                                        <th class="min-w-200px">User name</th>
+                                        <th class="min-w-250px text-center">Account Type</th>
+                                        <th class="min-w-250px text-center">Date</th>
+                                        <th class="min-w-300px text-center">Comment</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -484,9 +484,9 @@
                             </div>
                         </td>
 
-                        <td style = "padding-left: 50px;" >${row.user.user_type}</td>
-                        <td style = "padding-left: 50px;">${row.registration_date}</td>
-                        <td style = "">${row.comment}</td>
+                        <td class="px-4"" >${row.user.user_type}</td>
+                        <td class="px-4"">${row.registration_date}</td>
+                        <td class="px-4">${row.comment}</td>
                     </tr>
                 `;
                         tableBody.append(newRow);
@@ -682,8 +682,8 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#38B89A',
-            cancelButtonColor: '#38B89A1A',
-            confirmButtonText: 'Delete',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Sure!',
             cancelButtonText: 'Cancel',
             willOpen: () => {
                 const cancelButton = Swal.getCancelButton();

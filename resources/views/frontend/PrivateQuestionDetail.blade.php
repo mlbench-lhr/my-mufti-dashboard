@@ -92,8 +92,10 @@
             </div>
             <!--end::Page title=-->
             <div class="d-flex ">
-                <a href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{ $user_id }}" id="delete-btn">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;" onclick="confirmDeletePrivate(event)">
+                <a href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{ $user_id }}"
+                    id="delete-btn">
+                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;"
+                        onclick="confirmDeletePrivate(event)">
                         Delete
                     </button>
                 </a>
@@ -236,8 +238,8 @@
                                     </div>
                                 @else
                                     <div class="col-3 badge badge-light-danger fs-3 d-flex justify-content-end align-content-end"
-                                        style="height:fit-content; width: fit-content;" data-bs-html="true"  data-bs-toggle="tooltip"
-                                        title="<strong>Reason:</strong> {{ $row->reason }}">
+                                        style="height:fit-content; width: fit-content;" data-bs-html="true"
+                                        data-bs-toggle="tooltip" title="<strong>Reason:</strong> {{ $row->reason }}">
                                         Rejected
                                     </div>
                                 @endif
@@ -324,9 +326,9 @@
                             </div>
                         </td>
 
-                        <td style = "padding-left: 50px;" >${row.user.user_type}</td>
-                        <td style = "padding-left: 50px;">${row.registration_date}</td>
-                        <td style = "">${row.comment}</td>
+                        <td class="px-4"" >${row.user.user_type}</td>
+                        <td class="px-4"">${row.registration_date}</td>
+                        <td class="px-4">${row.comment}</td>
                     </tr>
                 `;
                         tableBody.append(newRow);
@@ -415,20 +417,20 @@
     });
 
     function confirmDeletePrivate(event) {
-        event.preventDefault();  // Prevent the default link behavior
+        event.preventDefault();
 
         Swal.fire({
-            title: 'Delete Private Question',  // Title of the alert
-            text: 'Are you sure you want to delete this private question?',  // Body text
+            title: 'Delete Private Question',
+            text: 'Are you sure you want to delete this private question?',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#38B89A',  
-            cancelButtonColor: '#38B89A1A', 
-            confirmButtonText: 'Delete',  
-            cancelButtonText: 'Cancel',  
+            confirmButtonColor: '#38B89A',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Sure!',
+            cancelButtonText: 'Cancel',
             willOpen: () => {
                 const cancelButton = Swal.getCancelButton();
-                cancelButton.style.color = '#7B849A';  
+                cancelButton.style.color = '#7B849A';
             }
         }).then((result) => {
             if (result.isConfirmed) {

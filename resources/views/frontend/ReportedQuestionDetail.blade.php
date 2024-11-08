@@ -89,8 +89,10 @@
             </div>
             <!--end::Page title=-->
             <div class="d-flex">
-                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}" id="delete-btn">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;" onclick="confirmDeletePublic(event)">
+                <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}"
+                    id="delete-btn">
+                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;"
+                        onclick="confirmDeletePublic(event)">
                         Delete
                     </button>
                 </a>
@@ -242,7 +244,7 @@
                         var reasonText = row.reason || 'No reason provided';
                         var words = reasonText.split(" ");
                         var truncatedText = words.length > 25 ? words.slice(0, 25).join(" ")
-                        .trim() + "..." : reasonText.trim();
+                            .trim() + "..." : reasonText.trim();
 
                         var newRow = `
                         <tr>
@@ -393,20 +395,20 @@
     });
 
     function confirmDeletePublic(event) {
-        event.preventDefault();  
+        event.preventDefault();
 
         Swal.fire({
-            title: 'Delete Public Question', 
-            text: 'Are you sure you want to delete this public question?',  
+            title: 'Delete Public Question',
+            text: 'Are you sure you want to delete this public question?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#38B89A',
-            cancelButtonColor: '#38B89A1A', 
-            confirmButtonText: 'Delete', 
-            cancelButtonText: 'Cancel',  
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Sure!',
+            cancelButtonText: 'Cancel',
             willOpen: () => {
                 const cancelButton = Swal.getCancelButton();
-                cancelButton.style.color = '#7B849A';  
+                cancelButton.style.color = '#7B849A';
             }
         }).then((result) => {
             if (result.isConfirmed) {
