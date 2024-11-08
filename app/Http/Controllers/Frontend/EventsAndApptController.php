@@ -67,7 +67,7 @@ class EventsAndApptController extends Controller
     public function get_all_events(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = Event::whereIn('event_status', [0, 1])->count();
+        $userCount = Event::whereIn('event_status', [0, 1,2])->count();
         $query = Event::with('scholars', 'hosted_by', 'event_questions');
 
         if ($searchTerm) {
