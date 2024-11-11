@@ -245,7 +245,8 @@
                 iconColor: '#38B89A',
                 showCancelButton: true,
                 confirmButtonColor: '#38B89A',
-                cancelButtonColor: '#d4d5d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Sure!',
                 confirmButtonText: 'Approved',
             }).then((result) => {
                 if (result.isConfirmed) {
