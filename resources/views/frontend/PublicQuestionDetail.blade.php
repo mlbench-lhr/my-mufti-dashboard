@@ -288,7 +288,7 @@
                 <div>
                     @if ($question->adminReply)
                         <a href="javascript:void(0)" class="link-primary fw-bolder"
-                            onclick="confirmDelete({{ $question->adminReply->id }})">
+                            onclick="confirmreplyDelete({{ $question->adminReply->id }})">
                             <img src="{{ url('public/frontend/media/svg/deleteIcon.svg') }}" alt="Delete"
                                 style="width: 30px; height: 30px;">
                         </a>
@@ -621,7 +621,7 @@
         $('#replyModal').modal('show');
     }
 
-    function confirmDelete(replyId) {
+    function confirmreplyDelete(replyId) {
         if (replyId !== null) {
             Swal.fire({
                 title: 'Delete Admin’s Reply',
@@ -629,11 +629,12 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#38B89A',
-                cancelButtonColor: '#38B89A1A',
-                confirmButtonText: 'Delete',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Sure!',
                 cancelButtonText: 'Cancel',
                 willOpen: () => {
                     const cancelButton = Swal.getCancelButton();
+                    // cancelButton.style.color = '#7B849A';
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -686,7 +687,6 @@
             cancelButtonText: 'Cancel',
             willOpen: () => {
                 const cancelButton = Swal.getCancelButton();
-                cancelButton.style.color = '#7B849A';
             }
         }).then((result) => {
             if (result.isConfirmed) {
