@@ -28,6 +28,9 @@ class UserQuery extends Model
         'question' => "",
         'category' => "[]",
     ];
+    protected $hidden = [
+        'deleted_at',
+    ];
     public function all_question()
     {
         return $this->hasMany(UserAllQuery::class, 'query_id', 'id');

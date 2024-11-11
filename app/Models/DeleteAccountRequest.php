@@ -17,6 +17,7 @@ class DeleteAccountRequest extends Model
     ];
     protected $casts = [
         'user_id' => 'integer',
+        'status' => 'integer',
     ];
     protected $hidden = [
         'deleted_at',

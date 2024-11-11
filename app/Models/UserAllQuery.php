@@ -29,6 +29,10 @@ class UserAllQuery extends Model
     protected $attributes = [
         'question' => "",
     ];
+
+    protected $hidden = [
+        'deleted_at',
+    ];
     
     public function mufti_detail()
     {

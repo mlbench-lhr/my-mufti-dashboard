@@ -18,5 +18,6 @@ class Mufti extends Model
     ];
     protected $casts = [
         'user_id' => 'integer',
+        'status' => 'integer',
     ];
 }

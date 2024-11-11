@@ -13,4 +13,9 @@ class EventQuestionLike extends Model
         'event_question_id',
         'user_id',
     ];
+
+    protected $casts = [
+        'event_question_id' => 'integer',
+        'user_id' => 'integer',
+    ];
 }
