@@ -6,13 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Degree;
 use App\Models\DeleteAccountRequest;
 use App\Models\Event;
+use App\Models\EventScholar;
 use App\Models\Experience;
 use App\Models\Interest;
 use App\Models\Mufti;
 use App\Models\MuftiAppointment;
 use App\Models\Notification;
 use App\Models\Question;
-use App\Models\EventScholar;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
@@ -290,19 +290,34 @@ class UserController extends Controller
         ];
         Notification::create($data);
 
-        $mufti->delete();
+        $data = [
+            'status' => 2,
+            'reason' => "",
+        ];
+
+        $mufti = Mufti::where('user_id', $user->id)->update($data);
+        // $mufti->delete();
 
         return redirect('ScholarsRequests');
     }
-    public function reject_request(Request $request, $id)
+    public function reject_request(Request $request)
     {
+
+        $id = $request->user_id;
         $user = User::where('id', $id)->first();
         $user->mufti_status = 3;
         $user->save();
+
         $degrees = Degree::where('user_id', $id)->delete();
         $experience = Experience::where('user_id', $id)->delete();
-        $mufti = Mufti::where('user_id', $id)->delete();
         $interestes = Interest::where('user_id', $id)->delete();
+
+        $data = [
+            'status' => 3,
+            'reason' => $request->reason,
+        ];
+
+        $mufti = Mufti::where('user_id', $id)->update($data);
 
         $device_id = $user->device_id;
         $title = "Scholar Request Update";

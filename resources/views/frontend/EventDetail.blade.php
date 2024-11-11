@@ -176,20 +176,19 @@
                         <!--begin::Actions-->
                         @if ($event->event_status == 2)
                             <div class="d-flex">
-                                {{-- <a href="{{ URL::to('EventRequestApprove/' . $event->id) }}">
-                                    <button type="button" class="btn btn-md btn-success w-100"
-                                        style="background-color:#38B89A;">Accept</button>
-                                </a> --}}
-                                <a href="#" data-url="{{ URL::to('EventRequestApprove/' . $event->id) }}"
+                                {{-- <a href="#" data-url="{{ URL::to('EventRequestApprove/' . $event->id) }}"
                                     class="btn-approve">
                                     <button type="button" class="btn btn-md btn-success w-100"
                                         style="background-color:#38B89A;">Accept</button>
-                                </a>
+                                </a> --}}
 
-                                <a href="{{ URL::to('EventRequestDecline/' . $event->id) }}">
+                                {{-- <a href="{{ URL::to('EventRequestDecline/' . $event->id) }}">
                                     <button type="button" class="btn btn-md btn-danger w-100 ms-5"
                                         style="background-color:#F52E2E;">Reject</button>
-                                </a>
+                                </a> --}}
+                                <p class='badge px-5 py-4 fs-5 fw-bold' style='background: #F2C9251A;color: #F2C925;'>
+                                    Pending
+                                </p>
                             </div>
                         @elseif($event->event_status == 1)
                             <div class="d-flex">

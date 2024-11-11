@@ -67,7 +67,7 @@ class EventsAndApptController extends Controller
     public function get_all_events(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = Event::whereIn('event_status', [0, 1,2])->count();
+        $userCount = Event::whereIn('event_status', [0, 1, 2])->count();
         $query = Event::with('scholars', 'hosted_by', 'event_questions');
 
         if ($searchTerm) {
@@ -222,11 +222,20 @@ class EventsAndApptController extends Controller
         return response()->json($data);
     }
 
-    public function reject_request(Request $request, $id)
+    public function reject_request(Request $request)
     {
-        $event = Event::where('id', $request->id)->first();
-        $event->event_status = 0;
-        $event->save();
+
+        // dd($request->all());
+
+        $event = Event::where('id', $request->event_id)->first();
+        // $event->event_status = 0;
+        // $event->save();
+
+        $data = [
+            'reason' => $request->reason ?? "",
+            'event_status' => 0,
+        ];
+        Event::where('id', $request->event_id)->update($data);
         $event_date = Carbon::parse($event->date)->format('M d, Y');
         $user_id = $event->user_id;
         $user = User::find($user_id);

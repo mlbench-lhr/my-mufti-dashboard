@@ -27,7 +27,9 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('getScholarRequests', [UserController::class, 'get_all_scholar_request'])->name('getScholarRequests');
     Route::get('ScholarRequest/Detail/{id}', [UserController::class, 'scholar_request_detail'])->name('ScholarRequest/Detail');
     Route::get('Approve/{id}', [UserController::class, 'approve_request'])->name('Approve');
-    Route::get('Reject/{id}', [UserController::class, 'reject_request'])->name('Reject');
+    // Route::get('Reject/{id}', [UserController::class, 'reject_request'])->name('Reject');
+    Route::post('Reject', [UserController::class, 'reject_request'])->name('Reject');
+
 
     // Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
     Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
@@ -97,7 +99,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('RequestedEvents', [EventsAndApptController::class, 'all_requested_events'])->name('RequestedEvents');
     Route::get('getRequestedEvents', [EventsAndApptController::class, 'get_all_requested_events'])->name('getRequestedEvents');
     Route::get('EventRequestApprove/{id}', [EventsAndApptController::class, 'approve_request'])->name('EventRequestApprove');
-    Route::get('EventRequestDecline/{id}', [EventsAndApptController::class, 'reject_request'])->name('EventRequestDecline');
+    // Route::get('EventRequestDecline/{id}', [EventsAndApptController::class, 'reject_request'])->name('EventRequestDecline');
+    Route::post('EventRequestDecline', [EventsAndApptController::class, 'reject_request'])->name('EventRequestDecline');
+
+
     Route::get('EventDetail/{id}', [EventsAndApptController::class, 'event_detail'])->name('EventDetail');
     Route::get('getEventsQuestions/{id}', [EventsAndApptController::class, 'get_event_questions'])->name('getEventsQuestions');
     Route::get('EventQuestionDetail/{id}', [EventsAndApptController::class, 'event_question_detail'])->name('EventQuestionDetail');

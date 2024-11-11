@@ -487,12 +487,12 @@
                             ${row.event_status == 2 ?
                                 `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
                                     <a href="#" class="btn-approve" data-url="{{ URL::to('EventRequestApprove') }}/${row.id}">
-                                        <button type="button" class="btn btn-sm btn-success w-100"
-                                            style="background-color:#38B89A;">Approve</button>
+                                        <button type="button" class="btn btn-sm w-100"
+                                            style="background-color:#38B89A; color:white;">Approve</button>
                                     </a>
                                     <a href="{{ URL::to('EventRequestDecline') }}/${row.id}">
-                                        <button type="button" class="btn btn-sm btn-danger w-100 ms-5"
-                                        style="background-color:#F52E2E;">Reject</button>
+                                        <button type="button" class="btn btn-sm w-100 ms-5"
+                                        style="background-color:#F52E2E; color:white;">Reject</button>
                                     </a>
                                     <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
                                         View detail
