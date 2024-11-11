@@ -25,6 +25,7 @@ class Event extends Model
         'longitude',
         'about',
         'event_status',
+        'reason',
     ];
     protected $casts = [
         'user_id' => 'integer',
@@ -39,6 +40,9 @@ class Event extends Model
         'event_category' => "[]",
         'question_category' => "[]",
         'about' => "",
+    ];
+    protected $hidden = [
+        'reason',
     ];
 
     protected static function boot()

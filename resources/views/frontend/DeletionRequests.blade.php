@@ -146,7 +146,7 @@
             <!--end::Card-->
         </div>
         <!--end::Container-->
-        <!--begin::Modal - interests - Update-->
+        <!--begin::Modal - Reason -->
         <div class="modal fade" id="kt_modal_update_interests" tabindex="-1" aria-hidden="true">
             <!--begin::Modal dialog-->
             <div class="modal-dialog mw-500px">
@@ -213,7 +213,7 @@
             </div>
             <!--end::Modal dialog-->
         </div>
-        <!--end::Modal - interests - Update-->
+        <!--end::Modal - Reason -->
     </div>
     <!--end::Content-->
 @endsection
@@ -234,6 +234,7 @@
             form.attr('action', actionUrl);
         });
     });
+    
     $(document).ready(function() {
         $(document).on('click', '.delete-interest', function() {
             var interestId = $(this).data('interest-id');

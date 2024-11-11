@@ -13,6 +13,8 @@ class Mufti extends Model
         'name',
         'phone_number',
         'fiqa',
+        'reason',
+        'status',
     ];
     protected $casts = [
         'user_id' => 'integer',

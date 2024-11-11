@@ -26,17 +26,14 @@ class MuftiController extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        $check_user = Mufti::where('user_id', $user_id)->first();
-        if ($check_user) {
+        $check_user1 = Mufti::where(['user_id' => $user_id, 'status' => 1])->first();
+        if ($check_user1) {
             return ResponseHelper::jsonResponse(false, 'Already send a request');
         }
-
-        $data1 = [
-            'user_id' => $request->user_id,
-            'name' => $request->name,
-            'phone_number' => $request->phone_number,
-            'fiqa' => $request->fiqa,
-        ];
+        $check_user2 = Mufti::where(['user_id' => $user_id, 'status' => 2])->first();
+        if ($check_user2) {
+            return ResponseHelper::jsonResponse(false, 'Already Mufti');
+        }
 
         $data2 = [
             'user_id' => $request->user_id,
@@ -47,15 +44,10 @@ class MuftiController extends Controller
             'degree_endDate' => $request->degree_endDate,
         ];
         $base64File = $data2['degree_image'];
-
         $fileData = base64_decode($base64File);
-
         $name = 'degree_images/' . Str::random(15) . '.png';
-
         Storage::put('public/' . $name, $fileData);
-
         $data2['degree_image'] = $name;
-
         $data3 = [
             'user_id' => $request->user_id,
             'experience_startDate' => $request->experience_startDate,
@@ -64,7 +56,20 @@ class MuftiController extends Controller
 
         User::where('id', $request->user_id)->update(['mufti_status' => 1]);
 
-        Mufti::create($data1);
+        $data1 = [
+            'user_id' => $request->user_id,
+            'name' => $request->name,
+            'phone_number' => $request->phone_number,
+            'fiqa' => $request->fiqa,
+            'reason' => "",
+            'status' => 1,
+        ];
+
+        Mufti::updateOrCreate(
+            ['user_id' => $request->user_id],
+            $data1
+        );
+
         Degree::create($data2);
         Experience::create($data3);
         collect($request->interest)->map(function ($value) use ($request) {

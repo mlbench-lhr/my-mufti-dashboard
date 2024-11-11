@@ -17,4 +17,7 @@ class Interest extends Model
     protected $casts = [
         'user_id' => 'integer',
     ];
+    protected $hidden = [
+        'deleted_at',
+    ];
 }
