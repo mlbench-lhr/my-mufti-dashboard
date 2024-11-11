@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('muftis', function (Blueprint $table) {
-            $table->longText('reason')->default("")->after('fiqa');
+            $table->longText('reason')->nullable()->after('fiqa');
             $table->integer('status')->comment("1 for pending,2 for accepted,3 for rejected")->default(1)->after('reason');
         });
     }
