@@ -10,7 +10,6 @@ use App\Http\Requests\VerifyOTPRequest;
 use App\Mail\GenerateOTPMail;
 use App\Models\Interest;
 use App\Models\User;
-use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -29,9 +28,19 @@ class ForgotPassword extends Controller
             return $validationError;
         }
         $otp_code = mt_rand(1000, 9999);
-        $user = User::where('email', $request->email)->update(['email_code' => $otp_code]);
+        // $user = User::where('email', $request->email)->update(['email_code' => $otp_code]);
+
+        $check_email = User::where('email', $request->email)
+            ->where(function ($query) {
+                $query->where('a_code', '=', '')
+                    ->where('g_code', '=', '');
+            })->first();
+
         // $user = Admin::where('email', $request->email)->update(['email_code' => $otp_code]);
-        if ($user) {
+        if ($check_email) {
+
+            $user = User::where('email', $request->email)->update(['email_code' => $otp_code]);
+
             $main_data = ['message' => $otp_code];
             Mail::to($request->email)->send(new GenerateOTPMail($main_data));
             $data = [
@@ -53,7 +62,7 @@ class ForgotPassword extends Controller
             User::where('email', $request->email)->update(['email_code' => 0]);
             $user = User::where('email', $email)->first();
             if ($user->mufti_status == 2) {
-                $interests = Interest::where('user_id', $user->id)->select('id','user_id','interest')->get();
+                $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
                 $user->interests = $interests;
             } else {
                 $user->interests = [];

@@ -11,8 +11,6 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SocialRequest;
 use App\Models\Interest;
 use App\Models\User;
-use App\Models\UserAllQuery;
-use App\Models\UserQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -24,49 +22,119 @@ class AuthController extends Controller
     // for user signup
     public function sign_up(RegisterRequest $request)
     {
-        $check_email = User::where('email', $request->email)->first();
-        if ($check_email) {
+
+        $check_email1 = User::where('email', $request->email)
+            ->where(function ($query) {
+                $query->whereNotNull('a_code')->where('a_code', '!=', '')
+                    ->orWhere(function ($query) {
+                        $query->whereNotNull('g_code')->where('g_code', '!=', '');
+                    });
+            })->first();
+
+        if ($check_email1) {
+
+            $check_email = User::where('email', $request->email)
+                ->where(function ($query) {
+                    $query->where('a_code', '=', '')
+                        ->where('g_code', '=', '');
+                })->first();
+
+            if ($check_email) {
+                $data = [
+                    'message' => 'This email is already exist in our database',
+                    'status' => false,
+                    'data' => null,
+                ];
+                return response($data, 200);
+            }
+
             $data = [
-                'message' => 'This email is already exist in our database',
-                'status' => false,
-                'data' => null,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'device_id' => $request->device_id ?? "",
+
             ];
-            return response($data, 200);
-        }
+            $user = User::create($data);
+            $user_data = User::where('id', $user->id)->first();
+            if ($user_data->mufti_status == 2) {
+                $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
+                $user_data->interests = $interests;
+            } else {
+                $user_data->interests = [];
+            }
+            $user_id = $user_data->id;
+            $message = "A new user has registered on the platform. Review their profile.";
+            $type = "register";
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'device_id' => $request->device_id ?? "",
+            ActivityHelper::store_avtivity($user_id, $message, $type);
 
-        ];
-        $user = User::create($data);
-        $user_data = User::where('id', $user->id)->first();
-        if ($user_data->mufti_status == 2) {
-            $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
-            $user_data->interests = $interests;
+            $response = [
+                'status' => true,
+                'message' => 'Successfully registered!',
+                'data' => $user_data,
+            ];
+            return response()->json($response, 200);
         } else {
-            $user_data->interests = [];
+
+            $check_email = User::where('email', $request->email)
+                ->where(function ($query) {
+                    $query->where('a_code', '=', '')
+                        ->where('g_code', '=', '');
+                })->first();
+
+            if ($check_email) {
+                $data = [
+                    'message' => 'This email is already exist in our database',
+                    'status' => false,
+                    'data' => null,
+                ];
+                return response($data, 200);
+            }
+
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'device_id' => $request->device_id ?? "",
+
+            ];
+            $user = User::create($data);
+            $user_data = User::where('id', $user->id)->first();
+            if ($user_data->mufti_status == 2) {
+                $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
+                $user_data->interests = $interests;
+            } else {
+                $user_data->interests = [];
+            }
+            $user_id = $user_data->id;
+            $message = "A new user has registered on the platform. Review their profile.";
+            $type = "register";
+
+            ActivityHelper::store_avtivity($user_id, $message, $type);
+
+            $response = [
+                'status' => true,
+                'message' => 'Successfully registered!',
+                'data' => $user_data,
+            ];
+            return response()->json($response, 200);
+
         }
-        $user_id = $user_data->id;
-        $message = "A new user has registered on the platform. Review their profile.";
-        $type = "register";
 
-        ActivityHelper::store_avtivity($user_id, $message, $type);
-
-        $response = [
-            'status' => true,
-            'message' => 'Successfully registered!',
-            'data' => $user_data,
-        ];
-        return response()->json($response, 200);
     }
     // for user signin
     public function sign_in(LoginRequest $request)
     {
         $device_id = $request->device_id ?? "";
-        $user = User::where('email', $request->email)->first();
+
+        // $user = User::where('email', $request->email)->first();
+
+        $user = User::where('email', $request->email)
+            ->where(function ($query) {
+                $query->where('a_code', '=', '')
+                    ->where('g_code', '=', '');
+            })->first();
 
         if (empty($user)) {
             return response()->json([
@@ -118,7 +186,6 @@ class AuthController extends Controller
                         "data" => null,
                     ], 200);
             }
-
         }
 
     }
@@ -136,33 +203,35 @@ class AuthController extends Controller
             $check_email = User::where('email', $request->email)->first();
             $check_user_social_token = User::where('g_code', $social_token)->first();
 
-            if ($check_email) {
+            // if ($check_email) {
 
-                if ($device_id != "") {
-                    User::where('device_id', $device_id)->update(['device_id' => '']);
-                }
+            //     if ($device_id != "") {
+            //         User::where('device_id', $device_id)->update(['device_id' => '']);
+            //     }
 
-                User::where('email', $request->email)->update(['device_id' => $device_id]);
+            //     User::where('email', $request->email)->update(['device_id' => $device_id]);
 
-                $check_email->refresh();
+            //     $check_email->refresh();
 
-                // $check_email->update(['device_id' => $request->device_id]);
-                if ($check_email->mufti_status == 2) {
-                    $check_email->user_type = "scholar";
-                    $interests = Interest::where('user_id', $check_email->id)->select('id', 'user_id', 'interest')->get();
-                    $check_email->interests = $interests;
-                } else {
-                    $check_email->interests = [];
-                }
+            //     // $check_email->update(['device_id' => $request->device_id]);
+            //     if ($check_email->mufti_status == 2) {
+            //         $check_email->user_type = "scholar";
+            //         $interests = Interest::where('user_id', $check_email->id)->select('id', 'user_id', 'interest')->get();
+            //         $check_email->interests = $interests;
+            //     } else {
+            //         $check_email->interests = [];
+            //     }
 
-                $data = [
-                    'status' => true,
-                    'message' => 'Successfully logged In!',
-                    'data' => $check_email,
-                ];
+            //     $data = [
+            //         'status' => true,
+            //         'message' => 'Successfully logged In!',
+            //         'data' => $check_email,
+            //     ];
 
-                return response($data, 200);
-            } else if ($check_user_social_token) {
+            //     return response($data, 200);
+            // } else
+
+            if ($check_user_social_token) {
 
                 if ($device_id != "") {
                     User::where('device_id', $device_id)->update(['device_id' => '']);
@@ -229,32 +298,34 @@ class AuthController extends Controller
             $check_email = User::where('email', $request->email)->first();
             $check_user_social_token = User::where('a_code', $social_token)->first();
 
-            if ($check_email) {
+            // if ($check_email) {
 
-                if ($device_id != "") {
-                    User::where('device_id', $device_id)->update(['device_id' => '']);
-                }
+            //     if ($device_id != "") {
+            //         User::where('device_id', $device_id)->update(['device_id' => '']);
+            //     }
 
-                User::where('email', $request->email)->update(['device_id' => $device_id]);
+            //     User::where('email', $request->email)->update(['device_id' => $device_id]);
 
-                $check_email->refresh();
+            //     $check_email->refresh();
 
-                // $check_email->update(['device_id' => $request->device_id]);
-                if ($check_email->mufti_status == 2) {
-                    $check_email->user_type = "scholar";
-                    $interests = Interest::where('user_id', $check_email->id)->select('id', 'user_id', 'interest')->get();
-                    $check_email->interests = $interests;
-                } else {
-                    $check_email->interests = [];
-                }
-                $data = [
-                    'status' => true,
-                    'message' => 'Successfully logged In!',
-                    'data' => $check_email,
-                ];
+            //     // $check_email->update(['device_id' => $request->device_id]);
+            //     if ($check_email->mufti_status == 2) {
+            //         $check_email->user_type = "scholar";
+            //         $interests = Interest::where('user_id', $check_email->id)->select('id', 'user_id', 'interest')->get();
+            //         $check_email->interests = $interests;
+            //     } else {
+            //         $check_email->interests = [];
+            //     }
+            //     $data = [
+            //         'status' => true,
+            //         'message' => 'Successfully logged In!',
+            //         'data' => $check_email,
+            //     ];
 
-                return response($data, 200);
-            } else if ($check_user_social_token) {
+            //     return response($data, 200);
+            // } else
+
+            if ($check_user_social_token) {
                 // $check_user_social_token->update(['device_id' => $request->device_id]);
 
                 if ($device_id != "") {
