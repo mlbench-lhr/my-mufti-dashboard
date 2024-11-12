@@ -113,8 +113,7 @@
 
                                     @if ($response['user']->user_type == 'scholar')
                                         <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                            <a
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -131,8 +130,7 @@
                                     @endif
 
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a
-                                            class="d-flex align-items-center text-gray-400  me-5 ">
+                                        <a class="d-flex align-items-center text-gray-400  me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
@@ -148,8 +146,7 @@
                                     </div>
                                     @if ($response['user']->user_type == 'user')
                                         <div class="d-flex flex-wrap fw-bold fs-6 pe-2 mt-2">
-                                            <a
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -174,8 +171,8 @@
                                 <!--begin::Actions-->
                                 <div class="d-flex ">
                                     <a href="#" data-url="{{ URL::to('DeleteUser/' . $response['user']->id) }}">
-                                        <button type="button" class="btn btn-danger w-100 text-uppercase btn-remove"
-                                            style="background-color:red;">Delete User</button>
+                                        <button type="button" class="btn w-100 text-uppercase btn-remove"
+                                            style="background-color:red; color:white;">Delete User</button>
                                     </a>
                                 </div>
                                 <!--end::Actions-->
@@ -206,49 +203,49 @@
 
                     <div class="d-flex overflow-auto h-55px">
                         <ul
-                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
+                        class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
+                        @php
+                            $routes = [
+                                'PublicQuestions' => 'Public Questions',
+                                'PrivateQuestions' => 'Private Questions',
+                                'Appointments' => 'Appointments',
+                                // 'UserEvents' => 'Events',
+                                'UserEventsRequest' => 'User All Events',
+                            ];
+
+                            $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                        @endphp
+
+                        @foreach ($routes as $route => $displayName)
                             @php
-                                $routes = [
-                                    'PublicQuestions' => 'Public Questions',
-                                    'PrivateQuestions' => 'Private Questions',
-                                    'Appointments' => 'Appointments',
-                                    // 'UserEvents' => 'Events',
-                                    'UserEventsRequest' => 'All Events',
-                                ];
-
-                                $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                                $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
+                                $isActive = Request::is($fullUrl);
                             @endphp
+                            <li class="nav-item min-w-175px d-flex justify-content-start">
+                                <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
+                                    href="{{ URL::to($fullUrl) }}">
+                                    {{ $displayName }}
+                                </a>
+                            </li>
+                        @endforeach
 
-                            @foreach ($routes as $route => $displayName)
-                                @php
-                                    $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
-                                    $isActive = Request::is($fullUrl);
-                                @endphp
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ $isActive ? 'active' : '' }}"
-                                        href="{{ URL::to($fullUrl) }}">
-                                        {{ $displayName }}
-                                    </a>
-                                </li>
-                            @endforeach
-
-                            @if ($response['user']->user_type == 'scholar')
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
-                                        href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
-                                        Events</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
-                                        href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
-                                        From Me</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
-                                        href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
-                                </li>
-                            @endif
-                        </ul>
+                        @if ($response['user']->user_type == 'scholar')
+                            <li class="nav-item min-w-150px">
+                                <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                    href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
+                                    Events</a>
+                            </li>
+                            <li class="nav-item min-w-150px">
+                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
+                                    href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
+                                    From Me</a>
+                            </li>
+                            <li class="nav-item min-w-100px">
+                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                    href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                            </li>
+                        @endif
+                    </ul>
                     </div>
                 </div>
             </div>
@@ -297,6 +294,76 @@
             </div>
         </div>
         <!--end::Container-->
+
+        <!--begin::Modal - Reason -->
+        <div class="modal fade" id="kt_modal_update_interests" tabindex="-1" aria-hidden="true">
+            <!--begin::Modal dialog-->
+            <div class="modal-dialog mw-500px">
+                <!--begin::Modal content-->
+                <div class="modal-content">
+                    <!--begin::Modal header-->
+                    <div class="modal-header pb-0 border-0 d-f justify-content-between">
+                        <!--begin::Close-->
+                        <p>
+
+                        </p>
+                        <p class="fs-2 fw-bold">
+                            Reason For Not Accepted
+                        </p>
+                        <div class="btn btn-sm btn-icon btn-active-color-dark" data-bs-dismiss="modal">
+                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+
+                            <span class="">
+                                <svg width="35" height="35" viewBox="0 0 40 40" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M33.3307 20.0013C33.3307 27.3651 27.3612 33.3346 19.9974 33.3346C12.6336 33.3346 6.66406 27.3651 6.66406 20.0013C6.66406 12.6375 12.6336 6.66797 19.9974 6.66797C27.3612 6.66797 33.3307 12.6375 33.3307 20.0013ZM15.9569 15.9608C16.3474 15.5703 16.9806 15.5703 17.3711 15.9608L19.9974 18.5871L22.6236 15.9609C23.0141 15.5703 23.6473 15.5703 24.0378 15.9609C24.4283 16.3514 24.4283 16.9846 24.0378 17.3751L21.4116 20.0013L24.0378 22.6275C24.4283 23.018 24.4283 23.6512 24.0378 24.0417C23.6472 24.4322 23.0141 24.4322 22.6235 24.0417L19.9974 21.4155L17.3711 24.0417C16.9806 24.4322 16.3475 24.4322 15.9569 24.0417C15.5664 23.6512 15.5664 23.018 15.9569 22.6275L18.5831 20.0013L15.9569 17.375C15.5664 16.9845 15.5664 16.3514 15.9569 15.9608Z"
+                                        fill="#303030" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--begin::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body  pt-4 mx-0">
+                        <!--begin::Input group-->
+
+                        <form action="{{ route('EventRequestDecline') }}" method="POST" class="form"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <!-- Add a hidden input field to carry the interest ID -->
+                            <input type="hidden" name="event_id" id="userId" value="">
+                            <div class="fv-row mb-5">
+                                <!--begin::Input-->
+                                <label for="name" class="fw-bold fs-4 pb-2 fw-600">Reason</label>
+                                <textarea style="background-color:#F0F1F3; font-size: 1.3rem;" type="text" placeholder="Add Reason"
+                                    name="reason" class="form-control form-control-solid mb-3 border" id="productDescription" cols="20"
+                                    rows="6" oninput="validateInput(this)" required></textarea>
+                                <!--end::Input-->
+                            </div>
+
+                            <div class="d-flex justify-content-center align-content-center pt-2 ">
+                                <!--begin::Button-->
+                                <button type="submit" id="kt_modal_add_customer_submit" class="btn col-12"
+                                    style="background-color: #38B89A; color:#FFFFFF">
+                                    <span class="indicator-label fs-4">Send</span>
+                                    <span class="indicator-progress">Please wait...
+                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                </button>
+                                <!--end::Button-->
+                            </div>
+                            <!--end::Input group-->
+                        </form>
+                    </div>
+                    <!--end::Modal body-->
+                </div>
+                <!--end::Modal content-->
+            </div>
+            <!--end::Modal dialog-->
+        </div>
+        <!--end::Modal - Reason -->
     </div>
     <!--end::Content-->
     <script type="module">
@@ -375,14 +442,78 @@
 
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    $(document).ready(function() {
+        $('#kt_modal_update_interests').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var userId = button.data('user-id');
+
+            var modal = $(this);
+
+            modal.find('#userId').val(userId);
+
+            var form = modal.find('form');
+            var actionUrl = form.attr('action');
+            actionUrl = actionUrl.replace('user-id', userId);
+            form.attr('action', actionUrl);
+        });
+    });
+
+    $(document).ready(function() {
+        $(document).on('click', '.delete-interest', function() {
+            var interestId = $(this).data('interest-id');
+            Swal.fire({
+                title: 'Accept the Request',
+                text: "Are you sure you want to Accept the Event Request?",
+                icon: 'warning',
+                iconColor: '#38B89A',
+                showCancelButton: true,
+                confirmButtonColor: '#38B89A',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Sure!',
+                confirmButtonText: 'Approved',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('EventRequestApprove', ':id') }}'.replace(':id',
+                            interestId),
+                        type: "GET",
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Accepted!',
+                                text: 'Event has been accepted.',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 700,
+                                willClose: () => {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(error) {
+                            Swal.fire('Error', 'Something went wrong.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    function validateInput(input) {
+        const regex = /[^a-zA-Z0-9 .,!?'"()-]/g;
+        input.value = input.value.replace(regex, '');
+        input.value = input.value.replace(/^\s*/, '');
+    }
+</script>
+<script>
     // Handle click event for approval button
     $(document).on('click', '.btn-approve', function(e) {
         e.preventDefault();
 
         var button = $(this);
-        var url = button.data('url'); 
+        var url = button.data('url');
 
         $.ajax({
             url: url,
@@ -486,13 +617,15 @@
                         <td>
                             ${row.event_status == 2 ?
                                 `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <a href="#" class="btn-approve" data-url="{{ URL::to('EventRequestApprove') }}/${row.id}">
-                                        <button type="button" class="btn btn-sm w-100"
-                                            style="background-color:#38B89A; color:white;">Approve</button>
+                                    <a>
+                                        <button type="button" class="btn btn-sm w-100 delete-interest"
+                                            style="background-color:#38B89A; color:white;" data-interest-id="${row.id}">Approve</button>
                                     </a>
-                                    <a href="{{ URL::to('EventRequestDecline') }}/${row.id}">
+                                    <a>
                                         <button type="button" class="btn btn-sm w-100 ms-5"
-                                        style="background-color:#F52E2E; color:white;">Reject</button>
+                                        style="background-color:#F52E2E; color:white;" data-bs-toggle="modal"
+                                        data-bs-target="#kt_modal_update_interests"
+                                        data-user-id="${row.id}">Reject</button>
                                     </a>
                                     <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
                                         View detail

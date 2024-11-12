@@ -118,7 +118,7 @@
                                         <th class="min-w-125px">Email Address</th>
                                         <th class="min-w-125px">Registration Date</th>
                                         <th class="min-w-125px">Posted Questions</th>
-                                        <th class="text-end min-w-100px">Action</th>
+                                        <th class="min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -214,8 +214,8 @@
                         </td>
                         <td>${row.email}</td>
                         <td>${row.registration_date}</td>
-                        <td style = "padding-left: 50px;">${row.posted_questions}</td>
-                        <td class="text-end">
+                        <td>${row.posted_questions}</td>
+                        <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('UserDetail/PublicQuestions') }}/${row.id}" class="link-success fw-bold">
                                     View Profile

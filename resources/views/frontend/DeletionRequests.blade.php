@@ -69,9 +69,9 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Users
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Deletion Requests
                 </h1>
-                <h3 class="mt-4" style=" font-weight:400; ">Total Users: <span class="fs-5" id="user-count"
+                <h3 class="mt-4" style=" font-weight:400; ">Total Requests: <span class="fs-5" id="user-count"
                         style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
@@ -89,7 +89,7 @@
                 </span>
                 <!--end::Svg Icon-->
                 <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
-                    placeholder="Search user" />
+                    placeholder="Search by name..." />
             </div>
             <!--end::Page title=-->
 
@@ -234,13 +234,13 @@
             form.attr('action', actionUrl);
         });
     });
-    
+
     $(document).ready(function() {
         $(document).on('click', '.delete-interest', function() {
             var interestId = $(this).data('interest-id');
             Swal.fire({
                 title: 'Accept the Request',
-                text: "Are you sure you want to Accept the Request?",
+                text: "Are you sure you want to Accept the Deletion Request?",
                 icon: 'warning',
                 iconColor: '#38B89A',
                 showCancelButton: true,
@@ -329,9 +329,8 @@
                             '0');
 
                         var newRow = `
-                    <tr>
-                        <td class="text-center">${modifiedSerialNumber}</td>
-
+                    <tr class="text-start">
+                        <td>${modifiedSerialNumber}</td>
                         <td class="d-flex align-items-center">
                             ${row.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -356,20 +355,19 @@
 
                         <td>${row.email}</td>
                         <td>${row.requested_date}</td>
-                        <td class="center">
-                            <div class="fs-4 fw-bolder text-dark d-flex align-content-center justify-content-center gap-3">
-                                    <a class="btn-approve">
+                        <td>
+                            <div class="fs-4 fw-bolder text-dark d-flex justify-content-center align-content-center gap-3">
+                                    <a>
                                         <button type="button" class="btn btn-sm w-100 delete-interest" data-interest-id="${row.id}"
                                         style="background-color:#38B89A; color:white;">Accept</button>
                                     </a>
-
                                     <a>
                                         <button type="button" class="btn btn-sm w-100"
                                         style="background-color:#F52E2E; color:white;" data-bs-toggle="modal"
                                         data-bs-target="#kt_modal_update_interests"
                                         data-user-id="${row.id}" >Reject</button>
                                     </a>
-                                </div>
+                            </div>
                         </td>
                        
                     </tr>

@@ -115,8 +115,8 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-175px">Posted By</th>
-                                        <th class="min-w-125px">Question</th>
-                                        <th class="text-end min-w-100px">Action</th>
+                                        <th class="min-w-200px">Question</th>
+                                        <th class="min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -217,7 +217,7 @@
                         <td>
                             ${truncateWords(row.question, 25)}
                         </td>
-                        <td class="text-end">
+                        <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('ReportedQuestionDetail') }}/${row.id}/${row.id}?flag=3" class="link-success fw-bold">
                                     View detail

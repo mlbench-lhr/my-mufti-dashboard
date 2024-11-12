@@ -53,7 +53,7 @@ class UserController extends Controller
         }
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
             $row->posted_questions = Question::where('user_id', $row->id)->count();
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
@@ -182,7 +182,7 @@ class UserController extends Controller
 
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
             $interests = Interest::where('user_id', $row->id)->select('id', 'user_id', 'interest')->get();
             $row->interests = $interests;
         }
@@ -214,7 +214,7 @@ class UserController extends Controller
         }
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
             $row->posted_questions = Question::where('user_id', $row->id)->count();
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
@@ -391,7 +391,7 @@ class UserController extends Controller
 
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('');
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }

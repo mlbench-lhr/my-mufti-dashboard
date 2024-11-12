@@ -88,7 +88,7 @@
                 @endif
                 <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}"
                     id="delete-btn">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;"
+                    <button type="button" class="btn w-100" style="background-color:#EA4335; color:white;"
                         onclick="confirmDelete(event)">
                         Delete
                     </button>
@@ -392,9 +392,9 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-200px">User name</th>
-                                        <th class="min-w-250px text-center">Account Type</th>
-                                        <th class="min-w-250px text-center">Date</th>
-                                        <th class="min-w-300px text-center">Comment</th>
+                                        <th class="min-w-150px">Account Type</th>
+                                        <th class="min-w-125px">Date</th>
+                                        <th class="min-w-300px">Comment</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -462,8 +462,9 @@
                         var modifiedSerialNumber = pad(count + 1, 2,
                             '0'); // Calculate modified serial number
                         var newRow = `
-                    <tr>
-                        <td class="d-flex align-items-center">
+                    <tr class="text-start">
+                        <td>
+                            <div class="d-flex align-items-center">
                             ${row.user.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
                                     <div class="symbol-label">
@@ -482,11 +483,11 @@
                                 </div>
                                 <span> #${row.user.email}</span>
                             </div>
+                            </div>
                         </td>
-
-                        <td class="px-4"" >${row.user.user_type}</td>
-                        <td class="px-4"">${row.registration_date}</td>
-                        <td class="px-4">${row.comment}</td>
+                        <td>${row.user.user_type}</td>
+                        <td>${row.registration_date}</td>
+                        <td>${row.comment}</td>
                     </tr>
                 `;
                         tableBody.append(newRow);

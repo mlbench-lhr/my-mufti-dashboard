@@ -91,7 +91,7 @@
             <div class="d-flex">
                 <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}"
                     id="delete-btn">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;"
+                    <button type="button" class="btn w-100 text-uppercase" style="background-color:#EA4335; color:white;"
                         onclick="confirmDeletePublic(event)">
                         Delete
                     </button>
@@ -147,9 +147,9 @@
                     </div>
                 </div>
 
-                <div class="line-container">
+                {{-- <div class="line-container">
                     <hr class="content-line">
-                </div>
+                </div> --}}
 
             </div>
 
@@ -175,15 +175,14 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-150px">Reported By</th>
-                                        <th class="min-w-250px">Account Type</th>
-                                        <th class="min-w-250px">Date</th>
+                                        <th class="min-w-150px">Account Type</th>
+                                        <th class="min-w-125px">Date</th>
                                         <th class="min-w-300px">Reason</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
                                 <tbody class="text-gray-600 fw-bold" id="verification-table-body">
                                     <div id="loader" class="loader"></div>
-
                                 </tbody>
 
                             </table>
@@ -247,8 +246,8 @@
                             .trim() + "..." : reasonText.trim();
 
                         var newRow = `
-                        <tr>
-                            <td class="px-4">
+                        <tr class="text-start">
+                            <td>
                             <div class="d-flex align-items-center justify-content-start">
                                 ${row.user.image ? `
                                     <div class="symbol symbol-50px overflow-hidden me-3">
@@ -269,10 +268,9 @@
                                     </div>
                             </div>
                             </td>
-
-                            <td class="px-4">${row.user.user_type}</td>
-                            <td class="px-4">${row.reported_at}</td>
-                            <td class="px-4">
+                            <td>${row.user.user_type}</td>
+                            <td>${row.reported_at}</td>
+                            <td>
                                 <span id="truncated-text-${row.id}">
                                     ${truncatedText}
                                 </span>

@@ -69,7 +69,7 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Private questions
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Private Questions
                 </h1>
                 <h3 class="mt-4" style=" font-weight:400; ">All Questions: <span class="fs-5" id="user-count"
                         style="font-weight:500 "> </span> </h3>
@@ -117,9 +117,9 @@
                                         <th class="min-w-75px">Sr No</th>
                                         <th class="min-w-175px">Question</th>
                                         <th class="min-w-125px">Question Category</th>
-                                        <th class="min-w-125px">Fiqa</th>
+                                        <th class="min-w-100px">Fiqa</th>
                                         <th class="min-w-125px">Date</th>
-                                        <th class="text-end min-w-125px">Action</th>
+                                        <th class="min-w-125px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -197,13 +197,13 @@
                         var modifiedSerialNumber = pad(count + 1, 2,
                             '0');
                         var newRow = `
-                    <tr>
+                    <tr class="text-start">
                         <td>${modifiedSerialNumber}</td>
-                        <td style = "" >${row.question}</td>
+                        <td>${row.question}</td>
                         <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" >${categoryName}</td>
-                        <td style = "" >${row.fiqa}</td>
+                        <td>${row.fiqa}</td>
                         <td>${row.registration_date}</td>
-                        <td class="text-end">
+                        <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('PrivateQuestionDetail') }}/${row.id}?flag=1" class="link-success fw-bold">
                                     View Detail

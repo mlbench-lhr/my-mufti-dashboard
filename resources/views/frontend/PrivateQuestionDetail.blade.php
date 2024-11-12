@@ -94,7 +94,7 @@
             <div class="d-flex ">
                 <a href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{ $user_id }}"
                     id="delete-btn">
-                    <button type="button" class="btn btn-danger w-100 text-uppercase" style="background-color:#EA4335;"
+                    <button type="button" class="btn w-100 text-uppercase" style="background-color:#EA4335; color:white;"
                         onclick="confirmDeletePrivate(event)">
                         Delete
                     </button>

@@ -89,7 +89,7 @@
                 </span>
                 <!--end::Svg Icon-->
                 <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
-                    placeholder="Search user" />
+                    placeholder="Search by name..." />
             </div>
             <!--end::Page title=-->
 
@@ -118,8 +118,8 @@
                                         <th class="min-w-175px">Scholarname</th>
                                         <th class="min-w-125px">Category</th>
                                         <th class="min-w-125px">Date</th>
-                                        <th class="min-w-125px">Charges</th>
-                                        <th class="text-end min-w-100px">Action</th>
+                                        <th class="min-w-100px">Charges</th>
+                                        <th class="min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -192,7 +192,7 @@
                     var count = 0;
                     $.each(users.data, function(index, row) {
                         var newRow = `
-                    <tr>
+                    <tr class="text-start">
                         <td class="d-flex align-items-center">
                             ${row.user_detail.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -236,8 +236,8 @@
                         </td>
                         <td>${row.category}</td>
                         <td>${row.registration_date}</td>
-                        <td style = "padding-left: 50px;">${row.consultation_fee}$</td>
-                        <td class="text-end">
+                        <td>${row.consultation_fee}$</td>
+                        <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('AppointmentDetail') }}/${row.id}" class="link-success fw-bold">
                                     View detail

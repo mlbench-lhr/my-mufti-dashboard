@@ -69,7 +69,7 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">Public Qustions
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Public Qustions
                 </h1>
                 <h3 class="mt-4" style=" font-weight:400; ">Total posted questions: <span class="fs-5" id="user-count"
                         style="font-weight:500 "> </span> </h3>
@@ -115,10 +115,10 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-175px">Posted By</th>
-                                        <th class="min-w-175px">Account Type</th>
+                                        <th class="min-w-150px">Account Type</th>
                                         <th class="min-w-275px">Question</th>
-                                        <th class="min-w-175px">Voting Option</th>
-                                        <th class="text-end min-w-175px">Action</th>
+                                        <th class="min-w-150px">Voting Option</th>
+                                        <th class="min-w-125px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -187,7 +187,7 @@
                     var count = 0;
                     $.each(users.data, function(index, row) {
                         var newRow = `
-                    <tr>
+                    <tr class="text-start">
                         <td class="d-flex align-items-center">
                             ${row.user.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -208,14 +208,14 @@
                                 <span>${row.user.email}</span>
                             </div>
                         </td>
-                        <td style = "padding-left: 50px;" >${row.user.user_type}</td>
+                        <td>${row.user.user_type}</td>
                         <td>${row.question}</td>
-                        <td style = "padding-left: 50px;"> 
+                        <td> 
                                 ${row.voting_option == 1 ?
                                     `Yes, No` :
                                     `True, False`}
                         </td>
-                        <td class="text-end">
+                        <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('PublicQuestionDetail') }}/${row.id}?flag=1" class="link-success fw-bold">
                                     View Detail

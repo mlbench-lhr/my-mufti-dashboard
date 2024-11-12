@@ -133,10 +133,10 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-100px">Event Name</th>
-                                        <th class="min-w-125px">Date</th>
-                                        <th class="min-w-125px">Time</th>
-                                        <th class="min-w-125px">Duration</th>
-                                        <th class="text-center min-w-225px">Action</th>
+                                        <th class="min-w-100px">Date</th>
+                                        <th class="min-w-75px">Time</th>
+                                        <th class="min-w-100px">Duration</th>
+                                        <th class="text-center min-w-250px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -255,43 +255,44 @@
         });
     });
 
-    // $(document).ready(function() {
-    //     $(document).on('click', '.delete-interest', function() {
-    //         var interestId = $(this).data('interest-id');
-    //         Swal.fire({
-    //             title: 'Accept the Request',
-    //             text: "Are you sure you want to Accept the Request?",
-    //             icon: 'warning',
-    //             iconColor: '#38B89A',
-    //             showCancelButton: true,
-    //             confirmButtonColor: '#38B89A',
-    //             cancelButtonColor: '#d4d5d6',
-    //             confirmButtonText: 'Approved',
-    //         }).then((result) => {
-    //             if (result.isConfirmed) {
-    //                 $.ajax({
-    //                     url: 'acceptRequestDeletion/' + interestId,
-    //                     type: "GET",
-    //                     success: function(response) {
-    //                         Swal.fire({
-    //                             title: 'Accepted!',
-    //                             text: 'Scholar has been deleted.',
-    //                             icon: 'success',
-    //                             showConfirmButton: false,
-    //                             timer: 700,
-    //                             willClose: () => {
-    //                                 location.reload();
-    //                             }
-    //                         });
-    //                     },
-    //                     error: function(error) {
-    //                         Swal.fire('Error', 'Something went wrong.', 'error');
-    //                     }
-    //                 });
-    //             }
-    //         });
-    //     });
-    // });
+    $(document).ready(function() {
+        $(document).on('click', '.delete-interest', function() {
+            var interestId = $(this).data('interest-id');
+            Swal.fire({
+                title: 'Accept the Request',
+                text: "Are you sure you want to Accept the Event Request?",
+                icon: 'warning',
+                iconColor: '#38B89A',
+                showCancelButton: true,
+                confirmButtonColor: '#38B89A',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Sure!',
+                confirmButtonText: 'Approved',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'EventRequestApprove/' + interestId,
+                        type: "GET",
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Accepted!',
+                                text: 'Event has been accepted.',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 700,
+                                willClose: () => {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(error) {
+                            Swal.fire('Error', 'Something went wrong.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
 
     function validateInput(input) {
         const regex = /[^a-zA-Z0-9 .,!?'"()-]/g;
@@ -390,7 +391,7 @@
 
                         var category = categoryName.join(', ');
                         var newRow = `
-                    <tr>
+                    <tr class="text-start">
                         <td class="d-flex align-items-center">
                             ${row.image? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -416,10 +417,10 @@
                         <td>${row.duration} Hours</td>
                         <td>
                             ${row.event_status == 2 ?
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                   <a href="#" class="btn-approve" data-url="{{ URL::to('EventRequestApprove') }}/${row.id}">
-                                        <button type="button" class="btn btn-sm w-100"
-                                            style="background-color:#38B89A;  color:white;">Accept</button>
+                                `<div class="fs-4 fw-bolder text-dark d-flex align-items-center justify-content-center">
+                                   <a>
+                                        <button type="button" class="btn btn-sm w-100 delete-interest"
+                                            style="background-color:#38B89A;  color:white;" data-interest-id="${row.id}">Accept</button>
                                     </a>
                                     <a>
                                         <button type="button" class="btn btn-sm w-100 ms-5"
@@ -433,7 +434,7 @@
                                 </div>` 
                             :
                             row.event_status == 1 ?
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
+                                `<div class="fs-4 fw-bolder text-dark d-flex align-items-center justify-content-center">
                                     <div class="fw-bold fs-4 badge badge-light-success fw-normal">
                                                 Accepted
                                     </div>
@@ -442,7 +443,7 @@
                                     </a>
                                 </div>`
                             :
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
+                                `<div class="fs-4 fw-bolder text-dark d-flex align-items-center justify-content-center">
                                     <div class="fw-bold fs-4 badge badge-light-danger fw-normal">
                                                 Rejected
                                     </div>
@@ -450,10 +451,8 @@
                                         View detail
                                     </a>
                                 </div>`       
-                        }
-                           
+                        }            
                         </td>
-                       
                     </tr>
                 `;
                         tableBody.append(newRow);

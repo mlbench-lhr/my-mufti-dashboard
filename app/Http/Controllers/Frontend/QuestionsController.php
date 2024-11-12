@@ -51,7 +51,7 @@ class QuestionsController extends Controller
 
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
@@ -104,7 +104,7 @@ class QuestionsController extends Controller
 
         $user = $query->paginate(3);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
@@ -134,7 +134,7 @@ class QuestionsController extends Controller
         }
 
         foreach ($reports as $report) {
-            $report->reported_at = $report->created_at->format('j \\ F Y');
+            $report->reported_at = $report->created_at->format('M d, Y');
         }
         return response()->json([
             'reportCount' => $reportCount,
@@ -216,7 +216,7 @@ class QuestionsController extends Controller
         $query->orderBy('created_at', 'DESC');
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
@@ -328,7 +328,7 @@ class QuestionsController extends Controller
         }
 
         foreach ($reportedQuestions as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
         }
 
         return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);

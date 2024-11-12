@@ -116,9 +116,9 @@
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-125px">Scholar Name</th>
                                         <th class="min-w-125px">Email Address</th>
-                                        <th class="min-w-125px">Fiqa</th>
+                                        <th class="min-w-75px">Fiqa</th>
                                         <th class="min-w-125px">Category</th>
-                                        <th class="text-end min-w-100px">Action</th>
+                                        <th class="min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -196,7 +196,7 @@
 
                         var category = categoryName.join(', ');
                         var newRow = `
-                    <tr>
+                    <tr class="text-start">
                         <td class="d-flex align-items-center">
                             ${row.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -222,7 +222,7 @@
                         <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
                             ${category}
                         </td>
-                        <td class="text-end">
+                        <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('ScholarDetail/PublicQuestions') }}/${row.id}" class="link-success fw-bold">
                                     View Profile

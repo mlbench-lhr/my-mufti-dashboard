@@ -115,9 +115,9 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-75px">Sr No</th>
-                                        <th class="min-w-275px">User</th>
+                                        <th class="min-w-125px">User</th>
                                         <th class="min-w-125px">Email Address</th>
-                                        <th class="text-end min-w-100px">Action</th>
+                                        <th class="min-w-75px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -188,7 +188,7 @@
                     $.each(users.data, function(index, row) {
                         var modifiedSerialNumber = pad(count + 1, 2, '0');
                         var newRow = `
-                    <tr>
+                    <tr class="text-start">
                         <td>${modifiedSerialNumber}</td>
                         <td class="d-flex align-items-center">
                             ${row.image ? `
@@ -211,7 +211,7 @@
                             </div>
                         </td>
                         <td>${row.email}</td>
-                        <td class="text-end">
+                        <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('ScholarRequest/Detail') }}/${row.id}" class="link-success fw-bold">
                                     View Detail

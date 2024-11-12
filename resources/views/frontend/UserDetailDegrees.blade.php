@@ -184,8 +184,8 @@
                                 <!--begin::Actions-->
                                 <div class="d-flex ">
                                     <a href="#" data-url="{{ URL::to('DeleteUser/' . $response['user']->id) }}">
-                                        <button type="button" class="btn btn-danger w-100 text-uppercase btn-remove"
-                                            style="background-color:red;">Delete User</button>
+                                        <button type="button" class="btn  w-100 text-uppercase btn-remove"
+                                            style="background-color:red; color:white;">Delete User</button>
                                     </a>
                                 </div>
                                 <!--end::Actions-->
@@ -216,14 +216,14 @@
 
                     <div class="d-flex overflow-auto h-55px">
                         <ul
-                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
+                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
                             @php
                                 $routes = [
                                     'PublicQuestions' => 'Public Questions',
                                     'PrivateQuestions' => 'Private Questions',
                                     'Appointments' => 'Appointments',
                                     // 'UserEvents' => 'Events',
-                                    'UserEventsRequest' => 'All Events',
+                                    'UserEventsRequest' => 'User All Events',
                                 ];
 
                                 $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
@@ -234,8 +234,8 @@
                                     $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
                                     $isActive = Request::is($fullUrl);
                                 @endphp
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ $isActive ? 'active' : '' }}"
+                                <li class="nav-item min-w-175px d-flex justify-content-start">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
                                         href="{{ URL::to($fullUrl) }}">
                                         {{ $displayName }}
                                     </a>
@@ -243,18 +243,18 @@
                             @endforeach
 
                             @if ($response['user']->user_type == 'scholar')
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
                                         Events</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
                                         From Me</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
                                 </li>
                             @endif

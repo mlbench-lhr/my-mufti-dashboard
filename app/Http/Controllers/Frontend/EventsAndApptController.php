@@ -47,7 +47,7 @@ class EventsAndApptController extends Controller
 
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('j \\ F Y');
+            $row->registration_date = $row->created_at->format('M d, Y');
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
