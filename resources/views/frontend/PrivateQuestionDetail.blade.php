@@ -91,14 +91,118 @@
                 <!--end::Heading-->
             </div>
             <!--end::Page title=-->
-            <div class="d-flex ">
-                <a href="{{ URL::to('DeletePrivateQuestion/' . $detail->id) }}?flag={{ $type }}&uId={{ $user_id }}"
-                    id="delete-btn">
-                    <button type="button" class="btn w-100 text-uppercase" style="background-color:#EA4335; color:white;"
-                        onclick="confirmDeletePrivate(event)">
-                        Delete
-                    </button>
-                </a>
+            <div class="d-flex">
+                <!-- Approve Button -->
+                @foreach ($question_from as $item)
+                    @if ($item->status == 0)
+                        <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
+                            data-bs-toggle="modal" data-bs-target="#approveModal">
+                            Approve
+                        </button>
+                        <button style="background-color: #EA4335; color:#FFFFFF" type="button" class="btn me-3"
+                            data-bs-toggle="modal" data-bs-target="#declineModal">
+                            Decline
+                        </button>
+                    @else
+                        <button style="background-color: #38B89A1A; color:#38B89A;" type="button" class="btn me-3"
+                            disabled>
+                            Approve
+                        </button>
+                        <button style="background-color: #EA43351A; color:#EA4335;" type="button" class="btn me-3"
+                            disabled>
+                            Decline
+                        </button>
+                    @endif
+                @endforeach
+
+            </div>
+
+            <!-- Approve Modal -->
+            <div class="modal fade" id="approveModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog mw-500px">
+                    <div class="modal-content">
+                        <div class="modal-header pb-0 border-0 d-flex justify-content-between">
+                            <p class="fs-1 fw-bold mx-auto">Question’s Reply</p>
+                            <button type="button" class="btn btn-lg btn-icon btn-active-color-dark" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <span class="svg-icon svg-icon-1 w-25">
+                                    <svg width="34" height="34" viewBox="0 0 34 34" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M33.6663 17.0002C33.6663 26.2049 26.2044 33.6668 16.9997 33.6668C7.79493 33.6668 0.333008 26.2049 0.333008 17.0002C0.333008 7.79542 7.79493 0.333496 16.9997 0.333496C26.2044 0.333496 33.6663 7.79542 33.6663 17.0002ZM11.9491 11.9496C12.4372 11.4614 13.2287 11.4614 13.7168 11.9496L16.9996 15.2324L20.2824 11.9496C20.7705 11.4615 21.562 11.4615 22.0502 11.9496C22.5383 12.4378 22.5383 13.2292 22.0502 13.7174L18.7674 17.0001L22.0501 20.2829C22.5383 20.771 22.5383 21.5625 22.0501 22.0506C21.562 22.5388 20.7705 22.5388 20.2824 22.0506L16.9996 18.7679L13.7169 22.0507C13.2287 22.5388 12.4372 22.5388 11.9491 22.0507C11.4609 21.5625 11.4609 20.7711 11.9491 20.2829L15.2319 17.0001L11.9491 13.7173C11.4609 13.2292 11.4609 12.4377 11.9491 11.9496Z"
+                                            fill="#1C274C" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="modal-body pt-4">
+                            <form action="{{ route('admin.approve') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="query_id" value="{{ $detail->id }}">
+                                <div class="mb-5">
+                                    <label for="replyInput" class="form-label fw-bold fs-3">Reply</label>
+
+                                    <textarea id="replyInput" name="reply" class="form-control form-control-solid" placeholder="Add Reply" rows="7"
+                                        style="resize: none;" required oninput="validateInput(this)"></textarea>
+                                </div>
+                                <div class="d-flex justify-content-center align-content-center pt-2 mt-10">
+                                    <button type="submit" class="btn btn-lg col-12"
+                                        style="background-color: #38B89A; color:#FFFFFF;">
+                                        <span class="indicator-label">Send</span>
+                                        <span class="indicator-progress">Please wait...
+                                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decline Modal -->
+            <div class="modal fade" id="declineModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog mw-500px">
+                    <div class="modal-content">
+                        <div class="modal-header pb-0 border-0 d-flex justify-content-between">
+                            <p class="fs-1 fw-bold mx-auto">Reason For Rejection</p>
+                            <button type="button" class="btn btn-lg btn-icon btn-active-color-dark" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <span class="svg-icon svg-icon-1 w-25">
+                                    <!-- Close Icon -->
+                                    <svg width="34" height="34" viewBox="0 0 34 34" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M33.6663 17.0002C33.6663 26.2049 26.2044 33.6668 16.9997 33.6668C7.79493 33.6668 0.333008 26.2049 0.333008 17.0002C0.333008 7.79542 7.79493 0.333496 16.9997 0.333496C26.2044 0.333496 33.6663 7.79542 33.6663 17.0002ZM11.9491 11.9496C12.4372 11.4614 13.2287 11.4614 13.7168 11.9496L16.9996 15.2324L20.2824 11.9496C20.7705 11.4615 21.562 11.4615 22.0502 11.9496C22.5383 12.4378 22.5383 13.2292 22.0502 13.7174L18.7674 17.0001L22.0501 20.2829C22.5383 20.771 22.5383 21.5625 22.0501 22.0506C21.562 22.5388 20.7705 22.5388 20.2824 22.0506L16.9996 18.7679L13.7169 22.0507C13.2287 22.5388 12.4372 22.5388 11.9491 22.0507C11.4609 21.5625 11.4609 20.7711 11.9491 20.2829L15.2319 17.0001L11.9491 13.7173C11.4609 13.2292 11.4609 12.4377 11.9491 11.9496Z"
+                                            fill="#1C274C" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="modal-body pt-4">
+                            <form action="{{ route('admin.decline') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="question_id" value="{{ $detail->id }}">
+
+                                <div class="mb-5">
+                                    <label for="reasonInput" class="form-label fw-bold fs-3">Reason</label>
+                                    <textarea id="reasonInput" name="reason" class="form-control form-control-solid" placeholder="Add Reason"
+                                        rows="7" style="resize: none;" required oninput="validateInput(this)"></textarea>
+                                </div>
+
+                                <div class="d-flex justify-content-center align-content-center pt-2 mt-10">
+                                    <button type="submit" class="btn btn-lg col-12"
+                                        style="background-color: #EA4335; color:#FFFFFF;">
+                                        <span class="indicator-label">Send</span>
+                                        <span class="indicator-progress">Please wait...
+                                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!--end::Container-->
@@ -181,6 +285,21 @@
                     {{ $detail->question }}
                 </div>
 
+                <div class="col-12 fs-2 fw-bolder text-dark pb-2">
+                    <span>Admin's Reply</span>
+                </div>
+                <div class="col-12">
+                    @if ($detail->adminReply)
+                        <div class="col-12 fs-4 fw-bold text-black pb-10" data-reply-id="{{ $detail->adminReply->id }}">
+                            {{ $detail->adminReply->reply }}
+                        </div>
+                    @else
+                        <div class="col-12 fs-1 fw-bold text-muted pb-10 text-center mt-10 mb-10">
+                            You haven't replied to this question yet!
+                        </div>
+                    @endif
+                </div>
+
                 <div class="col-12 fs-2 fw-bolder text-dark mb-5">
                     Questioned From
                 </div>
@@ -249,12 +368,11 @@
                     </div>
                 @endforeach
             </div>
-            {{-- <div class=" d-flex justify-content-end pb-5">
-                {!! $question_from->onEachSide(1)->links() !!}
-            </div> --}}
         </div>
+
     </div>
     <!--end::Container-->
+
     </div>
     <!--end::Content-->
 @endsection
@@ -416,31 +534,35 @@
         loadVerificationData(currentPage);
     });
 
-    function confirmDeletePrivate(event) {
-        event.preventDefault();
-
-        Swal.fire({
-            title: 'Delete Private Question',
-            text: 'Are you sure you want to delete this private question?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#38B89A',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Sure!',
-            cancelButtonText: 'Cancel',
-            willOpen: () => {
-                const cancelButton = Swal.getCancelButton();
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire(
-                    'Deleted!',
-                    'The private question has been deleted.',
-                    'success'
-                ).then(() => {
-                    window.location.href = event.target.closest('a').href;
-                });
-            }
-        });
+    function validateInput(input) {
+        input.value = input.value.replace(/^\s+/, '');
+        input.value = input.value.replace(/[^0-9a-zA-Z\s]/g, '');
     }
+    // function confirmDeletePrivate(event) {
+    //     event.preventDefault();
+
+    //     Swal.fire({
+    //         title: 'Delete Private Question',
+    //         text: 'Are you sure you want to delete this private question?',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#38B89A',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, Sure!',
+    //         cancelButtonText: 'Cancel',
+    //         willOpen: () => {
+    //             const cancelButton = Swal.getCancelButton();
+    //         }
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             Swal.fire(
+    //                 'Deleted!',
+    //                 'The private question has been deleted.',
+    //                 'success'
+    //             ).then(() => {
+    //                 window.location.href = event.target.closest('a').href;
+    //             });
+    //         }
+    //     });
+    // }
 </script>

@@ -88,7 +88,11 @@ class QuestionsController extends Controller
 
         $question->scholar_reply = $scholar_reply;
 
-        $isReplied = AdminReply::where('question_id', $question_id)->exists();
+        $isReplied = AdminReply::where([
+            'question_id' => $question_id,
+            'question_type' => 'public'
+        ])->exists();
+
 
         return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id', 'isReplied'));
     }
@@ -119,12 +123,12 @@ class QuestionsController extends Controller
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
                 $query->where('reason', 'LIKE', '%' . $searchTerm . '%')
-                      ->orWhereHas('user_detail', function ($subQuery) use ($searchTerm) {
-                          $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
-                      });
+                    ->orWhereHas('user_detail', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                    });
             });
         }
-        
+
         $query->orderBy('created_at', 'DESC');
 
         $reports = $query->paginate(5);
@@ -185,7 +189,11 @@ class QuestionsController extends Controller
         $vote = QuestionVote::where('question_id', $id)->delete();
         $scholar_reply = ScholarReply::where('question_id', $id)->delete();
         ReportQuestion::where('question_id', $id)->delete();
-        AdminReply::where('question_id', $id)->delete();
+        AdminReply::where([
+            'question_id' => $id,
+            'question_type' => 'public'
+        ])->delete();
+
 
 
         $question->delete();
@@ -242,7 +250,6 @@ class QuestionsController extends Controller
 
         return view('frontend.PrivateQuestionDetail', compact('detail', 'question_id', 'question_from', 'type', 'user_id'));
     }
-
 
 
     public function delete_private_question(Request $request, $id)
@@ -356,9 +363,13 @@ class QuestionsController extends Controller
         $questionId = $request->question_id;
 
         if ($request->filled('reply_id')) {
-            $adminReply = AdminReply::find($request->reply_id);
+            $adminReply = AdminReply::where([
+                'id' => $request->reply_id,
+                'question_type' => 'public'
+            ])->first();
+
             if (!$adminReply) {
-                return redirect()->back()->withErrors(['error' => 'Reply not found.']);
+                return redirect()->back()->withErrors(['error' => 'Reply not found or is not public.']);
             }
 
             $adminReply->reply = $request->reply;
@@ -368,6 +379,7 @@ class QuestionsController extends Controller
                 'question_id' => $request->question_id,
                 'user_id' => 0,
                 'reply' => $request->reply,
+                'question_type' => 'public',
             ];
 
             AdminReply::create($replyData);
@@ -386,6 +398,106 @@ class QuestionsController extends Controller
         return redirect()->to('/PublicQuestionDetail/' . $question->id . '?flag=1');
     }
 
+    public function approveReply(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'reply' => 'required|string',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $replyData = [
+            'question_id' => $request->query_id,
+            'user_id' => 9,
+            'reply' => $request->reply,
+            'question_type' => 'private',
+        ];
+
+        AdminReply::create($replyData);
+
+        $userQuery = UserAllQuery::where([
+            'query_id' => $request->query_id,
+            'mufti_id' => 9
+        ])->first();
+
+        $userQuery->status = 1;
+        $userQuery->save();
+
+        if ($userQuery) {
+            $userData = User::find($userQuery->user_id);
+            if ($userData && $userData->device_id) {
+                $device_id = $userData->device_id;
+                $title = "Reply Approved";
+                $body = 'Your private query has been approved with a reply.';
+                $messageType = "Admin reply";
+                $otherData = "Admin reply";
+                $notificationType = "2";
+
+                $this->fcmService->sendNotification(
+                    $device_id,
+                    $title,
+                    $body,
+                    $messageType,
+                    $otherData,
+                    $notificationType,
+                    $request->query_id
+                );
+            }
+        }
+
+        return redirect()->to('/PrivateQuestionDetail/' . $request->query_id . '?flag=1');
+    }
+
+    public function declineReply(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'reason' => 'required|string',
+    ]);
+
+    $validationError = ValidationHelper::handleValidationErrors($validator);
+    if ($validationError !== null) {
+        return $validationError;
+    }
+
+    $userQuery = UserAllQuery::where([
+        'query_id' => $request->question_id,
+        'mufti_id' => 9
+    ])->first();
+
+    if ($userQuery) {
+        $userQuery->status = 2;
+        $userQuery->reason = $request->reason;
+        $userQuery->save();
+
+        $userData = User::find($userQuery->user_id);
+        if ($userData && $userData->device_id) {
+            $device_id = $userData->device_id;
+            $title = "Reply Declined";
+            $body = 'Your private query has been declined with a reason: ' . $request->reason;
+            $messageType = "Admin reply";
+            $otherData = "Admin reply";
+            $notificationType = "3";
+
+            $this->fcmService->sendNotification(
+                $device_id,
+                $title,
+                $body,
+                $messageType,
+                $otherData,
+                $notificationType,
+                $request->question_id
+            );
+        }
+    } else {
+        return response()->json(['error' => 'Query not found'], 404);
+    }
+
+    return redirect()->to('/PrivateQuestionDetail/' . $request->question_id . '?flag=1'); // flag=2 for declined
+}
 
     // public function editAdminReply(Request $request)
     // {
@@ -416,7 +528,10 @@ class QuestionsController extends Controller
             'reply_id' => 'required',
         ]);
 
-        $adminReply = AdminReply::find($request->reply_id);
+        $adminReply = AdminReply::where([
+            'id' => $request->reply_id,
+            'question_type' => 'public'  // Add the question_type check
+        ])->first();
 
         if (!$adminReply) {
             return response()->json(['error' => 'Reply not found.'], 200);

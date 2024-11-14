@@ -33,7 +33,7 @@ class UserAllQuery extends Model
     protected $hidden = [
         'deleted_at',
     ];
-    
+
     public function mufti_detail()
     {
         return $this->belongsTo(User::class, 'mufti_id', 'id');
@@ -41,5 +41,10 @@ class UserAllQuery extends Model
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function adminReplies()
+    {
+        return $this->hasMany(AdminReply::class, 'question_id', 'query_id');
     }
 }

@@ -574,7 +574,6 @@
         loadVerificationData(currentPage);
     });
 
-    // add admin reply
     document.getElementById('replyForm').addEventListener('submit', function(e) {
         e.preventDefault();
 

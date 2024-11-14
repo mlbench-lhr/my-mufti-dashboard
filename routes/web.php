@@ -83,6 +83,8 @@ Route::group(['middleware' => 'admin'], function () {
 
     // Route for creating an admin reply
     Route::post('/admin/reply', [QuestionsController::class, 'adminReply'])->name('admin.reply');
+    Route::post('/admin/approve', [QuestionsController::class, 'approveReply'])->name('admin.approve');
+    Route::post('/admin/decline', [QuestionsController::class, 'declineReply'])->name('admin.decline');
 
     // Route for editing an admin reply
     Route::post('/admin/reply/edit', [QuestionsController::class, 'editAdminReply'])->name('admin.reply.edit');

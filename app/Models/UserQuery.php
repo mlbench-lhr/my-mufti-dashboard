@@ -40,4 +40,9 @@ class UserQuery extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id', 'name', 'image', 'user_type', 'email');
     }
+
+    public function adminReply()
+    {
+        return $this->hasOne(AdminReply::class, 'question_id');
+    }
 }

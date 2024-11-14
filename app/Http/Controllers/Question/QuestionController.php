@@ -408,7 +408,10 @@ class QuestionController extends Controller
         $scholar_reply = ScholarReply::with('user_detail')->where('question_id', $question->id)->first();
         $question->scholar_reply = $scholar_reply ? $scholar_reply : (object) [];
 
-        $admin_reply = AdminReply::where('question_id', $question->id)->first();
+        $admin_reply = AdminReply::where([
+            'question_id' => $question->id,
+            'question_type' => 'public'
+        ])->first();
 
         if ($admin_reply) {
             $question->admin_reply = (object) [
@@ -522,7 +525,7 @@ class QuestionController extends Controller
             'question_id' => $request->question_id,
             'reply' => $request->reply,
         ];
-    
+
         ScholarReply::updateOrCreate(
             ['user_id' => $request->user_id, 'question_id' => $request->question_id],
             $data
@@ -750,7 +753,7 @@ class QuestionController extends Controller
         $user_id = $user->id;
         $type = "added private question";
         $message = $user->name . " added a private question.";
-        
+
         ActivityHelper::store_avtivity($user_id, $message, $type);
 
         UserAllQuery::create($data1);

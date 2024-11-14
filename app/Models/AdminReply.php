@@ -15,11 +15,13 @@ class AdminReply extends Model
         'question_id',
         'reply',
         'user_id',
+        'question_type',
     ];
 
     protected $casts = [
         'user_id' => 'integer',
         'question_id' => 'integer',
+        'question_type' => 'string',
     ];
 
     protected $attributes = [
@@ -34,5 +36,9 @@ class AdminReply extends Model
     public function question()
     {
         return $this->belongsTo(Question::class);
+    }
+    public function userAllQuery()
+    {
+        return $this->belongsTo(UserAllQuery::class, 'question_id', 'query_id');
     }
 }
