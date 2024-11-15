@@ -203,49 +203,49 @@
 
                     <div class="d-flex overflow-auto h-55px">
                         <ul
-                        class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
-                        @php
-                            $routes = [
-                                'PublicQuestions' => 'Public Questions',
-                                'PrivateQuestions' => 'Private Questions',
-                                'Appointments' => 'Appointments',
-                                // 'UserEvents' => 'Events',
-                                'UserEventsRequest' => 'User All Events',
-                            ];
-
-                            $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
-                        @endphp
-
-                        @foreach ($routes as $route => $displayName)
+                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
                             @php
-                                $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
-                                $isActive = Request::is($fullUrl);
-                            @endphp
-                            <li class="nav-item min-w-175px d-flex justify-content-start">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
-                                    href="{{ URL::to($fullUrl) }}">
-                                    {{ $displayName }}
-                                </a>
-                            </li>
-                        @endforeach
+                                $routes = [
+                                    'PublicQuestions' => 'Public Questions',
+                                    'PrivateQuestions' => 'Private Questions',
+                                    'Appointments' => 'Appointments',
+                                    // 'UserEvents' => 'Events',
+                                    'UserEventsRequest' => 'User All Events',
+                                ];
 
-                        @if ($response['user']->user_type == 'scholar')
-                            <li class="nav-item min-w-150px">
-                                <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
-                                    Events</a>
-                            </li>
-                            <li class="nav-item min-w-150px">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
-                                    From Me</a>
-                            </li>
-                            <li class="nav-item min-w-100px">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
-                            </li>
-                        @endif
-                    </ul>
+                                $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                            @endphp
+
+                            @foreach ($routes as $route => $displayName)
+                                @php
+                                    $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
+                                    $isActive = Request::is($fullUrl);
+                                @endphp
+                                <li class="nav-item min-w-175px d-flex justify-content-start">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
+                                        href="{{ URL::to($fullUrl) }}">
+                                        {{ $displayName }}
+                                    </a>
+                                </li>
+                            @endforeach
+
+                            @if ($response['user']->user_type == 'scholar')
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
+                                        Events</a>
+                                </li>
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
+                                        From Me</a>
+                                </li>
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                                </li>
+                            @endif
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -481,16 +481,25 @@
                             interestId),
                         type: "GET",
                         success: function(response) {
-                            Swal.fire({
-                                title: 'Accepted!',
-                                text: 'Event has been accepted.',
-                                icon: 'success',
-                                showConfirmButton: false,
-                                timer: 700,
-                                willClose: () => {
-                                    location.reload();
-                                }
-                            });
+                            if (response.response == 'error') {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message,
+                                    icon: 'error',
+                                    showConfirmButton: true
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Accepted!',
+                                    text: 'Event has been accepted.',
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 700,
+                                    willClose: () => {
+                                        location.reload();
+                                    }
+                                });
+                            }
                         },
                         error: function(error) {
                             Swal.fire('Error', 'Something went wrong.', 'error');
