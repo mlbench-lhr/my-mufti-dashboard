@@ -274,16 +274,26 @@
                         url: 'EventRequestApprove/' + interestId,
                         type: "GET",
                         success: function(response) {
-                            Swal.fire({
-                                title: 'Accepted!',
-                                text: 'Event has been accepted.',
-                                icon: 'success',
-                                showConfirmButton: false,
-                                timer: 700,
-                                willClose: () => {
-                                    location.reload();
-                                }
-                            });
+                            if (response.response == 'error') {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message,
+                                    icon: 'error',
+                                    showConfirmButton: true
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Accepted!',
+                                    text: 'Event has been accepted.',
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 700,
+                                    willClose: () => {
+                                        location.reload();
+                                    }
+                                });
+                            }
+
                         },
                         error: function(error) {
                             Swal.fire('Error', 'Something went wrong.', 'error');
