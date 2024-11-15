@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
+use App\Models\AdminReply;
 use App\Models\Question;
 use App\Models\QuestionComment;
 use App\Models\QuestionVote;
+use App\Models\ReportQuestion;
 use App\Models\ScholarReply;
-use App\Models\AdminReply;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
-use Illuminate\Http\Request;
-use App\Models\ReportQuestion;
 use App\Services\FcmService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Notification;
-use App\Helpers\ResponseHelper;
-use App\Helpers\ValidationHelper;
-use App\Models\Mufti;
 use Kreait\Firebase\Database;
-
 
 class QuestionsController extends Controller
 {
@@ -91,9 +87,8 @@ class QuestionsController extends Controller
 
         $isReplied = AdminReply::where([
             'question_id' => $question_id,
-            'question_type' => 'public'
+            'question_type' => 'public',
         ])->exists();
-
 
         return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id', 'isReplied'));
     }
@@ -143,7 +138,7 @@ class QuestionsController extends Controller
         }
         return response()->json([
             'reportCount' => $reportCount,
-            'reports' => $reports
+            'reports' => $reports,
         ]);
     }
 
@@ -176,12 +171,10 @@ class QuestionsController extends Controller
             ->where('question_id', $question->id)
             ->first();
 
-
         $question->scholar_reply = $scholar_reply;
 
         return view('frontend.ReportedQuestionDetail', compact('question', 'reportedQuestion', 'question_id', 'type', 'user_id'));
     }
-
 
     public function delete_public_question(Request $request, $id)
     {
@@ -192,10 +185,8 @@ class QuestionsController extends Controller
         ReportQuestion::where('question_id', $id)->delete();
         AdminReply::where([
             'question_id' => $id,
-            'question_type' => 'public'
+            'question_type' => 'public',
         ])->delete();
-
-
 
         $question->delete();
 
@@ -251,7 +242,6 @@ class QuestionsController extends Controller
 
         return view('frontend.PrivateQuestionDetail', compact('detail', 'question_id', 'question_from', 'type', 'user_id'));
     }
-
 
     public function delete_private_question(Request $request, $id)
     {
@@ -342,8 +332,6 @@ class QuestionsController extends Controller
         return response()->json(['userCount' => $userCount, 'reportedQuestions' => $reportedQuestions]);
     }
 
-
-
     public function adminReply(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -366,7 +354,7 @@ class QuestionsController extends Controller
         if ($request->filled('reply_id')) {
             $adminReply = AdminReply::where([
                 'id' => $request->reply_id,
-                'question_type' => 'public'
+                'question_type' => 'public',
             ])->first();
 
             if (!$adminReply) {
@@ -419,7 +407,7 @@ class QuestionsController extends Controller
 
         $userQuery = UserAllQuery::where([
             'query_id' => $request->query_id,
-            'mufti_id' => 9
+            'mufti_id' => 9,
         ])->first();
 
         if ($userQuery) {
@@ -428,34 +416,109 @@ class QuestionsController extends Controller
 
             $userData = User::find($userQuery->user_id);
 
-            $allMessagesData = (object) [
-                'content_message' => $request->reply,
+            $allMessagesData1 = (object) [
+                'content_message' => $userQuery->question,
                 'conversation_id' => '9+' . $userQuery->user_id,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'is_read' => false,
-                'receiver_id' => $userQuery->user_id,
-                'sender_id' => '9',
+                'receiver_id' => (string) $userQuery->user_id,
+                'sender_id' => "9",
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
+            // check ids
+            $postKey = '9+' . $userQuery->user_id;
+            $referencePath1 = 'All_Messages/' . $postKey;
 
-            $this->firebase->getReference('All_Messages')
-                ->push(json_decode(json_encode($allMessagesData)));
+            $this->firebase->getReference($referencePath1)
+                ->push(json_decode(json_encode($allMessagesData1)));
 
-            $inboxData = (object) [
-                'chat_name' => "Mufti Omar",
-                'content_message' => $request->reply,
+            // For Mufti
+            $inboxData1 = (object) [
+                'chat_name' => $userData->name ?? "",
+                'content_message' => $userQuery->question,
                 'conversation_enable' => false,
-                'conversation_id' => '9+' . $userQuery->user_id,
+                'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
-                'other_user_id' => '9',
+                'other_user_id' => (string) $userQuery->user_id,
                 'read_count' => 0,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
 
-            $this->firebase->getReference('Inbox/_' . $userQuery->user_id)
-                ->set(json_decode(json_encode($inboxData)));
+            // For User
+            $inboxData2 = (object) [
+                'chat_name' => "Mufti Omar",
+                'content_message' => $userQuery->question,
+                'conversation_enable' => false,
+                'conversation_id' => $postKey,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => "9",
+                'read_count' => 0,
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
+
+            $referencePath2 = 'Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
+            $this->firebase->getReference($referencePath2)
+                ->set(json_decode(json_encode($inboxData2)));
+
+            $referencePath3 = 'Inbox/_9/' . $postKey;
+            $this->firebase->getReference($referencePath3)
+                ->set(json_decode(json_encode($inboxData1)));
+
+            // for admin reply
+
+            $allMessagesData2 = (object) [
+                'content_message' => $request->reply,
+                'conversation_id' => '9+' . $userQuery->user_id,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'is_read' => false,
+                'receiver_id' => (string) $userQuery->user_id,
+                'sender_id' => "9",
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
+            // check ids
+            $postKey = '9+' . $userQuery->user_id;
+            $referencePath4 = 'All_Messages/' . $postKey;
+
+            $this->firebase->getReference($referencePath4)
+                ->push(json_decode(json_encode($allMessagesData2)));
+
+            // For Mufti
+            $inboxData3 = (object) [
+                'chat_name' => $userData->name ?? "",
+                'content_message' => $request->reply,
+                'conversation_enable' => false,
+                'conversation_id' => $postKey,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => (string) $userQuery->user_id,
+                'read_count' => 0,
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
+
+            // For User
+            $inboxData4 = (object) [
+                'chat_name' => "Mufti Omar",
+                'content_message' => $request->reply,
+                'conversation_enable' => false,
+                'conversation_id' => $postKey,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => "9",
+                'read_count' => 0,
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
+
+            $referencePath5 = 'Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
+            $this->firebase->getReference($referencePath5)
+                ->set(json_decode(json_encode($inboxData4)));
+
+            $referencePath6 = 'Inbox/_9/' . $postKey;
+            $this->firebase->getReference($referencePath6)
+                ->set(json_decode(json_encode($inboxData3)));
 
             if ($userData && $userData->device_id) {
                 $this->fcmService->sendNotification(
@@ -486,7 +549,7 @@ class QuestionsController extends Controller
 
         $userQuery = UserAllQuery::where([
             'query_id' => $request->question_id,
-            'mufti_id' => 9
+            'mufti_id' => 9,
         ])->first();
 
         if ($userQuery) {
@@ -542,7 +605,6 @@ class QuestionsController extends Controller
     //     return redirect()->to('/PublicQuestionDetail/' . $adminReply->question_id . '?flag=1');
     // }
 
-
     public function deleteAdminReply(Request $request)
     {
         $request->validate([
@@ -551,7 +613,7 @@ class QuestionsController extends Controller
 
         $adminReply = AdminReply::where([
             'id' => $request->reply_id,
-            'question_type' => 'public'  // Add the question_type check
+            'question_type' => 'public', // Add the question_type check
         ])->first();
 
         if (!$adminReply) {
