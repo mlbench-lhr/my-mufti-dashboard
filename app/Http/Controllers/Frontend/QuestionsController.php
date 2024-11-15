@@ -19,18 +19,19 @@ use App\Models\Notification;
 use App\Helpers\ResponseHelper;
 use App\Helpers\ValidationHelper;
 use App\Models\Mufti;
-
-
+use Kreait\Firebase\Database;
 
 
 class QuestionsController extends Controller
 {
 
     protected $fcmService;
+    protected $firebase;
 
-    public function __construct(FcmService $fcmService)
+    public function __construct(FcmService $fcmService, Database $firebase)
     {
         $this->fcmService = $fcmService;
+        $this->firebase = $firebase;
     }
 
     public function all_public_questions()
@@ -397,10 +398,8 @@ class QuestionsController extends Controller
         }
         return redirect()->to('/PublicQuestionDetail/' . $question->id . '?flag=1');
     }
-
     public function approveReply(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'reply' => 'required|string',
         ]);
@@ -416,7 +415,6 @@ class QuestionsController extends Controller
             'reply' => $request->reply,
             'question_type' => 'private',
         ];
-
         AdminReply::create($replyData);
 
         $userQuery = UserAllQuery::where([
@@ -424,26 +422,49 @@ class QuestionsController extends Controller
             'mufti_id' => 9
         ])->first();
 
-        $userQuery->status = 1;
-        $userQuery->save();
-
         if ($userQuery) {
-            $userData = User::find($userQuery->user_id);
-            if ($userData && $userData->device_id) {
-                $device_id = $userData->device_id;
-                $title = "Reply Approved";
-                $body = 'Your private query has been approved with a reply.';
-                $messageType = "Admin reply";
-                $otherData = "Admin reply";
-                $notificationType = "2";
+            $userQuery->status = 1;
+            $userQuery->save();
 
+            $userData = User::find($userQuery->user_id);
+
+            $allMessagesData = (object) [
+                'content_message' => $request->reply,
+                'conversation_id' => '9+' . $userQuery->user_id,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'is_read' => false,
+                'receiver_id' => $userQuery->user_id,
+                'sender_id' => '9',
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
+
+            $this->firebase->getReference('All_Messages')
+                ->push(json_decode(json_encode($allMessagesData)));
+
+            $inboxData = (object) [
+                'chat_name' => "Mufti Omar",
+                'content_message' => $request->reply,
+                'conversation_enable' => false,
+                'conversation_id' => '9+' . $userQuery->user_id,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => '9',
+                'read_count' => 0,
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
+
+            $this->firebase->getReference('Inbox/_' . $userQuery->user_id)
+                ->set(json_decode(json_encode($inboxData)));
+
+            if ($userData && $userData->device_id) {
                 $this->fcmService->sendNotification(
-                    $device_id,
-                    $title,
-                    $body,
-                    $messageType,
-                    $otherData,
-                    $notificationType,
+                    $userData->device_id,
+                    "Reply Approved",
+                    'Your private query has been approved with a reply.',
+                    "Admin reply",
+                    "Admin reply",
+                    "2",
                     $request->query_id
                 );
             }
@@ -453,51 +474,51 @@ class QuestionsController extends Controller
     }
 
     public function declineReply(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'reason' => 'required|string',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'reason' => 'required|string',
+        ]);
 
-    $validationError = ValidationHelper::handleValidationErrors($validator);
-    if ($validationError !== null) {
-        return $validationError;
-    }
-
-    $userQuery = UserAllQuery::where([
-        'query_id' => $request->question_id,
-        'mufti_id' => 9
-    ])->first();
-
-    if ($userQuery) {
-        $userQuery->status = 2;
-        $userQuery->reason = $request->reason;
-        $userQuery->save();
-
-        $userData = User::find($userQuery->user_id);
-        if ($userData && $userData->device_id) {
-            $device_id = $userData->device_id;
-            $title = "Reply Declined";
-            $body = 'Your private query has been declined with a reason: ' . $request->reason;
-            $messageType = "Admin reply";
-            $otherData = "Admin reply";
-            $notificationType = "3";
-
-            $this->fcmService->sendNotification(
-                $device_id,
-                $title,
-                $body,
-                $messageType,
-                $otherData,
-                $notificationType,
-                $request->question_id
-            );
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
         }
-    } else {
-        return response()->json(['error' => 'Query not found'], 404);
-    }
 
-    return redirect()->to('/PrivateQuestionDetail/' . $request->question_id . '?flag=1'); // flag=2 for declined
-}
+        $userQuery = UserAllQuery::where([
+            'query_id' => $request->question_id,
+            'mufti_id' => 9
+        ])->first();
+
+        if ($userQuery) {
+            $userQuery->status = 2;
+            $userQuery->reason = $request->reason;
+            $userQuery->save();
+
+            $userData = User::find($userQuery->user_id);
+            if ($userData && $userData->device_id) {
+                $device_id = $userData->device_id;
+                $title = "Reply Declined";
+                $body = 'Your private query has been declined with a reason: ' . $request->reason;
+                $messageType = "Admin reply";
+                $otherData = "Admin reply";
+                $notificationType = "3";
+
+                $this->fcmService->sendNotification(
+                    $device_id,
+                    $title,
+                    $body,
+                    $messageType,
+                    $otherData,
+                    $notificationType,
+                    $request->question_id
+                );
+            }
+        } else {
+            return response()->json(['error' => 'Query not found'], 404);
+        }
+
+        return redirect()->to('/PrivateQuestionDetail/' . $request->question_id . '?flag=1'); // flag=2 for declined
+    }
 
     // public function editAdminReply(Request $request)
     // {
