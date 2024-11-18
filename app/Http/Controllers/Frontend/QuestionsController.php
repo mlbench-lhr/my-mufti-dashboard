@@ -426,8 +426,16 @@ class QuestionsController extends Controller
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
-            // check ids
-            $postKey = '9+' . $userQuery->user_id;
+
+            $muftiId = 9;
+            $userId = $userQuery->user_id;
+
+            if ($muftiId < $userId) {
+                $postKey = $muftiId . '+' . $userId;
+            } else {
+                $postKey = $userId . '+' . $muftiId;
+            }
+
             $referencePath1 = 'All_Messages/' . $postKey;
 
             $this->firebase->getReference($referencePath1)
@@ -480,9 +488,12 @@ class QuestionsController extends Controller
                 'type' => 'text',
             ];
             // check ids
-            $postKey = '9+' . $userQuery->user_id;
+            if ($muftiId < $userId) {
+                $postKey = $muftiId . '+' . $userId;
+            } else {
+                $postKey = $userId . '+' . $muftiId;
+            }
             $referencePath4 = 'All_Messages/' . $postKey;
-
             $this->firebase->getReference($referencePath4)
                 ->push(json_decode(json_encode($allMessagesData2)));
 
