@@ -17,7 +17,7 @@ class FirebaseServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Database::class, function ($app) {
             $factory = (new Factory)
-                ->withServiceAccount(storage_path('mufti-7f6c7-firebase-adminsdk-nwwbc-48bb9138e3.json'))
+                ->withServiceAccount(storage_path('mymufti-ce4a6-firebase-adminsdk-ljivv-740bba83f5.json'))
                 ->withDatabaseUri(env('FIREBASE_DATABASE_URL'));
 
             return $factory->createDatabase();

@@ -188,11 +188,11 @@ class EventsAndApptController extends Controller
             array_walk($eventScholars, function ($value) use ($event_date, $user_data, $event) {
                 $user = User::find($value);
                 $device_id = $user->device_id;
-                $title = "You've Been Added to a New Event!";
+                $title = "Event Invitation";
                 $notiBody = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
                 $body = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
-                $messageType = "You've Been Added to a New Event!";
-                $otherData = "You've Been Added to a New Event!";
+                $messageType = "Event Invitation";
+                $otherData = "Event Invitation";
                 $notificationType = "0";
 
                 if ($device_id != "") {

@@ -113,7 +113,6 @@ class EventController extends Controller
             $message = $user->name . " added a new event.";
         }
 
-
         $user_id = $user->id;
         $type = "event added";
 
@@ -193,11 +192,11 @@ class EventController extends Controller
                 array_walk($eventScholars, function ($value) use ($oldDateTime, $newDateTime, $userName) {
                     $user = User::find($value);
                     $device_id = $user->device_id;
-                    $title = "Event Update";
-                    $notiBody = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '.';
-                    $body = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '.';
-                    $messageType = "Event Update";
-                    $otherData = "Event Update";
+                    $title = "Event Request Update";
+                    $notiBody = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
+                    $body = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
+                    $messageType = "Event Request Update";
+                    $otherData = "Event Request Update";
                     $notificationType = "0";
 
                     if ($device_id != "") {
@@ -801,6 +800,8 @@ class EventController extends Controller
 
         $page = $request->input('page', 1);
         $perPage = 20;
+        $search = $request->search;
+
         $userId = $request->user_id;
 
         function getCategoryCounts2($categories, $eventId)
@@ -813,9 +814,26 @@ class EventController extends Controller
 
         $userSaveEvents = SaveEvent::where('user_id', $request->user_id)->pluck('event_id')->toArray();
 
-        $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        }])->get();
+        if (!empty($search)) {
+
+            $userSaveEvents = Event::where(function ($query) use ($search) {
+                $query->where('event_title', 'LIKE', '%' . $search . '%')
+                    ->orWhere('location', 'LIKE', '%' . $search . '%')
+                    ->orWhere('event_category', 'LIKE', "%{$search}%");
+            })->forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }])->get();
+
+            // $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
+            //     $query->where('user_id', $userId);
+            // }])->get();
+
+        } else {
+            $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }])->get();
+
+        }
 
         $userSaveEvents->each(function ($event) use ($request) {
 
@@ -825,7 +843,9 @@ class EventController extends Controller
             $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
         });
 
-        $totalPages = ceil(SaveEvent::forPage($page, $perPage)->where('user_id', $request->user_id)->get()->count() / $perPage);
+        // $totalPages = ceil(SaveEvent::forPage($page, $perPage)->where('user_id', $request->user_id)->get()->count() / $perPage);
+        $totalPages = ceil($userSaveEvents->count() / $perPage);
+
         $response = [
             'status' => true,
             'message' => 'User Save Events!',

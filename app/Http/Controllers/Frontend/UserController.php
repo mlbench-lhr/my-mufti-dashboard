@@ -271,12 +271,12 @@ class UserController extends Controller
         $user->save();
 
         $device_id = $user->device_id;
-        $title = "Scholar Request Update";
+        $title = "Become scholar Request Update";
 
         $notiBody = 'Congrats! Your request for become a scholar has been accepted. You are  a scholar now!!';
         $body = 'Congrats! Your request for become a scholar has been accepted. You are  a scholar now!!';
-        $messageType = "Scholar Request Update";
-        $otherData = "Scholar Request Update";
+        $messageType = "Become scholar Request Update";
+        $otherData = "Become scholar Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {
@@ -320,12 +320,12 @@ class UserController extends Controller
         $mufti = Mufti::where('user_id', $id)->update($data);
 
         $device_id = $user->device_id;
-        $title = "Scholar Request Update";
+        $title = "Become scholar Request Update";
 
-        $notiBody = 'Sorry! Your request to become a scholar has been rejected due to the submission of incorrect information.';
-        $body = 'Sorry! Your request to become a scholar has been rejected due to the submission of incorrect information.';
-        $messageType = "Scholar Request Update";
-        $otherData = "Scholar Request Update";
+        $notiBody = 'Your request to become a scholar has been Rejected, Go and check the reason in your Profile.';
+        $body = 'Your request to become a scholar has been Rejected, Go and check the reason in your Profile.';
+        $messageType = "Become scholar Request Update";
+        $otherData = "Become scholar Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {

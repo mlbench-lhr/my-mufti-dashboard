@@ -374,10 +374,10 @@ class QuestionsController extends Controller
             AdminReply::create($replyData);
             $userData = User::where('id', $question->user_id)->first();
             $device_id = $userData->device_id;
-            $title = "Admin Replied";
+            $title = "Public Question Update";
             $body = 'My Mufti Admin has reply on your question.';
-            $messageType = "Admin reply";
-            $otherData = "Admin reply";
+            $messageType = "Public Question Update";
+            $otherData = "Public Question Update";
             $notificationType = "2";
 
             if ($device_id != "") {
@@ -449,7 +449,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => (string) $userQuery->user_id,
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -462,7 +462,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => "9",
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -505,7 +505,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => (string) $userQuery->user_id,
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -518,7 +518,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => "9",
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -571,10 +571,10 @@ class QuestionsController extends Controller
             $userData = User::find($userQuery->user_id);
             if ($userData && $userData->device_id) {
                 $device_id = $userData->device_id;
-                $title = "Reply Declined";
-                $body = 'Your private query has been declined with a reason: ' . $request->reason;
-                $messageType = "Admin reply";
-                $otherData = "Admin reply";
+                $title = "Question Request Update";
+                $body = 'Your request for private question to Mufti Omar has been Rejected. Go and check the reason in your Question Requests.';
+                $messageType = "Question Request Update";
+                $otherData = "Question Request Update";
                 $notificationType = "3";
 
                 $this->fcmService->sendNotification(

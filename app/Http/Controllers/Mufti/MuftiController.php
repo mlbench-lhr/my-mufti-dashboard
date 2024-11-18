@@ -129,13 +129,13 @@ class MuftiController extends Controller
 
         if (count($muftis) <= 0) {
             return response()->json([
-                "message" => "No Mufti Found against this search",
+                "message" => "No scholar Found against this search",
                 "status" => false,
                 "data" => [],
             ], 200);
         } else {
             $response = [
-                'message' => 'All Mufti according to this search',
+                'message' => 'All scholar according to this search',
                 'status' => true,
                 'data' => $muftis,
             ];
