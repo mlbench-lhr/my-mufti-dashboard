@@ -72,6 +72,7 @@ Route::group([
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);
     Route::post('addDegree', [MuftiDegrees::class, 'add_degree']);
     Route::put('updateDegree', [MuftiDegrees::class, 'update_degree']);
+    Route::post('deleteDegree', [MuftiDegrees::class, 'delete_degree']);
 });
 
 Route::group([

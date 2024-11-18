@@ -123,7 +123,7 @@ class MuftiDegrees extends Controller
 
         $response = [
             'status' => true,
-            'message' => 'Mufti degree!',
+            'message' => 'Degree added successfully.',
             'data' => $degree,
         ];
         return response()->json($response, 200);
@@ -175,9 +175,35 @@ class MuftiDegrees extends Controller
 
         $response = [
             'status' => true,
-            'message' => 'Update degree Successfully!',
+            'message' => 'Degree updated successfully.',
             'data' => $degree,
         ];
         return response()->json($response, 200);
     }
+    public function delete_degree(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'degree_id' => 'required|exists:degrees,id',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $degree = Degree::find($request->degree_id);
+
+        if (!$degree) {
+            return ResponseHelper::jsonResponse(false, 'Degree Not Found');
+        }
+
+        if ($degree->degree_image && Storage::exists('public/' . $degree->degree_image)) {
+            Storage::delete('public/' . $degree->degree_image);
+        }
+
+        $degree->delete();
+
+        return ResponseHelper::jsonResponse(true, 'Degree deleted successfully.');
+    }
+
 }

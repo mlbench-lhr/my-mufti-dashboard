@@ -146,10 +146,10 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id = $userData->device_id;
-                $title = "Added Vote";
-                $body = 'User ' . $user->name . ' has vote on your question.';
-                $messageType = "voting question";
-                $otherData = "voting question";
+                $title = "Public Question Update";
+                $body = 'User ' . $user->name . ' has vote on your posted public question.';
+                $messageType = "Public Question Update";
+                $otherData = "Public Question Update";
                 $notificationType = "2";
 
                 if ($device_id != "") {
@@ -169,10 +169,10 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id = $userData->device_id;
-                $title = "Added Vote";
-                $body = 'User ' . $user->name . ' has vote on your question.';
-                $messageType = "voting question";
-                $otherData = "voting question";
+                $title = "Public Question Update";
+                $body = 'User ' . $user->name . ' has vote on your posted public question.';
+                $messageType = "Public Question Update";
+                $otherData = "Public Question Update";
                 $notificationType = "2";
 
                 if ($device_id != "") {
@@ -410,7 +410,7 @@ class QuestionController extends Controller
 
         $admin_reply = AdminReply::where([
             'question_id' => $question->id,
-            'question_type' => 'public'
+            'question_type' => 'public',
         ])->first();
 
         if ($admin_reply) {
@@ -476,10 +476,10 @@ class QuestionController extends Controller
         if ($question->user_id != $request->user_id) {
             $userData = User::where('id', $question->user_id)->first();
             $device_id = $userData->device_id;
-            $title = "Added Comment";
-            $body = 'User ' . $user->name . ' has comment on your question.';
-            $messageType = "question comment";
-            $otherData = "voting question";
+            $title = "Public Question Update";
+            $body = 'User ' . $user->name . ' has comment on your posted public question.';
+            $messageType = "Public Question Update";
+            $otherData = "Public Question Update";
             $notificationType = "2";
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
@@ -533,10 +533,10 @@ class QuestionController extends Controller
 
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
-        $title = "Scholar Replied";
-        $body = $user->name . ' has reply on your question.';
-        $messageType = "question reply";
-        $otherData = "voting question";
+        $title = "Public Question Update";
+        $body = 'Scholar ' . $user->name . ' has reply on your question.';
+        $messageType = "Public Question Update";
+        $otherData = "Public Question Update";
         $notificationType = "2";
 
         if ($device_id != "") {
@@ -591,8 +591,8 @@ class QuestionController extends Controller
     //         $device_id = $user->device_id;
     //         $title = "Question Request Sent";
 
-    //         $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-    //         $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $notiBody = 'Your request for private question to ' . $mufti->name . ' has been sent.';
+    //         $body = 'Your request for private question to ' . $mufti->name . ' has been sent.';
     //         $messageType = "Question Request Sent";
     //         $otherData = "personal question";
     //         $notificationType = "1";
@@ -633,8 +633,8 @@ class QuestionController extends Controller
     //         $device_id = $user->device_id;
     //         $title = "Question Request Sent";
 
-    //         $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-    //         $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $notiBody = 'Your request for private question to ' . $mufti->name . ' has been sent.';
+    //         $body = 'Your request for private question to ' . $mufti->name . ' has been sent.';
     //         $messageType = "Question Request Sent";
     //         $otherData = "personal question";
     //         $notificationType = "1";
@@ -667,8 +667,8 @@ class QuestionController extends Controller
     //         $device_id = $user->device_id;
     //         $title = "Question Request Sent";
 
-    //         $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
-    //         $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been sent.';
+    //         $notiBody = 'Your request for private question to ' . $mufti->name . ' has been sent.';
+    //         $body = 'Your request for private question to ' . $mufti->name . ' has been sent.';
     //         $messageType = "Question Request Sent";
     //         $otherData = "personal question";
     //         $notificationType = "1";
@@ -732,10 +732,10 @@ class QuestionController extends Controller
         $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
 
         $device_id = $user->device_id;
-        $title = "Question Request Sent";
-        $body = 'Your request for a private question to Mufti ' . $mufti->name . ' has been sent.';
-        $messageType = "Question Request Sent";
-        $otherData = "personal question";
+        $title = "Question Request Update";
+        $body = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
+        $messageType = "Question Request Update";
+        $otherData = "Question Request Update";
         $notificationType = "1";
 
         if ($device_id != "") {
@@ -748,7 +748,6 @@ class QuestionController extends Controller
             'body' => $body,
         ];
         Notification::create($notificationData);
-
 
         $user_id = $user->id;
         $type = "added private question";
@@ -929,10 +928,10 @@ class QuestionController extends Controller
         UserAllQuery::create($data2);
 
         $device_id = $user->device_id;
-        $title = "Question Request Sent";
-        $body = 'Your request for a private question to Mufti ' . $mufti->name . ' has been sent.';
-        $messageType = "Question Request Sent";
-        $otherData = "personal question";
+        $title = "Question Request Update";
+        $body = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
+        $messageType = "Question Request Update";
+        $otherData = "Question Request Update";
         $notificationType = "1";
 
         if ($device_id != "") {
@@ -1001,7 +1000,7 @@ class QuestionController extends Controller
         $notiBody = 'User' . ' ' . $name . ' wants to ask a question for you.';
         $body = 'User' . ' ' . $name . ' wants to ask a question for you.';
         $messageType = $title;
-        $otherData = "personal question";
+        $otherData = "Asked Question";
         $notificationType = "1";
 
         if ($device_id != "") {

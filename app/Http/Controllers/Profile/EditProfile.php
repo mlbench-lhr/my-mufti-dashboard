@@ -102,14 +102,12 @@ class EditProfile extends Controller
             $muftiId = $user->id;
             $message = "Mufti " . $user->name . " has edited his profile.";
             $type = "edited profile";
-    
+
             ActivityHelper::store_avtivity($muftiId, $message, $type);
 
         } else {
             $user->interests = [];
         }
-
-       
 
         //return a response as json assuming you are building a restful API
         return response()->json(
@@ -320,6 +318,48 @@ class EditProfile extends Controller
         );
     }
     // get user profile
+    // public function ask_for_me(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'mufti_id' => 'required',
+    //     ]);
+
+    //     $validationError = ValidationHelper::handleValidationErrors($validator);
+    //     if ($validationError !== null) {
+    //         return $validationError;
+    //     }
+    //     $user = User::find($request->mufti_id);
+    //     if (!$user) {
+    //         return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+    //     }
+    //     $page = $request->input('page', 1);
+    //     $perPage = 10;
+    //     $search = $request->input('search', '');
+
+    //     $totalPages = ceil(UserAllQuery::where('mufti_id', $request->mufti_id)->count() / $perPage);
+
+    //     $myAllQueries = UserAllQuery::forPage($page, $perPage)->with('user_detail.interests')->where(['mufti_id' => $request->mufti_id])->orderBy('created_at', 'DESC')->get();
+
+    //     $fiqas = UserQuery::whereIn('id', $myAllQueries->pluck('query_id'))->pluck('fiqa', 'id');
+
+    //     $myAllQueries->each(function ($query) use ($fiqas) {
+    //         $query->fiqa = $fiqas->get($query->query_id, 'General');
+    //         if ($query->reason === null) {
+    //             unset($query->reason);
+    //         }
+    //     });
+
+    //     return response()->json(
+    //         [
+    //             'status' => true,
+    //             'message' => 'My All Queries',
+    //             'totalpages' => $totalPages,
+    //             'data' => $myAllQueries,
+    //         ],
+    //         200
+    //     );
+    // }
+
     public function ask_for_me(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -330,16 +370,34 @@ class EditProfile extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
+
         $user = User::find($request->mufti_id);
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
+
         $page = $request->input('page', 1);
         $perPage = 10;
-        $totalPages = ceil(UserAllQuery::where('mufti_id', $request->mufti_id)->count() / $perPage);
+        $search = $request->input('search', '');
 
-        $myAllQueries = UserAllQuery::forPage($page, $perPage)->with('user_detail.interests')->where(['mufti_id' => $request->mufti_id])->orderBy('created_at', 'DESC')->get();
+        $query = UserAllQuery::with('user_detail.interests')
+            ->where('mufti_id', $request->mufti_id)
+            ->orderBy('created_at', 'DESC');
 
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user_detail', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('email', 'LIKE', '%' . $search . '%');
+                })->orWhere('question', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $totalPages = ceil($query->count() / $perPage);
+
+        $myAllQueries = $query->forPage($page, $perPage)->get();
+
+        // Get fiqas for the queries
         $fiqas = UserQuery::whereIn('id', $myAllQueries->pluck('query_id'))->pluck('fiqa', 'id');
 
         $myAllQueries->each(function ($query) use ($fiqas) {
@@ -359,6 +417,7 @@ class EditProfile extends Controller
             200
         );
     }
+
     // get user profile
     public function question_accept_decline(Request $request)
     {
@@ -387,10 +446,10 @@ class EditProfile extends Controller
                 $device_id = $user->device_id;
                 $title = "Question Request Update";
 
-                $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
-                $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been accepted.';
-                $messageType = "Question Accepted";
-                $otherData = "Question Accepted";
+                $notiBody = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
+                $body = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
+                $messageType = "Question Request Update";
+                $otherData = "Question Request Update";
                 $notificationType = "0";
 
                 if ($device_id != "") {
@@ -420,10 +479,10 @@ class EditProfile extends Controller
 
                 $device_id = $user->device_id;
                 $title = "Question Request Update";
-                $notiBody = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
-                $body = 'Your request for private question to Mufti ' . $mufti->name . ' has been rejected.';
-                $messageType = "Question Rejected";
-                $otherData = "Question Rejected";
+                $notiBody = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
+                $body = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
+                $messageType = "Question Request Update";
+                $otherData = "Question Request Update";
                 $notificationType = "0";
 
                 if ($device_id != "") {
@@ -602,8 +661,8 @@ class EditProfile extends Controller
         $title = "New Appointment Request Received";
         $notiBody = 'You have received a new appointment request from ' . $user->name . '.';
         $body = 'You have received a new appointment request from ' . $user->name . '.';
-        $messageType = "Appointment Request";
-        $otherData = "Appointment Request";
+        $messageType = "New Appointment Request Received";
+        $otherData = "New Appointment Request Received";
         $notificationType = "0";
 
         if ($device_id != "") {
@@ -643,19 +702,41 @@ class EditProfile extends Controller
         $userType = $user->user_type;
         $status = $user->mufti_status;
 
-        $appointments = MuftiAppointment::with('user_detail', 'mufti_detail')
+        $page = $request->input('page', 1);
+        $perPage = 1;
+        $search = $request->input('search', '');
+
+        $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')
             ->where('user_id', $request->user_id)
-            ->orWhere('mufti_id', $request->user_id)
-            ->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC")
-            ->get();
+            ->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC");
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('category', 'LIKE', '%' . $search . '%')
+                    ->orWhere('description', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('user_detail', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%')
+                            ->orWhere('email', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('mufti_detail', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%')
+                            ->orWhere('email', 'LIKE', '%' . $search . '%');
+                    });
+            });
+        }
+
+        $totalPages = ceil($query->count() / $perPage);
+        $myAppointments = $query->forPage($page, $perPage)->get();
 
         return response()->json(
             [
                 'status' => true,
-                'message' => 'My All Meetings',
-                'data' => $appointments,
+                'message' => 'My All Appointments',
+                'totalpages' => $totalPages,
+                'data' => $myAppointments,
             ],
             200
         );
+        // ->orWhere('mufti_id', $request->user_id)
     }
 }
