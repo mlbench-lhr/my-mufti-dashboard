@@ -520,16 +520,16 @@ class QuestionsController extends Controller
             $this->firebase->getReference($referencePath6)
                 ->set(json_decode(json_encode($inboxData3)));
 
-            if ($userData && $userData->device_id) {
-                $this->fcmService->sendNotification(
-                    $userData->device_id,
-                    "Reply Approved",
-                    'Your private query has been approved with a reply.',
-                    "Admin reply",
-                    "Admin reply",
-                    "2",
-                    $request->query_id
-                );
+            $questionId = $request->query_id;
+            $device_id = $userData->device_id;
+            $title = "Question Request Update";
+            $body = 'My Mufti Admin has reply on your question. Please see in your chat.';
+            $messageType = "Question Request Update";
+            $otherData = "Question Request Update";
+            $notificationType = "2";
+
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
         }
 
