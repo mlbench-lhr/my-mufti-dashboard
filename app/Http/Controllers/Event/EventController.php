@@ -842,9 +842,6 @@ class EventController extends Controller
                 ->where('user_id', '!=', $userId)
                 ->get();
 
-            $event->your_question = $event->your_question;
-            $event->event_questions = $event->event_questions;
-
         });
 
         $totalPages = ceil($userSaveEvents->count() / $perPage);
