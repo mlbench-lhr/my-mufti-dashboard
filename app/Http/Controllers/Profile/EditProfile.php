@@ -51,7 +51,6 @@ class EditProfile extends Controller
 
             $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
             $user->interests = $interests;
-
         } else {
             $user->interests = [];
         }
@@ -104,7 +103,6 @@ class EditProfile extends Controller
             $type = "edited profile";
 
             ActivityHelper::store_avtivity($muftiId, $message, $type);
-
         } else {
             $user->interests = [];
         }
@@ -163,7 +161,6 @@ class EditProfile extends Controller
                 ],
                 200
             );
-
         } else {
             return ResponseHelper::jsonResponse(false, 'Old Password does not match');
         }
@@ -203,7 +200,6 @@ class EditProfile extends Controller
             ],
             200
         );
-
     }
     // help & feedback
     public function help_feedback(Request $request)
@@ -246,7 +242,6 @@ class EditProfile extends Controller
             ],
             200
         );
-
     }
     // get user profile
     public function my_queries(Request $request)
@@ -472,7 +467,6 @@ class EditProfile extends Controller
                 UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status]);
 
                 return ResponseHelper::jsonResponse(true, 'Question Status Updated');
-
             }
             if ($request->status == 2) {
                 $user = User::where('id', $question->user_id)->first();
@@ -505,11 +499,8 @@ class EditProfile extends Controller
                 UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status, 'reason' => $request->reason ? $request->reason : ""]);
 
                 return ResponseHelper::jsonResponse(true, 'Question Status Updated');
-
             }
-
         }
-
     }
     // get user profile
     public function my_all_queries(Request $request)
@@ -579,7 +570,6 @@ class EditProfile extends Controller
     }
     public function request_for_delete_account(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
         ]);
@@ -588,45 +578,54 @@ class EditProfile extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
+
         $user = User::find($request->user_id);
 
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
+        $data = DeleteAccountRequest::where('user_id', $request->user_id)->first();
         if ($request->flag == 1) {
 
-            $data = DeleteAccountRequest::where('user_id', $request->user_id)->first();
             return response()->json(
                 [
+
                     'status' => true,
                     'message' => 'Request status',
                     'data' => $data,
                 ],
                 200
             );
-
         } else {
-            $data = [
+            $existingRequest = DeleteAccountRequest::where('user_id', $request->user_id)->first();
+
+            if ($existingRequest) {
+                return ResponseHelper::jsonResponse(false, 'Already requested');
+            }
+
+            DeleteAccountRequest::create([
                 'user_id' => $request->user_id,
                 'reason' => "",
                 'status' => 1,
-            ];
+            ]);
 
             $muftiId = $user->id;
             $message = "Mufti " . $user->name . " requested to delete the account.";
             $type = "deletion request";
-
             ActivityHelper::store_avtivity($muftiId, $message, $type);
 
-            DeleteAccountRequest::updateOrCreate(
-                ['user_id' => $request->user_id],
-                $data
+            return response()->json(
+                [
+                    'status' => true,
+                    'message' => 'Request sent successfully!',
+                    'data' => $data,
+                ],
+                200
             );
-            return ResponseHelper::jsonResponse(true, 'Request send Successfully!');
         }
-
     }
+
 
     public function book_an_appointment(BookAppointment $request)
     {
