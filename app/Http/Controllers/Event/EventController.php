@@ -140,7 +140,6 @@ class EventController extends Controller
             'data' => $event_data,
         ];
         return response()->json($response, 200);
-
     }
 
     public function update_event(Request $request)
@@ -793,6 +792,7 @@ class EventController extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
+
         $user = User::where('id', $request->user_id)->first();
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
@@ -823,27 +823,32 @@ class EventController extends Controller
             })->forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             }])->get();
-
-            // $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-            //     $query->where('user_id', $userId);
-            // }])->get();
-
         } else {
             $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             }])->get();
-
         }
 
-        $userSaveEvents->each(function ($event) use ($request) {
+        $userSaveEvents->each(function ($event) use ($request, $userId) {
 
             $questionCategories = $event->question_category;
             $event->question_category = getCategoryCounts2($questionCategories, $event->id);
 
+            // Fetch user-specific questions for the event (not mixed with event questions)
+            $userQuestions = EventQuestion::where(['event_id' => $event->id, 'user_id' => $userId])->get();
+
+            // Add the user-specific questions right after hosted_by, before event_questions
+            $event->user_questions = $userQuestions;  // This will now hold user-specific questions
+
+            // Event questions are set to exclude user-specific ones
+            $event->event_questions = EventQuestion::where('event_id', $event->id)
+                                                   ->where('user_id', '!=', $userId)  // Ensure it's not the same user
+                                                   ->get();
+
+            // Check if the event is saved by the user
             $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
         });
 
-        // $totalPages = ceil(SaveEvent::forPage($page, $perPage)->where('user_id', $request->user_id)->get()->count() / $perPage);
         $totalPages = ceil($userSaveEvents->count() / $perPage);
 
         $response = [
@@ -852,8 +857,10 @@ class EventController extends Controller
             'totalPages' => $totalPages,
             'data' => $userSaveEvents,
         ];
+
         return response()->json($response, 200);
     }
+
 
     public function search_event(Request $request)
     {
