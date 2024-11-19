@@ -842,6 +842,11 @@ class EventController extends Controller
             $event->event_questions = EventQuestion::where('event_id', $event->id)
                 ->where('user_id', '!=', $userId)
                 ->get();
+
+            $event->hosted_by['your_question'] = $event->your_question;
+            $event->hosted_by['event_questions'] = $event->event_questions;
+
+            unset($event->your_question, $event->event_questions);
         });
 
         $totalPages = ceil($userSaveEvents->count() / $perPage);
