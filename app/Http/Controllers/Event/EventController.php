@@ -833,16 +833,15 @@ class EventController extends Controller
             $questionCategories = $event->question_category;
             $event->question_category = getCategoryCounts2($questionCategories, $event->id);
 
-            $userQuestions = EventQuestion::where('user_id', $userId)->where('event_id', $event->id)->get();
-
-            $eventQuestions = $event->event_questions->filter(function ($eventQuestion) use ($userQuestions) {
-                return !$userQuestions->contains('id', $eventQuestion->id);
-            });
-
-            $event->your_question = $userQuestions;
-            $event->event_questions = $eventQuestions;
-
             $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
+
+            $event->your_question = EventQuestion::where('user_id', $userId)
+                ->where('event_id', $event->id)
+                ->get();
+
+            $event->event_questions = EventQuestion::where('event_id', $event->id)
+                ->where('user_id', '!=', $userId)
+                ->get();
         });
 
         $totalPages = ceil($userSaveEvents->count() / $perPage);
