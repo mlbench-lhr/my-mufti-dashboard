@@ -415,99 +415,111 @@ class QuestionsController extends Controller
             $userQuery->save();
 
             $userData = User::find($userQuery->user_id);
+
             $muftiId = 9;
             $userId = $userQuery->user_id;
 
             $postKey = ($muftiId < $userId) ? $muftiId . '+' . $userId : $userId . '+' . $muftiId;
 
-            $timestamp = now()->format('d-m-Y H:i:s');
-
-            $allMessagesData1 = [
+            $allMessagesData1 = (object) [
                 'content_message' => $userQuery->question,
                 'conversation_id' => $postKey,
-                'date' => $timestamp,
+                'date' => now()->format('d-m-Y H:i:s'),
                 'is_read' => false,
-                'receiver_id' => (string) $userId,
-                'sender_id' => (string) $muftiId,
+                'receiver_id' => "9",
+                'sender_id' => (string) $userQuery->user_id,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
-            $this->firebase->getReference('All_Messages/' . $postKey)
-                ->push($allMessagesData1);
 
-            $inboxDataUser = [
-                'chat_name' => 'Mufti Omar',
+            $referencePath1 = 'All_Messages/' . $postKey;
+
+            $this->firebase->getReference($referencePath1)
+                ->push(json_decode(json_encode($allMessagesData1)));
+
+            $inboxData1 = (object) [
+                'chat_name' => $userData->name ?? "",
                 'content_message' => $userQuery->question,
                 'conversation_enable' => false,
                 'conversation_id' => $postKey,
-                'date' => $timestamp,
-                'other_user_id' => (string) $muftiId,
-                'read_count' => 1,
-                'time_zone_id' => 'Asia/Karachi',
-                'type' => 'text',
-            ];
-            $inboxDataMufti = [
-                'chat_name' => $userData->name ?? '',
-                'content_message' => $userQuery->question,
-                'conversation_enable' => false,
-                'conversation_id' => $postKey,
-                'date' => $timestamp,
-                'other_user_id' => (string) $userId,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => (string) $userQuery->user_id,
                 'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
 
-            $this->firebase->getReference('Inbox/_' . $userId . '/' . $postKey)
-                ->set($inboxDataUser);
-            $this->firebase->getReference('Inbox/_' . $muftiId . '/' . $postKey)
-                ->set($inboxDataMufti);
+            $inboxData2 = (object) [
+                'chat_name' => "Mufti Omar",
+                'content_message' => $userQuery->question,
+                'conversation_enable' => false,
+                'conversation_id' => $postKey,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => "9",
+                'read_count' => 1,
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
 
-            $allMessagesData2 = [
+            $referencePath2 = 'Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
+            $this->firebase->getReference($referencePath2)
+                ->set(json_decode(json_encode($inboxData2)));
+
+            $referencePath3 = 'Inbox/_9/' . $postKey;
+            $this->firebase->getReference($referencePath3)
+                ->set(json_decode(json_encode($inboxData1)));
+
+            $allMessagesData2 = (object) [
                 'content_message' => $request->reply,
                 'conversation_id' => $postKey,
-                'date' => $timestamp,
+                'date' => now()->format('d-m-Y H:i:s'),
                 'is_read' => false,
-                'receiver_id' => (string) $userId,
-                'sender_id' => (string) $muftiId,
+                'receiver_id' => (string) $userQuery->user_id,
+                'sender_id' => "9",
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
-            $this->firebase->getReference('All_Messages/' . $postKey)
-                ->push($allMessagesData2);
 
-            $inboxReplyUser = [
-                'chat_name' => 'Mufti Omar',
+            $referencePath4 = 'All_Messages/' . $postKey;
+            $this->firebase->getReference($referencePath4)
+                ->push(json_decode(json_encode($allMessagesData2)));
+
+            $inboxData3 = (object) [
+                'chat_name' => $userData->name ?? "",
                 'content_message' => $request->reply,
                 'conversation_enable' => false,
                 'conversation_id' => $postKey,
-                'date' => $timestamp,
-                'other_user_id' => (string) $muftiId,
-                'read_count' => 1,
-                'time_zone_id' => 'Asia/Karachi',
-                'type' => 'text',
-            ];
-            $inboxReplyMufti = [
-                'chat_name' => $userData->name ?? '',
-                'content_message' => $request->reply,
-                'conversation_enable' => false,
-                'conversation_id' => $postKey,
-                'date' => $timestamp,
-                'other_user_id' => (string) $userId,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => (string) $userQuery->user_id,
                 'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
 
-            $this->firebase->getReference('Inbox/_' . $userId . '/' . $postKey)
-                ->set($inboxReplyUser);
-            $this->firebase->getReference('Inbox/_' . $muftiId . '/' . $postKey)
-                ->set($inboxReplyMufti);
+            $inboxData4 = (object) [
+                'chat_name' => "Mufti Omar",
+                'content_message' => $request->reply,
+                'conversation_enable' => false,
+                'conversation_id' => $postKey,
+                'date' => now()->format('d-m-Y H:i:s'),
+                'other_user_id' => "9",
+                'read_count' => 1,
+                'time_zone_id' => 'Asia/Karachi',
+                'type' => 'text',
+            ];
+
+            $referencePath5 = 'Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
+            $this->firebase->getReference($referencePath5)
+                ->set(json_decode(json_encode($inboxData4)));
+
+            $referencePath6 = 'Inbox/_9/' . $postKey;
+            $this->firebase->getReference($referencePath6)
+                ->set(json_decode(json_encode($inboxData3)));
 
             $questionId = $request->query_id;
             $device_id = $userData->device_id;
             $title = "Question Request Update";
-            $body = 'My Mufti Admin has reply on your question. Please see in your chat.';
+            $body = 'My Mufti Admin has replied to your question. Please see it in your chat.';
             $messageType = "Question Request Update";
             $otherData = "Question Request Update";
             $notificationType = "2";
@@ -516,6 +528,8 @@ class QuestionsController extends Controller
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
         }
+
+
         return redirect()->to('/PrivateQuestionDetail/' . $request->query_id . '?flag=1');
     }
 
