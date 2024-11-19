@@ -83,7 +83,9 @@ Route::group([
     Route::post('allQuestion', [QuestionController::class, 'all_question']);
     Route::post('/userAllPublicQuestions', [QuestionController::class, 'User_AllPublicQuestions']);
     Route::post('questionDetail', [QuestionController::class, 'question_detail']);
+    Route::post('/deletePublicQuestion', [QuestionController::class, 'deletePublicQuestion']);
     Route::post('addComment', [QuestionController::class, 'add_comment']);
+    Route::post('/deleteComment', [QuestionController::class, 'delete_comment']);
     Route::post('scholarReply', [QuestionController::class, 'scholar_reply']);
     Route::post('postGeneralQuestion', [QuestionController::class, 'post_general_question']);
     Route::post('postFiqaWiseQuestion', [QuestionController::class, 'post_fiqa_wise_question']);

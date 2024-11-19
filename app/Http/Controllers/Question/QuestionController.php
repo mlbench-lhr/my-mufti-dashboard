@@ -442,6 +442,31 @@ class QuestionController extends Controller
         return response()->json($response, 200);
     }
 
+    public function deletePublicQuestion(Request $request)
+    {
+        $request->validate([
+            'question_id' => 'required|integer',
+        ]);
+
+        $questionId = $request->input('question_id');
+
+        $question = Question::find($questionId);
+
+        if (!$question) {
+            return ResponseHelper::jsonResponse(false, 'Question not found');
+        }
+
+        QuestionComment::where('question_id', $questionId)->delete();
+        QuestionVote::where('question_id', $questionId)->delete();
+        ReportQuestions::where('question_id', $questionId)->delete();
+        ScholarReply::where('question_id', $questionId)->delete();
+        AdminReply::where('question_id', $questionId)->delete();
+        $question->delete();
+
+        return ResponseHelper::jsonResponse(true, 'Public Question deleted successfully!');
+    }
+
+
     public function add_comment(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -488,6 +513,28 @@ class QuestionController extends Controller
         $comment = QuestionComment::create($data);
 
         return ResponseHelper::jsonResponse(true, 'Comment added successfully!');
+    }
+
+    public function delete_comment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'comment_id' => 'required|integer',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $comment = QuestionComment::find($request->comment_id);
+
+        if (!$comment) {
+            return ResponseHelper::jsonResponse(false, 'Comment not found');
+        }
+
+        $comment->delete();
+
+        return ResponseHelper::jsonResponse(true, 'Comment deleted successfully!');
     }
 
     public function scholar_reply(Request $request)
