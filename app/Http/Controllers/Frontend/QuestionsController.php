@@ -421,8 +421,8 @@ class QuestionsController extends Controller
                 'conversation_id' => '9+' . $userQuery->user_id,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'is_read' => false,
-                'receiver_id' => (string) $userQuery->user_id,
-                'sender_id' => "9",
+                'receiver_id' => "9",
+                'sender_id' => (string) $userQuery->user_id,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -449,7 +449,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => (string) $userQuery->user_id,
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -462,7 +462,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => "9",
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -487,7 +487,7 @@ class QuestionsController extends Controller
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
-
+            // check ids
             if ($muftiId < $userId) {
                 $postKey = $muftiId . '+' . $userId;
             } else {
@@ -495,10 +495,8 @@ class QuestionsController extends Controller
             }
 
             $referencePath4 = 'All_Messages/' . $postKey;
-
             $this->firebase->getReference($referencePath4)
                 ->push(json_decode(json_encode($allMessagesData2)));
-
 
             // For Mufti
             $inboxData3 = (object) [
@@ -508,7 +506,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => (string) $userQuery->user_id,
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -521,7 +519,7 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date' => now()->format('d-m-Y H:i:s'),
                 'other_user_id' => "9",
-                'read_count' => 0,
+                'read_count' => 1,
                 'time_zone_id' => 'Asia/Karachi',
                 'type' => 'text',
             ];
@@ -534,19 +532,18 @@ class QuestionsController extends Controller
             $this->firebase->getReference($referencePath6)
                 ->set(json_decode(json_encode($inboxData3)));
 
-            if ($userData && $userData->device_id) {
-                $this->fcmService->sendNotification(
-                    $userData->device_id,
-                    "Reply Approved",
-                    'Your private query has been approved with a reply.',
-                    "Admin reply",
-                    "Admin reply",
-                    "2",
-                    $request->query_id
-                );
+            $questionId = $request->query_id;
+            $device_id = $userData->device_id;
+            $title = "Question Request Update";
+            $body = 'My Mufti Admin has reply on your question. Please see in your chat.';
+            $messageType = "Question Request Update";
+            $otherData = "Question Request Update";
+            $notificationType = "2";
+
+            if ($device_id != "") {
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
         }
-
         return redirect()->to('/PrivateQuestionDetail/' . $request->query_id . '?flag=1');
     }
 
