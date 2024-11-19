@@ -829,13 +829,11 @@ class EventController extends Controller
         }
 
         $userSaveEvents->each(function ($event) use ($request, $userId) {
-
             $questionCategories = $event->question_category;
             $event->question_category = getCategoryCounts2($questionCategories, $event->id);
 
             $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
 
-            // Get your question and event questions
             $event->your_question = EventQuestion::where('user_id', $userId)
                 ->where('event_id', $event->id)
                 ->get();
@@ -844,12 +842,9 @@ class EventController extends Controller
                 ->where('user_id', '!=', $userId)
                 ->get();
 
-            // Rearrange your_question and event_questions after hosted_by
-            $event->hosted_by['your_question'] = $event->your_question;
-            $event->hosted_by['event_questions'] = $event->event_questions;
+            $event->your_question = $event->your_question;
+            $event->event_questions = $event->event_questions;
 
-            // Remove them from the event itself to avoid duplication
-            unset($event->your_question, $event->event_questions);
         });
 
         $totalPages = ceil($userSaveEvents->count() / $perPage);
@@ -863,7 +858,6 @@ class EventController extends Controller
 
         return response()->json($response, 200);
     }
-
 
     public function search_event(Request $request)
     {
