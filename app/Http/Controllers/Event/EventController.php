@@ -140,6 +140,7 @@ class EventController extends Controller
             'data' => $event_data,
         ];
         return response()->json($response, 200);
+
     }
 
     public function update_event(Request $request)
@@ -831,19 +832,10 @@ class EventController extends Controller
             $userSaveEvents = Event::forPage($page, $perPage)->whereIn('id', $userSaveEvents)->with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             }])->get();
+
         }
 
         $userSaveEvents->each(function ($event) use ($request) {
-            $userId = $request->user_id;
-            $userQuestions = $event->event_questions->filter(function ($question) use ($userId) {
-                return $question->user_id == $userId;
-            });
-
-            $event->event_questions = $event->event_questions->filter(function ($question) use ($userId) {
-                return $question->user_id != $userId;
-            });
-
-            $event->your_questions = $userQuestions->values();
 
             $questionCategories = $event->question_category;
             $event->question_category = getCategoryCounts2($questionCategories, $event->id);
@@ -851,6 +843,7 @@ class EventController extends Controller
             $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
         });
 
+        // $totalPages = ceil(SaveEvent::forPage($page, $perPage)->where('user_id', $request->user_id)->get()->count() / $perPage);
         $totalPages = ceil($userSaveEvents->count() / $perPage);
 
         $response = [
