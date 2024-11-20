@@ -408,6 +408,15 @@ class EventController extends Controller
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
+        $existingQuestion = EventQuestion::where([
+            'event_id' => $request->event_id,
+            'user_id' => $request->user_id,
+        ])->first();
+
+        if ($existingQuestion) {
+            return ResponseHelper::jsonResponse(false, 'You have already submitted a question');
+        }
+
         $data = [
             'event_id' => $request->event_id,
             'user_id' => $request->user_id,
@@ -418,6 +427,7 @@ class EventController extends Controller
         EventQuestion::create($data);
         return ResponseHelper::jsonResponse(true, 'Question Added Successfully!');
     }
+
 
     public function add_answer_on_event(Request $request)
     {
