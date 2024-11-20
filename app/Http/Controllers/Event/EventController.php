@@ -954,10 +954,10 @@ class EventController extends Controller
 
     public function all_questions_belongs_to_events(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'event_id' => 'required',
             'category' => 'required',
+            'search' => 'nullable|string',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -970,19 +970,26 @@ class EventController extends Controller
         if (!$event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
+
         $page = $request->input('page', 1);
         $perPage = 20;
-        $totalPages = ceil(EventQuestion::where(['event_id' => $request->event_id, 'category' => $request->category])->get()->count() / $perPage);
+
+        $baseQuery = EventQuestion::with('user_detail:id,name,image')
+            ->withCount('likes')
+            ->where(['event_id' => $request->event_id, 'category' => $request->category]);
+
+        if ($request->filled('search')) {
+            $searchTerm = trim($request->search);
+            $baseQuery->where('question', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        $totalPages = ceil($baseQuery->count() / $perPage);
+
+        $eventQuestions = $baseQuery->orderBy('likes_count', 'desc')
+            ->forPage($page, $perPage)
+            ->get();
 
         if ($request->user_id) {
-
-            $eventQuestions = EventQuestion::with('user_detail:id,name,image')
-                ->withCount('likes')
-                ->where(['event_id' => $request->event_id, 'category' => $request->category])
-                ->orderBy('likes_count', 'desc')
-                ->forPage($page, $perPage)
-                ->get();
-
             $userLikedQuestionIds = EventQuestionLike::where('user_id', $request->user_id)
                 ->whereIn('event_question_id', $eventQuestions->pluck('id'))
                 ->pluck('event_question_id')
@@ -992,33 +999,18 @@ class EventController extends Controller
                 $question->is_like = in_array($question->id, $userLikedQuestionIds);
                 return $question;
             });
-
-            $response = [
-                'status' => true,
-                'message' => 'All Questions according to this category',
-                'totalPages' => $totalPages,
-                'data' => $eventQuestions,
-            ];
-
-            return response()->json($response, 200);
-        } else {
-            $eventQuestions = EventQuestion::with('user_detail:id,name,image')
-                ->withCount('likes')
-                ->where(['event_id' => $request->event_id, 'category' => $request->category])
-                ->orderBy('likes_count', 'desc')
-                ->forPage($page, $perPage)
-                ->get();
-
-            $response = [
-                'status' => true,
-                'message' => 'All Questions according to this category',
-                'totalPages' => $totalPages,
-                'data' => $eventQuestions,
-            ];
-
-            return response()->json($response, 200);
         }
+
+        $response = [
+            'status' => true,
+            'message' => 'All Questions according to this category',
+            'totalPages' => $totalPages,
+            'data' => $eventQuestions,
+        ];
+
+        return response()->json($response, 200);
     }
+
 
     public function all_category_belongs_to_events(Request $request)
     {
