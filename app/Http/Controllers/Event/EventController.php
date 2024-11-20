@@ -828,7 +828,7 @@ class EventController extends Controller
             $questionCategories = $event->question_category;
             $event->question_category = getCategoryCounts2($questionCategories, $event->id);
 
-            $event->your_questions = EventQuestion::where(['event_id' => $event->id, 'user_id' => $userId])->get();
+            $event->your_question = EventQuestion::where(['event_id' => $event->id, 'user_id' => $userId])->first();
 
             $event->event_questions = EventQuestion::where('event_id', $event->id)
                 ->where('user_id', '!=', $userId)
@@ -839,20 +839,21 @@ class EventController extends Controller
             $eventArray = $event->toArray();
 
             $hostedBy = ['hosted_by' => $eventArray['hosted_by']];
-            $yourQuestions = ['your_questions' => $eventArray['your_questions']];
+            $yourQuestion = ['your_question' => $eventArray['your_question']];
             $eventQuestions = ['event_questions' => $eventArray['event_questions']];
 
-            unset($eventArray['hosted_by'], $eventArray['your_questions'], $eventArray['event_questions']);
+            unset($eventArray['hosted_by'], $eventArray['your_question'], $eventArray['event_questions']);
 
             $reorderedArray = array_merge(
                 $eventArray,
                 $hostedBy,
-                $yourQuestions,
+                $yourQuestion,
                 $eventQuestions
             );
 
             return collect($reorderedArray);
         });
+
 
 
         $totalPages = ceil($userSaveEvents->count() / $perPage);
