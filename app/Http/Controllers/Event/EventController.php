@@ -428,7 +428,6 @@ class EventController extends Controller
         return ResponseHelper::jsonResponse(true, 'Question Added Successfully!');
     }
 
-
     public function add_answer_on_event(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -447,6 +446,7 @@ class EventController extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
+
         $question = EventQuestion::where('id', $request->question_id)->first();
 
         if (!$question) {
@@ -459,9 +459,16 @@ class EventController extends Controller
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
+        $existingAnswer = $question->answer;
+
+        if ($existingAnswer) {
+            return ResponseHelper::jsonResponse(false, 'You have already submitted an answer');
+        }
+
         $question->update(['answer' => $request->answer]);
         return ResponseHelper::jsonResponse(true, 'Answer Added Successfully!');
     }
+
 
     public function past_upcoming_events(Request $request)
     {
