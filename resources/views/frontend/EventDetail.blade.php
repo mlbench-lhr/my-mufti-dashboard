@@ -176,33 +176,40 @@
                         <!--begin::Actions-->
                         @if ($event->event_status == 2)
                             <div class="d-flex">
-                                {{-- <a href="#" data-url="{{ URL::to('EventRequestApprove/' . $event->id) }}"
-                                    class="btn-approve">
-                                    <button type="button" class="btn btn-md btn-success w-100"
-                                        style="background-color:#38B89A;">Accept</button>
-                                </a> --}}
-
-                                {{-- <a href="{{ URL::to('EventRequestDecline/' . $event->id) }}">
-                                    <button type="button" class="btn btn-md btn-danger w-100 ms-5"
-                                        style="background-color:#F52E2E;">Reject</button>
-                                </a> --}}
-                                <p class='badge px-5 py-4 fs-5 fw-bold' style='background: #F2C9251A;color: #F2C925;'>
-                                    Pending
-                                </p>
+                                <!-- Accept Button -->
+                                <a>
+                                    <button type="button" class="btn me-3"
+                                        style="background-color:#38B89A; color:white;"
+                                        data-interest-id="{{ $event->id }}" onclick="acceptEvent({{ $event->id }})">
+                                        Accept
+                                    </button>
+                                </a>
+                                <!-- Reject Button -->
+                                <a>
+                                    <button type="button" class="btn me-3"
+                                        style="background-color:#F52E2E; color:white;" data-bs-toggle="modal"
+                                        data-bs-target="#kt_modal_update_interests" data-user-id="{{ $event->id }}">
+                                        Reject
+                                    </button>
+                                </a>
                             </div>
                         @elseif($event->event_status == 1)
                             <div class="d-flex">
-                                <p class='badge px-5 py-4 fs-5 fw-bold' style='background: #e4f9f4;color: #38B89A;'>
+                                <p class="btn me-3" style="background-color: #38B89A1A; color:#38B89A;">
                                     Accepted
                                 </p>
                             </div>
                         @elseif($event->event_status == 0)
                             <div class="d-flex">
-                                <p class='badge px-5 py-4 fs-5 fw-bold' style='background: #EA43351A;color: #EA4335;'>
+                                <p class="btn me-3" style="background-color: #EA43351A; color:#EA4335;"
+                                    data-bs-html="true" data-bs-toggle="tooltip"
+                                    title="<strong>Reason:</strong> {{ $event->reason }}">
                                     Rejected
                                 </p>
                             </div>
                         @endif
+
+
                         <!--end::Actions-->
                     </div>
                     <!--end::Title-->
@@ -359,6 +366,75 @@
         </div>
     </div>
     <!--end::Container-->
+    <!--begin::Modal - Reason -->
+    <div class="modal fade" id="kt_modal_update_interests" tabindex="-1" aria-hidden="true">
+        <!--begin::Modal dialog-->
+        <div class="modal-dialog mw-500px">
+            <!--begin::Modal content-->
+            <div class="modal-content">
+                <!--begin::Modal header-->
+                <div class="modal-header pb-0 border-0 d-f justify-content-between">
+                    <!--begin::Close-->
+                    <p>
+
+                    </p>
+                    <p class="fs-2 fw-bold">
+                        Reason For Not Accepted
+                    </p>
+                    <div class="btn btn-sm btn-icon btn-active-color-dark" data-bs-dismiss="modal">
+                        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+
+                        <span class="">
+                            <svg width="35" height="35" viewBox="0 0 40 40" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M33.3307 20.0013C33.3307 27.3651 27.3612 33.3346 19.9974 33.3346C12.6336 33.3346 6.66406 27.3651 6.66406 20.0013C6.66406 12.6375 12.6336 6.66797 19.9974 6.66797C27.3612 6.66797 33.3307 12.6375 33.3307 20.0013ZM15.9569 15.9608C16.3474 15.5703 16.9806 15.5703 17.3711 15.9608L19.9974 18.5871L22.6236 15.9609C23.0141 15.5703 23.6473 15.5703 24.0378 15.9609C24.4283 16.3514 24.4283 16.9846 24.0378 17.3751L21.4116 20.0013L24.0378 22.6275C24.4283 23.018 24.4283 23.6512 24.0378 24.0417C23.6472 24.4322 23.0141 24.4322 22.6235 24.0417L19.9974 21.4155L17.3711 24.0417C16.9806 24.4322 16.3475 24.4322 15.9569 24.0417C15.5664 23.6512 15.5664 23.018 15.9569 22.6275L18.5831 20.0013L15.9569 17.375C15.5664 16.9845 15.5664 16.3514 15.9569 15.9608Z"
+                                    fill="#303030" />
+                            </svg>
+                        </span>
+                        <!--end::Svg Icon-->
+                    </div>
+                    <!--end::Close-->
+                </div>
+                <!--begin::Modal header-->
+                <!--begin::Modal body-->
+                <div class="modal-body  pt-4 mx-0">
+                    <!--begin::Input group-->
+
+                    <form action="{{ route('EventRequestDecline') }}" method="POST" class="form"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <!-- Add a hidden input field to carry the interest ID -->
+                        <input type="hidden" name="event_id" id="userId" value="">
+                        <div class="fv-row mb-5">
+                            <!--begin::Input-->
+                            <label for="name" class="fw-bold fs-4 pb-2 fw-600">Reason</label>
+                            <textarea style="background-color:#F0F1F3; font-size: 1.3rem;" type="text" placeholder="Add Reason"
+                                name="reason" class="form-control form-control-solid mb-3 border" id="productDescription" cols="20"
+                                rows="6" oninput="validateInput(this)" required></textarea>
+                            <!--end::Input-->
+                        </div>
+
+                        <div class="d-flex justify-content-center align-content-center pt-2 ">
+                            <!--begin::Button-->
+                            <button type="submit" id="kt_modal_add_customer_submit" class="btn col-12"
+                                style="background-color: #38B89A; color:#FFFFFF">
+                                <span class="indicator-label fs-4">Send</span>
+                                <span class="indicator-progress">Please wait...
+                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            </button>
+                            <!--end::Button-->
+                        </div>
+                        <!--end::Input group-->
+                    </form>
+                </div>
+                <!--end::Modal body-->
+            </div>
+            <!--end::Modal content-->
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Reason -->
 
     <!--begin::Modal Request Decline -->
     <div class="modal fade" id="view_all_scholars" tabindex="-1" aria-hidden="true">
@@ -491,9 +567,23 @@
 
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            html: true
+        });
+    });
+
     var event_id = @json($event_id);
     var currentPage = 1;
+
+    function validateInput(input) {
+        const regex = /[^a-zA-Z0-9 .,!?'"()-]/g;
+        input.value = input.value.replace(regex, '');
+        input.value = input.value.replace(/^\s*/, '');
+    }
 
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
@@ -624,5 +714,51 @@
     });
     $(document).ready(function() {
         loadVerificationData(currentPage);
+    });
+
+    function acceptEvent(eventId) {
+        Swal.fire({
+            title: 'Accept the Request',
+            text: "Are you sure you want to accept this event?",
+            icon: 'warning',
+            iconColor: '#38B89A',
+            showCancelButton: true,
+            confirmButtonColor: '#38B89A',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Accept!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/EventRequestApprove/${eventId}`,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.response === 'error') {
+                            Swal.fire('Error!', response.message, 'error');
+                        } else {
+                            Swal.fire({
+                                title: 'Accepted!',
+                                text: 'Event has been accepted.',
+                                icon: 'success',
+                                timer: 700,
+                                showConfirmButton: false,
+                                willClose: () => location.reload(),
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Something went wrong.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#kt_modal_update_interests').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var userId = button.data('user-id');
+            var modal = $(this);
+            modal.find('#userId').val(userId);
+        });
     });
 </script>

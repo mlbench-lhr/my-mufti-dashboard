@@ -295,75 +295,7 @@
         </div>
         <!--end::Container-->
 
-        <!--begin::Modal - Reason -->
-        <div class="modal fade" id="kt_modal_update_interests" tabindex="-1" aria-hidden="true">
-            <!--begin::Modal dialog-->
-            <div class="modal-dialog mw-500px">
-                <!--begin::Modal content-->
-                <div class="modal-content">
-                    <!--begin::Modal header-->
-                    <div class="modal-header pb-0 border-0 d-f justify-content-between">
-                        <!--begin::Close-->
-                        <p>
 
-                        </p>
-                        <p class="fs-2 fw-bold">
-                            Reason For Not Accepted
-                        </p>
-                        <div class="btn btn-sm btn-icon btn-active-color-dark" data-bs-dismiss="modal">
-                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-
-                            <span class="">
-                                <svg width="35" height="35" viewBox="0 0 40 40" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                        d="M33.3307 20.0013C33.3307 27.3651 27.3612 33.3346 19.9974 33.3346C12.6336 33.3346 6.66406 27.3651 6.66406 20.0013C6.66406 12.6375 12.6336 6.66797 19.9974 6.66797C27.3612 6.66797 33.3307 12.6375 33.3307 20.0013ZM15.9569 15.9608C16.3474 15.5703 16.9806 15.5703 17.3711 15.9608L19.9974 18.5871L22.6236 15.9609C23.0141 15.5703 23.6473 15.5703 24.0378 15.9609C24.4283 16.3514 24.4283 16.9846 24.0378 17.3751L21.4116 20.0013L24.0378 22.6275C24.4283 23.018 24.4283 23.6512 24.0378 24.0417C23.6472 24.4322 23.0141 24.4322 22.6235 24.0417L19.9974 21.4155L17.3711 24.0417C16.9806 24.4322 16.3475 24.4322 15.9569 24.0417C15.5664 23.6512 15.5664 23.018 15.9569 22.6275L18.5831 20.0013L15.9569 17.375C15.5664 16.9845 15.5664 16.3514 15.9569 15.9608Z"
-                                        fill="#303030" />
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                        </div>
-                        <!--end::Close-->
-                    </div>
-                    <!--begin::Modal header-->
-                    <!--begin::Modal body-->
-                    <div class="modal-body  pt-4 mx-0">
-                        <!--begin::Input group-->
-
-                        <form action="{{ route('EventRequestDecline') }}" method="POST" class="form"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <!-- Add a hidden input field to carry the interest ID -->
-                            <input type="hidden" name="event_id" id="userId" value="">
-                            <div class="fv-row mb-5">
-                                <!--begin::Input-->
-                                <label for="name" class="fw-bold fs-4 pb-2 fw-600">Reason</label>
-                                <textarea style="background-color:#F0F1F3; font-size: 1.3rem;" type="text" placeholder="Add Reason"
-                                    name="reason" class="form-control form-control-solid mb-3 border" id="productDescription" cols="20"
-                                    rows="6" oninput="validateInput(this)" required></textarea>
-                                <!--end::Input-->
-                            </div>
-
-                            <div class="d-flex justify-content-center align-content-center pt-2 ">
-                                <!--begin::Button-->
-                                <button type="submit" id="kt_modal_add_customer_submit" class="btn col-12"
-                                    style="background-color: #38B89A; color:#FFFFFF">
-                                    <span class="indicator-label fs-4">Send</span>
-                                    <span class="indicator-progress">Please wait...
-                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                </button>
-                                <!--end::Button-->
-                            </div>
-                            <!--end::Input group-->
-                        </form>
-                    </div>
-                    <!--end::Modal body-->
-                </div>
-                <!--end::Modal content-->
-            </div>
-            <!--end::Modal dialog-->
-        </div>
-        <!--end::Modal - Reason -->
     </div>
     <!--end::Content-->
     <script type="module">
@@ -444,7 +376,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
+{{-- <script>
     $(document).ready(function() {
         $('#kt_modal_update_interests').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
@@ -515,7 +447,7 @@
         input.value = input.value.replace(regex, '');
         input.value = input.value.replace(/^\s*/, '');
     }
-</script>
+</script> --}}
 <script>
     // Handle click event for approval button
     $(document).on('click', '.btn-approve', function(e) {
@@ -624,45 +556,13 @@
                         <td>${row.event_time}</td>
                         <td>${row.duration} Hours</td>
                         <td>
-                            ${row.event_status == 2 ?
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <a>
-                                        <button type="button" class="btn btn-sm w-100 delete-interest"
-                                            style="background-color:#38B89A; color:white;" data-interest-id="${row.id}">Approve</button>
-                                    </a>
-                                    <a>
-                                        <button type="button" class="btn btn-sm w-100 ms-5"
-                                        style="background-color:#F52E2E; color:white;" data-bs-toggle="modal"
-                                        data-bs-target="#kt_modal_update_interests"
-                                        data-user-id="${row.id}">Reject</button>
-                                    </a>
-                                    <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
-                                        View detail
-                                    </a>
-                                </div>` 
-                            :
-                            row.event_status == 1 ?
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <div class="fw-bold fs-4 badge badge-light-success fw-normal">
-                                                Accepted
-                                    </div>
-                                    <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
-                                        View detail
-                                    </a>
-                                </div>`
-                            :
-                                `<div class="fs-4 fw-bolder text-dark d-flex align-content-end justify-content-end">
-                                    <div class="fw-bold fs-4 badge badge-light-danger fw-normal">
-                                                Rejected
-                                    </div>
-                                    <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
-                                        View detail
-                                    </a>
-                                </div>`       
-                        }
-                           
+                           <div class="fs-4 fw-bolder text-dark d-flex align-items-center justify-content-center">
+                                <a href="{{ URL::to('EventDetail') }}/${row.id}" class="link-success fw-bold ms-10">
+                                    View detail
+                                </a>
+                            </div>
                         </td>
-                       
+
                     </tr>
                 `;
                         tableBody.append(newRow);
