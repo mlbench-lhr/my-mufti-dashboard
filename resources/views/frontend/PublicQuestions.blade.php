@@ -163,7 +163,8 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getPublicQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
+            url: '{{ route('getPublicQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+                '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
@@ -209,8 +210,8 @@
                             </div>
                         </td>
                         <td>${row.user.user_type}</td>
-                        <td>${row.question}</td>
-                        <td> 
+                        <td>${truncateText(row.question, 14)}</td>
+                        <td>
                                 ${row.voting_option == 1 ?
                                     `Yes, No` :
                                     `True, False`}
@@ -222,7 +223,7 @@
                                 </a>
                             </div>
                         </td>
-                       
+
                     </tr>
                 `;
                         tableBody.append(newRow);
@@ -270,6 +271,11 @@
         });
     }
 
+
+    function truncateText(text, wordLimit) {
+        const words = text.split(" ");
+        return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + " ..." : text;
+    }
     // Handle page clicks
     // $(document).on('click', '.page-link', function(e) {
     //     e.preventDefault();

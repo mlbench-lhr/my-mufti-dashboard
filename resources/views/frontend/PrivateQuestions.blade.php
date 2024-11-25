@@ -115,7 +115,7 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-75px">Sr No</th>
-                                        <th class="min-w-175px">Question</th>
+                                        <th class="min-w-200px">Question</th>
                                         <th class="min-w-125px">Question Category</th>
                                         <th class="min-w-100px">Fiqa</th>
                                         <th class="min-w-125px">Date</th>
@@ -164,13 +164,15 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getPrivateQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
+            url: '{{ route('getPrivateQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+                '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
             success: function(response) {
                 var users = response.users;
-                console.log(users)
+                console.log(users);
+                console.log(users.data);
                 var tableBody = $('#verification-table-body');
                 var userCount = response.userCount;
                 $('#user-count').text(userCount);
@@ -199,7 +201,7 @@
                         var newRow = `
                     <tr class="text-start">
                         <td>${modifiedSerialNumber}</td>
-                        <td>${row.question}</td>
+                        <td>${truncateText(row.question, 14)}</td>
                         <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" >${categoryName}</td>
                         <td>${row.fiqa}</td>
                         <td>${row.registration_date}</td>
@@ -210,7 +212,7 @@
                                 </a>
                             </div>
                         </td>
-                       
+
                     </tr>
                 `;
                         tableBody.append(newRow);
@@ -266,6 +268,11 @@
 
             },
         });
+    }
+
+    function truncateText(text, wordLimit) {
+        const words = text.split(" ");
+        return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + " ..." : text;
     }
 
     // Handle page clicks

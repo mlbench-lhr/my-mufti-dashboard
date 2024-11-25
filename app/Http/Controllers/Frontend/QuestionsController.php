@@ -216,7 +216,7 @@ class QuestionsController extends Controller
         $query->orderBy('created_at', 'DESC');
         $user = $query->paginate(10);
         foreach ($user as $row) {
-            $row->registration_date = $row->created_at->format('M d, Y');
+            $row->registration_date = $row->created_at ? $row->created_at->format('M d, Y') : 'N/A';
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }

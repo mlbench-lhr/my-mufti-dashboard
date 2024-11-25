@@ -250,7 +250,7 @@
                             @endif
                         </ul>
 
-                        
+
                     </div>
                 </div>
             </div>
@@ -458,7 +458,7 @@
                     <tr>
                         <td class="d-flex align-items-center">${modifiedSerialNumber}</td>
 
-                        <td>${row.question}</td>
+                        <td>${truncateText(row.question, 20)}</td>
                         <td style = "padding-left: 50px;">${row.total_categories}</td>
                         <td style = "">${row.registration_date}</td>
                         <td style = "padding-left: 50px;">
@@ -473,7 +473,7 @@
                                 </a>
                             </div>
                         </td>
-                       
+
                     </tr>
                 `;
                         tableBody.append(newRow);
@@ -531,6 +531,11 @@
         });
     }
 
+    function truncateText(text, wordLimit) {
+        const words = text.split(" ");
+        return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + " ..." : text;
+    }
+
     // Handle page clicks
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
@@ -561,7 +566,7 @@
         loadVerificationData(currentPage);
     });
 </script>
-{{--                             
+{{--
                             @if ($response['user']->user_type == 'scholar')
                                 <li class="nav-item">
                                     <a class="nav-link text-active-success me-6 {{ Request::is('ScholarDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
@@ -574,12 +579,12 @@
                                         href="{{ URL::to('UserDetail/PublicQuestions/' . $response['user']->id) }}">Public
                                         Questions</a>
                                 </li>
-                            @endif 
+                            @endif
                             <li class="nav-item">
                                 <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PrivateQuestions/' . $response['user']->id) ? 'active' : null }}"
                                     href="{{ URL::to('UserDetail/PrivateQuestions/' . $response['user']->id) }}">Private
                                     Questions</a>
-                            </li> 
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Appointments/' . $response['user']->id) ? 'active' : null }}"
                                     href="{{ URL::to('UserDetail/Appointments/' . $response['user']->id) }}">Appointments</a>

@@ -113,8 +113,7 @@
 
                                     @if ($response['user']->user_type == 'scholar')
                                         <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                            <a
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -131,8 +130,7 @@
                                     @endif
 
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a
-                                            class="d-flex align-items-center text-gray-400  me-5 ">
+                                        <a class="d-flex align-items-center text-gray-400  me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
@@ -148,8 +146,7 @@
                                     </div>
                                     @if ($response['user']->user_type == 'user')
                                         <div class="d-flex flex-wrap fw-bold fs-6 pe-2 mt-2">
-                                            <a
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -206,49 +203,49 @@
 
                     <div class="d-flex overflow-auto h-55px">
                         <ul
-                        class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
-                        @php
-                            $routes = [
-                                'PublicQuestions' => 'Public Questions',
-                                'PrivateQuestions' => 'Private Questions',
-                                'Appointments' => 'Appointments',
-                                // 'UserEvents' => 'Events',
-                                'UserEventsRequest' => 'User All Events',
-                            ];
-
-                            $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
-                        @endphp
-
-                        @foreach ($routes as $route => $displayName)
+                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
                             @php
-                                $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
-                                $isActive = Request::is($fullUrl);
-                            @endphp
-                            <li class="nav-item min-w-175px d-flex justify-content-start">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
-                                    href="{{ URL::to($fullUrl) }}">
-                                    {{ $displayName }}
-                                </a>
-                            </li>
-                        @endforeach
+                                $routes = [
+                                    'PublicQuestions' => 'Public Questions',
+                                    'PrivateQuestions' => 'Private Questions',
+                                    'Appointments' => 'Appointments',
+                                    // 'UserEvents' => 'Events',
+                                    'UserEventsRequest' => 'User All Events',
+                                ];
 
-                        @if ($response['user']->user_type == 'scholar')
-                            <li class="nav-item min-w-150px">
-                                <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
-                                    Events</a>
-                            </li>
-                            <li class="nav-item min-w-150px">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
-                                    From Me</a>
-                            </li>
-                            <li class="nav-item min-w-100px">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
-                            </li>
-                        @endif
-                    </ul>
+                                $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                            @endphp
+
+                            @foreach ($routes as $route => $displayName)
+                                @php
+                                    $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
+                                    $isActive = Request::is($fullUrl);
+                                @endphp
+                                <li class="nav-item min-w-175px d-flex justify-content-start">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
+                                        href="{{ URL::to($fullUrl) }}">
+                                        {{ $displayName }}
+                                    </a>
+                                </li>
+                            @endforeach
+
+                            @if ($response['user']->user_type == 'scholar')
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
+                                        Events</a>
+                                </li>
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
+                                        From Me</a>
+                                </li>
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                                </li>
+                            @endif
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -433,7 +430,8 @@
             dataType: 'json',
             success: function(response) {
                 var users = response.users;
-                console.log(users)
+                console.log(users);
+                console.log(users.data);
                 var tableBody = $('#verification-table-body');
                 var userCount = response.userCount;
                 $('#user-count').text(userCount);
@@ -461,8 +459,8 @@
                         var newRow = `
                     <tr>
                         <td>${modifiedSerialNumber}</td>
-                        <td style = "" >${row.question}</td>
-                        <td>${row.registration_date}</td>
+                            <td>${truncateText(row.question, 20)}</td>
+                        <td>${formatDate(row.created_at)}</td>
                         <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" >${categoryName}</td>
                         <td>${row.fiqa}</td>
                         <td class="text-end">
@@ -472,13 +470,24 @@
                                 </a>
                             </div>
                         </td>
-                       
+
                     </tr>
                 `;
                         tableBody.append(newRow);
                         count++;
                     });
 
+                    function formatDate(dateString) {
+                        if (!dateString) return 'N/A'; // Handle null or undefined date
+
+                        const options = {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        };
+                        const date = new Date(dateString);
+                        return date.toLocaleDateString('en-US', options);
+                    }
                     // Function to pad numbers with zeros
                     function pad(number, length, character) {
                         var str = '' + number;
@@ -487,7 +496,6 @@
                         }
                         return str;
                     }
-
                     // Update pagination links
 
                     var paginationLinks = $('#pagination-links');
@@ -529,6 +537,11 @@
 
             },
         });
+    }
+
+    function truncateText(text, wordLimit) {
+        const words = text.split(" ");
+        return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + " ..." : text;
     }
 
     // Handle page clicks

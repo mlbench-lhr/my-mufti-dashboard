@@ -104,7 +104,7 @@
                                     @endif
                                     <!--begin::Name-->
                                     <div class="d-flex align-items-center mb-0">
-                                        <a  class="text-gray-900  fs-2 fw-bolder me-1">
+                                        <a class="text-gray-900  fs-2 fw-bolder me-1">
                                             {{ $response['user']->name }}
                                         </a>
                                     </div>
@@ -113,8 +113,7 @@
 
                                     @if ($response['user']->user_type == 'scholar')
                                         <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                            <a 
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -131,8 +130,7 @@
                                     @endif
 
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a 
-                                            class="d-flex align-items-center text-gray-400  me-5 ">
+                                        <a class="d-flex align-items-center text-gray-400  me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
@@ -148,8 +146,7 @@
                                     </div>
                                     @if ($response['user']->user_type == 'user')
                                         <div class="d-flex flex-wrap fw-bold fs-6 pe-2 mt-2">
-                                            <a 
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -475,14 +472,14 @@
                         </td>
                         <td style = "" >${row.user_detail.user_type}</td>
                         <td>${row.registration_date}</td>
-                        <td>${row.question}</td>
+                        <td>${truncateText(row.question, 20)}</td>
                         <td class = "text-center">
                             ${row.status == 0 ?
                                     `<div class="fw-bold fs-5 badge badge-light-warning fw-normal fs-4 ms-3 mb-3">Pending</div>` :
                                     row.status == 1 ?
                                     `<div class="fw-bold fs-5 badge badge-light-success fw-normal fs-4 ms-3 mb-3">Accepted</div>` :
                                     `<div class="fw-bold fs-5 badge badge-light-danger fw-normal fs-4 ms-3 mb-3"> Rejected </div>`}
-                        </td>                       
+                        </td>
                     </tr>
                 `;
                         tableBody.append(newRow);
@@ -539,6 +536,11 @@
 
             },
         });
+    }
+
+    function truncateText(text, wordLimit) {
+        const words = text.split(" ");
+        return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + " ..." : text;
     }
 
     // Handle page clicks
