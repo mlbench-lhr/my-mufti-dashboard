@@ -26,10 +26,12 @@ class MuftiController extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
+
         $check_user1 = Mufti::where(['user_id' => $user_id, 'status' => 1])->first();
         if ($check_user1) {
             return ResponseHelper::jsonResponse(false, 'Already send a request');
         }
+
         $check_user2 = Mufti::where(['user_id' => $user_id, 'status' => 2])->first();
         if ($check_user2) {
             return ResponseHelper::jsonResponse(false, 'Already Mufti');
@@ -48,6 +50,7 @@ class MuftiController extends Controller
         $name = 'degree_images/' . Str::random(15) . '.png';
         Storage::put('public/' . $name, $fileData);
         $data2['degree_image'] = $name;
+
         $data3 = [
             'user_id' => $request->user_id,
             'experience_startDate' => $request->experience_startDate,
@@ -72,6 +75,7 @@ class MuftiController extends Controller
 
         Degree::create($data2);
         Experience::create($data3);
+
         collect($request->interest)->map(function ($value) use ($request) {
             return [
                 'user_id' => $request->user_id,
@@ -84,13 +88,27 @@ class MuftiController extends Controller
 
         $user_data = User::where('id', $request->user_id)->first();
         if ($user_data->mufti_status == 2) {
-
             $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
             $user_data->interests = $interests;
-
         } else {
             $user_data->interests = [];
         }
+
+        $rejectionReason = "";
+        if ($user->mufti_status == 3) {
+            $mufti = Mufti::where('user_id', $user->id)->first();
+            $rejectionReason = $mufti ? $mufti->reason : "";
+        }
+
+        $userArray = $user->toArray();
+
+        $keys = array_keys($userArray);
+        $index = array_search('mufti_status', $keys) + 1;
+        $userArray = array_merge(
+            array_slice($userArray, 0, $index),
+            ['reason' => $rejectionReason],
+            array_slice($userArray, $index)
+        );
 
         $user_id = $user->id;
         $message = "User " . $user->name . " added scholar’s details.";
@@ -101,10 +119,11 @@ class MuftiController extends Controller
         $response = [
             'status' => true,
             'message' => 'Request Send Successfully!',
-            'data' => $user_data,
+            'data' => $userArray,
         ];
         return response()->json($response, 200);
     }
+
     public function search_scholar(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -141,6 +160,5 @@ class MuftiController extends Controller
             ];
             return response()->json($response, 200);
         }
-
     }
 }

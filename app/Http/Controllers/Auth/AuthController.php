@@ -10,6 +10,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SocialRequest;
 use App\Models\Interest;
+use App\Models\Mufti;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -119,9 +120,7 @@ class AuthController extends Controller
                 'data' => $user_data,
             ];
             return response()->json($response, 200);
-
         }
-
     }
     // for user signin
     public function sign_in(LoginRequest $request)
@@ -151,7 +150,9 @@ class AuthController extends Controller
                             "status" => false,
                             "message" => "Incorrect Password",
                             "data" => null,
-                        ], 200);
+                        ],
+                        200
+                    );
                 } else {
                     $user_data = User::where('id', $user->id)->first();
 
@@ -163,6 +164,12 @@ class AuthController extends Controller
 
                     $user_data->refresh();
 
+                    $rejectionReason = "";
+                    if ($user->mufti_status == 3) {
+                        $mufti = Mufti::where('user_id', $user->id)->first();
+                        $rejectionReason = $mufti ? $mufti->reason : "";
+                    }
+
                     if ($user_data->mufti_status == 2) {
                         $user_data->user_type = "scholar";
                         $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
@@ -170,13 +177,24 @@ class AuthController extends Controller
                     } else {
                         $user_data->interests = [];
                     }
+
+                    $userArray = $user->toArray();
+
+                    $keys = array_keys($userArray);
+                    $index = array_search('mufti_status', $keys) + 1;
+                    $userArray = array_merge(
+                        array_slice($userArray, 0, $index),
+                        ['reason' => $rejectionReason],
+                        array_slice($userArray, $index)
+                    );
+
+
                     $response = [
                         'status' => true,
                         'message' => 'Successfully logged In!',
-                        'data' => $user_data,
+                        'data' => $userArray,
                     ];
                     return response()->json($response, 200);
-
                 }
             } else {
                 return response()->json(
@@ -184,10 +202,11 @@ class AuthController extends Controller
                         "status" => false,
                         "message" => "user register through social signup",
                         "data" => null,
-                    ], 200);
+                    ],
+                    200
+                );
             }
         }
-
     }
     // for social login and signup
     public function social_login_signup(SocialRequest $request)
@@ -242,6 +261,12 @@ class AuthController extends Controller
                 $check_user_social_token->refresh();
 
                 // $check_user_social_token->update(['device_id' => $request->device_id]);
+                $rejectionReason = "";
+                if ($check_user_social_token->mufti_status == 3) {
+                    $mufti = Mufti::where('user_id', $check_user_social_token->id)->first();
+                    $rejectionReason = $mufti ? $mufti->reason : "";
+                }
+
                 if ($check_user_social_token->mufti_status == 2) {
                     $check_user_social_token->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_user_social_token->id)->select('id', 'user_id', 'interest')->get();
@@ -250,10 +275,19 @@ class AuthController extends Controller
                     $check_user_social_token->interests = [];
                 }
 
+                $userData = $check_user_social_token->toArray();
+                $keys = array_keys($userData);
+                $index = array_search('mufti_status', $keys) + 1;
+                $userData = array_merge(
+                    array_slice($userData, 0, $index),
+                    ['reason' => $rejectionReason],
+                    array_slice($userData, $index)
+                );
+
                 $data = [
                     'status' => true,
                     'message' => 'Successfully logged In!',
-                    'data' => $check_user_social_token,
+                    'data' => $userData,
                 ];
 
                 return response($data, 200);
@@ -273,12 +307,28 @@ class AuthController extends Controller
                 $user->save();
                 $id = $user->id;
                 $user_data = User::find($id);
+
+                $rejectionReason = "";
+                if ($user->mufti_status == 3) {
+                    $mufti = Mufti::where('user_id', $user->id)->first();
+                    $rejectionReason = $mufti ? $mufti->reason : "";
+                }
                 if ($user_data->mufti_status == 2) {
                     $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
                     $user_data->interests = $interests;
                 } else {
                     $user_data->interests = [];
                 }
+
+                $userArray = $user_data->toArray();
+                $keys = array_keys($userArray);
+                $index = array_search('mufti_status', $keys) + 1;
+                $userArray = array_merge(
+                    array_slice($userArray, 0, $index),
+                    ['reason' => $rejectionReason],
+                    array_slice($userArray, $index)
+                );
+
                 $user_id = $user_data->id;
                 $message = "A new user has registered on the platform. Review their profile.";
                 $type = "register";
@@ -288,7 +338,7 @@ class AuthController extends Controller
                 $data = [
                     'status' => true,
                     'message' => 'Successfully registered!',
-                    'data' => $user_data,
+                    'data' => $userArray,
                 ];
 
                 return response($data, 200);
@@ -336,6 +386,12 @@ class AuthController extends Controller
 
                 $check_user_social_token->refresh();
 
+                $rejectionReason = "";
+                if ($check_user_social_token->mufti_status == 3) {
+                    $mufti = Mufti::where('user_id', $check_user_social_token->id)->first();
+                    $rejectionReason = $mufti ? $mufti->reason : "";
+                }
+
                 if ($check_user_social_token->mufti_status == 2) {
                     $check_user_social_token->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_user_social_token->id)->select('id', 'user_id', 'interest')->get();
@@ -344,10 +400,20 @@ class AuthController extends Controller
                     $check_user_social_token->interests = [];
                 }
 
+                $userData = $check_user_social_token->toArray();
+                $keys = array_keys($userData);
+                $index = array_search('mufti_status', $keys) + 1;
+                $userData = array_merge(
+                    array_slice($userData, 0, $index),
+                    ['reason' => $rejectionReason],
+                    array_slice($userData, $index)
+                );
+
+
                 $data = [
                     'status' => true,
                     'message' => 'Successfully logged In!',
-                    'data' => $check_user_social_token,
+                    'data' => $userData,
                 ];
 
                 return response($data, 200);
@@ -367,12 +433,29 @@ class AuthController extends Controller
                 $user->save();
                 $id = $user->id;
                 $user_data = User::find($id);
+
+                $rejectionReason = "";
+                if ($user->mufti_status == 3) {
+                    $mufti = Mufti::where('user_id', $user->id)->first();
+                    $rejectionReason = $mufti ? $mufti->reason : "";
+                }
+
                 if ($user_data->mufti_status == 2) {
                     $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
                     $user_data->interests = $interests;
                 } else {
                     $user_data->interests = [];
                 }
+
+                $userArray = $user_data->toArray();
+                $keys = array_keys($userArray);
+                $index = array_search('mufti_status', $keys) + 1;
+                $userArray = array_merge(
+                    array_slice($userArray, 0, $index),
+                    ['reason' => $rejectionReason],
+                    array_slice($userArray, $index)
+                );
+
                 $user_id = $user_data->id;
                 $message = "A new user has registered on the platform. Review their profile.";
                 $type = "register";
@@ -382,7 +465,7 @@ class AuthController extends Controller
                 $data = [
                     'status' => true,
                     'message' => 'Successfully registered!',
-                    'data' => $user_data,
+                    'data' => $userArray,
                 ];
                 return response($data, 200);
             }
@@ -410,7 +493,6 @@ class AuthController extends Controller
         $user = User::where('id', $request->user_id)->first();
         $user->update(['device_id' => $request->device_id]);
         return ResponseHelper::jsonResponse(true, 'DeviceID Updated Successfully');
-
     }
     // for user logout
     public function logout(Request $request)
@@ -478,5 +560,4 @@ class AuthController extends Controller
             return response()->json($errorResponse, 400);
         }
     }
-
 }

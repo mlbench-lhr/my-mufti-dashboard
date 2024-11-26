@@ -10,6 +10,7 @@ use App\Http\Requests\BookAppointment;
 use App\Models\DeleteAccountRequest;
 use App\Models\HelpFeedBack;
 use App\Models\Interest;
+use App\Models\Mufti;
 use App\Models\MuftiAppointment;
 use App\Models\Notification;
 use App\Models\User;
@@ -42,28 +43,46 @@ class EditProfile extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
+
         $user = User::find($request->user_id);
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        if ($user->mufti_status == 2) {
+        $rejectionReason = "";
+        if ($user->mufti_status == 3) {
+            $mufti = Mufti::where('user_id', $user->id)->first();
+            $rejectionReason = $mufti ? $mufti->reason : "";
+        }
 
+        if ($user->mufti_status == 2) {
             $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
             $user->interests = $interests;
         } else {
             $user->interests = [];
         }
 
+        $userArray = $user->toArray();
+
+        $keys = array_keys($userArray);
+        $index = array_search('mufti_status', $keys) + 1;
+        $userArray = array_merge(
+            array_slice($userArray, 0, $index),
+            ['reason' => $rejectionReason],
+            array_slice($userArray, $index)
+        );
+
         return response()->json(
             [
                 'status' => true,
                 'message' => 'User Fetched Successfully',
-                'data' => $user,
+                'data' => $userArray,
             ],
             200
         );
     }
+
+
     // update/add user profile image
     public function edit_profile_image(Request $request)
     {

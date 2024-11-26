@@ -126,7 +126,7 @@ class User extends Authenticatable
 
     public function mufti_detail()
     {
-        return $this->hasOne(Mufti::class);
+        return $this->hasOne(Mufti::class, 'user_id', 'id');
     }
 
     public function events()
@@ -138,6 +138,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Question::class, 'user_id');
     }
+
+
 
     public function deleteWithRelated()
     {
