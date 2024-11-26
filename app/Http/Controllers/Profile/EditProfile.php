@@ -712,22 +712,27 @@ class EditProfile extends Controller
         if ($validationError !== null) {
             return $validationError;
         }
+
         $user = User::where(['id' => $request->user_id])->first();
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $userType = $user->user_type;
-        $status = $user->mufti_status;
 
         $page = $request->input('page', 1);
         $perPage = 10;
         $search = $request->input('search', '');
 
-        $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')
-            ->where('user_id', $request->user_id)
-            ->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC");
+        $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests');
 
+        if ($userType === 'scholar') {
+            $query->where('mufti_id', $request->user_id);
+        } elseif ($userType === 'user') {
+            $query->where('user_id', $request->user_id);
+        }
+
+        $query->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC");
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -747,6 +752,20 @@ class EditProfile extends Controller
         $totalPages = ceil($query->count() / $perPage);
         $myAppointments = $query->forPage($page, $perPage)->get();
 
+
+
+        if ($myAppointments->isEmpty()) {
+            return response()->json(
+                [
+                    'status' => false,
+                    'message' => 'No Appointments Found',
+                    'totalpages' => 0,
+                    'data' => [],
+                ],
+                200
+            );
+        }
+
         return response()->json(
             [
                 'status' => true,
@@ -756,6 +775,5 @@ class EditProfile extends Controller
             ],
             200
         );
-        // ->orWhere('mufti_id', $request->user_id)
     }
 }
