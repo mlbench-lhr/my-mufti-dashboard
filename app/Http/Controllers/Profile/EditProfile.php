@@ -721,12 +721,13 @@ class EditProfile extends Controller
         $status = $user->mufti_status;
 
         $page = $request->input('page', 1);
-        $perPage = 1;
+        $perPage = 10;
         $search = $request->input('search', '');
 
         $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')
             ->where('user_id', $request->user_id)
             ->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC");
+
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {

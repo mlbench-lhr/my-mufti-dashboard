@@ -31,7 +31,7 @@ class MuftiAppointment extends Model
     protected $attributes = [
         'description' => "",
         'payment_id' => "",
-        "payment_method" => "",   
+        "payment_method" => "",
     ];
 
     public function user_detail()
@@ -43,5 +43,5 @@ class MuftiAppointment extends Model
     {
         return $this->belongsTo(User::class, 'mufti_id')->select('id','name','image', 'email', 'fiqa');
     }
-    
+
 }
