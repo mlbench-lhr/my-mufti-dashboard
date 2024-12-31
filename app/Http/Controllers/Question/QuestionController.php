@@ -47,10 +47,10 @@ class QuestionController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
+        $userType = $user->user_type;
 
         $data = [
             'user_id' => $request->user_id,
@@ -59,6 +59,7 @@ class QuestionController extends Controller
             'time_limit' => $request->time_limit,
             'voting_option' => $request->voting_option,
             'user_info' => $request->user_info,
+            'user_type' => $userType,
         ];
 
         $question = Question::create($data);
@@ -81,12 +82,19 @@ class QuestionController extends Controller
 
         $question->user_detail = User::where('id', $question->user_id)->select('name', 'image')->first();
         $question->comments = QuestionComment::with('user_detail')->where('question_id', $question->id)->get();
-        $scholar_reply = ScholarReply::with('user_detail')->where('question_id', $question->id)->first();
+        $scholar_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
+        $lifecoach_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
 
         if ($scholar_reply) {
             $question->scholar_reply = $scholar_reply;
         } else {
             $question->scholar_reply = (object) [];
+        }
+
+        if ($lifecoach_reply) {
+            $question->lifecoach_reply = $lifecoach_reply;
+        } else {
+            $question->lifecoach_reply = (object) [];
         }
 
         if ($user->mufti_status == 2) {
@@ -405,8 +413,11 @@ class QuestionController extends Controller
 
         $question->comments = $paginatedComments->items();
 
-        $scholar_reply = ScholarReply::with('user_detail')->where('question_id', $question->id)->first();
+        $scholar_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
         $question->scholar_reply = $scholar_reply ? $scholar_reply : (object) [];
+
+        $lifecoach_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
+        $question->lifecoach_reply = $lifecoach_reply ? $lifecoach_reply : (object) [];
 
         $admin_reply = AdminReply::where([
             'question_id' => $question->id,
@@ -465,7 +476,6 @@ class QuestionController extends Controller
 
         return ResponseHelper::jsonResponse(true, 'Public Question deleted successfully!');
     }
-
 
     public function add_comment(Request $request)
     {
@@ -550,8 +560,8 @@ class QuestionController extends Controller
             return $validationError;
         }
 
-        if ($request->user_id != 9) {
-            return ResponseHelper::jsonResponse(false, 'Only Mufti Omer can reply to question.');
+        if ($request->user_id != 9 && $request->user_id != 24) {
+            return ResponseHelper::jsonResponse(false, 'Only Mufti Omer and Life Coach Abdullah can reply to question.');
         }
 
         $user = User::where('id', $request->user_id)->first();
@@ -559,8 +569,10 @@ class QuestionController extends Controller
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
-        $question = Question::where('id', $request->question_id)->first();
 
+        $userType = $user->user_type;
+
+        $question = Question::where('id', $request->question_id)->first();
         if (!$question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
@@ -571,6 +583,7 @@ class QuestionController extends Controller
             'user_id' => $request->user_id,
             'question_id' => $request->question_id,
             'reply' => $request->reply,
+            'user_type' => $userType ?? 'scholar',
         ];
 
         ScholarReply::updateOrCreate(
@@ -581,7 +594,8 @@ class QuestionController extends Controller
         $userData = User::where('id', $question->user_id)->first();
         $device_id = $userData->device_id;
         $title = "Public Question Update";
-        $body = 'Scholar ' . $user->name . ' has reply on your question.';
+        // $body = 'Scholar ' . $user->name . ' has reply on your question.';
+        $body = $user->name . ' has reply on your question.';
         $messageType = "Public Question Update";
         $otherData = "Public Question Update";
         $notificationType = "2";

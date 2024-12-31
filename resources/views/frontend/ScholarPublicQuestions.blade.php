@@ -140,7 +140,6 @@
                             <!--end::Nav item-->
                         </ul>
                     </div>
-
                     @if (count($questions))
                         <!--begin::Table-->
                         <div class="table-responsive">
@@ -149,10 +148,10 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
+                                        <th class="min-w-175px">Posted By</th>
+                                        <th class="min-w-150px">Account Type</th>
                                         <th class="min-w-275px">Question</th>
-                                        <th class="min-w-175px">Question Category</th>
                                         <th class="min-w-150px">Voting Option</th>
-                                        <th class="min-w-150px">Added On</th>
                                         <th class="min-w-125px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -170,7 +169,7 @@
                         <!--end::Table-->
                         <div class="pagination d-flex justify-content-end" id="pagination-links"></div>
                     @else
-                        <div class="text-center my-19">
+                        <div class=" text-center">
                             <img alt="Logo" style="align-items: center; margin-top:50px"
                                 src="{{ url('public/frontend/media/NoPrivateQus.svg') }}" class="img-fluid ">
                         </div>
@@ -394,14 +393,13 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getPublicQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+            url: '{{ route('getScholarPublicQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) +
                 '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
             success: function(response) {
                 var users = response.users;
-
                 var tableBody = $('#verification-table-body');
                 var userCount = response.userCount;
                 $('#user-count').text(userCount);
@@ -409,6 +407,7 @@
                 tableBody.empty();
 
                 if (users.data.length === 0) {
+                    // If no users found, display a message in a new row
                     var noUserRow = `
             <tr>
                 <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No Questions found</td>
@@ -417,29 +416,40 @@
                     tableBody.append(noUserRow);
                 } else {
                     var count = 0;
-                    console.log(users.data);
                     $.each(users.data, function(index, row) {
-
-                        var categoryName = row.question_category.map(function(categoryname) {
-                            return categoryname;
-                        });
-
-                        var category = categoryName.slice(0, 3).join(
-                            ', ');
-                        if (categoryName.length > 3) {
-                            category += ' ...';
-                        }
-
                         var newRow = `
                     <tr class="text-start">
+                        <td class="d-flex align-items-center">
+                            ${row.user.image ? `
+                                <div class="symbol symbol-50px overflow-hidden me-3">
+                                    <div class="symbol-label">
+                                        <img src="{{ asset('public/storage/') }}/${row.user.image}" alt="image" class="w-100" />
+                                    </div>
+                                </div>` : `
+                                <div class="symbol symbol-50px overflow-hidden me-3">
+                                    <div class="symbol-label">
+                                        <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
+                                    </div>
+                                </div>`}
+
+                            <div class="d-flex flex-column">
+                                <div class="text-gray-800 mb-1">
+                                    ${row.user.name}
+                                </div>
+                                <span>${row.user.email}</span>
+                            </div>
+                        </td>
+                         <td style="color: #38B89A;">
+                             ${row.user.user_type === 'lifecoach' 
+                            ? 'Life Coach' 
+                            : row.user.user_type.charAt(0).toUpperCase() + row.user.user_type.slice(1)}
+                            </td>
                         <td>${truncateText(row.question, 14)}</td>
-                        <td>${category}</td>
                         <td>
                                 ${row.voting_option == 1 ?
                                     `Yes, No` :
                                     `True, False`}
                         </td>
-                        <td>${row.registration_date}</td>
                         <td>
                             <div class="fs-4 fw-bolder text-dark">
                                 <a href="{{ URL::to('PublicQuestionDetail') }}/${row.id}?flag=1" class="link-success fw-bold">

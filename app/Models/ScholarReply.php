@@ -14,6 +14,7 @@ class ScholarReply extends Model
         'question_id',
         'reply',
         'user_id',
+        'user_type',
     ];
     protected $casts = [
         'user_id' => 'integer',

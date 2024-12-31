@@ -20,6 +20,8 @@ class Question extends Model
         'voting_option',
         'user_info',
         'user_id',
+        'user_type',
+
     ];
     protected $casts = [
         'question_category' => 'array',
@@ -33,9 +35,9 @@ class Question extends Model
         'question' => "",
     ];
 
-    protected $hidden = [
-        'question_category',
-    ];
+    // protected $hidden = [
+    //     'question_category',
+    // ];
 
     public function votes()
     {

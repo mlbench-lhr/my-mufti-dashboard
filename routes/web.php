@@ -76,6 +76,12 @@ Route::group(['middleware' => 'admin'], function () {
     //Public Questions
     Route::get('PublicQuestions', [QuestionsController::class, 'all_public_questions'])->name('PublicQuestions');
     Route::get('getPublicQuestions', [QuestionsController::class, 'get_all_public_questions'])->name('getPublicQuestions');
+
+    Route::get('PublicQuestions/Scholar', [QuestionsController::class, 'all_scholar_public_questions'])->name('PublicQuestions/Scholar');
+    Route::get('getScholarPublicQuestions', [QuestionsController::class, 'get_all_scholar_public_questions'])->name('getScholarPublicQuestions');
+
+
+
     Route::get('PublicQuestionDetail/{id}', [QuestionsController::class, 'public_question_detail'])->name('PublicQuestionDetail');
     Route::get('getQuestionComments/{id}', [QuestionsController::class, 'get_question_comments'])->name('getQuestionComments');
     Route::get('DeletePublicQuestion/{id}', [QuestionsController::class, 'delete_public_question'])->name('DeletePublicQuestion');
@@ -104,6 +110,9 @@ Route::group(['middleware' => 'admin'], function () {
 
     // Route for deleting an admin reply
     Route::post('/admin/reply/delete', [QuestionsController::class, 'deleteAdminReply'])->name('admin.reply.delete');
+
+    Route::post('/submitPublicQuestion', [QuestionsController::class, 'submit_public_question'])->name('submitPublicQuestion');
+
     // Appointments & Events
     Route::get('AllAppointments', [EventsAndApptController::class, 'all_appointments'])->name('AllAppointments');
     Route::get('getAppts', [EventsAndApptController::class, 'get_all_appointments'])->name('getAppts');

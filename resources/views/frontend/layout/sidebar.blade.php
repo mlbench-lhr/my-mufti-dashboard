@@ -187,11 +187,12 @@
                                   $currentRoute = request()->path();
                                   $isActive1 = preg_match('/^PublicQuestions$/', $currentRoute);
                                   $isActive2 = preg_match('/^PublicQuestionDetail(\/\d+)?$/', $currentRoute);
+                                  $isActive3 = preg_match('/^PublicQuestions\/Scholar$/', $currentRoute);
                               @endphp
                               <!--end::Svg Icon-->
                           </span>
                           <span class="menu-title"
-                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">All Public
+                              style="{{ $isActive1 || $isActive2 || $isActive3 ? 'color:#000000;' : 'color:#7B849A;' }}">All Public
                               Questions</span>
                       </a>
                   </div>

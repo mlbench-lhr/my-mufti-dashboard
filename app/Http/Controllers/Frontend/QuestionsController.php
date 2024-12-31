@@ -32,14 +32,40 @@ class QuestionsController extends Controller
 
     public function all_public_questions()
     {
-        $questions = Question::get();
+        $questions = Question::where('user_type', 'admin')->get();
+
         return view('frontend.PublicQuestions', compact('questions'));
     }
     public function get_all_public_questions(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = Question::count();
-        $query = Question::with('user');
+        $userCount = Question::where('user_type', 'admin')->count();
+        $query = Question::where('user_type', 'admin')->with('user');
+
+        if ($searchTerm) {
+            $query->where('question', 'LIKE', '%' . $searchTerm . '%');
+        }
+        $query->orderBy('created_at', 'DESC');
+
+        $user = $query->paginate(10);
+        foreach ($user as $row) {
+            $row->registration_date = $row->created_at->format('M d, Y');
+        }
+
+        return response()->json(['userCount' => $userCount, 'users' => $user]);
+    }
+
+    public function all_scholar_public_questions()
+    {
+        $questions = Question::whereIn('user_type', ['user', 'scholar', 'lifecoach'])->get();
+
+        return view('frontend.ScholarPublicQuestions', compact('questions'));
+    }
+    public function get_all_scholar_public_questions(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $userCount = Question::whereIn('user_type', ['user', 'scholar', 'lifecoach'])->count();
+        $query = Question::whereIn('user_type', ['user', 'scholar', 'lifecoach'])->with('user');
 
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
@@ -81,9 +107,11 @@ class QuestionsController extends Controller
         $question->user_detail = User::where('id', $question->user_id)->select('name', 'image', 'email', 'user_type')->first();
 
         $question->comments = QuestionComment::with('user_detail')->where('question_id', $question->id)->get();
-        $scholar_reply = ScholarReply::with('user_detail.interests')->where('question_id', $question->id)->first();
+        $scholar_reply = ScholarReply::with('user_detail.interests')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
+        $lifecoach_reply = ScholarReply::with('user_detail.interests')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
 
         $question->scholar_reply = $scholar_reply;
+        $question->lifecoach_reply = $lifecoach_reply;
 
         $isReplied = AdminReply::where([
             'question_id' => $question_id,
@@ -92,7 +120,6 @@ class QuestionsController extends Controller
 
         return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id', 'isReplied'));
     }
-
     public function get_question_comments(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -167,11 +194,11 @@ class QuestionsController extends Controller
             ->where('question_id', $question->id)
             ->get();
 
-        $scholar_reply = ScholarReply::with('user_detail.interests')
-            ->where('question_id', $question->id)
-            ->first();
+        $scholar_reply = ScholarReply::with('user_detail.interests')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
+        $lifecoach_reply = ScholarReply::with('user_detail.interests')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
 
         $question->scholar_reply = $scholar_reply;
+        $question->lifecoach_reply = $lifecoach_reply;
 
         return view('frontend.ReportedQuestionDetail', compact('question', 'reportedQuestion', 'question_id', 'type', 'user_id'));
     }
@@ -619,5 +646,24 @@ class QuestionsController extends Controller
         $adminReply->delete();
 
         return response()->json(['success' => 'Reply deleted successfully.']);
+    }
+
+    public function submit_public_question(Request $request)
+    {
+
+        $jsonString = $request->question_categories;
+        $questionCategories = json_decode($jsonString, true);
+        $questionCategories = array_column($questionCategories, 'name');
+        $data = [
+            'user_id' => (int) 1,
+            'question_category' => $questionCategories,
+            'question' => $request->question,
+            'time_limit' => "01-01-2027 00:00:00",
+            'voting_option' => (int) $request->voting_option,
+            'user_info' => (int) 0,
+            'user_type' => "admin",
+        ];
+        Question::create($data);
+        return response()->json(['success' => true, 'message' => 'Question submitted successfully!']);
     }
 }

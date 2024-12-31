@@ -81,10 +81,17 @@
                         Replied
                     </button>
                 @else
-                    <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
-                        data-bs-toggle="modal" data-bs-target="#replyModal">
-                        Reply as a Admin
-                    </button>
+                    @if ($question->user_type == 'admin')
+                        <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
+                            data-bs-toggle="modal123" data-bs-target="#replyModal123">
+                            Edit
+                        </button>
+                    @else
+                        <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
+                            data-bs-toggle="modal" data-bs-target="#replyModal">
+                            Reply as a Admin
+                        </button>
+                    @endif
                 @endif
                 <a href="{{ URL::to('DeletePublicQuestion/' . $question->id) }}?flag={{ $type }}&uId={{ $user_id }}"
                     id="delete-btn">
@@ -171,37 +178,39 @@
                 <div class="col-12 fs-3 fw-normal text-dark pb-10">
                     {{ $question->question }}
                 </div>
+                @if ($question->user_type != 'admin')
+                    <div class="col-12 fs-2 fw-bolder text-dark pb-2">
+                        Posted By
+                    </div>
 
-                <div class="col-12 fs-2 fw-bolder text-dark pb-2">
-                    Posted By
-                </div>
-
-                <div class="col-12 fs-2 fw-bolder text-dark d-flex pb-5">
-                    @if ($question->user_detail->image == '')
-                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
-                                style="height: 80px; width:80px;" />
-                        </div>
-                    @else
-                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                            <img src="{{ asset('public/storage/' . $question->user_detail->image) }}" alt="image"
-                                style="height: 80px; width:80px; object-fit: cover;" />
-                        </div>
-                    @endif
+                    <div class="col-12 fs-2 fw-bolder text-dark d-flex pb-5">
+                        @if ($question->user_detail->image == '')
+                            <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
+                                    style="height: 80px; width:80px;" />
+                            </div>
+                        @else
+                            <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                <img src="{{ asset('public/storage/' . $question->user_detail->image) }}" alt="image"
+                                    style="height: 80px; width:80px; object-fit: cover;" />
+                            </div>
+                        @endif
 
 
-                    <div class="ms-2">
-                        <div class="fs-5 fw-normal text-success">
-                            {{ $question->user_detail->user_type }}
-                        </div>
-                        <div class="fs-4">
-                            {{ $question->user_detail->name }}
-                        </div>
-                        <div class="fs-6 fw-normal text-muted">
-                            {{ $question->user_detail->email }}
+                        <div class="ms-2">
+                            <div class="fs-5 fw-normal text-success">
+                                {{ $question->user_detail->user_type }}
+                            </div>
+                            <div class="fs-4">
+                                {{ $question->user_detail->name }}
+                            </div>
+                            <div class="fs-6 fw-normal text-muted">
+                                {{ $question->user_detail->email }}
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
+
             </div>
             <div class="row mb-5">
                 <div class="col-3 fs-2 fw-bold text-dark">
@@ -283,33 +292,36 @@
 
             </div>
             {{-- Admin's Reply --}}
-            <div class="col-12 fs-2 fw-bolder text-dark pb-2 d-flex justify-content-between align-items-center">
-                <span>Admin's Reply</span>
-                <div>
-                    @if ($question->adminReply)
-                        <a href="javascript:void(0)" class="link-primary fw-bolder"
-                            onclick="confirmreplyDelete({{ $question->adminReply->id }})">
-                            <img src="{{ url('public/frontend/media/svg/deleteIcon.svg') }}" alt="Delete"
-                                style="width: 30px; height: 30px;">
-                        </a>
-                        <a href="javascript:void(0)" class="link-primary fw-bolder"
-                            onclick="editReply({{ $question->adminReply->id }}, '{{ addslashes($question->adminReply->reply) }}')">
-                            <img src="{{ url('public/frontend/media/svg/editPen.svg') }}" alt="Edit"
-                                style="width: 30px; height: 30px;">
-                        </a>
-                    @endif
+            @if ($question->user_type != 'admin')
+                <div class="col-12 fs-2 fw-bolder text-dark pb-2 d-flex justify-content-between align-items-center">
+                    <span>Admin's Reply</span>
+                    <div>
+                        @if ($question->adminReply)
+                            <a href="javascript:void(0)" class="link-primary fw-bolder"
+                                onclick="confirmreplyDelete({{ $question->adminReply->id }})">
+                                <img src="{{ url('public/frontend/media/svg/deleteIcon.svg') }}" alt="Delete"
+                                    style="width: 30px; height: 30px;">
+                            </a>
+                            <a href="javascript:void(0)" class="link-primary fw-bolder"
+                                onclick="editReply({{ $question->adminReply->id }}, '{{ addslashes($question->adminReply->reply) }}')">
+                                <img src="{{ url('public/frontend/media/svg/editPen.svg') }}" alt="Edit"
+                                    style="width: 30px; height: 30px;">
+                            </a>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            @if ($question->adminReply)
-                <div class="col-12 fs-4 fw-bold text-black pb-10" data-reply-id="{{ $question->adminReply->id }}">
-                    {{ $question->adminReply->reply }}
-                </div>
-            @else
-                <div class="col-12 fs-1 fw-bold text-muted pb-10 text-center mt-10 mb-10">
-                    You haven't replied to this question!
-                </div>
+                @if ($question->adminReply)
+                    <div class="col-12 fs-4 fw-bold text-black pb-10" data-reply-id="{{ $question->adminReply->id }}">
+                        {{ $question->adminReply->reply }}
+                    </div>
+                @else
+                    <div class="col-12 fs-1 fw-bold text-muted pb-10 text-center mt-10 mb-10">
+                        You haven't replied to this question!
+                    </div>
+                @endif
             @endif
+
 
 
             {{-- Scholars Reply --}}
@@ -355,6 +367,53 @@
             @else
                 <div class="col-12 fs-1  fw-bold text-muted pb-10 text-center mt-10 mb-10">
                     No Scholar’s Reply!!
+                </div>
+            @endif
+
+
+            {{-- Life Coach Reply --}}
+            <div class="col-12 fs-2 fw-bolder text-dark pb-2">
+                Life Coach’s Reply
+            </div>
+            @if (!empty($question->lifecoach_reply))
+                <div class="col-12 fs-2 fw-bolder text-dark d-flex pb-5">
+                    @if ($question->lifecoach_reply->user_detail->image == '')
+                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                            <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image"
+                                style="height: 80px; width:80px;" />
+                        </div>
+                    @else
+                        <div class="symbol   symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                            <img src="{{ asset('public/storage/' . $question->lifecoach_reply->user_detail->image) }}"
+                                alt="image" style="height: 80px; width:80px; object-fit: cover;" />
+                        </div>
+                    @endif
+
+
+                    <div class="ms-2">
+                        <div class="fs-5 fw-normal text-success">
+                            {{ $question->lifecoach_reply->user_detail->fiqa }}
+                        </div>
+                        <div class="fs-4">
+                            {{ $question->lifecoach_reply->user_detail->name }}
+                        </div>
+                        <div class="text-muted fs-5 fw-normal"
+                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;">
+                            @foreach ($question->lifecoach_reply->user_detail->interests as $data)
+                                {{ $data->interest }}
+                                @if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 fs-4 fw-bold text-black pb-10">
+                    {{ $question->lifecoach_reply->reply }}
+                </div>
+            @else
+                <div class="col-12 fs-1  fw-bold text-muted pb-10 text-center mt-10 mb-10">
+                    No Life Coach’s Reply!!
                 </div>
             @endif
 
