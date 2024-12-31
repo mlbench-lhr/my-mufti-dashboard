@@ -69,30 +69,38 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Public Qustions
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Public Questions
                 </h1>
                 <h3 class="mt-4" style=" font-weight:400; ">Total posted questions: <span class="fs-5" id="user-count"
                         style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
-            <div class="d-flex align-items-center position-relative ">
-                <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none">
-                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1"
-                            transform="rotate(45 17.0365 15.1223)" fill="black" />
-                        <path
-                            d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                            fill="black" />
-                    </svg>
-                </span>
-                <!--end::Svg Icon-->
-                <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
-                    placeholder="Search" />
-            </div>
-            <!--end::Page title=-->
+            <div class="d-flex gap-2">
+                <div class="d-flex align-items-center position-relative ">
+                    <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                    <span class="svg-icon svg-icon-1 position-absolute ms-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none">
+                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1"
+                                transform="rotate(45 17.0365 15.1223)" fill="black" />
+                            <path
+                                d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                fill="black" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                    <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
+                        placeholder="Search" />
+                </div>
 
+                <div class="dropdown">
+                    <button class="btn" style="background-color: #38B89A; color: #FFFFFF" type="button" id=""
+                        data-bs-toggle="modal" data-bs-target="#kt_modal_add_interests" aria-expanded="false">
+                        Add Question
+                    </button>
+                </div>
+                <!--end::Page title=-->
+            </div>
         </div>
         <!--end::Container-->
     </div>
@@ -146,10 +154,112 @@
             <!--end::Card-->
         </div>
         <!--end::Container-->
+
+        <!--begin::Modal - interests - Add-->
+        <div class="modal fade" id="kt_modal_add_interests" tabindex="-1" aria-hidden="true">
+            <!--begin::Modal dialog-->
+            <div class="modal-dialog mw-500px">
+                <!--begin::Modal content-->
+                <div class="modal-content">
+                    <!--begin::Modal header-->
+                    <div class="modal-header pb-0 border-0 d-f justify-content-between">
+                        <!--begin::Close-->
+                        <p>
+
+                        </p>
+                        <p class="fs-1 fw-bold">
+                            Add Public Question
+                        </p>
+                        <div class="btn btn-lg btn-icon btn-active-color-dark" data-bs-dismiss="modal">
+                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+
+                            <span class="svg-icon svg-icon-1 w-25">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M33.3307 20.0013C33.3307 27.3651 27.3612 33.3346 19.9974 33.3346C12.6336 33.3346 6.66406 27.3651 6.66406 20.0013C6.66406 12.6375 12.6336 6.66797 19.9974 6.66797C27.3612 6.66797 33.3307 12.6375 33.3307 20.0013ZM15.9569 15.9608C16.3474 15.5703 16.9806 15.5703 17.3711 15.9608L19.9974 18.5871L22.6236 15.9609C23.0141 15.5703 23.6473 15.5703 24.0378 15.9609C24.4283 16.3514 24.4283 16.9846 24.0378 17.3751L21.4116 20.0013L24.0378 22.6275C24.4283 23.018 24.4283 23.6512 24.0378 24.0417C23.6472 24.4322 23.0141 24.4322 22.6235 24.0417L19.9974 21.4155L17.3711 24.0417C16.9806 24.4322 16.3475 24.4322 15.9569 24.0417C15.5664 23.6512 15.5664 23.018 15.9569 22.6275L18.5831 20.0013L15.9569 17.375C15.5664 16.9845 15.5664 16.3514 15.9569 15.9608Z"
+                                        fill="#303030" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--begin::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body  pt-4 mx-0">
+
+
+                        <!--begin::Input group-->
+                        <form action="AddMenuItemCategories" method="post" class="form" enctype="multipart/form-data"
+                            onsubmit="return validateForm()">
+                            @method('POST')
+
+                            @csrf
+                            <div class="fv-row mb-5">
+                                <!--begin::Input-->
+                                <label for="name" class="fw-bold fs-6 pb-2 fw-600">Category Name</label>
+                                <input type="text" class="form-control form-control-solid"
+                                    placeholder="Enter name of category" name="name" oninput="validateInput(this)"
+                                    required />
+                                <!--end::Input-->
+                            </div>
+
+                            <div class="mb-3">
+
+                            </div>
+
+                            <div class="d-flex justify-content-center align-content-center pt-2">
+                                <!--begin::Button-->
+                                <button type="submit" id="kt_modal_add_customer_submit" class="btn btn-lg col-12"
+                                    style="background-color: #8BC63E; color:#FFFFFF">
+                                    <span class="indicator-label">Add</span>
+                                    <span class="indicator-progress">Please wait...
+                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                </button>
+                                <!--end::Button-->
+                            </div>
+                            <!--end::Input group-->
+                        </form>
+                    </div>
+                    <!--end::Modal body-->
+                </div>
+                <!--end::Modal content-->
+            </div>
+            <!--end::Modal dialog-->
+        </div>
+        <!--end::Modal - interests - Add-->
+
     </div>
     <!--end::Content-->
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function validateForm() {
+
+        var fileInput = document.getElementById('img_select');
+        var fileError = document.getElementById('fileError');
+
+        if (!fileInput.files.length) {
+            fileError.innerText = 'Image is required';
+            return false;
+
+        } else {
+            var fileInput = document.getElementById('img_select');
+            var fileSize = fileInput.files[0].size;
+            var fileSizeKB = fileSize / 1024;
+
+            if (fileSizeKB > 1024) {
+                fileError.innerText = 'File size exceeds 1 MB. Please choose a smaller image.';
+                return false;
+            } else {
+                fileError.innerText = '';
+                return true;
+
+            }
+        }
+    }
+</script>
 <script>
     var currentPage = 1;
 

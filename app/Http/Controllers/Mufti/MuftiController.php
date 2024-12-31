@@ -169,7 +169,7 @@ class MuftiController extends Controller
 
         $excludedUserId = [$request->user_id];
 
-        $muftis = User::with('interests')->where('name', 'LIKE', '%' . $search . '%')->where('id', 9)->where('mufti_status', 2)->whereNotIn('id', $excludedUserId)->get();
+        $muftis = User::with('interests')->where('name', 'LIKE', '%' . $search . '%')->whereIn('id', [9,24])->where('mufti_status', 2)->whereNotIn('id', $excludedUserId)->get();
 
         if (count($muftis) <= 0) {
             return response()->json([
