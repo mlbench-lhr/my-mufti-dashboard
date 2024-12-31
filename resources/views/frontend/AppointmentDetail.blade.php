@@ -141,7 +141,7 @@
                 </div>
                 <div class="col-6">
                     <div class=" title fs-2 fw-bold pb-9">
-                        Scholars
+                        {{$detail->user_type == 'scholar' ? 'Scholar' : 'Life Coach';}}
                     </div>
                     <div class="d-flex flex-wrap flex-sm-nowrap">
                         <!--begin: Pic-->

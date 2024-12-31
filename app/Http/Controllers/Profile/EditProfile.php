@@ -677,14 +677,23 @@ class EditProfile extends Controller
     {
 
         $user = User::where('id', $request->user_id)->first();
-
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        $mufti = User::where(['id' => $request->mufti_id, 'mufti_status' => 2])->first();
 
-        if (!$mufti) {
-            return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+        $muftiTypes = [
+            9 => ['status' => 2, 'type' => 'scholar', 'notFoundMessage' => 'Mufti Not Found'],
+            24 => ['status' => 4, 'type' => 'lifecoach', 'notFoundMessage' => 'Life Coach Not Found'],
+        ];
+
+        if (isset($muftiTypes[$request->mufti_id])) {
+            $typeDetails = $muftiTypes[$request->mufti_id];
+            $mufti = User::where(['id' => $request->mufti_id, 'mufti_status' => $typeDetails['status']])->first();
+            if (!$mufti) {
+                return ResponseHelper::jsonResponse(false, $typeDetails['notFoundMessage']);
+            }
+        } else {
+            return ResponseHelper::jsonResponse(false, 'Invalid Mufti ID');
         }
 
         $data = [
@@ -699,8 +708,9 @@ class EditProfile extends Controller
             'payment_id' => $request->payment_id ?? "",
             'payment_method' => $request->payment_method ?? "",
             'consultation_fee' => $request->consultation_fee,
+            'user_type' => $typeDetails['type'],
         ];
-        $appointment = MuftiAppointment::create($data);
+        MuftiAppointment::create($data);
 
         $device_id = $mufti->device_id;
         $title = "New Appointment Request Received";
@@ -724,7 +734,6 @@ class EditProfile extends Controller
         $user_id = $user->id;
         $message = "A new appointment booked by " . $user->name;
         $type = "booked appointment";
-
         ActivityHelper::store_avtivity($user_id, $message, $type);
 
         return ResponseHelper::jsonResponse(true, 'Book Appointment successfully!');

@@ -21,7 +21,7 @@ class MuftiAppointment extends Model
         'consultation_fee',
         'payment_method',
         'payment_id',
-
+        'user_type',
     ];
     protected $casts = [
         'mufti_id' => 'integer',
