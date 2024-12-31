@@ -97,24 +97,23 @@
                             <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
                                 <!--begin::User-->
                                 <div class="d-flex flex-column">
-                                    @if ($response['user']->user_type == 'scholar')
+                                    @if ($response['user']->user_type == 'scholar' || $response['user']->user_type == 'lifecoach')
                                         <div class="d-flex align-items-center  text-success fs-6 fw-bolder me-1">
                                             {{ $response['user']->fiqa }}
                                         </div>
                                     @endif
                                     <!--begin::Name-->
                                     <div class="d-flex align-items-center mb-0">
-                                        <a  class="text-gray-900  fs-2 fw-bolder me-1">
+                                        <a class="text-gray-900  fs-2 fw-bolder me-1">
                                             {{ $response['user']->name }}
                                         </a>
                                     </div>
                                     <!--end::Name-->
                                     <!--begin::Info-->
 
-                                    @if ($response['user']->user_type == 'scholar')
+                                    @if ($response['user']->user_type == 'scholar' || $response['user']->user_type == 'lifecoach')
                                         <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                            <a 
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -131,8 +130,7 @@
                                     @endif
 
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a 
-                                            class="d-flex align-items-center text-gray-400  me-5 ">
+                                        <a class="d-flex align-items-center text-gray-400  me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
@@ -148,8 +146,7 @@
                                     </div>
                                     @if ($response['user']->user_type == 'user')
                                         <div class="d-flex flex-wrap fw-bold fs-6 pe-2 mt-2">
-                                            <a 
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -185,7 +182,7 @@
                         <!--end::Info-->
                     </div>
                     <!--end::Details-->
-                    @if ($response['user']->user_type == 'scholar')
+                    @if ($response['user']->user_type == 'scholar' || $response['user']->user_type == 'lifecoach')
                         <div class="row mb-5">
                             <div class="col-2 fs-2 fw-bold text-dark">
                                 Category
@@ -206,49 +203,68 @@
 
                     <div class="d-flex overflow-auto h-55px">
                         <ul
-                        class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
-                        @php
-                            $routes = [
-                                'PublicQuestions' => 'Public Questions',
-                                'PrivateQuestions' => 'Private Questions',
-                                'Appointments' => 'Appointments',
-                                // 'UserEvents' => 'Events',
-                                'UserEventsRequest' => 'User All Events',
-                            ];
-
-                            $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
-                        @endphp
-
-                        @foreach ($routes as $route => $displayName)
+                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
                             @php
-                                $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
-                                $isActive = Request::is($fullUrl);
-                            @endphp
-                            <li class="nav-item min-w-175px d-flex justify-content-start">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
-                                    href="{{ URL::to($fullUrl) }}">
-                                    {{ $displayName }}
-                                </a>
-                            </li>
-                        @endforeach
+                                if ($response['user']->user_type == 'lifecoach') {
+                                    $routes = [
+                                        'PublicQuestions' => 'Public Questions',
+                                        'Appointments' => 'Appointments',
+                                        'UserEventsRequest' => 'Coach All Events',
+                                    ];
+                                } else {
+                                    $routes = [
+                                        'PublicQuestions' => 'Public Questions',
+                                        'PrivateQuestions' => 'Private Questions',
+                                        'Appointments' => 'Appointments',
+                                        // 'UserEvents' => 'Events',
+                                        'UserEventsRequest' => 'User All Events',
+                                    ];
+                                }
 
-                        @if ($response['user']->user_type == 'scholar')
-                            <li class="nav-item min-w-150px">
-                                <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
-                                    Events</a>
-                            </li>
-                            <li class="nav-item min-w-150px">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
-                                    From Me</a>
-                            </li>
-                            <li class="nav-item min-w-100px">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
-                            </li>
-                        @endif
-                    </ul>
+                                // $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                                $baseUrl = match ($response['user']->user_type) {
+                                    'scholar' => 'ScholarDetail/',
+                                    'lifecoach' => 'LifeCoachDetail/',
+                                    default => 'UserDetail/',
+                                };
+                            @endphp
+
+                            @foreach ($routes as $route => $displayName)
+                                @php
+                                    $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
+                                    $isActive = Request::is($fullUrl);
+                                @endphp
+                                <li class="nav-item min-w-175px d-flex justify-content-start">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
+                                        href="{{ URL::to($fullUrl) }}">
+                                        {{ $displayName }}
+                                    </a>
+                                </li>
+                            @endforeach
+
+                            @if ($response['user']->user_type == 'scholar')
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-6 {{ Request::is('ScholarDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('ScholarDetail/UserEvents/' . $response['user']->id) }}">Added
+                                        Events</a>
+                                </li>
+                                <li class="nav-item min-w-150px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/AskedFromScholar/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/AskedFromScholar/' . $response['user']->id) }}">Asked
+                                        From Me</a>
+                                </li>
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                                </li>
+                            @endif
+                            @if ($response['user']->user_type == 'lifecoach')
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('LifeCoachDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('LifeCoachDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                                </li>
+                            @endif
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -440,7 +456,6 @@
                 tableBody.empty();
 
                 if (users.data.length === 0) {
-                    // If no users found, display a message in a new row
                     var noUserRow = `
             <tr>
                 <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No Appointments found</td>
@@ -498,22 +513,18 @@
                     });
 
 
-                    // Update pagination links
 
                     var paginationLinks = $('#pagination-links');
                     paginationLinks.empty();
 
                     var totalPages = users.last_page;
 
-                    // Render "Previous" button
                     var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
                         <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
                     </li>`;
                     paginationLinks.append(previousLink);
 
-                    // Add pagination links to the page
                     for (var i = 1; i <= totalPages; i++) {
-                        // Render ellipsis if there are many pages
                         if (totalPages > 7 && (i < currentPage - 2 || i > currentPage + 2)) {
                             if (i === 1 || i === totalPages) {
                                 var pageLink =
@@ -529,7 +540,6 @@
                         paginationLinks.append(pageLink);
                     }
 
-                    // Render "Next" button
                     var nextLink = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
                     <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
                 </li>`;
@@ -541,7 +551,6 @@
         });
     }
 
-    // Handle page clicks
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
         currentPage = $(this).data('page');
@@ -561,7 +570,6 @@
         loadVerificationData(currentPage);
     });
     $(document).ready(function() {
-        // Handle global search input
         $('#global-search').on('input', function() {
             var searchTerm = $(this).val();
             loadVerificationData(1, searchTerm);

@@ -121,6 +121,7 @@
                                     href="{{ URL::to('RequestedEvents') }}">Requested Events</a>
                             </li>
                             <!--end::Nav item-->
+                        </ul>
                     </div>
 
 
@@ -182,7 +183,8 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getEvents') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
+            url: '{{ route('getEvents') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+                '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',

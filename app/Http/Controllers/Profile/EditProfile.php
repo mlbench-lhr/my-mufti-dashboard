@@ -55,12 +55,9 @@ class EditProfile extends Controller
             $rejectionReason = $mufti ? $mufti->reason : "";
         }
 
-        if ($user->mufti_status == 2) {
-            $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
-            $user->interests = $interests;
-        } else {
-            $user->interests = [];
-        }
+        $user->interests = ($user->mufti_status == 2 || $user->mufti_status == 4)
+        ? Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get()
+        : [];
 
         $userArray = $user->toArray();
 
@@ -81,7 +78,6 @@ class EditProfile extends Controller
             200
         );
     }
-
 
     // update/add user profile image
     public function edit_profile_image(Request $request)
@@ -113,7 +109,12 @@ class EditProfile extends Controller
         $user->image = $name;
         $user->save();
         $user = User::find($request->user_id);
-        if ($user->mufti_status == 2) {
+
+        $user->reason = ($user->mufti_status == 3)
+        ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
+        : "";
+
+        if ($user->mufti_status == 2 || $user->mufti_status == 4) {
             $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
             $user->interests = $interests;
 
@@ -166,12 +167,21 @@ class EditProfile extends Controller
             $user->password = Hash::make($request->new_password);
             $user->save();
             $user = User::find($request->user_id);
-            if ($user->mufti_status == 2) {
-                $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
-                $user->interests = $interests;
-            } else {
-                $user->interests = [];
-            }
+
+            // if ($user->mufti_status == 2) {
+            //     $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
+            //     $user->interests = $interests;
+            // } else {
+            //     $user->interests = [];
+            // }
+
+            $user->reason = ($user->mufti_status == 3)
+            ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
+            : "";
+
+            $user->interests = ($user->mufti_status == 2 || $user->mufti_status == 4)
+            ? Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get()
+            : [];
             return response()->json(
                 [
                     'status' => true,
@@ -205,12 +215,21 @@ class EditProfile extends Controller
         User::where('id', $request->user_id)->update(['name' => $request->name]);
 
         $user = User::find($request->user_id);
-        if ($user->mufti_status == 2) {
-            $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
-            $user->interests = $interests;
-        } else {
-            $user->interests = [];
-        }
+        // if ($user->mufti_status == 2) {
+        //     $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
+        //     $user->interests = $interests;
+        // } else {
+        //     $user->interests = [];
+        // }
+
+        $user->reason = ($user->mufti_status == 3)
+        ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
+        : "";
+
+        $user->interests = ($user->mufti_status == 2 || $user->mufti_status == 4)
+        ? Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get()
+        : [];
+
         return response()->json(
             [
                 'status' => true,
@@ -247,12 +266,21 @@ class EditProfile extends Controller
         $user = HelpFeedBack::create($data);
 
         $user = User::find($request->user_id);
-        if ($user->mufti_status == 2) {
-            $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
-            $user->interests = $interests;
-        } else {
-            $user->interests = [];
-        }
+        // if ($user->mufti_status == 2) {
+        //     $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
+        //     $user->interests = $interests;
+        // } else {
+        //     $user->interests = [];
+        // }
+
+        $user->reason = ($user->mufti_status == 3)
+        ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
+        : "";
+
+        $user->interests = ($user->mufti_status == 2 || $user->mufti_status == 4)
+        ? Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get()
+        : [];
+
         return response()->json(
             [
                 'status' => true,
@@ -645,7 +673,6 @@ class EditProfile extends Controller
         }
     }
 
-
     public function book_an_appointment(BookAppointment $request)
     {
 
@@ -751,8 +778,6 @@ class EditProfile extends Controller
 
         $totalPages = ceil($query->count() / $perPage);
         $myAppointments = $query->forPage($page, $perPage)->get();
-
-
 
         if ($myAppointments->isEmpty()) {
             return response()->json(

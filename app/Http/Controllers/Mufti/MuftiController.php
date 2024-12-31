@@ -27,14 +27,33 @@ class MuftiController extends Controller
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $check_user1 = Mufti::where(['user_id' => $user_id, 'status' => 1])->first();
-        if ($check_user1) {
-            return ResponseHelper::jsonResponse(false, 'Already send a request');
-        }
+        // $check_user1 = Mufti::where(['user_id' => $user_id, 'status' => 1, 'user_type' => 'scholar'])->first();
+        // if ($check_user1) {
+        //     return ResponseHelper::jsonResponse(false, 'Already send a request');
+        // }
+        // $check_user2 = Mufti::where(['user_id' => $user_id, 'status' => 1, 'user_type' => 'lifecoach'])->first();
+        // if ($check_user2) {
+        //     return ResponseHelper::jsonResponse(false, 'Already send a request');
+        // }
+        // $check_user3 = Mufti::where(['user_id' => $user_id, 'status' => 2, 'user_type' => 'scholar'])->first();
+        // if ($check_user3) {
+        //     return ResponseHelper::jsonResponse(false, 'Already Mufti');
+        // }
+        // $check_user4 = Mufti::where(['user_id' => $user_id, 'status' => 2, 'user_type' => 'lifecoach'])->first();
+        // if ($check_user4) {
+        //     return ResponseHelper::jsonResponse(false, 'Already Life Coach');
+        // }
 
-        $check_user2 = Mufti::where(['user_id' => $user_id, 'status' => 2])->first();
-        if ($check_user2) {
-            return ResponseHelper::jsonResponse(false, 'Already Mufti');
+        $existingMufti = Mufti::where('user_id', $request->user_id)
+            ->whereIn('status', [1, 2])
+            ->whereIn('user_type', ['scholar', 'lifecoach'])
+            ->first();
+
+        if ($existingMufti) {
+            $message = $existingMufti->status === 1
+            ? 'Already sent a request'
+            : ($existingMufti->user_type === 'scholar' ? 'Already Mufti' : 'Already Life Coach');
+            return ResponseHelper::jsonResponse(false, $message);
         }
 
         $data2 = [
@@ -66,6 +85,7 @@ class MuftiController extends Controller
             'fiqa' => $request->fiqa,
             'reason' => "",
             'status' => 1,
+            'user_type' => $request->join_as ?? 'scholar',
         ];
 
         Mufti::updateOrCreate(
@@ -86,13 +106,18 @@ class MuftiController extends Controller
             Interest::create($data);
         });
 
-        $user_data = User::where('id', $request->user_id)->first();
-        if ($user_data->mufti_status == 2) {
-            $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
-            $user_data->interests = $interests;
-        } else {
-            $user_data->interests = [];
-        }
+        $user = User::where('id', $request->user_id)->first();
+
+        // if ($user->mufti_status == 2 || $user->mufti_status == 4) {
+        //     $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
+        //     $user->interests = $interests;
+        // } else {
+        //     $user->interests = [];
+        // }
+
+        $user->interests = ($user->mufti_status == 2 || $user->mufti_status == 4)
+        ? Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get()
+        : [];
 
         $rejectionReason = "";
         if ($user->mufti_status == 3) {
@@ -101,7 +126,6 @@ class MuftiController extends Controller
         }
 
         $userArray = $user->toArray();
-
         $keys = array_keys($userArray);
         $index = array_search('mufti_status', $keys) + 1;
         $userArray = array_merge(
@@ -110,11 +134,12 @@ class MuftiController extends Controller
             array_slice($userArray, $index)
         );
 
-        $user_id = $user->id;
-        $message = "User " . $user->name . " added scholar’s details.";
-        $type = "request";
-
-        ActivityHelper::store_avtivity($user_id, $message, $type);
+        $userType = $request->join_as === 'lifecoach' ? 'life coach' : 'scholar’s';
+        ActivityHelper::store_avtivity(
+            $user->id,
+            "User {$user->name} added {$userType} details.",
+            'request'
+        );
 
         $response = [
             'status' => true,

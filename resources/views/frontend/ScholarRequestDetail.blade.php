@@ -78,7 +78,7 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">Scholar Request Detail
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">Scholar/Life Coach Request Detail
                 </h1>
                 <!--end::Heading-->
             </div>
@@ -165,6 +165,9 @@
                                     <button type="button" class="btn w-100 text-uppercase delete-interest"
                                         style="background-color:#38B89A; color:white; pointer-events: none; cursor: default;"
                                         data-interest-id="{{ $response['user']->id }}" disabled>Approve</button>
+                                    {{-- <button type="button" class="btn w-100 text-uppercase delete-interest"
+                                        style="background-color:#38B89A; color:white;"
+                                        data-interest-id="{{ $response['user']->id }}">Approve</button> --}}
                                     <button type="button" class="btn w-100 text-uppercase ms-5"
                                         style="background-color:#F52E2E; color:white;" data-bs-toggle="modal"
                                         data-bs-target="#kt_modal_update_interests"
@@ -181,18 +184,28 @@
             </div>
             <div class="card ">
                 <div class="card-body pt-9 pb-0">
+
+                    <div class="row mb-0 flex-row">
+                        <div class="col-3 fs-2 fw-bold text-dark mb-10">
+                            Requested For
+                        </div>
+                        <div class="col-9 fs-2 fw-bold text-muted mb-10">
+                            {{ $response['requested_for'] == 'lifecoach' ? 'Life Coach' : 'Scholar' }}
+                        </div>
+                    </div>
+
                     <div class="row mb-5 flex-row">
-                        <div class="col-12 fs-2 fw-bold text-dark mb-10">
+                        <div class="col-3 fs-2 fw-bold text-dark mb-10">
                             Work Experience
                         </div>
-                        <div class="col-12 fs-2 fw-bold text-muted mb-10">
+                        <div class="col-9 fs-2 fw-bold text-muted mb-10">
                             {{ $response['experience'] }}
                         </div>
                     </div>
 
                     <div class="row mb-5">
                         <div class="col-12 fs-2 fw-bold text-dark mb-10">
-                            Category
+                            Categories
                         </div>
                         <div class="col-12 mb-10">
                             <div class="row">

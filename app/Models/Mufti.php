@@ -15,6 +15,7 @@ class Mufti extends Model
         'fiqa',
         'reason',
         'status',
+        'user_type',
     ];
     protected $casts = [
         'user_id' => 'integer',

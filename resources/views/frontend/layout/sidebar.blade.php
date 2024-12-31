@@ -96,8 +96,33 @@
                               Scholars</span>
                       </a>
                   </div>
-
               </div>
+
+              <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
+                  <div class="menu-item">
+                      <a class="menu-link" href="{{ URL::to('AllLifeCoach') }}">
+                          <span class="menu-icon">
+                              <!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg-->
+                              <span class="menu-bullet">
+                                  <span class="bullet bullet-dot"></span>
+                              </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^AllLifeCoach$/', $currentRoute);
+                                  $isActive2 = preg_match('/^LifeCoachDetail\/Degrees(\/\d+)?$/', $currentRoute);
+                                  $isActive3 = preg_match('/^LifeCoachDetail\/PublicQuestions(\/\d+)?$/', $currentRoute);
+                                  $isActive4 = preg_match('/^LifeCoachDetail\/Appointments(\/\d+)?$/', $currentRoute);
+                                  $isActive5 = preg_match('/^LifeCoachDetail\/UserEventsRequest(\/\d+)?$/', $currentRoute);
+                              @endphp
+                              <!--end::Svg Icon-->
+                          </span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 || $isActive3 || $isActive4 || $isActive5 ? 'color:#000000;' : 'color:#7B849A;' }}">All
+                              Life Coach</span>
+                      </a>
+                  </div>
+              </div>
+
 
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
@@ -115,8 +140,9 @@
                               <!--end::Svg Icon-->
                           </span>
                           <span class="menu-title"
-                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">Scholars
-                              Requests</span>
+                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">Scholars/Life
+                              Coach Requests
+                          </span>
                       </a>
                   </div>
 
@@ -206,7 +232,10 @@
                               @php
                                   $currentRoute = request()->path();
                                   $isActive1 = preg_match('/^ReportedQuestions$/', $currentRoute);
-                                  $isActive2 = preg_match('/^ReportedQuestionDetail(\/\d+){2}(\?flag=\d+)?$/', $currentRoute);
+                                  $isActive2 = preg_match(
+                                      '/^ReportedQuestionDetail(\/\d+){2}(\?flag=\d+)?$/',
+                                      $currentRoute,
+                                  );
 
                               @endphp
                               <!--end::Svg Icon-->
@@ -231,7 +260,6 @@
                               @php
                                   $currentRoute = request()->path();
                                   $isActive1 = preg_match('/^DeletionRequests$/', $currentRoute);
-                                  // $isActive2 = preg_match('/^AppointmentDetail(\/\d+)?$/', $currentRoute);
                               @endphp
                               <!--end::Svg Icon-->
                           </span>
@@ -252,12 +280,13 @@
                               @php
                                   $currentRoute = request()->path();
                                   $isActive1 = preg_match('/^AllAppointments$/', $currentRoute);
-                                  $isActive2 = preg_match('/^AppointmentDetail(\/\d+)?$/', $currentRoute);
+                                  $isActive2 = preg_match('/^AllAppointments\/LifeCoach$/', $currentRoute);
+                                  $isActive3 = preg_match('/^AppointmentDetail(\/\d+)?$/', $currentRoute);
                               @endphp
                               <!--end::Svg Icon-->
                           </span>
                           <span class="menu-title"
-                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">All
+                              style="{{ $isActive1 || $isActive2 || $isActive3 ? 'color:#000000;' : 'color:#7B849A;' }}">All
                               Appointments</span>
                       </a>
                   </div>

@@ -107,7 +107,7 @@
                             <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
                                 <!--begin::User-->
                                 <div class="d-flex flex-column">
-                                    @if ($response['user']->user_type == 'scholar')
+                                    @if ($response['user']->user_type == 'scholar' || $response['user']->user_type == 'lifecoach')
                                         <div class="d-flex align-items-center  text-success fs-6 fw-bolder me-1">
                                             {{ $response['user']->fiqa }}
                                         </div>
@@ -121,10 +121,9 @@
                                     <!--end::Name-->
                                     <!--begin::Info-->
 
-                                    @if ($response['user']->user_type == 'scholar')
+                                    @if ($response['user']->user_type == 'scholar' || $response['user']->user_type == 'lifecoach')
                                         <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                            <a
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -141,8 +140,7 @@
                                     @endif
 
                                     <div class="d-flex flex-wrap flex-row fw-bold fs-5 pe-2 ">
-                                        <a
-                                            class="d-flex align-items-center text-gray-400  me-5 ">
+                                        <a class="d-flex align-items-center text-gray-400  me-5 ">
                                             <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                             <span class="  me-2">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
@@ -158,8 +156,7 @@
                                     </div>
                                     @if ($response['user']->user_type == 'user')
                                         <div class="d-flex flex-wrap fw-bold fs-6 pe-2 mt-2">
-                                            <a
-                                                class="d-flex align-items-center text-gray-400  me-5 ">
+                                            <a class="d-flex align-items-center text-gray-400  me-5 ">
                                                 <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
                                                 <span class="  me-2">
                                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -195,7 +192,7 @@
                         <!--end::Info-->
                     </div>
                     <!--end::Details-->
-                    @if ($response['user']->user_type == 'scholar')
+                    @if ($response['user']->user_type == 'scholar' || $response['user']->user_type == 'lifecoach')
                         <div class="row mb-5">
                             <div class="col-2 fs-2 fw-bold text-dark">
                                 Category
@@ -218,15 +215,28 @@
                         <ul
                             class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
                             @php
-                                $routes = [
-                                    'PublicQuestions' => 'Public Questions',
-                                    'PrivateQuestions' => 'Private Questions',
-                                    'Appointments' => 'Appointments',
-                                    // 'UserEvents' => 'Events',
-                                    'UserEventsRequest' => 'User All Events',
-                                ];
+                                if ($response['user']->user_type == 'lifecoach') {
+                                    $routes = [
+                                        'PublicQuestions' => 'Public Questions',
+                                        'Appointments' => 'Appointments',
+                                       'UserEventsRequest' => 'Coach All Events',
+                                    ];
+                                } else {
+                                    $routes = [
+                                        'PublicQuestions' => 'Public Questions',
+                                        'PrivateQuestions' => 'Private Questions',
+                                        'Appointments' => 'Appointments',
+                                        // 'UserEvents' => 'Events',
+                                        'UserEventsRequest' => 'User All Events',
+                                    ];
+                                }
 
-                                $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                                // $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
+                                $baseUrl = match ($response['user']->user_type) {
+                                    'scholar' => 'ScholarDetail/',
+                                    'lifecoach' => 'LifeCoachDetail/',
+                                    default => 'UserDetail/',
+                                };
                             @endphp
 
                             @foreach ($routes as $route => $displayName)
@@ -256,6 +266,12 @@
                                 <li class="nav-item min-w-100px">
                                     <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                                </li>
+                            @endif
+                            @if ($response['user']->user_type == 'lifecoach')
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('LifeCoachDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('LifeCoachDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
                                 </li>
                             @endif
                         </ul>

@@ -58,7 +58,7 @@
                 </div>
                 <!--end::Aside mobile toggle-->
                 <!--begin::Logo-->
-                <a href="" class="d-flex align-items-center">
+                <a class="d-flex align-items-center">
                     <img alt="Logo" src="{{ '../../public/frontend/media/sidebarLogo.svg' }}" class="h-20px" />
                 </a>
                 <!--end::Logo-->
@@ -69,9 +69,9 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">Scholars/Life Coach Requests
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Appointments
                 </h1>
-                <h3 class="mt-4" style=" font-weight:400; ">Total Requests: <span class="fs-5" id="user-count"
+                <h3 class="mt-4" style=" font-weight:400; ">Total Appointments: <span class="fs-5" id="user-count"
                         style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
@@ -89,7 +89,7 @@
                 </span>
                 <!--end::Svg Icon-->
                 <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
-                    placeholder="Search user" />
+                    placeholder="Search by name..." />
             </div>
             <!--end::Page title=-->
 
@@ -106,7 +106,26 @@
             <div class="card">
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
-                    @if (count($users))
+
+                    <div class="d-flex overflow-auto h-55px">
+                        <ul
+                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
+                            <!--begin::Nav item-->
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('AllAppointments') ? 'active' : null }}"
+                                    href="{{ URL::to('AllAppointments') }}">Booked From Scholars</a>
+                            </li>
+                            <!--end::Nav item-->
+                            <!--begin::Nav item-->
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('AllAppointments/LifeCoach') ? 'active' : null }}"
+                                    href="{{ URL::to('AllAppointments/LifeCoach') }}">Booked From Life Coach</a>
+                            </li>
+                            <!--end::Nav item-->
+                        </ul>
+                    </div>
+
+                    @if (count($appts))
                         <!--begin::Table-->
                         <div class="table-responsive">
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
@@ -114,11 +133,12 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-75px">Sr No</th>
-                                        <th class="min-w-125px">User</th>
-                                        <th class="min-w-125px">Request For</th>
-                                        <th class="min-w-125px">Email Address</th>
-                                        <th class="min-w-125px text-center">Action</th>
+                                        <th class="min-w-175px">Username</th>
+                                        <th class="min-w-175px">Scholarname</th>
+                                        <th class="min-w-125px">Category</th>
+                                        <th class="min-w-125px">Date</th>
+                                        <th class="min-w-100px">Charges</th>
+                                        <th class="min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -135,9 +155,9 @@
                         <!--end::Table-->
                         <div class="pagination d-flex justify-content-end" id="pagination-links"></div>
                     @else
-                        <div class="text-center my-19">
+                        <div class=" text-center">
                             <img alt="Logo" style="align-items: center; margin-top:50px"
-                                src="{{ url('public/frontend/media/noNewRequest.svg') }}" class="img-fluid ">
+                                src="{{ url('public/frontend/media/noAppLife.svg') }}" class="img-fluid ">
                         </div>
                     @endif
                 </div>
@@ -163,7 +183,7 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getScholarRequests') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+            url: '{{ route('getLifeCoachAppts') }}?page=' + page + '&search=' + encodeURIComponent(search) +
                 '&sorting=' +
                 sortingOption,
             method: 'GET',
@@ -185,18 +205,19 @@
         `;
                     tableBody.append(noUserRow);
                 } else {
-
-                    var count = (users.data.length > 0) ? (users.current_page - 1) * users.per_page : 0;
+                    var badgeColors = ['text-warning', 'text-danger', 'text-primary', 'text-success'];
+                    var bgColors = ['bg-light-warning', 'bg-light-danger', 'bg-light-primary',
+                        'bg-light-success'
+                    ];
+                    var count = 0;
                     $.each(users.data, function(index, row) {
-                        var modifiedSerialNumber = pad(count + 1, 2, '0');
                         var newRow = `
                     <tr class="text-start">
-                        <td>${modifiedSerialNumber}</td>
                         <td class="d-flex align-items-center">
-                            ${row.image ? `
+                            ${row.user_detail.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
                                     <div class="symbol-label">
-                                        <img src="{{ asset('public/storage/') }}/${row.image}" alt="image" class="w-100" />
+                                        <img src="{{ asset('public/storage/') }}/${row.user_detail.image}" alt="image" class="w-100" />
                                     </div>
                                 </div>` : `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -207,38 +228,49 @@
 
                             <div class="d-flex flex-column">
                                 <div class="text-gray-800 mb-1">
-                                    ${row.name}
+                                    ${row.user_detail.name}
                                 </div>
-                                <span> #${row.id}</span>
+                                <span>${row.user_detail.email}</span>
                             </div>
                         </td>
-                       <td>
-                        ${row.userType === 'lifecoach' 
-                            ? 'Life Coach' 
-                            : row.userType.charAt(0).toUpperCase() + row.userType.slice(1)}
+                        <td>
+                            <div class = "d-flex align-items-center">
+                                ${row.mufti_detail.image ? `
+                                    <div class="symbol symbol-50px overflow-hidden me-3">
+                                         <div class="symbol-label">
+                                            <img src="{{ asset('public/storage/') }}/${row.mufti_detail.image}" alt="image" class="w-100" />
+                                        </div>
+                                    </div>` : `
+                                    <div class="symbol symbol-50px overflow-hidden me-3">
+                                        <div class="symbol-label">
+                                             <img src="{{ url('public/frontend/media/blank.svg') }}" alt="image" class="w-100" />
+                                         </div>
+                                    </div>`}
+                                     <div class="d-flex flex-column">
+                                        <div class="text-gray-800 mb-1">
+                                        ${row.mufti_detail.name}
+                                    </div>
+                                    <span>${row.mufti_detail.email}</span>
+                                    </div>
+                           </div> 
                         </td>
-                        <td>${row.email}</td>
-                        <td class="text-center">
-                             <div class="fs-4 fw-bolder text-dark">
-                                <a href="{{ URL::to('ScholarRequest/Detail') }}/${row.id}" class="link-success fw-bold">
-                                    View Detail
+                        <td>${row.category}</td>
+                        <td>${row.registration_date}</td>
+                        <td>${row.consultation_fee}$</td>
+                        <td>
+                            <div class="fs-4 fw-bolder text-dark">
+                                <a href="{{ URL::to('AppointmentDetail') }}/${row.id}" class="link-success fw-bold">
+                                    View detail
                                 </a>
                             </div>
                         </td>
+                       
                     </tr>
                 `;
                         tableBody.append(newRow);
                         count++;
                     });
 
-                    // Function to pad numbers with zeros
-                    function pad(number, length, character) {
-                        var str = '' + number;
-                        while (str.length < length) {
-                            str = character + str;
-                        }
-                        return str;
-                    }
                 }
                 var paginationLinks = $('#pagination-links');
                 paginationLinks.empty();
@@ -308,6 +340,7 @@
     // $(document).ready(function() {
     //     loadVerificationData(currentPage);
     // });
+
 
     function updateUrlParameter(key, value) {
         var url = new URL(window.location.href);

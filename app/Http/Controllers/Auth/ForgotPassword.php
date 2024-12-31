@@ -9,6 +9,7 @@ use App\Http\Requests\ResetPasswordRequests;
 use App\Http\Requests\VerifyOTPRequest;
 use App\Mail\GenerateOTPMail;
 use App\Models\Interest;
+use App\Models\Mufti;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -61,12 +62,22 @@ class ForgotPassword extends Controller
         if ($check_user) {
             User::where('email', $request->email)->update(['email_code' => 0]);
             $user = User::where('email', $email)->first();
-            if ($user->mufti_status == 2) {
-                $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
-                $user->interests = $interests;
-            } else {
-                $user->interests = [];
-            }
+            // if ($user->mufti_status == 2) {
+            //     $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
+            //     $user->interests = $interests;
+            // } else {
+            //     $user->interests = [];
+            // }
+
+            $user->interests = ($user->mufti_status == 2 || $user->mufti_status == 4)
+            ? Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get()
+            : [];
+
+            $user->reason = ($user->mufti_status == 3)
+            ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
+            : "";
+        
+
             $data = [
                 'status' => true,
                 'message' => 'OTP Verified',

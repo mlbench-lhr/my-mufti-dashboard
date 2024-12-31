@@ -529,7 +529,6 @@ class QuestionsController extends Controller
             }
         }
 
-
         return redirect()->to('/PrivateQuestionDetail/' . $request->query_id . '?flag=1');
     }
 

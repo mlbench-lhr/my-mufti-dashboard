@@ -21,19 +21,24 @@ Route::group(['middleware' => 'admin'], function () {
     // users & scholars
     Route::get('AllUsers', [UserController::class, 'all_users'])->name('AllUsers');
     Route::get('getUsers', [UserController::class, 'get_all_users'])->name('getUsers');
+
     Route::get('AllScholars', [UserController::class, 'all_scholars'])->name('AllScholars');
     Route::get('getScholars', [UserController::class, 'get_all_scholars'])->name('getScholars');
+
+    Route::get('AllLifeCoach', [UserController::class, 'all_lifecoach'])->name('AllLifeCoach');
+    Route::get('getLifecoach', [UserController::class, 'get_all_lifecoach'])->name('getLifecoach');
+
     Route::get('ScholarsRequests', [UserController::class, 'all_scholar_request'])->name('ScholarsRequests');
     Route::get('getScholarRequests', [UserController::class, 'get_all_scholar_request'])->name('getScholarRequests');
     Route::get('ScholarRequest/Detail/{id}', [UserController::class, 'scholar_request_detail'])->name('ScholarRequest/Detail');
     Route::get('Approve/{id}', [UserController::class, 'approve_request'])->name('Approve');
-    // Route::get('Reject/{id}', [UserController::class, 'reject_request'])->name('Reject');
     Route::post('Reject', [UserController::class, 'reject_request'])->name('Reject');
 
 
-    // Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
     Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
     Route::get('ScholarDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('ScholarDetail/PublicQuestions');
+    Route::get('LifeCoachDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('LifeCoachDetail/PublicQuestions');
+
     Route::get('getUserPublicQuestions/{id}', [UserController::class, 'get_public_questions_posted_by_user'])->name('getUserPublicQuestions');
 
     Route::get('UserDetail/PrivateQuestions/{id}', [UserController::class, 'user_detail_private_questons'])->name('UserDetail/PrivateQuestions');
@@ -42,6 +47,8 @@ Route::group(['middleware' => 'admin'], function () {
 
     Route::get('UserDetail/Appointments/{id}', [UserController::class, 'user_detail_appointments'])->name('UserDetail/Appointments');
     Route::get('ScholarDetail/Appointments/{id}', [UserController::class, 'user_detail_appointments'])->name('ScholarDetail/Appointments');
+    Route::get('LifeCoachDetail/Appointments/{id}', [UserController::class, 'user_detail_appointments'])->name('LifeCoachDetail/Appointments');
+
     Route::get('getUserAppointments/{id}', [UserController::class, 'get_appointments_of_user'])->name('getUserAppointments');
 
     Route::get('UserDetail/UserEvents/{id}', [UserController::class, 'user_events'])->name('UserDetail/UserEvents');
@@ -50,12 +57,18 @@ Route::group(['middleware' => 'admin'], function () {
 
     Route::get('UserDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('UserDetail/UserEventsRequest');
     Route::get('ScholarDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('ScholarDetail/UserEventsRequest');
+    Route::get('LifeCoachDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('LifeCoachDetail/UserEventsRequest');
+
+    
     Route::get('getUserEventsRequests/{id}', [UserController::class, 'get_user_events_requests'])->name('getUserEventsRequests');
 
 
     Route::get('UserDetail/AskedFromScholar/{id}', [UserController::class, 'user_detail_asked_from_me'])->name('UserDetail/AskedFromScholar');
     Route::get('getUserAskedFromMe/{id}', [UserController::class, 'get_asked_from_me'])->name('getUserAskedFromMe');
     Route::get('UserDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('UserDetail/Degrees');
+
+    Route::get('LifeCoachDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('LifeCoachDetail/Degrees');
+
 
     Route::get('DeleteUser/{id}', [UserController::class, 'delete_user'])->name('DeleteUser');
 
@@ -94,6 +107,10 @@ Route::group(['middleware' => 'admin'], function () {
     // Appointments & Events
     Route::get('AllAppointments', [EventsAndApptController::class, 'all_appointments'])->name('AllAppointments');
     Route::get('getAppts', [EventsAndApptController::class, 'get_all_appointments'])->name('getAppts');
+
+    Route::get('AllAppointments/LifeCoach', [EventsAndApptController::class, 'all_lifeCoach_appointments'])->name('AllAppointments/LifeCoach');
+    Route::get('getLifeCoachAppts', [EventsAndApptController::class, 'get_all_lifeCoach_appointments'])->name('getLifeCoachAppts');
+
     Route::get('AppointmentDetail/{id}', [EventsAndApptController::class, 'appointment_detail'])->name('AppointmentDetail');
 
     Route::get('AllEvents', [EventsAndApptController::class, 'all_events'])->name('AllEvents');
@@ -101,7 +118,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('RequestedEvents', [EventsAndApptController::class, 'all_requested_events'])->name('RequestedEvents');
     Route::get('getRequestedEvents', [EventsAndApptController::class, 'get_all_requested_events'])->name('getRequestedEvents');
     Route::get('EventRequestApprove/{id}', [EventsAndApptController::class, 'approve_request'])->name('EventRequestApprove');
-    // Route::get('EventRequestDecline/{id}', [EventsAndApptController::class, 'reject_request'])->name('EventRequestDecline');
     Route::post('EventRequestDecline', [EventsAndApptController::class, 'reject_request'])->name('EventRequestDecline');
 
 

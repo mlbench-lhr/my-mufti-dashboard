@@ -58,18 +58,21 @@ class AuthController extends Controller
             ];
             $user = User::create($data);
             $user_data = User::where('id', $user->id)->first();
-            if ($user_data->mufti_status == 2) {
+
+            $user_data->reason = "";
+
+            if ($user_data->mufti_status == 2 || $user_data->mufti_status == 4) {
                 $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
                 $user_data->interests = $interests;
             } else {
                 $user_data->interests = [];
             }
+
             $user_id = $user_data->id;
             $message = "A new user has registered on the platform. Review their profile.";
             $type = "register";
 
             ActivityHelper::store_avtivity($user_id, $message, $type);
-
             $response = [
                 'status' => true,
                 'message' => 'Successfully registered!',
@@ -102,7 +105,10 @@ class AuthController extends Controller
             ];
             $user = User::create($data);
             $user_data = User::where('id', $user->id)->first();
-            if ($user_data->mufti_status == 2) {
+            
+            $user_data->reason = "";
+
+            if ($user_data->mufti_status == 2 || $user_data->mufti_status == 4) {
                 $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
                 $user_data->interests = $interests;
             } else {
@@ -169,8 +175,7 @@ class AuthController extends Controller
                         $mufti = Mufti::where('user_id', $user->id)->first();
                         $rejectionReason = $mufti ? $mufti->reason : "";
                     }
-
-                    if ($user_data->mufti_status == 2) {
+                    if ($user_data->mufti_status == 2 || $user_data->mufti_status == 4) {
                         $user_data->user_type = "scholar";
                         $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
                         $user_data->interests = $interests;
@@ -187,7 +192,6 @@ class AuthController extends Controller
                         ['reason' => $rejectionReason],
                         array_slice($userArray, $index)
                     );
-
 
                     $response = [
                         'status' => true,
@@ -267,7 +271,7 @@ class AuthController extends Controller
                     $rejectionReason = $mufti ? $mufti->reason : "";
                 }
 
-                if ($check_user_social_token->mufti_status == 2) {
+                if ($check_user_social_token->mufti_status == 2 || $check_user_social_token->mufti_status == 4) {
                     $check_user_social_token->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_user_social_token->id)->select('id', 'user_id', 'interest')->get();
                     $check_user_social_token->interests = $interests;
@@ -313,7 +317,7 @@ class AuthController extends Controller
                     $mufti = Mufti::where('user_id', $user->id)->first();
                     $rejectionReason = $mufti ? $mufti->reason : "";
                 }
-                if ($user_data->mufti_status == 2) {
+                if ($user_data->mufti_status == 2 || $user_data->mufti_status == 4) {
                     $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
                     $user_data->interests = $interests;
                 } else {
@@ -392,7 +396,7 @@ class AuthController extends Controller
                     $rejectionReason = $mufti ? $mufti->reason : "";
                 }
 
-                if ($check_user_social_token->mufti_status == 2) {
+                if ($check_user_social_token->mufti_status == 2 || $check_user_social_token->mufti_status == 4) {
                     $check_user_social_token->user_type = "scholar";
                     $interests = Interest::where('user_id', $check_user_social_token->id)->select('id', 'user_id', 'interest')->get();
                     $check_user_social_token->interests = $interests;
@@ -408,7 +412,6 @@ class AuthController extends Controller
                     ['reason' => $rejectionReason],
                     array_slice($userData, $index)
                 );
-
 
                 $data = [
                     'status' => true,
@@ -439,8 +442,7 @@ class AuthController extends Controller
                     $mufti = Mufti::where('user_id', $user->id)->first();
                     $rejectionReason = $mufti ? $mufti->reason : "";
                 }
-
-                if ($user_data->mufti_status == 2) {
+                if ($user_data->mufti_status == 2 || $user_data->mufti_status == 4) {
                     $interests = Interest::where('user_id', $user_data->id)->select('id', 'user_id', 'interest')->get();
                     $user_data->interests = $interests;
                 } else {

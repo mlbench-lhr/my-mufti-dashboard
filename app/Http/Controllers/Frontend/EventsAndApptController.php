@@ -24,14 +24,44 @@ class EventsAndApptController extends Controller
 
     public function all_appointments()
     {
-        $appts = MuftiAppointment::get();
+        $appts = MuftiAppointment::where('user_type', 'scholar')->get();
         return view('frontend.AllAppointments', compact('appts'));
     }
     public function get_all_appointments(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = MuftiAppointment::count();
-        $query = MuftiAppointment::with('user_detail', 'mufti_detail');
+        $userCount = MuftiAppointment::where('user_type', 'scholar')->count();
+        $query = MuftiAppointment::where('user_type', 'scholar')->with('user_detail', 'mufti_detail');
+
+        if ($searchTerm) {
+            $query->where(function ($query) use ($searchTerm) {
+                $query->whereHas('mufti_detail', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                })
+                    ->orWhereHas('user_detail', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+                    });
+            });
+        }
+        $query->orderBy('created_at', 'desc');
+
+        $user = $query->paginate(10);
+        foreach ($user as $row) {
+            $row->registration_date = $row->created_at->format('M d, Y');
+        }
+        return response()->json(['userCount' => $userCount, 'users' => $user]);
+    }
+
+    public function all_lifeCoach_appointments()
+    {
+        $appts = MuftiAppointment::where('user_type', 'lifecoach')->get();
+        return view('frontend.AllLifeCoachAppointments', compact('appts'));
+    }
+    public function get_all_lifeCoach_appointments(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $userCount = MuftiAppointment::where('user_type', 'lifecoach')->count();
+        $query = MuftiAppointment::where('user_type', 'lifecoach')->with('user_detail', 'mufti_detail');
 
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {

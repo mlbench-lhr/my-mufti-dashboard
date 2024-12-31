@@ -189,6 +189,31 @@ class UserController extends Controller
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
 
+    public function all_lifecoach()
+    {
+        $users = User::where('user_type', 'lifecoach')->get();
+        return view('frontend.AllLifeCoach', compact('users'));
+    }
+    public function get_all_lifecoach(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $userCount = User::where('user_type', 'lifecoach')->count();
+        $query = User::where('user_type', 'lifecoach');
+
+        if ($searchTerm) {
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+        }
+        $query->orderBy('created_at', 'desc');
+
+        $user = $query->paginate(10);
+        foreach ($user as $row) {
+            $row->registration_date = $row->created_at->format('M d, Y');
+            $interests = Interest::where('user_id', $row->id)->select('id', 'user_id', 'interest')->get();
+            $row->interests = $interests;
+        }
+        return response()->json(['userCount' => $userCount, 'users' => $user]);
+    }
+
     public function all_scholar_request()
     {
         $users = User::where(['user_type' => 'user', 'mufti_status' => 1])->get();
@@ -216,6 +241,8 @@ class UserController extends Controller
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('M d, Y');
             $row->posted_questions = Question::where('user_id', $row->id)->count();
+            $userType = Mufti::where('user_id', $row->id)->select('user_type')->first();
+            $row->userType = $userType->user_type;
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
@@ -224,12 +251,12 @@ class UserController extends Controller
         $user = User::with('interests', 'mufti_detail')->where('id', $id)->first();
         $degrees = Degree::where('user_id', $id)->get();
         $experience = Experience::where('user_id', $id)->first();
+        $userType = Mufti::where('user_id', $id)->select('user_type')->first();
+        $userType = $userType->user_type;
 
         $start_date = Carbon::parse($experience->experience_startDate);
         $end_date = Carbon::parse($experience->experience_endDate);
-
         $diff = $end_date->diff($start_date);
-
         $years = $diff->y;
         $months = $diff->m;
         $days = $diff->d;
@@ -241,48 +268,53 @@ class UserController extends Controller
                 $work_experience .= " ";
             }
         }
-
         if ($months > 0) {
             $work_experience .= $months . " month" . ($months > 1 ? "s" : "");
             if ($days > 0) {
                 $work_experience .= " and ";
             }
         }
-
         if ($days > 0) {
             $work_experience .= $days . " day" . ($days > 1 ? "s" : "");
         }
+
         $response = [
             'user' => $user,
             'degrees' => $degrees,
             'experience' => $work_experience,
+            'requested_for' => $userType,
         ];
         return view('frontend.ScholarRequestDetail', compact('response', 'id'));
     }
     public function approve_request(Request $request, $id)
     {
         $mufti = Mufti::where('user_id', $id)->first();
+
+        $userType = Mufti::where('user_id', $id)->select('user_type')->first();
+        $userType = $userType->user_type;
+
         $user = User::where('id', $id)->first();
-        $user->mufti_status = 2;
-        $user->user_type = 'scholar';
+
+        $user->mufti_status = $userType == 'scholar' ? 2 : 4;
+        $user->user_type = $userType == 'scholar' ? 'scholar' : 'lifecoach';
+
         $user->name = $mufti->name;
         $user->phone_number = $mufti->phone_number;
         $user->fiqa = $mufti->fiqa;
         $user->save();
 
         $device_id = $user->device_id;
-        $title = "Become scholar Request Update";
+        $title = "Become {$userType} Request Update";
 
-        $notiBody = 'Congrats! Your request for become a scholar has been accepted. You are  a scholar now!!';
-        $body = 'Congrats! Your request for become a scholar has been accepted. You are  a scholar now!!';
-        $messageType = "Become scholar Request Update";
-        $otherData = "Become scholar Request Update";
+        // $notiBody = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
+        $body = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
+        $messageType = "Become {$userType} Request Update";
+        $otherData = "Become {$userType} Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
-
         $data = [
             'user_id' => $user->id,
             'title' => $title,
@@ -294,12 +326,12 @@ class UserController extends Controller
             'status' => 2,
             'reason' => "",
         ];
-
         $mufti = Mufti::where('user_id', $user->id)->update($data);
-        // $mufti->delete();
 
+        // $mufti->delete();
         return redirect('ScholarsRequests');
     }
+
     public function reject_request(Request $request)
     {
 
@@ -308,24 +340,26 @@ class UserController extends Controller
         $user->mufti_status = 3;
         $user->save();
 
-        $degrees = Degree::where('user_id', $id)->delete();
-        $experience = Experience::where('user_id', $id)->delete();
-        $interestes = Interest::where('user_id', $id)->delete();
+        Degree::where('user_id', $id)->delete();
+        Experience::where('user_id', $id)->delete();
+        Interest::where('user_id', $id)->delete();
 
         $data = [
             'status' => 3,
             'reason' => $request->reason,
         ];
 
-        $mufti = Mufti::where('user_id', $id)->update($data);
+        Mufti::where('user_id', $id)->update($data);
+        $userType = Mufti::where('user_id', $id)->select('user_type')->first();
+        $userType = $userType->user_type;
 
         $device_id = $user->device_id;
-        $title = "Become scholar Request Update";
+        $title = "Become {$userType} Request Update";
 
-        $notiBody = 'Your request to become a scholar has been Rejected, Go and check the reason in your Profile.';
-        $body = 'Your request to become a scholar has been Rejected, Go and check the reason in your Profile.';
-        $messageType = "Become scholar Request Update";
-        $otherData = "Become scholar Request Update";
+        // $notiBody = 'Your request to become a scholar has been Rejected, Go and check the reason in your Profile.';
+        $body = "Your request to become a {$userType} has been Rejected, Go and check the reason in your Profile.";
+        $messageType = "Become {$userType} Request Update";
+        $otherData = "Become {$userType} Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {

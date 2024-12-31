@@ -106,6 +106,25 @@
             <div class="card">
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
+
+                    <div class="d-flex overflow-auto h-55px">
+                        <ul
+                            class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
+                            <!--begin::Nav item-->
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('AllAppointments') ? 'active' : null }}"
+                                    href="{{ URL::to('AllAppointments') }}">Booked From Scholars</a>
+                            </li>
+                            <!--end::Nav item-->
+                            <!--begin::Nav item-->
+                            <li class="nav-item">
+                                <a class="nav-link text-active-success me-6 {{ Request::is('AllAppointments/LifeCoach') ? 'active' : null }}"
+                                    href="{{ URL::to('AllAppointments/LifeCoach') }}">Booked From Life Coach</a>
+                            </li>
+                            <!--end::Nav item-->
+                        </ul>
+                    </div>
+
                     @if (count($appts))
                         <!--begin::Table-->
                         <div class="table-responsive">
@@ -138,7 +157,7 @@
                     @else
                         <div class=" text-center">
                             <img alt="Logo" style="align-items: center; margin-top:50px"
-                                src="{{ url('public/frontend/media/noAppt.svg') }}" class="img-fluid ">
+                                src="{{ url('public/frontend/media/noAppSch.svg') }}" class="img-fluid ">
                         </div>
                     @endif
                 </div>
@@ -164,7 +183,8 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getAppts') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
+            url: '{{ route('getAppts') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+                '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',

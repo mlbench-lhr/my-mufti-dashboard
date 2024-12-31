@@ -69,9 +69,9 @@
                 data-kt-swapper="true" data-kt-swapper-mode="prepend"
                 data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
                 <!--begin::Heading-->
-                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">Scholars/Life Coach Requests
+                <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All Life Coach
                 </h1>
-                <h3 class="mt-4" style=" font-weight:400; ">Total Requests: <span class="fs-5" id="user-count"
+                <h3 class="mt-4" style=" font-weight:400; ">Total Life Coach: <span class="fs-5" id="user-count"
                         style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
@@ -114,11 +114,11 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-75px">Sr No</th>
-                                        <th class="min-w-125px">User</th>
-                                        <th class="min-w-125px">Request For</th>
+                                        <th class="min-w-125px">Coach Name</th>
                                         <th class="min-w-125px">Email Address</th>
-                                        <th class="min-w-125px text-center">Action</th>
+                                        <th class="min-w-75px">Fiqa</th>
+                                        <th class="min-w-125px">Category</th>
+                                        <th class="min-w-100px">Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -135,9 +135,9 @@
                         <!--end::Table-->
                         <div class="pagination d-flex justify-content-end" id="pagination-links"></div>
                     @else
-                        <div class="text-center my-19">
+                        <div class=" text-center">
                             <img alt="Logo" style="align-items: center; margin-top:50px"
-                                src="{{ url('public/frontend/media/noNewRequest.svg') }}" class="img-fluid ">
+                                src="{{ url('public/frontend/media/noLifeCoach.svg') }}" class="img-fluid ">
                         </div>
                     @endif
                 </div>
@@ -163,8 +163,7 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getScholarRequests') }}?page=' + page + '&search=' + encodeURIComponent(search) +
-                '&sorting=' +
+            url: '{{ route('getLifecoach') }}?page=' + page + '&search=' + encodeURIComponent(search) + '&sorting=' +
                 sortingOption,
             method: 'GET',
             dataType: 'json',
@@ -177,7 +176,6 @@
                 tableBody.empty();
 
                 if (users.data.length === 0) {
-                    // If no users found, display a message in a new row
                     var noUserRow = `
             <tr>
                 <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No user found</td>
@@ -185,13 +183,19 @@
         `;
                     tableBody.append(noUserRow);
                 } else {
-
-                    var count = (users.data.length > 0) ? (users.current_page - 1) * users.per_page : 0;
+                    var badgeColors = ['text-warning', 'text-danger', 'text-primary', 'text-success'];
+                    var bgColors = ['bg-light-warning', 'bg-light-danger', 'bg-light-primary',
+                        'bg-light-success'
+                    ];
+                    var count = 0;
                     $.each(users.data, function(index, row) {
-                        var modifiedSerialNumber = pad(count + 1, 2, '0');
+                        var categoryName = row.interests.map(function(interest) {
+                            return interest.interest;
+                        });
+
+                        var category = categoryName.join(', ');
                         var newRow = `
                     <tr class="text-start">
-                        <td>${modifiedSerialNumber}</td>
                         <td class="d-flex align-items-center">
                             ${row.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -212,33 +216,24 @@
                                 <span> #${row.id}</span>
                             </div>
                         </td>
-                       <td>
-                        ${row.userType === 'lifecoach' 
-                            ? 'Life Coach' 
-                            : row.userType.charAt(0).toUpperCase() + row.userType.slice(1)}
-                        </td>
                         <td>${row.email}</td>
-                        <td class="text-center">
-                             <div class="fs-4 fw-bolder text-dark">
-                                <a href="{{ URL::to('ScholarRequest/Detail') }}/${row.id}" class="link-success fw-bold">
-                                    View Detail
+                        <td>${row.fiqa}</td>
+                        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
+                            ${category}
+                        </td>
+                        <td>
+                            <div class="fs-4 fw-bolder text-dark">
+                                <a href="{{ URL::to('LifeCoachDetail/PublicQuestions') }}/${row.id}" class="link-success fw-bold">
+                                    View Profile
                                 </a>
                             </div>
                         </td>
+                       
                     </tr>
                 `;
                         tableBody.append(newRow);
                         count++;
                     });
-
-                    // Function to pad numbers with zeros
-                    function pad(number, length, character) {
-                        var str = '' + number;
-                        while (str.length < length) {
-                            str = character + str;
-                        }
-                        return str;
-                    }
                 }
                 var paginationLinks = $('#pagination-links');
                 paginationLinks.empty();
@@ -276,38 +271,10 @@
 
                 $('#loader').addClass('d-none');
 
+
             },
         });
     }
-
-    // Handle page clicks
-    // $(document).on('click', '.page-link', function(e) {
-    //     e.preventDefault();
-    //     currentPage = $(this).data('page');
-    //     var searchTerm = $('#global-search').val();
-    //     loadVerificationData(currentPage, searchTerm);
-    // });
-    // $(document).on('click', '#apply-filter-button', function(e) {
-    //     e.preventDefault();
-    //     var searchTerm = $('#global-search').val();
-    //     var sortingOption = $('#request-date-filter').val();
-    //     loadVerificationData(currentPage, searchTerm, sortingOption);
-    // });
-    // $(document).on('click', '#reset-filter-button', function(e) {
-    //     e.preventDefault();
-    //     $('#request-date-filter').val('').trigger('change');
-    //     loadVerificationData(currentPage);
-    // });
-    // $(document).ready(function() {
-    //     // Handle global search input
-    //     $('#global-search').on('input', function() {
-    //         var searchTerm = $(this).val();
-    //         loadVerificationData(1, searchTerm);
-    //     });
-    // });
-    // $(document).ready(function() {
-    //     loadVerificationData(currentPage);
-    // });
 
     function updateUrlParameter(key, value) {
         var url = new URL(window.location.href);
@@ -348,4 +315,6 @@
         currentPage = getUrlParameter('page') || 1;
         loadVerificationData(currentPage);
     });
+
+
 </script>
