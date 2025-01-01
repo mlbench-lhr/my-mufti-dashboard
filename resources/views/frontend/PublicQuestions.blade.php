@@ -207,7 +207,7 @@
                             @csrf
                             <div class="mb-5">
                                 <label for="question_category" class="fw-bold fs-6 pb-2 mb-1">Question Category</label>
-                                <select onchange="changeFunc2();" id="categoryBox" class="form-select"
+                                <select onchange="changeFunc2();" id="categoryBox" class="form-select cursor-pointer"
                                     name="question_category" required>
                                     <option value="" disabled selected>-- Select Category--</option>
                                     <option value="Family Law">Family Law</option>
