@@ -17,7 +17,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('rejectRequestDeletion', [UserController::class, 'reject_request_deletion'])->name('rejectRequestDeletion');
     Route::get('acceptRequestDeletion/{id}', [UserController::class, 'accept_request_deletion']);
 
-
     // users & scholars
     Route::get('AllUsers', [UserController::class, 'all_users'])->name('AllUsers');
     Route::get('getUsers', [UserController::class, 'get_all_users'])->name('getUsers');
@@ -33,7 +32,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('ScholarRequest/Detail/{id}', [UserController::class, 'scholar_request_detail'])->name('ScholarRequest/Detail');
     Route::get('Approve/{id}', [UserController::class, 'approve_request'])->name('Approve');
     Route::post('Reject', [UserController::class, 'reject_request'])->name('Reject');
-
 
     Route::get('UserDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('UserDetail/PublicQuestions');
     Route::get('ScholarDetail/PublicQuestions/{id}', [UserController::class, 'user_detail'])->name('ScholarDetail/PublicQuestions');
@@ -59,9 +57,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('ScholarDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('ScholarDetail/UserEventsRequest');
     Route::get('LifeCoachDetail/UserEventsRequest/{id}', [UserController::class, 'user_events_requests'])->name('LifeCoachDetail/UserEventsRequest');
 
-    
     Route::get('getUserEventsRequests/{id}', [UserController::class, 'get_user_events_requests'])->name('getUserEventsRequests');
-
 
     Route::get('UserDetail/AskedFromScholar/{id}', [UserController::class, 'user_detail_asked_from_me'])->name('UserDetail/AskedFromScholar');
     Route::get('getUserAskedFromMe/{id}', [UserController::class, 'get_asked_from_me'])->name('getUserAskedFromMe');
@@ -69,9 +65,7 @@ Route::group(['middleware' => 'admin'], function () {
 
     Route::get('LifeCoachDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('LifeCoachDetail/Degrees');
 
-
     Route::get('DeleteUser/{id}', [UserController::class, 'delete_user'])->name('DeleteUser');
-
 
     //Public Questions
     Route::get('PublicQuestions', [QuestionsController::class, 'all_public_questions'])->name('PublicQuestions');
@@ -79,8 +73,6 @@ Route::group(['middleware' => 'admin'], function () {
 
     Route::get('PublicQuestions/Scholar', [QuestionsController::class, 'all_scholar_public_questions'])->name('PublicQuestions/Scholar');
     Route::get('getScholarPublicQuestions', [QuestionsController::class, 'get_all_scholar_public_questions'])->name('getScholarPublicQuestions');
-
-
 
     Route::get('PublicQuestionDetail/{id}', [QuestionsController::class, 'public_question_detail'])->name('PublicQuestionDetail');
     Route::get('getQuestionComments/{id}', [QuestionsController::class, 'get_question_comments'])->name('getQuestionComments');
@@ -91,8 +83,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('getReportedQuestions', [QuestionsController::class, 'get_all_reported_questions'])->name('getReportedQuestions');
     Route::get('ReportedQuestionDetail/{id}/{reportedId}', [QuestionsController::class, 'reported_question_detail'])->name('ReportedQuestionDetail');
     Route::get('/question/{id}/reports', [QuestionsController::class, 'get_question_reports'])->name('getQuestionReports');
-
-
 
     //Private Questions
     Route::get('PrivateQuestions', [QuestionsController::class, 'all_private_questions'])->name('PrivateQuestions');
@@ -113,6 +103,9 @@ Route::group(['middleware' => 'admin'], function () {
 
     Route::post('/submitPublicQuestion', [QuestionsController::class, 'submit_public_question'])->name('submitPublicQuestion');
 
+    Route::get('/getQuestion/{id}', [QuestionsController::class, 'get_question']);
+    Route::put('/editPublicQuestion', [QuestionsController::class, 'edit_public_question']);
+
     // Appointments & Events
     Route::get('AllAppointments', [EventsAndApptController::class, 'all_appointments'])->name('AllAppointments');
     Route::get('getAppts', [EventsAndApptController::class, 'get_all_appointments'])->name('getAppts');
@@ -129,7 +122,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('EventRequestApprove/{id}', [EventsAndApptController::class, 'approve_request'])->name('EventRequestApprove');
     Route::post('EventRequestDecline', [EventsAndApptController::class, 'reject_request'])->name('EventRequestDecline');
 
-
     Route::get('EventDetail/{id}', [EventsAndApptController::class, 'event_detail'])->name('EventDetail');
     Route::get('getEventsQuestions/{id}', [EventsAndApptController::class, 'get_event_questions'])->name('getEventsQuestions');
     Route::get('EventQuestionDetail/{id}', [EventsAndApptController::class, 'event_question_detail'])->name('EventQuestionDetail');
@@ -144,6 +136,5 @@ Route::get('/resetPassword', [AdminController::class, 'reset']);
 Route::get('resetAdminPassword', [AdminController::class, 'reset_password']);
 Route::get('fogetPasswordOTP', [AdminController::class, 'generate_otp']);
 Route::get('verifyOTP', [AdminController::class, 'verify_otp']);
-
 
 Route::get('questions/{id?}', [QuestionsController::class, 'show']);

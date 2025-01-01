@@ -666,4 +666,33 @@ class QuestionsController extends Controller
         Question::create($data);
         return response()->json(['success' => true, 'message' => 'Question submitted successfully!']);
     }
+
+    public function get_question($id)
+    {
+        $question = Question::findOrFail($id);
+        return response()->json($question);
+    }
+
+    public function edit_public_question(Request $request)
+    {
+        $request->validate([
+            'question_id' => 'required|integer|exists:questions,id',
+            'question_categories' => 'required|json',
+            'question' => 'required|string',
+            'voting_option' => 'required|integer|in:1,2',
+        ]);
+
+        $questionCategories = json_decode($request->question_categories, true);
+        $questionCategories = array_column($questionCategories, 'name');
+
+        $question = Question::findOrFail($request->question_id);
+        $question->update([
+            'question_category' => $questionCategories,
+            'question' => $request->question,
+            'voting_option' => (int) $request->voting_option,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Question updated successfully!']);
+    }
+
 }

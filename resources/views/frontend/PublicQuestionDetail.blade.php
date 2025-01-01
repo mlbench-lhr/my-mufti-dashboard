@@ -33,6 +33,13 @@
         max-width: 100px;
         /* Adjust the max-width based on your requirements */
     }
+
+    .form-check-input:checked {
+        background-color: #38B89A !important;
+        color: #38B89A !important;
+        border-color: #38B89A !important;
+        box-shadow: 0 0 5px rgba(56, 184, 154, 0.6) !important;
+    }
 </style>
 @section('content')
     <!--begin::Header-->
@@ -83,7 +90,8 @@
                 @else
                     @if ($question->user_type == 'admin')
                         <button style="background-color: #38B89A; color:#FFFFFF" type="button" class="btn me-3"
-                            data-bs-toggle="modal123" data-bs-target="#replyModal123">
+                            data-bs-toggle="modal" data-bs-target="#kt_modal_edit_question"
+                            onclick="populateEditForm({{ $question->id }})">
                             Edit
                         </button>
                     @else
@@ -481,8 +489,226 @@
         </div>
     </div>
     <!--end::Container-->
+
+    <!-- Edit Question Modal -->
+    <div class="modal fade" id="kt_modal_edit_question" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog mw-500px">
+            <div class="modal-content">
+                <div class="modal-header pb-0 border-0 d-flex justify-content-between items-center">
+                    <p>
+                    </p>
+                    <p class="fs-1 fw-bold">Edit Public Question</p>
+                    <button type="button" class="btn btn-lg btn-icon btn-active-color-dark" data-bs-dismiss="modal">
+                        <span class="svg-icon svg-icon-1 w-50">
+                            <svg width="55" height="55" viewBox="0 0 33 33" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M33.3307 20.0013C33.3307 27.3651 27.3612 33.3346 19.9974 33.3346C12.6336 33.3346 6.66406 27.3651 6.66406 20.0013C6.66406 12.6375 12.6336 6.66797 19.9974 6.66797C27.3612 6.66797 33.3307 12.6375 33.3307 20.0013ZM15.9569 15.9608C16.3474 15.5703 16.9806 15.5703 17.3711 15.9608L19.9974 18.5871L22.6236 15.9609C23.0141 15.5703 23.6473 15.5703 24.0378 15.9609C24.4283 16.3514 24.4283 16.9846 24.0378 17.3751L21.4116 20.0013L24.0378 22.6275C24.4283 23.018 24.4283 23.6512 24.0378 24.0417C23.6472 24.4322 23.0141 24.4322 22.6235 24.0417L19.9974 21.4155L17.3711 24.0417C16.9806 24.4322 16.3475 24.4322 15.9569 24.0417C15.5664 23.6512 15.5664 23.018 15.9569 22.6275L18.5831 20.0013L15.9569 17.375C15.5664 16.9845 15.5664 16.3514 15.9569 15.9608Z"
+                                    fill="#303030" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body pt-4">
+                    <form id="editForm" action="/editPublicQuestion" method="post" class="form">
+                        @method('PUT')
+                        @csrf
+                        <input type="hidden" name="question_id" id="edit_question_id">
+                        <input type="hidden" name="question_categories" id="category_box">
+
+                        <!-- Question Category -->
+                        <div class="mb-5">
+                            <label for="edit_categoryBox" class="fw-bold fs-6 pb-2 mb-1">Question Category</label>
+                            <select onchange="changeFunc2();" id="edit_categoryBox" class="form-select cursor-pointer"
+                                name="question_category">
+                                <option value="" disabled selected>-- Select Category --</option>
+                                <option value="Family Law">Family Law</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Home Finance">Home Finance</option>
+                                <option value="Food">Food</option>
+                                <option value="Marriage">Marriage</option>
+                                <option value="Relationship">Relationship</option>
+                                <option value="Dhikr">Dhikr</option>
+                                <option value="Duas">Duas</option>
+                                <option value="Raising Kids">Raising Kids</option>
+                                <option value="Parents">Parents</option>
+                                <option value="Salah">Salah</option>
+                                <option value="Dawah">Dawah</option>
+                                <option value="Competitive Religion">Competitive Religion</option>
+                                <option value="Quran">Quran</option>
+                                <option value="Hadith">Hadith</option>
+                                <option value="Others">Others</option>
+                            </select>
+                            <br>
+                            <div id="categoryContainer" class="d-flex flex-wrap"
+                                style="height: auto; overflow-y: hidden; overflow-x: hidden;"></div>
+                        </div>
+
+                        <!-- Question Text -->
+                        <div class="mb-5">
+                            <label for="edit_question" class="fw-bold fs-6 pb-2 mb-1">Question</label>
+                            <textarea id="edit_question" oninput="validateInput(this)" class="form-control" name="question"
+                                placeholder="Edit your question" rows="4" required></textarea>
+                        </div>
+
+                        <!-- Voting Option -->
+                        <div class="mb-5">
+                            <label for="voting_option" class="fw-bold fs-6 pb-2 mb-2">Select Voting Option</label>
+                            <div class="flex-row items-center gap-5">
+                                <span class="me-10">
+                                    <input class="form-check-input cursor-pointer" type="radio" name="voting_option"
+                                        id="edit_yes_no" value="1" required>
+                                    <label class="" for="yes_no">Yes, No</label>
+                                </span>
+                                <span class="">
+                                    <input class="form-check-input cursor-pointer" type="radio" name="voting_option"
+                                        id="edit_true_false" value="2" required>
+                                    <label class="" for="true_false">True, False</label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center pt-2">
+                            <button type="submit" class="btn btn-lg col-12"
+                                style="background-color: #38B89A; color: #FFFFFF">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     </div>
     <!--end::Content-->
+
+    <script>
+        let mealTimeArray = [];
+
+        function populateEditForm(questionId) {
+            console.log("Fetching question ID:", questionId);
+            fetch(`/getQuestion/${questionId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch question data.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('edit_question_id').value = data.id;
+                    document.getElementById('edit_categoryBox').value = data.question_category[0];
+                    document.getElementById('edit_question').value = data.question;
+
+                    if (data.voting_option === 1) {
+                        document.getElementById('edit_yes_no').checked = true;
+                    } else if (data.voting_option === 2) {
+                        document.getElementById('edit_true_false').checked = true;
+                    }
+
+                    mealTimeArray = data.question_category.map(category => ({
+                        name: category,
+                        id: category
+                    }));
+                    displayObjects2();
+                })
+                .catch(error => {
+                    console.error("Error populating form:", error);
+                    alert("Failed to load question data. Please try again.");
+                });
+        }
+
+        function changeFunc2() {
+            const selectBox = document.getElementById("edit_categoryBox");
+            const selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+            if (!mealTimeArray.find(obj => obj.name === selectedValue)) {
+                mealTimeArray.push({
+                    name: selectedValue,
+                    id: selectedValue
+                });
+            }
+            displayObjects2();
+        }
+
+        function displayObjects2() {
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = '';
+            mealTimeArray.forEach(obj => {
+                const div = document.createElement('span');
+                div.innerHTML = `
+            <span class="d-flex align-items-center justify-content-start px-3 py-2 bg-white rounded-1 shadow-sm me-2 mb-2">
+                <span class="fs-5 text-gray-900 me-2">${obj.name}</span>
+                <span style="cursor:pointer;" onclick="removeItem2('${obj.id}')" class="text-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 27 27" fill="none">
+                        <path d="M17.1531 9.90137L9.43948 17.6149" stroke="#38B89A" stroke-width="2" stroke-linecap="round" />
+                        <path d="M17.1531 17.6152L9.43948 9.90166" stroke="#38B89A" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </span>
+            </span>`;
+                container.appendChild(div);
+            });
+        }
+
+        function removeItem2(id) {
+            mealTimeArray = mealTimeArray.filter(obj => obj.id !== id);
+            document.getElementById('edit_categoryBox').value = '';
+            displayObjects2();
+        }
+
+        function validateInput(input) {
+            input.value = input.value.trimStart();
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            if (mealTimeArray.length === 0) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Please select at least one question category.",
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+                return;
+            }
+
+            const formData = new FormData(this);
+            formData.append('question_categories', JSON.stringify(mealTimeArray));
+
+            fetch(this.action, {
+                    method: this.method,
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: "Success!",
+                        text: data.message,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => window.location.reload());
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Failed to update question.",
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                });
+        });
+    </script>
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -507,7 +733,6 @@
                 tableBody.empty();
 
                 if (users.data.length === 0) {
-                    // If no users found, display a message in a new row
                     var noUserRow = `
             <tr>
                 <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No Questions found</td>
@@ -519,7 +744,7 @@
                     var count = (users.data.length > 0) ? (users.current_page - 1) * users.per_page : 0;
                     $.each(users.data, function(index, row) {
                         var modifiedSerialNumber = pad(count + 1, 2,
-                            '0'); // Calculate modified serial number
+                            '0');
                         var newRow = `
                     <tr class="text-start">
                         <td>
@@ -553,7 +778,6 @@
                         count++;
                     });
 
-                    // Function to pad numbers with zeros
                     function pad(number, length, character) {
                         var str = '' + number;
                         while (str.length < length) {
@@ -561,22 +785,18 @@
                         }
                         return str;
                     }
-                    // Update pagination links
 
                     var paginationLinks = $('#pagination-links');
                     paginationLinks.empty();
 
                     var totalPages = users.last_page;
 
-                    // Render "Previous" button
                     var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
                         <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
                     </li>`;
                     paginationLinks.append(previousLink);
 
-                    // Add pagination links to the page
                     for (var i = 1; i <= totalPages; i++) {
-                        // Render ellipsis if there are many pages
                         if (totalPages > 7 && (i < currentPage - 2 || i > currentPage + 2)) {
                             if (i === 1 || i === totalPages) {
                                 var pageLink =
@@ -592,7 +812,6 @@
                         paginationLinks.append(pageLink);
                     }
 
-                    // Render "Next" button
                     var nextLink = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
                     <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
                 </li>`;
@@ -604,7 +823,6 @@
         });
     }
 
-    // Handle page clicks
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
         currentPage = $(this).data('page');

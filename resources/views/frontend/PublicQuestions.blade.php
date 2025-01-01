@@ -328,12 +328,6 @@
             document.getElementById("category_box").value = JSON.stringify(mealTimeArray);
         }
 
-        // document.getElementById("postForm").addEventListener("submit", function(event) {
-        //     event.preventDefault();
-        //     updateFormInput2();
-        //     this.submit();
-        // });
-
         document.getElementById("postForm").addEventListener("submit", function(event) {
             event.preventDefault();
             updateFormInput2();
