@@ -399,9 +399,6 @@
 
 
                     <div class="ms-2">
-                        <div class="fs-5 fw-normal text-success">
-                            {{ $question->lifecoach_reply->user_detail->fiqa }}
-                        </div>
                         <div class="fs-4">
                             {{ $question->lifecoach_reply->user_detail->name }}
                         </div>

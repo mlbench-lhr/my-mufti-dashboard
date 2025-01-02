@@ -141,7 +141,7 @@
                 </div>
                 <div class="col-6">
                     <div class=" title fs-2 fw-bold pb-9">
-                        {{$detail->user_type == 'scholar' ? 'Scholar' : 'Life Coach';}}
+                        {{ $detail->user_type == 'scholar' ? 'Scholar' : 'Life Coach' }}
                     </div>
                     <div class="d-flex flex-wrap flex-sm-nowrap">
                         <!--begin: Pic-->
@@ -165,19 +165,22 @@
                             <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
                                 <!--begin::User-->
                                 <div class="d-flex flex-column">
-                                    <div class="d-flex align-items-center mb-1 text-success fs-7 fw-normal">
-                                        {{ $detail->mufti_detail->fiqa }}
-                                    </div>
+                                    @if ($detail->user_type == 'scholar')
+                                        <div class="d-flex align-items-center mb-1 text-success fs-7 fw-normal">
+                                            {{ $detail->mufti_detail->fiqa }}
+                                        </div>
+                                    @endif
                                     <div class="d-flex align-items-center mb-1 text-gray-900 fs-2 fw-bolder">
                                         {{ $detail->mufti_detail->name }}
                                     </div>
-                                    <div class="text-muted fs-6 pt-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;">
+                                    <div class="text-muted fs-6 pt-1"
+                                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;">
                                         @foreach ($detail->mufti_detail['interests'] as $data)
-                                        {{ $data['interest'] }}
-                                        @if (!$loop->last)
-                                            ,
-                                        @endif
-                                    @endforeach
+                                            {{ $data['interest'] }}
+                                            @if (!$loop->last)
+                                                ,
+                                            @endif
+                                        @endforeach
                                     </div>
                                 </div>
                                 <!--end::User-->
@@ -199,7 +202,8 @@
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-5">
-                                <span class="fw-bold fs-3 badge badge-light fw-normal fs-4  mb-3"> {{$detail->category}} </span>
+                                <span class="fw-bold fs-3 badge badge-light fw-normal fs-4  mb-3"> {{ $detail->category }}
+                                </span>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -212,7 +216,7 @@
                             <!--begin::Col-->
                             <div class="col-lg-5">
                                 <span class="fw-bold fs-3 text-muted">
-                                   {{$detail->consultation_fee}}$
+                                    {{ $detail->consultation_fee }}$
                                 </span>
                             </div>
                             <!--end::Col-->
@@ -240,21 +244,21 @@
                             <!--begin::Col-->
                             <div class="col-lg-5">
                                 <span class="fw-bold fs-3 text-muted">
-                                    {{$detail->duration}} Mins
+                                    {{ $detail->duration }} Mins
                                 </span>
                             </div>
                             <!--end::Col-->
                         </div>
                         <!--end::Input group-->
-                         <!--begin::Input group-->
-                         <div class="row mb-7">
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
                             <!--begin::Label-->
                             <label class="col-lg-7 fw-bolder fs-2 text-gray-800">Payment With:</label>
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-5">
                                 <span class="fw-bold fs-3 text-success">
-                                    {{$detail->payment_method}}
+                                    {{ $detail->payment_method }}
                                 </span>
                             </div>
                             <!--end::Col-->
@@ -267,7 +271,7 @@
                     <div class="col-lg-12">
                         <div class="fw-bolder fs-1 text-gray-800">Description</div>
                         <div class="fw-normal text-dark fs-2 text-dark mt-5">
-                           {{$detail->description}}
+                            {{ $detail->description }}
                         </div>
                     </div>
 

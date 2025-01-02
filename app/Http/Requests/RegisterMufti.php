@@ -25,7 +25,7 @@ class RegisterMufti extends FormRequest
             'user_id' => 'required',
             'name' => 'required',
             'phone_number' => 'required',
-            'fiqa' => 'required',
+            // 'fiqa' => 'required',
             'degree_title' => 'required',
             'institute_name' => 'required',
             'degree_startDate' => 'required',

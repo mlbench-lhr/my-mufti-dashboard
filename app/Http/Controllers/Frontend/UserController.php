@@ -300,7 +300,7 @@ class UserController extends Controller
 
         $user->name = $mufti->name;
         $user->phone_number = $mufti->phone_number;
-        $user->fiqa = $mufti->fiqa;
+        $user->fiqa = $mufti->fiqa ?? '';
         $user->save();
 
         $device_id = $user->device_id;

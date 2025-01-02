@@ -117,7 +117,7 @@
                                 <!--begin::User-->
                                 <div class="d-flex flex-column">
                                     <div class="d-flex align-items-center  text-success fs-6 fw-bolder me-1">
-                                        {{ $response['user']->mufti_detail->fiqa }}
+                                        {{ $response['requested_for'] == 'lifecoach' ? 'Life Coach' : $response['user']->mufti_detail->fiqa }}
                                     </div>
                                     <!--begin::Name-->
                                     <div class="d-flex align-items-center mb-0">
@@ -162,12 +162,12 @@
                                 <!--end::User-->
                                 <!--begin::Actions-->
                                 <div class="d-flex">
-                                    <button type="button" class="btn w-100 text-uppercase delete-interest"
-                                        style="background-color:#38B89A; color:white; pointer-events: none; cursor: default;"
-                                        data-interest-id="{{ $response['user']->id }}" disabled>Approve</button>
                                     {{-- <button type="button" class="btn w-100 text-uppercase delete-interest"
+                                        style="background-color:#38B89A; color:white; pointer-events: none; cursor: default;"
+                                        data-interest-id="{{ $response['user']->id }}" disabled>Approve</button> --}}
+                                    <button type="button" class="btn w-100 text-uppercase delete-interest"
                                         style="background-color:#38B89A; color:white;"
-                                        data-interest-id="{{ $response['user']->id }}">Approve</button> --}}
+                                        data-interest-id="{{ $response['user']->id }}">Approve</button>
                                     <button type="button" class="btn w-100 text-uppercase ms-5"
                                         style="background-color:#F52E2E; color:white;" data-bs-toggle="modal"
                                         data-bs-target="#kt_modal_update_interests"

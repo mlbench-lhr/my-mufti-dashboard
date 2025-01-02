@@ -116,7 +116,6 @@
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
                                         <th class="min-w-125px">Coach Name</th>
                                         <th class="min-w-125px">Email Address</th>
-                                        <th class="min-w-75px">Fiqa</th>
                                         <th class="min-w-125px">Category</th>
                                         <th class="min-w-100px">Action</th>
                                     </tr>
@@ -217,7 +216,6 @@
                             </div>
                         </td>
                         <td>${row.email}</td>
-                        <td>${row.fiqa}</td>
                         <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
                             ${category}
                         </td>

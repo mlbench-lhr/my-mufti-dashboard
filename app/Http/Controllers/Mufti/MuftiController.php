@@ -27,23 +27,6 @@ class MuftiController extends Controller
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        // $check_user1 = Mufti::where(['user_id' => $user_id, 'status' => 1, 'user_type' => 'scholar'])->first();
-        // if ($check_user1) {
-        //     return ResponseHelper::jsonResponse(false, 'Already send a request');
-        // }
-        // $check_user2 = Mufti::where(['user_id' => $user_id, 'status' => 1, 'user_type' => 'lifecoach'])->first();
-        // if ($check_user2) {
-        //     return ResponseHelper::jsonResponse(false, 'Already send a request');
-        // }
-        // $check_user3 = Mufti::where(['user_id' => $user_id, 'status' => 2, 'user_type' => 'scholar'])->first();
-        // if ($check_user3) {
-        //     return ResponseHelper::jsonResponse(false, 'Already Mufti');
-        // }
-        // $check_user4 = Mufti::where(['user_id' => $user_id, 'status' => 2, 'user_type' => 'lifecoach'])->first();
-        // if ($check_user4) {
-        //     return ResponseHelper::jsonResponse(false, 'Already Life Coach');
-        // }
-
         $existingMufti = Mufti::where('user_id', $request->user_id)
             ->whereIn('status', [1, 2])
             ->whereIn('user_type', ['scholar', 'lifecoach'])
@@ -82,7 +65,7 @@ class MuftiController extends Controller
             'user_id' => $request->user_id,
             'name' => $request->name,
             'phone_number' => $request->phone_number,
-            'fiqa' => $request->fiqa,
+            'fiqa' => $request->fiqa ?? '',
             'reason' => "",
             'status' => 1,
             'user_type' => $request->join_as ?? 'scholar',
@@ -100,7 +83,7 @@ class MuftiController extends Controller
             return [
                 'user_id' => $request->user_id,
                 'interest' => $value,
-                'fiqa' => $request->fiqa,
+                'fiqa' => $request->fiqa ?? '',
             ];
         })->each(function ($data) {
             Interest::create($data);

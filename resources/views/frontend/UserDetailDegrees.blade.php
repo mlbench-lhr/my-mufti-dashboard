@@ -107,7 +107,7 @@
                             <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
                                 <!--begin::User-->
                                 <div class="d-flex flex-column">
-                                    @if ($response['user']->user_type == 'scholar' || $response['user']->user_type == 'lifecoach')
+                                    @if ($response['user']->user_type == 'scholar')
                                         <div class="d-flex align-items-center  text-success fs-6 fw-bolder me-1">
                                             {{ $response['user']->fiqa }}
                                         </div>
