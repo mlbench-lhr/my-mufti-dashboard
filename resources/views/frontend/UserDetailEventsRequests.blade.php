@@ -209,7 +209,7 @@
                                     $routes = [
                                         'PublicQuestions' => 'Public Questions',
                                         'Appointments' => 'Appointments',
-                                        'UserEventsRequest' => 'Coach All Events',
+                                        'UserEventsRequest' => 'Events',
                                     ];
                                 } else {
                                     $routes = [
@@ -234,7 +234,8 @@
                                     $fullUrl = $baseUrl . $route . '/' . $response['user']->id;
                                     $isActive = Request::is($fullUrl);
                                 @endphp
-                                <li class="nav-item min-w-175px d-flex justify-content-start">
+                                <li
+                                    class="nav-item d-flex justify-content-start {{ $displayName == 'Events' ? 'min-w-100px' : 'min-w-175px' }}">
                                     <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
                                         href="{{ URL::to($fullUrl) }}">
                                         {{ $displayName }}
@@ -259,11 +260,11 @@
                                 </li>
                             @endif
                             @if ($response['user']->user_type == 'lifecoach')
-                            <li class="nav-item min-w-100px">
-                                <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('LifeCoachDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('LifeCoachDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
-                            </li>
-                        @endif
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('LifeCoachDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('LifeCoachDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                                </li>
+                            @endif
                         </ul>
                     </div>
                 </div>

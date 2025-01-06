@@ -83,7 +83,7 @@
                         style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex">
                 <div class="d-flex align-items-center position-relative ">
                     <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                     <span class="svg-icon svg-icon-1 position-absolute ms-6">
@@ -101,12 +101,12 @@
                         placeholder="Search" />
                 </div>
 
-                <div class="dropdown">
+                {{-- <div class="dropdown">
                     <button class="btn" style="background-color: #38B89A; color: #FFFFFF" type="button" id=""
                         data-bs-toggle="modal" data-bs-target="#kt_modal_add_interests" aria-expanded="false">
                         Add Question
                     </button>
-                </div>
+                </div> --}}
                 <!--end::Page title=-->
             </div>
         </div>
@@ -393,7 +393,8 @@
     function loadVerificationData(page, search = '', sortingOption = '') {
         $('#loader').removeClass('d-none');
         $.ajax({
-            url: '{{ route('getScholarPublicQuestions') }}?page=' + page + '&search=' + encodeURIComponent(search) +
+            url: '{{ route('getScholarPublicQuestions') }}?page=' + page + '&search=' + encodeURIComponent(
+                    search) +
                 '&sorting=' +
                 sortingOption,
             method: 'GET',
