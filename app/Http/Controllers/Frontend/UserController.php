@@ -582,7 +582,12 @@ class UserController extends Controller
                 'status' => 'mufti',
                 'message' => 'You cannot delete default mufti.',
             );
-        } else {
+        } elseif($id == 24 || $id == "24"){
+            $data = array(
+                'status' => 'mufti',
+                'message' => 'You cannot delete default life coach.',
+            );
+        } else{
             if ($user->mufti_status == 2) {
                 $data = array(
                     'status' => 'mufti',

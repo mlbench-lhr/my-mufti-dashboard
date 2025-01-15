@@ -598,6 +598,11 @@ class EditProfile extends Controller
             return ResponseHelper::jsonResponse(false, 'You cannot delete default mufti.');
         }
 
+
+        if ($request->user_id == 24 || $request->user_id == "24") {
+            return ResponseHelper::jsonResponse(false, 'You cannot delete default Life Coach.');
+        }
+
         if (!$user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
