@@ -86,6 +86,9 @@ class QuestionsController extends Controller
         $question_id = $request->id;
         $question = Question::where('id', $request->id)->first();
 
+        if (!$question) {
+            return redirect()->back();
+        }else{
         $totalVote = QuestionVote::where('question_id', $question_id)->count();
 
         $totalYesVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
@@ -119,6 +122,9 @@ class QuestionsController extends Controller
         ])->exists();
 
         return view('frontend.PublicQuestionDetail', compact('question', 'question_id', 'type', 'user_id', 'isReplied'));
+
+    }
+
     }
     public function get_question_comments(Request $request)
     {
