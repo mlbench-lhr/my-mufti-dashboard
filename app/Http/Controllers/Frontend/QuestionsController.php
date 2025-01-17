@@ -87,7 +87,7 @@ class QuestionsController extends Controller
         $question = Question::where('id', $request->id)->first();
 
         if (!$question) {
-            return redirect()->back();
+            return redirect()->route('PublicQuestions/Scholar');
         }else{
         $totalVote = QuestionVote::where('question_id', $question_id)->count();
 
