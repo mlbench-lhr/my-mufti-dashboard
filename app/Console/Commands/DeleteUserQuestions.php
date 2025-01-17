@@ -27,7 +27,7 @@ class DeleteUserQuestions extends Command
 
     public function handle()
     {
-        $specificUserIds = [380, 385, 253, 15, 206, 269, 24, 285, 76, 348, 243, 28, 320, 324];
+        $specificUserIds = [380, 385, 253, 15, 206, 269, 285, 76, 348, 243, 28, 320, 324];
         $defaultMufti = [9];
 
         QuestionComment::whereIn('user_id', $specificUserIds)->delete();
