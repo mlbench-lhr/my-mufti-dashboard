@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Profile;
 
 use App\Helpers\ActivityHelper;
@@ -45,13 +44,13 @@ class EditProfile extends Controller
         }
 
         $user = User::find($request->user_id);
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $rejectionReason = "";
         if ($user->mufti_status == 3) {
-            $mufti = Mufti::where('user_id', $user->id)->first();
+            $mufti           = Mufti::where('user_id', $user->id)->first();
             $rejectionReason = $mufti ? $mufti->reason : "";
         }
 
@@ -61,8 +60,8 @@ class EditProfile extends Controller
 
         $userArray = $user->toArray();
 
-        $keys = array_keys($userArray);
-        $index = array_search('mufti_status', $keys) + 1;
+        $keys      = array_keys($userArray);
+        $index     = array_search('mufti_status', $keys) + 1;
         $userArray = array_merge(
             array_slice($userArray, 0, $index),
             ['reason' => $rejectionReason],
@@ -71,9 +70,9 @@ class EditProfile extends Controller
 
         return response()->json(
             [
-                'status' => true,
+                'status'  => true,
                 'message' => 'User Fetched Successfully',
-                'data' => $userArray,
+                'data'    => $userArray,
             ],
             200
         );
@@ -84,7 +83,7 @@ class EditProfile extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
-            'image' => 'required',
+            'image'   => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -93,14 +92,14 @@ class EditProfile extends Controller
         }
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         try {
             $base64File = request('image');
-            $fileData = base64_decode($base64File);
-            $name = 'users_profile/' . Str::random(15) . '.png';
+            $fileData   = base64_decode($base64File);
+            $name       = 'users_profile/' . Str::random(15) . '.png';
             Storage::put('public/' . $name, $fileData);
         } catch (Exception $e) {
             return ResponseHelper::jsonResponse(false, 'An error occurred while uploading the image: ' . $e->getMessage());
@@ -115,12 +114,12 @@ class EditProfile extends Controller
         : "";
 
         if ($user->mufti_status == 2 || $user->mufti_status == 4) {
-            $interests = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
+            $interests       = Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get();
             $user->interests = $interests;
 
             $muftiId = $user->id;
             $message = "Mufti " . $user->name . " has edited his profile.";
-            $type = "edited profile";
+            $type    = "edited profile";
 
             ActivityHelper::store_avtivity($muftiId, $message, $type);
         } else {
@@ -130,9 +129,9 @@ class EditProfile extends Controller
         //return a response as json assuming you are building a restful API
         return response()->json(
             [
-                'status' => true,
+                'status'  => true,
                 'message' => 'Profile picture updated',
-                'data' => $user,
+                'data'    => $user,
             ],
             200
         );
@@ -141,7 +140,7 @@ class EditProfile extends Controller
     public function update_password(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'      => 'required',
             'old_password' => 'required|string|min:8',
             'new_password' => 'required|string|min:8',
         ]);
@@ -153,7 +152,7 @@ class EditProfile extends Controller
 
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
@@ -184,9 +183,9 @@ class EditProfile extends Controller
             : [];
             return response()->json(
                 [
-                    'status' => true,
+                    'status'  => true,
                     'message' => 'Password updated successfully',
-                    'data' => $user,
+                    'data'    => $user,
                 ],
                 200
             );
@@ -199,7 +198,7 @@ class EditProfile extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
-            'name' => 'required',
+            'name'    => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -209,7 +208,7 @@ class EditProfile extends Controller
 
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         User::where('id', $request->user_id)->update(['name' => $request->name]);
@@ -232,9 +231,9 @@ class EditProfile extends Controller
 
         return response()->json(
             [
-                'status' => true,
+                'status'  => true,
                 'message' => 'Username updated Successfully',
-                'data' => $user,
+                'data'    => $user,
             ],
             200
         );
@@ -243,8 +242,8 @@ class EditProfile extends Controller
     public function help_feedback(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'email' => 'required',
+            'user_id'     => 'required',
+            'email'       => 'required',
             'description' => 'required',
         ]);
 
@@ -255,12 +254,12 @@ class EditProfile extends Controller
 
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $data = [
-            'user_id' => $request->user_id,
-            'email' => $request->email,
+            'user_id'     => $request->user_id,
+            'email'       => $request->email,
             'description' => $request->description,
         ];
         $user = HelpFeedBack::create($data);
@@ -283,9 +282,9 @@ class EditProfile extends Controller
 
         return response()->json(
             [
-                'status' => true,
+                'status'  => true,
                 'message' => 'Feedback submited Successfully',
-                'data' => $user,
+                'data'    => $user,
             ],
             200
         );
@@ -302,11 +301,11 @@ class EditProfile extends Controller
             return $validationError;
         }
         $user = User::find($request->user_id);
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 10;
 
         $search = $request->search;
@@ -315,16 +314,16 @@ class EditProfile extends Controller
             ->where('user_id', $request->user_id)
             ->orderBy('created_at', 'desc');
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where('question', 'LIKE', '%' . $search . '%');
         }
 
         $totalPages = ceil($query->count() / $perPage);
-        $myQueries = $query->forPage($page, $perPage)->get();
+        $myQueries  = $query->forPage($page, $perPage)->get();
 
         $myQueries->each(function ($userQuery) {
             $userQuery->all_question->each(function ($question) {
-                $fiqa = UserQuery::where('id', $question->query_id)->select('fiqa')->first();
+                $fiqa           = UserQuery::where('id', $question->query_id)->select('fiqa')->first();
                 $question->fiqa = $fiqa ? $fiqa->fiqa : "General";
                 if ($question->reason === null) {
                     unset($question->reason);
@@ -351,10 +350,10 @@ class EditProfile extends Controller
 
         return response()->json(
             [
-                'status' => true,
-                'message' => 'My All Queries',
+                'status'     => true,
+                'message'    => 'My All Queries',
                 'totalpages' => $totalPages,
-                'data' => $myQueries,
+                'data'       => $myQueries,
             ],
             200
         );
@@ -414,19 +413,19 @@ class EditProfile extends Controller
         }
 
         $user = User::find($request->mufti_id);
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 10;
-        $search = $request->input('search', '');
+        $search  = $request->input('search', '');
 
         $query = UserAllQuery::with('user_detail.interests')
             ->where('mufti_id', $request->mufti_id)
             ->orderBy('created_at', 'DESC');
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('user_detail', function ($q) use ($search) {
                     $q->where('name', 'LIKE', '%' . $search . '%')
@@ -451,10 +450,10 @@ class EditProfile extends Controller
 
         return response()->json(
             [
-                'status' => true,
-                'message' => 'My All Queries',
+                'status'     => true,
+                'message'    => 'My All Queries',
                 'totalpages' => $totalPages,
-                'data' => $myAllQueries,
+                'data'       => $myAllQueries,
             ],
             200
         );
@@ -465,7 +464,7 @@ class EditProfile extends Controller
     {
         $validator = Validator::make($request->all(), [
             'question_id' => 'required',
-            'status' => 'required',
+            'status'      => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -473,7 +472,7 @@ class EditProfile extends Controller
             return $validationError;
         }
         $question = UserAllQuery::find($request->question_id);
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
@@ -486,12 +485,12 @@ class EditProfile extends Controller
                 $user = User::where('id', $question->user_id)->first();
 
                 $device_id = $user->device_id;
-                $title = "Question Request Update";
+                $title     = "Question Request Update";
 
-                $notiBody = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
-                $body = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
-                $messageType = "Question Request Update";
-                $otherData = "Question Request Update";
+                $notiBody         = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
+                $body             = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
+                $messageType      = "Question Request Update";
+                $otherData        = "Question Request Update";
                 $notificationType = "0";
 
                 if ($device_id != "") {
@@ -500,14 +499,14 @@ class EditProfile extends Controller
 
                 $muftiId = $mufti->id;
                 $message = "Mufti " . $mufti->name . " accepted the private question.";
-                $type = "accept question";
+                $type    = "accept question";
 
                 ActivityHelper::store_avtivity($muftiId, $message, $type);
 
                 $data = [
                     'user_id' => $user->id,
-                    'title' => $title,
-                    'body' => $body,
+                    'title'   => $title,
+                    'body'    => $body,
                 ];
                 Notification::create($data);
 
@@ -518,12 +517,12 @@ class EditProfile extends Controller
             if ($request->status == 2) {
                 $user = User::where('id', $question->user_id)->first();
 
-                $device_id = $user->device_id;
-                $title = "Question Request Update";
-                $notiBody = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
-                $body = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
-                $messageType = "Question Request Update";
-                $otherData = "Question Request Update";
+                $device_id        = $user->device_id;
+                $title            = "Question Request Update";
+                $notiBody         = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
+                $body             = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
+                $messageType      = "Question Request Update";
+                $otherData        = "Question Request Update";
                 $notificationType = "0";
 
                 if ($device_id != "") {
@@ -532,14 +531,14 @@ class EditProfile extends Controller
 
                 $muftiId = $mufti->id;
                 $message = "Mufti " . $mufti->name . " declined the private question.";
-                $type = "decline question";
+                $type    = "decline question";
 
                 ActivityHelper::store_avtivity($muftiId, $message, $type);
 
                 $data = [
                     'user_id' => $user->id,
-                    'title' => $title,
-                    'body' => $body,
+                    'title'   => $title,
+                    'body'    => $body,
                 ];
                 Notification::create($data);
 
@@ -553,7 +552,7 @@ class EditProfile extends Controller
     public function my_all_queries(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'  => 'required',
             'query_id' => 'required',
         ]);
 
@@ -562,11 +561,11 @@ class EditProfile extends Controller
             return $validationError;
         }
         $user = User::find($request->user_id);
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $query = UserQuery::find($request->query_id);
-        if (!$query) {
+        if (! $query) {
             return ResponseHelper::jsonResponse(false, 'Query Not Found');
         }
 
@@ -574,9 +573,9 @@ class EditProfile extends Controller
 
         return response()->json(
             [
-                'status' => true,
+                'status'  => true,
                 'message' => 'My All Queries',
-                'data' => $myAllQueries,
+                'data'    => $myAllQueries,
             ],
             200
         );
@@ -598,19 +597,18 @@ class EditProfile extends Controller
             return ResponseHelper::jsonResponse(false, 'You cannot delete default mufti.');
         }
 
-
         if ($request->user_id == 24 || $request->user_id == "24") {
             return ResponseHelper::jsonResponse(false, 'You cannot delete default Life Coach.');
         }
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         if ($user) {
 
             $user_id = $user->id;
-            $type = "added private question";
+            $type    = "added private question";
             $message = "User " . $user->name . " has deleted his account.";
 
             ActivityHelper::store_avtivity($user_id, $message, $type);
@@ -633,7 +631,7 @@ class EditProfile extends Controller
 
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
@@ -643,35 +641,39 @@ class EditProfile extends Controller
             return response()->json(
                 [
 
-                    'status' => true,
+                    'status'  => true,
                     'message' => 'Request status',
-                    'data' => $data,
+                    'data'    => $data,
                 ],
                 200
             );
         } else {
-            $existingRequest = DeleteAccountRequest::where('user_id', $request->user_id)->first();
+            $existingRequest = DeleteAccountRequest::where('user_id', $request->user_id)->whereIn('status', [1, 2])->first();
 
             if ($existingRequest) {
                 return ResponseHelper::jsonResponse(false, 'Already requested');
             }
 
-            DeleteAccountRequest::create([
-                'user_id' => $request->user_id,
-                'reason' => "",
-                'status' => 1,
-            ]);
+            $requestCreate = DeleteAccountRequest::updateOrCreate(
+                ['user_id' => $request->user_id],
+                [
+                    'reason' => "",
+                    'status' => 1,
+                ]
+            );
 
             $muftiId = $user->id;
             $message = "Mufti " . $user->name . " requested to delete the account.";
-            $type = "deletion request";
+            $type    = "deletion request";
             ActivityHelper::store_avtivity($muftiId, $message, $type);
+
+            $data = DeleteAccountRequest::find($requestCreate->id);
 
             return response()->json(
                 [
-                    'status' => true,
+                    'status'  => true,
                     'message' => 'Request sent successfully!',
-                    'data' => $data,
+                    'data'    => $data,
                 ],
                 200
             );
@@ -682,19 +684,19 @@ class EditProfile extends Controller
     {
 
         $user = User::where('id', $request->user_id)->first();
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $muftiTypes = [
-            9 => ['status' => 2, 'type' => 'scholar', 'notFoundMessage' => 'Mufti Not Found'],
+            9  => ['status' => 2, 'type' => 'scholar', 'notFoundMessage' => 'Mufti Not Found'],
             24 => ['status' => 4, 'type' => 'lifecoach', 'notFoundMessage' => 'Life Coach Not Found'],
         ];
 
         if (isset($muftiTypes[$request->mufti_id])) {
             $typeDetails = $muftiTypes[$request->mufti_id];
-            $mufti = User::where(['id' => $request->mufti_id, 'mufti_status' => $typeDetails['status']])->first();
-            if (!$mufti) {
+            $mufti       = User::where(['id' => $request->mufti_id, 'mufti_status' => $typeDetails['status']])->first();
+            if (! $mufti) {
                 return ResponseHelper::jsonResponse(false, $typeDetails['notFoundMessage']);
             }
         } else {
@@ -702,27 +704,27 @@ class EditProfile extends Controller
         }
 
         $data = [
-            'user_id' => $request->user_id,
-            'mufti_id' => $request->mufti_id,
-            'category' => $request->category,
-            'description' => $request->description,
-            'contact_number' => $request->contact_number ?? "",
-            'email' => $request->email ?? "",
-            'date' => $request->date,
-            'duration' => $request->duration,
-            'payment_id' => $request->payment_id ?? "",
-            'payment_method' => $request->payment_method ?? "",
+            'user_id'          => $request->user_id,
+            'mufti_id'         => $request->mufti_id,
+            'category'         => $request->category,
+            'description'      => $request->description,
+            'contact_number'   => $request->contact_number ?? "",
+            'email'            => $request->email ?? "",
+            'date'             => $request->date,
+            'duration'         => $request->duration,
+            'payment_id'       => $request->payment_id ?? "",
+            'payment_method'   => $request->payment_method ?? "",
             'consultation_fee' => $request->consultation_fee,
-            'user_type' => $typeDetails['type'],
+            'user_type'        => $typeDetails['type'],
         ];
         MuftiAppointment::create($data);
 
-        $device_id = $mufti->device_id;
-        $title = "New Appointment Request Received";
-        $notiBody = 'You have received a new appointment request from ' . $user->name . '.';
-        $body = 'You have received a new appointment request from ' . $user->name . '.';
-        $messageType = "New Appointment Request Received";
-        $otherData = "New Appointment Request Received";
+        $device_id        = $mufti->device_id;
+        $title            = "New Appointment Request Received";
+        $notiBody         = 'You have received a new appointment request from ' . $user->name . '.';
+        $body             = 'You have received a new appointment request from ' . $user->name . '.';
+        $messageType      = "New Appointment Request Received";
+        $otherData        = "New Appointment Request Received";
         $notificationType = "0";
 
         if ($device_id != "") {
@@ -731,14 +733,14 @@ class EditProfile extends Controller
 
         $data = [
             'user_id' => $mufti->id,
-            'title' => $title,
-            'body' => $body,
+            'title'   => $title,
+            'body'    => $body,
         ];
         Notification::create($data);
 
         $user_id = $user->id;
         $message = "A new appointment booked by " . $user->name;
-        $type = "booked appointment";
+        $type    = "booked appointment";
         ActivityHelper::store_avtivity($user_id, $message, $type);
 
         return ResponseHelper::jsonResponse(true, 'Book Appointment successfully!');
@@ -755,15 +757,15 @@ class EditProfile extends Controller
         }
 
         $user = User::where(['id' => $request->user_id])->first();
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $userType = $user->user_type;
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 10;
-        $search = $request->input('search', '');
+        $search  = $request->input('search', '');
 
         $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests');
 
@@ -775,7 +777,7 @@ class EditProfile extends Controller
 
         $query->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC");
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('category', 'LIKE', '%' . $search . '%')
                     ->orWhere('description', 'LIKE', '%' . $search . '%')
@@ -790,16 +792,16 @@ class EditProfile extends Controller
             });
         }
 
-        $totalPages = ceil($query->count() / $perPage);
+        $totalPages     = ceil($query->count() / $perPage);
         $myAppointments = $query->forPage($page, $perPage)->get();
 
         if ($myAppointments->isEmpty()) {
             return response()->json(
                 [
-                    'status' => false,
-                    'message' => 'No Appointments Found',
+                    'status'     => false,
+                    'message'    => 'No Appointments Found',
                     'totalpages' => 0,
-                    'data' => [],
+                    'data'       => [],
                 ],
                 200
             );
@@ -807,10 +809,10 @@ class EditProfile extends Controller
 
         return response()->json(
             [
-                'status' => true,
-                'message' => 'My All Appointments',
+                'status'     => true,
+                'message'    => 'My All Appointments',
                 'totalpages' => $totalPages,
-                'data' => $myAppointments,
+                'data'       => $myAppointments,
             ],
             200
         );
