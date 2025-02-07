@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\User;
@@ -16,11 +15,12 @@ class UserQuery extends Model
         'user_id',
         'fiqa',
         'category',
+        'user_info',
     ];
 
     protected $casts = [
-        'user_id' => 'integer',
-        'category' => 'array',
+        'user_id'    => 'integer',
+        'category'   => 'array',
         'created_at' => "datetime:Y-m-d H:i:s",
     ];
 

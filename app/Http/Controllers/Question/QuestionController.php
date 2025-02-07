@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Question;
 
 use App\Helpers\ActivityHelper;
@@ -33,12 +32,12 @@ class QuestionController extends Controller
     public function post_question(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'           => 'required',
             'question_category' => 'required',
-            'question' => 'required',
-            'time_limit' => 'required',
-            'voting_option' => 'required',
-            'user_info' => 'required',
+            'question'          => 'required',
+            'time_limit'        => 'required',
+            'voting_option'     => 'required',
+            'user_info'         => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -47,32 +46,32 @@ class QuestionController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $userType = $user->user_type;
 
         $data = [
-            'user_id' => $request->user_id,
+            'user_id'           => $request->user_id,
             'question_category' => $request->question_category,
-            'question' => $request->question,
-            'time_limit' => $request->time_limit,
-            'voting_option' => $request->voting_option,
-            'user_info' => $request->user_info,
-            'user_type' => $userType,
+            'question'          => $request->question,
+            'time_limit'        => $request->time_limit,
+            'voting_option'     => $request->voting_option,
+            'user_info'         => $request->user_info,
+            'user_type'         => $userType,
         ];
 
         $question = Question::create($data);
 
         $question = Question::where('id', $question->id)->first();
 
-        $totalYesVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
+        $totalYesVote           = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
         $question->totalYesVote = $totalYesVote;
-        $totalNoVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
-        $question->totalNoVote = $totalNoVote;
+        $totalNoVote            = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
+        $question->totalNoVote  = $totalNoVote;
 
         $currentUserVote = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id])->first();
-        if (!$currentUserVote) {
+        if (! $currentUserVote) {
             $question->current_user_vote = 0;
         } else if ($currentUserVote->vote == 1) {
             $question->current_user_vote = 1;
@@ -81,9 +80,9 @@ class QuestionController extends Controller
         }
 
         $question->user_detail = User::where('id', $question->user_id)->select('name', 'image')->first();
-        $question->comments = QuestionComment::with('user_detail')->where('question_id', $question->id)->get();
-        $scholar_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
-        $lifecoach_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
+        $question->comments    = QuestionComment::with('user_detail')->where('question_id', $question->id)->get();
+        $scholar_reply         = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
+        $lifecoach_reply       = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
 
         if ($scholar_reply) {
             $question->scholar_reply = $scholar_reply;
@@ -104,13 +103,13 @@ class QuestionController extends Controller
         }
 
         $user_id = $user->id;
-        $type = "posted question";
+        $type    = "posted question";
 
         ActivityHelper::store_avtivity($user_id, $message, $type);
         $response = [
-            'status' => true,
+            'status'  => true,
             'message' => 'Added question successfully!',
-            'data' => $question,
+            'data'    => $question,
         ];
         return response()->json($response, 200);
     }
@@ -118,9 +117,9 @@ class QuestionController extends Controller
     public function vote_on_question(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'     => 'required',
             'question_id' => 'required',
-            'vote' => 'required',
+            'vote'        => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -130,12 +129,12 @@ class QuestionController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $question = Question::where('id', $request->question_id)->first();
 
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
@@ -153,11 +152,11 @@ class QuestionController extends Controller
             $voteQuestion->update($data);
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
-                $device_id = $userData->device_id;
-                $title = "Public Question Update";
-                $body = 'User ' . $user->name . ' has vote on your posted public question.';
-                $messageType = "Public Question Update";
-                $otherData = "Public Question Update";
+                $device_id        = $userData->device_id;
+                $title            = "Public Question Update";
+                $body             = 'User ' . $user->name . ' has vote on your posted public question.';
+                $messageType      = "Public Question Update";
+                $otherData        = "Public Question Update";
                 $notificationType = "2";
 
                 if ($device_id != "") {
@@ -168,19 +167,19 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
         } else {
             $data = [
-                'user_id' => $request->user_id,
+                'user_id'     => $request->user_id,
                 'question_id' => $request->question_id,
-                'vote' => $request->vote,
+                'vote'        => $request->vote,
             ];
             QuestionVote::create($data);
 
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
-                $device_id = $userData->device_id;
-                $title = "Public Question Update";
-                $body = 'User ' . $user->name . ' has vote on your posted public question.';
-                $messageType = "Public Question Update";
-                $otherData = "Public Question Update";
+                $device_id        = $userData->device_id;
+                $title            = "Public Question Update";
+                $body             = 'User ' . $user->name . ' has vote on your posted public question.';
+                $messageType      = "Public Question Update";
+                $otherData        = "Public Question Update";
                 $notificationType = "2";
 
                 if ($device_id != "") {
@@ -195,7 +194,7 @@ class QuestionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
-            'search' => 'nullable|string',
+            'search'  => 'nullable|string',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -205,18 +204,18 @@ class QuestionController extends Controller
 
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 10;
 
         $baseQuery = Question::withCount([
             'votes as totalYesVote' => function ($query) {
                 $query->where('vote', 1);
             },
-            'votes as totalNoVote' => function ($query) {
+            'votes as totalNoVote'  => function ($query) {
                 $query->where('vote', 2);
             },
             'comments as comments_count',
@@ -237,21 +236,21 @@ class QuestionController extends Controller
 
         if ($questions->isEmpty()) {
             return response()->json([
-                'status' => false,
-                'message' => 'No questions found!',
+                'status'     => false,
+                'message'    => 'No questions found!',
                 'totalpages' => (int) 0,
-                'data' => [],
+                'data'       => [],
             ], 200);
         }
 
         $questions->each(function ($question) use ($request) {
             $question->current_user_vote = QuestionVote::where([
                 'question_id' => $question->id,
-                'user_id' => $request->user_id,
+                'user_id'     => $request->user_id,
             ])->value('vote') ?? 0;
 
-            $question->totalYesVote = (int) $question->totalYesVote;
-            $question->totalNoVote = (int) $question->totalNoVote;
+            $question->totalYesVote   = (int) $question->totalYesVote;
+            $question->totalNoVote    = (int) $question->totalNoVote;
             $question->comments_count = (int) $question->comments_count;
 
             unset($question->reports_count);
@@ -267,10 +266,10 @@ class QuestionController extends Controller
         });
 
         return response()->json([
-            'status' => true,
-            'message' => 'User All Public questions!',
+            'status'     => true,
+            'message'    => 'User All Public questions!',
             'totalpages' => $totalPages,
-            'data' => $questions->items(),
+            'data'       => $questions->items(),
         ], 200);
     }
 
@@ -278,7 +277,7 @@ class QuestionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
-            'search' => 'nullable|string',
+            'search'  => 'nullable|string',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -288,18 +287,18 @@ class QuestionController extends Controller
 
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 10;
 
         $baseQuery = Question::withCount([
             'votes as totalYesVote' => function ($query) {
                 $query->where('vote', 1);
             },
-            'votes as totalNoVote' => function ($query) {
+            'votes as totalNoVote'  => function ($query) {
                 $query->where('vote', 2);
             },
             'comments as comments_count',
@@ -320,21 +319,21 @@ class QuestionController extends Controller
 
         if ($questions->isEmpty()) {
             return response()->json([
-                'status' => false,
-                'message' => 'No questions found!',
+                'status'     => false,
+                'message'    => 'No questions found!',
                 'totalpages' => (int) 0,
-                'data' => [],
+                'data'       => [],
             ], 200);
         }
 
         $questions->each(function ($question) use ($request) {
             $question->current_user_vote = QuestionVote::where([
                 'question_id' => $question->id,
-                'user_id' => $request->user_id,
+                'user_id'     => $request->user_id,
             ])->value('vote') ?? 0;
 
-            $question->totalYesVote = (int) $question->totalYesVote;
-            $question->totalNoVote = (int) $question->totalNoVote;
+            $question->totalYesVote   = (int) $question->totalYesVote;
+            $question->totalNoVote    = (int) $question->totalNoVote;
             $question->comments_count = (int) $question->comments_count;
 
             unset($question->reports_count);
@@ -350,17 +349,17 @@ class QuestionController extends Controller
         });
 
         return response()->json([
-            'status' => true,
-            'message' => 'All Public questions!',
+            'status'     => true,
+            'message'    => 'All Public questions!',
             'totalpages' => $totalPages,
-            'data' => $questions->items(),
+            'data'       => $questions->items(),
         ], 200);
     }
 
     public function question_detail(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'     => 'required',
             'question_id' => 'required',
         ]);
 
@@ -371,26 +370,26 @@ class QuestionController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $question = Question::where('id', $request->question_id)->first();
 
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
         $question = Question::where('id', $question->id)->first();
 
-        $totalYesVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
+        $totalYesVote           = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
         $question->totalYesVote = $totalYesVote;
-        $totalNoVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
-        $question->totalNoVote = $totalNoVote;
+        $totalNoVote            = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
+        $question->totalNoVote  = $totalNoVote;
 
         $question->is_reported = ReportQuestions::where(['user_id' => $request->user_id, 'question_id' => $request->question_id])->exists();
 
         $currentUserVote = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id])->first();
-        if (!$currentUserVote) {
+        if (! $currentUserVote) {
             $question->current_user_vote = 0;
         } else if ($currentUserVote->vote == 1) {
             $question->current_user_vote = 1;
@@ -400,43 +399,43 @@ class QuestionController extends Controller
 
         $question->user_detail = User::where('id', $question->user_id)->select('name', 'image')->first();
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 20;
 
         $baseQuery = QuestionComment::with('user_detail')
             ->where('question_id', $question->id);
 
         $totalComments = $baseQuery->count();
-        $totalPages = ceil($totalComments / $perPage);
+        $totalPages    = ceil($totalComments / $perPage);
 
         $paginatedComments = $baseQuery->paginate($perPage, ['*'], 'page', $page);
 
         $question->comments = $paginatedComments->items();
 
-        $scholar_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
+        $scholar_reply           = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
         $question->scholar_reply = $scholar_reply ? $scholar_reply : (object) [];
 
-        $lifecoach_reply = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
+        $lifecoach_reply           = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
         $question->lifecoach_reply = $lifecoach_reply ? $lifecoach_reply : (object) [];
 
         $admin_reply = AdminReply::where([
-            'question_id' => $question->id,
+            'question_id'   => $question->id,
             'question_type' => 'public',
         ])->first();
 
         if ($admin_reply) {
             $question->admin_reply = (object) [
-                'id' => $admin_reply->id,
+                'id'          => $admin_reply->id,
                 'question_id' => $admin_reply->question_id,
-                'user_id' => $admin_reply->user_id,
-                'reply' => $admin_reply->reply,
-                'created_at' => $admin_reply->created_at,
-                'updated_at' => $admin_reply->updated_at,
+                'user_id'     => $admin_reply->user_id,
+                'reply'       => $admin_reply->reply,
+                'created_at'  => $admin_reply->created_at,
+                'updated_at'  => $admin_reply->updated_at,
                 'user_detail' => (object) [
-                    'id' => $admin_reply->user_id,
-                    'name' => 'My Mufti Admin',
+                    'id'    => $admin_reply->user_id,
+                    'name'  => 'My Mufti Admin',
                     'image' => '',
-                    'fiqa' => '',
+                    'fiqa'  => '',
                 ],
             ];
         } else {
@@ -444,10 +443,10 @@ class QuestionController extends Controller
         }
 
         $response = [
-            'status' => true,
-            'message' => 'Question detail!',
+            'status'      => true,
+            'message'     => 'Question detail!',
             'total_pages' => $totalPages,
-            'data' => $question,
+            'data'        => $question,
         ];
 
         return response()->json($response, 200);
@@ -463,7 +462,7 @@ class QuestionController extends Controller
 
         $question = Question::find($questionId);
 
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question not found');
         }
 
@@ -480,9 +479,9 @@ class QuestionController extends Controller
     public function add_comment(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'     => 'required',
             'question_id' => 'required',
-            'comment' => 'required',
+            'comment'     => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -492,29 +491,29 @@ class QuestionController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $question = Question::where('id', $request->question_id)->first();
 
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
         $questionId = $request->question_id;
 
         $data = [
-            'user_id' => $request->user_id,
+            'user_id'     => $request->user_id,
             'question_id' => $request->question_id,
-            'comment' => $request->comment,
+            'comment'     => $request->comment,
         ];
         if ($question->user_id != $request->user_id) {
-            $userData = User::where('id', $question->user_id)->first();
-            $device_id = $userData->device_id;
-            $title = "Public Question Update";
-            $body = 'User ' . $user->name . ' has comment on your posted public question.';
-            $messageType = "Public Question Update";
-            $otherData = "Public Question Update";
+            $userData         = User::where('id', $question->user_id)->first();
+            $device_id        = $userData->device_id;
+            $title            = "Public Question Update";
+            $body             = 'User ' . $user->name . ' has comment on your posted public question.';
+            $messageType      = "Public Question Update";
+            $otherData        = "Public Question Update";
             $notificationType = "2";
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
@@ -538,7 +537,7 @@ class QuestionController extends Controller
 
         $comment = QuestionComment::find($request->comment_id);
 
-        if (!$comment) {
+        if (! $comment) {
             return ResponseHelper::jsonResponse(false, 'Comment not found');
         }
 
@@ -550,9 +549,9 @@ class QuestionController extends Controller
     public function scholar_reply(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'     => 'required',
             'question_id' => 'required',
-            'reply' => 'required',
+            'reply'       => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -566,24 +565,24 @@ class QuestionController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
 
         $userType = $user->user_type;
 
         $question = Question::where('id', $request->question_id)->first();
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
         $questionId = $request->question_id;
 
         $data = [
-            'user_id' => $request->user_id,
+            'user_id'     => $request->user_id,
             'question_id' => $request->question_id,
-            'reply' => $request->reply,
-            'user_type' => $userType ?? 'scholar',
+            'reply'       => $request->reply,
+            'user_type'   => $userType ?? 'scholar',
         ];
 
         ScholarReply::updateOrCreate(
@@ -591,13 +590,12 @@ class QuestionController extends Controller
             $data
         );
 
-        $userData = User::where('id', $question->user_id)->first();
-        $device_id = $userData->device_id;
-        $title = "Public Question Update";
-        // $body = 'Scholar ' . $user->name . ' has reply on your question.';
-        $body = $user->name . ' has reply on your question.';
-        $messageType = "Public Question Update";
-        $otherData = "Public Question Update";
+        $userData         = User::where('id', $question->user_id)->first();
+        $device_id        = $userData->device_id;
+        $title            = "Public Question Update";
+        $body             = $user->name . ' has reply on your question.';
+        $messageType      = "Public Question Update";
+        $otherData        = "Public Question Update";
         $notificationType = "2";
 
         if ($device_id != "") {
@@ -752,7 +750,7 @@ class QuestionController extends Controller
     public function post_general_question(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'  => 'required',
             'mufti_id' => 'required',
             'question' => 'required',
         ]);
@@ -763,40 +761,41 @@ class QuestionController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User  Not Found');
         }
 
         $mufti_id = 9;
-        $mufti = User::where(['id' => $mufti_id, 'mufti_status' => 2])->first();
-        if (!$mufti) {
+        $mufti    = User::where(['id' => $mufti_id, 'mufti_status' => 2])->first();
+        if (! $mufti) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
 
         $categories = Interest::where('user_id', $mufti_id)->pluck('interest')->toArray();
-        $data = [
-            'user_id' => $request->user_id,
-            'question' => $request->question,
-            'fiqa' => "General",
-            'category' => $categories,
+        $data       = [
+            'user_id'   => $request->user_id,
+            'question'  => $request->question,
+            'fiqa'      => "General",
+            'category'  => $categories,
+            'user_info' => $request->user_info ?? 1,
         ];
 
         $question = UserQuery::create($data);
 
         $data1 = [
             'query_id' => $question->id,
-            'user_id' => $request->user_id,
+            'user_id'  => $request->user_id,
             'mufti_id' => $mufti_id,
             'question' => $request->question,
         ];
 
         $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
 
-        $device_id = $user->device_id;
-        $title = "Question Request Update";
-        $body = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
-        $messageType = "Question Request Update";
-        $otherData = "Question Request Update";
+        $device_id        = $user->device_id;
+        $title            = "Question Request Update";
+        $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
+        $messageType      = "Question Request Update";
+        $otherData        = "Question Request Update";
         $notificationType = "1";
 
         if ($device_id != "") {
@@ -805,13 +804,13 @@ class QuestionController extends Controller
 
         $notificationData = [
             'user_id' => $user->id,
-            'title' => $title,
-            'body' => $body,
+            'title'   => $title,
+            'body'    => $body,
         ];
         Notification::create($notificationData);
 
         $user_id = $user->id;
-        $type = "added private question";
+        $type    = "added private question";
         $message = $user->name . " added a private question.";
 
         ActivityHelper::store_avtivity($user_id, $message, $type);
@@ -946,8 +945,8 @@ class QuestionController extends Controller
     public function post_fiqa_wise_question(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'fiqa' => 'required',
+            'user_id'  => 'required',
+            'fiqa'     => 'required',
             'question' => 'required',
             'category' => 'required',
         ]);
@@ -958,28 +957,29 @@ class QuestionController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $mufti_id = 9;
-        $mufti = User::where(['id' => $mufti_id, 'mufti_status' => 2])->first();
-        if (!$mufti) {
+        $mufti    = User::where(['id' => $mufti_id, 'mufti_status' => 2])->first();
+        if (! $mufti) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
 
         $data = [
-            'user_id' => $request->user_id,
-            'question' => $request->question,
-            'fiqa' => $request->fiqa,
-            'category' => (array) $request->category,
+            'user_id'   => $request->user_id,
+            'question'  => $request->question,
+            'fiqa'      => $request->fiqa,
+            'category'  => (array) $request->category,
+            'user_info' => $request->user_info ?? 1,
         ];
 
         $question = UserQuery::create($data);
 
         $data2 = [
             'query_id' => $question->id,
-            'user_id' => $request->user_id,
+            'user_id'  => $request->user_id,
             'mufti_id' => $mufti_id,
             'question' => $request->question,
         ];
@@ -988,11 +988,11 @@ class QuestionController extends Controller
 
         UserAllQuery::create($data2);
 
-        $device_id = $user->device_id;
-        $title = "Question Request Update";
-        $body = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
-        $messageType = "Question Request Update";
-        $otherData = "Question Request Update";
+        $device_id        = $user->device_id;
+        $title            = "Question Request Update";
+        $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
+        $messageType      = "Question Request Update";
+        $otherData        = "Question Request Update";
         $notificationType = "1";
 
         if ($device_id != "") {
@@ -1001,8 +1001,8 @@ class QuestionController extends Controller
 
         $notificationData = [
             'user_id' => $user->id,
-            'title' => $title,
-            'body' => $body,
+            'title'   => $title,
+            'body'    => $body,
         ];
         Notification::create($notificationData);
 
@@ -1013,18 +1013,18 @@ class QuestionController extends Controller
     {
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $question = Question::find($request->question_id);
 
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
         $check = ReportQuestions::where([
-            'user_id' => $request->user_id,
+            'user_id'     => $request->user_id,
             'question_id' => $request->question_id,
         ])->first();
 
@@ -1032,9 +1032,9 @@ class QuestionController extends Controller
             return ResponseHelper::jsonResponse(false, 'Already Reported!');
         } else {
             $data = [
-                'user_id' => $request->user_id,
+                'user_id'     => $request->user_id,
                 'question_id' => $request->question_id,
-                'reason' => $request->reason,
+                'reason'      => $request->reason,
             ];
 
             ReportQuestions::create($data);
@@ -1046,7 +1046,7 @@ class QuestionController extends Controller
             }
 
             $user_id = $request->user_id;
-            $type = "reported question";
+            $type    = "reported question";
 
             ActivityHelper::store_avtivity($user_id, $message, $type);
 
@@ -1056,12 +1056,12 @@ class QuestionController extends Controller
 
     public function send($deviceId, $title, $name, $muftiId)
     {
-        $device_id = $deviceId;
-        $title = $title;
-        $notiBody = 'User' . ' ' . $name . ' wants to ask a question for you.';
-        $body = 'User' . ' ' . $name . ' wants to ask a question for you.';
-        $messageType = $title;
-        $otherData = "Asked Question";
+        $device_id        = $deviceId;
+        $title            = $title;
+        $notiBody         = 'User' . ' ' . $name . ' wants to ask a question for you.';
+        $body             = 'User' . ' ' . $name . ' wants to ask a question for you.';
+        $messageType      = $title;
+        $otherData        = "Asked Question";
         $notificationType = "1";
 
         if ($device_id != "") {
@@ -1070,8 +1070,8 @@ class QuestionController extends Controller
 
         $data = [
             'user_id' => $muftiId,
-            'title' => $title,
-            'body' => $body,
+            'title'   => $title,
+            'body'    => $body,
         ];
         Notification::create($data);
     }
@@ -1084,7 +1084,7 @@ class QuestionController extends Controller
         if (empty($request->user_ids)) {
             return response()->json(['message' => 'No user IDs provided.'], 200);
         }
-        $ids = $request->user_ids;
+        $ids          = $request->user_ids;
         $userquestion = UserQuery::whereIn('user_id', $ids)->pluck('id')->toArray();
         UserAllQuery::whereIn('query_id', $userquestion)->delete();
         UserQuery::whereIn('user_id', $ids)->delete();

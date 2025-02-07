@@ -26,6 +26,7 @@ class Event extends Model
         'about',
         'event_status',
         'reason',
+        'time_zone',
     ];
     protected $casts = [
         'user_id' => 'integer',

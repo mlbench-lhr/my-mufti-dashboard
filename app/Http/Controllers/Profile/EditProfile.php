@@ -607,10 +607,12 @@ class EditProfile extends Controller
 
         if ($user) {
 
+            $user->deletion_reason = $request->deletion_reason ?? '';
+            $user->save();
+
             $user_id = $user->id;
             $type    = "added private question";
             $message = "User " . $user->name . " has deleted his account.";
-
             ActivityHelper::store_avtivity($user_id, $message, $type);
 
             $user->deleteWithRelated();

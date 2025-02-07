@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Event;
 
 use App\Helpers\ActivityHelper;
@@ -17,6 +16,7 @@ use App\Models\SaveEvent;
 use App\Models\User;
 use App\Services\FcmService;
 use Carbon\Carbon;
+use Carbon\CarbonTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -34,7 +34,7 @@ class EventController extends Controller
     private function processImage($base64File, $folder)
     {
         $fileData = base64_decode($base64File);
-        $name = $folder . '/' . Str::random(15) . '.png';
+        $name     = $folder . '/' . Str::random(15) . '.png';
         Storage::put('public/' . $name, $fileData);
         return $name;
     }
@@ -44,27 +44,28 @@ class EventController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $data = [
-            'user_id' => $request->user_id,
-            'image' => $request->image,
-            'event_title' => $request->event_title,
-            'event_category' => $request->event_category,
+            'user_id'           => $request->user_id,
+            'image'             => $request->image,
+            'event_title'       => $request->event_title,
+            'event_category'    => $request->event_category,
             'question_category' => ["General", "Others"],
-            'date' => Carbon::parse($request->date),
-            'duration' => $request->duration,
-            'location' => $request->location,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'about' => $request->about,
+            'date'              => Carbon::parse($request->date),
+            'duration'          => $request->duration,
+            'location'          => $request->location,
+            'latitude'          => $request->latitude,
+            'longitude'         => $request->longitude,
+            'about'             => $request->about,
+            'time_zone'         => $request->time_zone ?? 'Asia/Karachi',
         ];
 
         $data['image'] = $this->processImage($data['image'], 'event_images');
 
-        $event = Event::create($data);
+        $event   = Event::create($data);
         $eventId = $event->id;
 
         $registerScholars = $request->register_scholar;
@@ -78,10 +79,10 @@ class EventController extends Controller
         collect($registerScholars)->map(function ($scholar) use ($eventId) {
             return [
                 'event_id' => $eventId,
-                'user_id' => $scholar['id'],
-                'image' => $scholar['image'],
-                'name' => $scholar['name'],
-                'fiqa' => $scholar['fiqa'],
+                'user_id'  => $scholar['id'],
+                'image'    => $scholar['image'],
+                'name'     => $scholar['name'],
+                'fiqa'     => $scholar['fiqa'],
                 'category' => $scholar['interest'],
             ];
         })->each(function ($data) {
@@ -97,10 +98,10 @@ class EventController extends Controller
             }
             return [
                 'event_id' => $eventId,
-                'user_id' => 0,
-                'image' => $img,
-                'name' => $newScholar['name'],
-                'fiqa' => $newScholar['fiqa'],
+                'user_id'  => 0,
+                'image'    => $img,
+                'name'     => $newScholar['name'],
+                'fiqa'     => $newScholar['fiqa'],
                 'category' => $newScholar['category'],
             ];
         })->each(function ($data) {
@@ -114,7 +115,7 @@ class EventController extends Controller
         }
 
         $user_id = $user->id;
-        $type = "event added";
+        $type    = "event added";
 
         ActivityHelper::store_avtivity($user_id, $message, $type);
 
@@ -130,14 +131,14 @@ class EventController extends Controller
             $query->where('user_id', $user_id);
         }])->first();
 
-        $questionCategories = $event_data->question_category;
+        $questionCategories            = $event_data->question_category;
         $event_data->question_category = getCategoryCounts12($questionCategories, $eventId);
-        $event_data->save = SaveEvent::where(['user_id' => $user_id, 'event_id' => $eventId])->exists();
+        $event_data->save              = SaveEvent::where(['user_id' => $user_id, 'event_id' => $eventId])->exists();
 
         $response = [
-            'status' => true,
+            'status'  => true,
             'message' => 'Event Added Successfully!',
-            'data' => $event_data,
+            'data'    => $event_data,
         ];
         return response()->json($response, 200);
     }
@@ -145,15 +146,15 @@ class EventController extends Controller
     public function update_event(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'event_id' => 'required',
-            'event_title' => 'required',
+            'event_id'       => 'required',
+            'event_title'    => 'required',
             'event_category' => 'required',
             // 'date' => 'required',
-            'duration' => 'required',
-            'location' => 'required',
-            'latitude' => 'required',
-            'longitude' => 'required',
-            'about' => 'required',
+            'duration'       => 'required',
+            'location'       => 'required',
+            'latitude'       => 'required',
+            'longitude'      => 'required',
+            'about'          => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -163,14 +164,14 @@ class EventController extends Controller
 
         $event = Event::with('scholars', 'hosted_by.interests')->where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
         $allowedFields = ['user_id', 'image', 'event_title', 'event_category', 'date', 'duration', 'location', 'latitude', 'longitude', 'about'];
         if (isset($request->date)) {
             $parsedDate = Carbon::parse($request->date);
-            $eventDate = Carbon::parse($event->date);
+            $eventDate  = Carbon::parse($event->date);
 
             if ($parsedDate->toDateTimeString() !== $eventDate->toDateTimeString()) {
 
@@ -183,19 +184,19 @@ class EventController extends Controller
                 $userData = User::where('id', $event->user_id)->first();
                 $userName = $userData->name ?? '';
 
-                $event_date = $event->date;
+                $event_date  = $event->date;
                 $change_date = $request->date;
                 $oldDateTime = Carbon::parse($event_date)->format('F j, Y, g:i A');
                 $newDateTime = Carbon::parse($change_date)->format('F j, Y, g:i A');
 
                 array_walk($eventScholars, function ($value) use ($oldDateTime, $newDateTime, $userName) {
-                    $user = User::find($value);
-                    $device_id = $user->device_id;
-                    $title = "Event Request Update";
-                    $notiBody = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
-                    $body = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
-                    $messageType = "Event Request Update";
-                    $otherData = "Event Request Update";
+                    $user             = User::find($value);
+                    $device_id        = $user->device_id;
+                    $title            = "Event Request Update";
+                    $notiBody         = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
+                    $body             = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
+                    $messageType      = "Event Request Update";
+                    $otherData        = "Event Request Update";
                     $notificationType = "0";
 
                     if ($device_id != "") {
@@ -204,8 +205,8 @@ class EventController extends Controller
 
                     $data = [
                         'user_id' => $user->id,
-                        'title' => $title,
-                        'body' => $body,
+                        'title'   => $title,
+                        'body'    => $body,
                     ];
 
                     Notification::create($data);
@@ -220,7 +221,7 @@ class EventController extends Controller
 
         $data = array_filter($data, fn($value) => $value !== null && $value !== '' && $value !== 0);
 
-        if (!empty($data['image'])) {
+        if (! empty($data['image'])) {
             $data['image'] = $this->processImage($data['image'], 'event_images');
         }
 
@@ -242,7 +243,7 @@ class EventController extends Controller
 
         $event = Event::with('scholars', 'hosted_by.interests')->where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
@@ -263,20 +264,20 @@ class EventController extends Controller
         collect($registerScholars)->map(function ($scholar) use ($eventId) {
             return [
                 'event_id' => $eventId,
-                'user_id' => $scholar['id'],
-                'image' => $scholar['image'],
-                'name' => $scholar['name'],
-                'fiqa' => $scholar['fiqa'],
+                'user_id'  => $scholar['id'],
+                'image'    => $scholar['image'],
+                'name'     => $scholar['name'],
+                'fiqa'     => $scholar['fiqa'],
                 'category' => $scholar['interest'],
             ];
         })->each(function ($data) {
             EventScholar::create($data);
         });
 
-        $name = $request->name;
-        $fiqa = $request->fiqa;
+        $name     = $request->name;
+        $fiqa     = $request->fiqa;
         $category = $request->category;
-        $image = $request->image;
+        $image    = $request->image;
         if ($request->image != "") {
             $img = $this->processImage($request->image, 'event_scholar');
         } else {
@@ -285,10 +286,10 @@ class EventController extends Controller
         if ($name != "") {
             $data1 = [
                 'event_id' => $eventId,
-                'user_id' => 0,
-                'image' => $img,
-                'name' => $name ?? "",
-                'fiqa' => $fiqa ?? "",
+                'user_id'  => 0,
+                'image'    => $img,
+                'name'     => $name ?? "",
+                'fiqa'     => $fiqa ?? "",
                 'category' => $category,
             ];
 
@@ -301,7 +302,7 @@ class EventController extends Controller
     public function remove_event_scholar(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'event_id' => 'required',
+            'event_id'   => 'required',
             'scholar_id' => 'required',
         ]);
 
@@ -312,12 +313,12 @@ class EventController extends Controller
 
         $event = Event::where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
         $scholar = EventScholar::where('id', $request->scholar_id)->first();
 
-        if (!$scholar) {
+        if (! $scholar) {
             return ResponseHelper::jsonResponse(false, 'Scholar Not Found');
         }
 
@@ -330,7 +331,7 @@ class EventController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'event_id' => 'required',
-            'user_id' => 'required',
+            'user_id'  => 'required',
         ]);
         $userId = $request->user_id;
 
@@ -341,7 +342,7 @@ class EventController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
@@ -349,11 +350,11 @@ class EventController extends Controller
             $query->where('user_id', $userId);
         }])->where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
-        $eventCategories = $event->event_category;
+        $eventCategories    = $event->event_category;
         $questionCategories = $event->question_category;
 
         $categoryCounts = collect($eventCategories)->map(function ($value) use ($request) {
@@ -366,18 +367,18 @@ class EventController extends Controller
             return (object) [$value => $count];
         })->values()->all();
 
-        $event->event_category = $categoryCounts;
+        $event->event_category    = $categoryCounts;
         $event->question_category = $questionCounts;
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
         $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $request->event_id])->exists();
 
         $response = [
-            'status' => true,
+            'status'  => true,
             'message' => 'Event detail!',
-            'data' => $event,
+            'data'    => $event,
         ];
         return response()->json($response, 200);
     }
@@ -386,7 +387,7 @@ class EventController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'event_id' => 'required',
-            'user_id' => 'required',
+            'user_id'  => 'required',
             'category' => 'required',
             'question' => 'required',
         ]);
@@ -398,19 +399,29 @@ class EventController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $event = Event::where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
+        }
+
+        $timeZone        = $event->time_zone ?? 'Asia/Karachi';
+        $eventTimeZone   = new CarbonTimeZone($timeZone ?? 'UTC');
+        $eventTime       = Carbon::parse($event->date, $eventTimeZone)->utc();
+        $questionEndTime = $eventTime->subMinutes($event->question_end_time);
+        $currentTime     = Carbon::now('UTC');
+
+        if ($currentTime->greaterThan($questionEndTime)) {
+            return ResponseHelper::jsonResponse(false, 'You can no longer ask questions for this event');
         }
 
         $existingQuestion = EventQuestion::where([
             'event_id' => $request->event_id,
-            'user_id' => $request->user_id,
+            'user_id'  => $request->user_id,
         ])->first();
 
         if ($existingQuestion) {
@@ -419,7 +430,7 @@ class EventController extends Controller
 
         $data = [
             'event_id' => $request->event_id,
-            'user_id' => $request->user_id,
+            'user_id'  => $request->user_id,
             'question' => $request->question,
             'category' => $request->category,
         ];
@@ -431,9 +442,9 @@ class EventController extends Controller
     public function add_answer_on_event(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'     => 'required',
             'question_id' => 'required',
-            'answer' => 'required',
+            'answer'      => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -443,19 +454,19 @@ class EventController extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $question = EventQuestion::where('id', $request->question_id)->first();
 
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
         $event = Event::where(['id' => $question->event_id, 'user_id' => $request->user_id])->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
@@ -469,11 +480,10 @@ class EventController extends Controller
         return ResponseHelper::jsonResponse(true, 'Answer Added Successfully!');
     }
 
-
     public function past_upcoming_events(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'flag' => 'required',
+            'flag'      => 'required',
             'time_zone' => "required",
         ]);
 
@@ -482,17 +492,17 @@ class EventController extends Controller
             return $validationError;
         }
         $todayDate = Carbon::now($request->time_zone);
-        $page = $request->input('page', 1);
-        $perPage = 20;
+        $page      = $request->input('page', 1);
+        $perPage   = 20;
 
         if ($request->flag == 1) {
-            $pastEvents = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where('event_status', 1)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
+            $pastEvents     = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where('event_status', 1)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
             $totalPastPages = ceil(Event::where('date', '<', $todayDate)->where('event_status', 1)->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Past Events!',
+            $response       = [
+                'status'              => true,
+                'message'             => 'Past Events!',
                 'totalPastEventPages' => $totalPastPages,
-                'data' => $pastEvents,
+                'data'                => $pastEvents,
             ];
             return response()->json($response, 200);
         }
@@ -500,11 +510,11 @@ class EventController extends Controller
             $upcomingEvents = Event::forPage($page, $perPage)->where('date', '>', $todayDate)->where('event_status', 1)->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
 
             $totalUpcomingPages = ceil(Event::where('date', '>', $todayDate)->where('event_status', 1)->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Upcomig Events!',
+            $response           = [
+                'status'                  => true,
+                'message'                 => 'Upcomig Events!',
                 'totalUpcomingEventPages' => $totalUpcomingPages,
-                'data' => $upcomingEvents,
+                'data'                    => $upcomingEvents,
             ];
             return response()->json($response, 200);
         }
@@ -513,8 +523,8 @@ class EventController extends Controller
     public function my_past_upcoming_requested_events(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'flag' => 'required',
+            'user_id'   => 'required',
+            'flag'      => 'required',
             'time_zone' => "required",
         ]);
 
@@ -524,21 +534,21 @@ class EventController extends Controller
         }
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $todayDate = Carbon::now($request->time_zone);
-        $page = $request->input('page', 1);
-        $perPage = 20;
+        $page      = $request->input('page', 1);
+        $perPage   = 20;
 
         if ($request->flag == 1) {
-            $pastEvents = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
+            $pastEvents     = Event::forPage($page, $perPage)->where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
             $totalPastPages = ceil(Event::where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Past Events!',
+            $response       = [
+                'status'              => true,
+                'message'             => 'Past Events!',
                 'totalPastEventPages' => $totalPastPages,
-                'data' => $pastEvents,
+                'data'                => $pastEvents,
             ];
             return response()->json($response, 200);
         }
@@ -546,22 +556,22 @@ class EventController extends Controller
             $upcomingEvents = Event::forPage($page, $perPage)->where('date', '>', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
 
             $totalUpcomingPages = ceil(Event::where('date', '>', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Upcomig Events!',
+            $response           = [
+                'status'                  => true,
+                'message'                 => 'Upcomig Events!',
                 'totalUpcomingEventPages' => $totalUpcomingPages,
-                'data' => $upcomingEvents,
+                'data'                    => $upcomingEvents,
             ];
             return response()->json($response, 200);
         }
         if ($request->flag == 3) {
-            $allUserEvents = Event::forPage($page, $perPage)->where(['event_status' => 2, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
+            $allUserEvents    = Event::forPage($page, $perPage)->where(['event_status' => 2, 'user_id' => $request->user_id])->select('id', 'image', 'event_title', 'event_category', 'date', 'duration', 'event_status', 'location')->get();
             $totalEventsPages = ceil(Event::where(['event_status' => 2, 'user_id' => $request->user_id])->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Total Events!',
+            $response         = [
+                'status'              => true,
+                'message'             => 'Total Events!',
                 'totalPastEventPages' => $totalEventsPages,
-                'data' => $allUserEvents,
+                'data'                => $allUserEvents,
             ];
             return response()->json($response, 200);
         }
@@ -570,8 +580,8 @@ class EventController extends Controller
     public function all_past_upcoming_events(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'flag' => 'required',
+            'user_id'   => 'required',
+            'flag'      => 'required',
             'time_zone' => "required",
         ]);
 
@@ -580,9 +590,9 @@ class EventController extends Controller
             return $validationError;
         }
         $todayDate = Carbon::now($request->time_zone);
-        $page = $request->input('page', 1);
-        $perPage = 20;
-        $userId = $request->user_id;
+        $page      = $request->input('page', 1);
+        $perPage   = 20;
+        $userId    = $request->user_id;
 
         function getCategoryCounts($categories, $eventId)
         {
@@ -604,18 +614,18 @@ class EventController extends Controller
                 ->get();
 
             $pastEvents->each(function ($event) use ($request) {
-                $questionCategories = $event->question_category;
+                $questionCategories       = $event->question_category;
                 $event->question_category = getCategoryCounts($questionCategories, $event->id);
 
                 $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
             });
 
             $totalPastPages = ceil(Event::where('date', '<', $todayDate)->where('event_status', 1)->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Past Events!',
+            $response       = [
+                'status'     => true,
+                'message'    => 'Past Events!',
                 'totalPages' => $totalPastPages,
-                'data' => $pastEvents,
+                'data'       => $pastEvents,
             ];
             return response()->json($response, 200);
         }
@@ -639,11 +649,11 @@ class EventController extends Controller
             });
 
             $totalUpcomingPages = ceil(Event::where('date', '>', $todayDate)->where('event_status', 1)->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Upcomig Events!',
+            $response           = [
+                'status'     => true,
+                'message'    => 'Upcomig Events!',
                 'totalPages' => $totalUpcomingPages,
-                'data' => $upcomingEvents,
+                'data'       => $upcomingEvents,
             ];
             return response()->json($response, 200);
         } else {
@@ -654,8 +664,8 @@ class EventController extends Controller
     public function my_all_past_upcoming_requested_events(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'flag' => 'required',
+            'user_id'   => 'required',
+            'flag'      => 'required',
             'time_zone' => "required",
         ]);
 
@@ -665,13 +675,13 @@ class EventController extends Controller
         }
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $todayDate = Carbon::now($request->time_zone);
-        $page = $request->input('page', 1);
-        $perPage = 20;
-        $userId = $request->user_id;
+        $page      = $request->input('page', 1);
+        $perPage   = 20;
+        $userId    = $request->user_id;
 
         function getCategoryCounts1($categories, $eventId)
         {
@@ -701,11 +711,11 @@ class EventController extends Controller
             });
 
             $totalPastPages = ceil(Event::where('date', '<', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Past Events!',
+            $response       = [
+                'status'     => true,
+                'message'    => 'Past Events!',
                 'totalPages' => $totalPastPages,
-                'data' => $pastEvents,
+                'data'       => $pastEvents,
             ];
             return response()->json($response, 200);
         }
@@ -729,11 +739,11 @@ class EventController extends Controller
             });
 
             $totalUpcomingPages = ceil(Event::where('date', '>', $todayDate)->where(['event_status' => 1, 'user_id' => $request->user_id])->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Upcomig Events!',
+            $response           = [
+                'status'     => true,
+                'message'    => 'Upcomig Events!',
                 'totalPages' => $totalUpcomingPages,
-                'data' => $upcomingEvents,
+                'data'       => $upcomingEvents,
             ];
             return response()->json($response, 200);
         }
@@ -751,11 +761,11 @@ class EventController extends Controller
             });
 
             $totalEventsPages = ceil(Event::where(['event_status' => 2, 'user_id' => $request->user_id])->get()->count() / $perPage);
-            $response = [
-                'status' => true,
-                'message' => 'Total Events!',
+            $response         = [
+                'status'     => true,
+                'message'    => 'Total Events!',
                 'totalPages' => $totalEventsPages,
-                'data' => $allUserEvents,
+                'data'       => $allUserEvents,
             ];
             return response()->json($response, 200);
         } else {
@@ -766,7 +776,7 @@ class EventController extends Controller
     public function sava_unsave_event(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'user_id'  => 'required',
             'event_id' => 'required',
         ]);
 
@@ -776,12 +786,12 @@ class EventController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $event = Event::where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
         $save_event = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $request->event_id])->first();
@@ -791,7 +801,7 @@ class EventController extends Controller
         } else {
             $save = new SaveEvent;
             $save->create([
-                'user_id' => $request->user_id,
+                'user_id'  => $request->user_id,
                 'event_id' => $request->event_id,
             ]);
 
@@ -811,13 +821,13 @@ class EventController extends Controller
         }
 
         $user = User::where('id', $request->user_id)->first();
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User  Not Found');
         }
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 20;
-        $search = $request->search;
+        $search  = $request->search;
 
         $userId = $request->user_id;
 
@@ -831,7 +841,7 @@ class EventController extends Controller
 
         $userSaveEvents = SaveEvent::where('user_id', $request->user_id)->pluck('event_id')->toArray();
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $userSaveEvents = Event::where(function ($query) use ($search) {
                 $query->where('event_title', 'LIKE', '%' . $search . '%')
                     ->orWhere('location', 'LIKE', '%' . $search . '%')
@@ -842,7 +852,7 @@ class EventController extends Controller
         }
 
         $userSaveEvents->transform(function ($event) use ($userId) {
-            $questionCategories = $event->question_category;
+            $questionCategories       = $event->question_category;
             $event->question_category = getCategoryCounts2($questionCategories, $event->id);
 
             $event->your_question = EventQuestion::where(['event_id' => $event->id, 'user_id' => $userId])->first();
@@ -855,8 +865,8 @@ class EventController extends Controller
 
             $eventArray = $event->toArray();
 
-            $hostedBy = ['hosted_by' => $eventArray['hosted_by']];
-            $yourQuestion = ['your_question' => $eventArray['your_question']];
+            $hostedBy       = ['hosted_by' => $eventArray['hosted_by']];
+            $yourQuestion   = ['your_question' => $eventArray['your_question']];
             $eventQuestions = ['event_questions' => $eventArray['event_questions']];
 
             unset($eventArray['hosted_by'], $eventArray['your_question'], $eventArray['event_questions']);
@@ -871,15 +881,13 @@ class EventController extends Controller
             return collect($reorderedArray);
         });
 
-
-
         $totalPages = ceil($userSaveEvents->count() / $perPage);
 
         $response = [
-            'status' => true,
-            'message' => 'User  Save Events!',
+            'status'     => true,
+            'message'    => 'User  Save Events!',
             'totalPages' => $totalPages,
-            'data' => $userSaveEvents,
+            'data'       => $userSaveEvents,
         ];
         return response()->json($response, 200);
     }
@@ -888,7 +896,7 @@ class EventController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'flag' => 'required',
+            'flag'      => 'required',
             'time_zone' => "required",
         ]);
 
@@ -897,7 +905,7 @@ class EventController extends Controller
             return $validationError;
         }
         $todayDate = Carbon::now($request->time_zone);
-        $search = $request->search;
+        $search    = $request->search;
 
         $userId = $request->user_id;
 
@@ -947,23 +955,23 @@ class EventController extends Controller
 
         $events->each(function ($event) use ($request) {
 
-            $questionCategories = $event->question_category;
+            $questionCategories       = $event->question_category;
             $event->question_category = getCategoryCounts3($questionCategories, $event->id);
-            $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
+            $event->save              = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $event->id])->exists();
         });
 
         if ($events->isEmpty()) {
             return response()->json([
                 "message" => "No Event Found against this search",
-                "status" => false,
-                "data" => [],
+                "status"  => false,
+                "data"    => [],
             ], 200);
         }
 
         $response = [
             'message' => 'All Events according to this search',
-            'status' => true,
-            'data' => $events,
+            'status'  => true,
+            'data'    => $events,
         ];
 
         return response()->json($response, 200);
@@ -974,7 +982,7 @@ class EventController extends Controller
         $validator = Validator::make($request->all(), [
             'event_id' => 'required',
             'category' => 'required',
-            'search' => 'nullable|string',
+            'search'   => 'nullable|string',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -984,11 +992,11 @@ class EventController extends Controller
 
         $event = Event::where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
-        $page = $request->input('page', 1);
+        $page    = $request->input('page', 1);
         $perPage = 20;
 
         $baseQuery = EventQuestion::with('user_detail:id,name,image')
@@ -1019,15 +1027,14 @@ class EventController extends Controller
         }
 
         $response = [
-            'status' => true,
-            'message' => 'All Questions according to this category',
+            'status'     => true,
+            'message'    => 'All Questions according to this category',
             'totalPages' => $totalPages,
-            'data' => $eventQuestions,
+            'data'       => $eventQuestions,
         ];
 
         return response()->json($response, 200);
     }
-
 
     public function all_category_belongs_to_events(Request $request)
     {
@@ -1043,20 +1050,20 @@ class EventController extends Controller
 
         $event = Event::where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
         $eventCategories = $event->event_category;
-        $categoryCounts = collect($eventCategories)->mapWithKeys(function ($value) use ($request) {
+        $categoryCounts  = collect($eventCategories)->mapWithKeys(function ($value) use ($request) {
             $count = EventQuestion::where(['event_id' => $request->event_id, 'category' => $value])->count();
             return [$value => $count];
         })->all();
 
         $response = [
-            'status' => true,
+            'status'  => true,
             'message' => 'All Questions according to this category',
-            'data' => $categoryCounts,
+            'data'    => $categoryCounts,
         ];
 
         return response()->json($response, 200);
@@ -1075,7 +1082,7 @@ class EventController extends Controller
 
         $event = Event::where('id', $request->event_id)->first();
 
-        if (!$event) {
+        if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
         $event->delete();
@@ -1087,18 +1094,18 @@ class EventController extends Controller
     {
         $user = User::find($request->user_id);
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
         $question = EventQuestion::find($request->event_question_id);
 
-        if (!$question) {
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
 
         $check = EventQuestionLike::where([
-            'user_id' => $request->user_id,
+            'user_id'           => $request->user_id,
             'event_question_id' => $request->event_question_id,
         ])->first();
         if ($check) {
@@ -1107,7 +1114,7 @@ class EventController extends Controller
         }
 
         $data = [
-            'user_id' => $request->user_id,
+            'user_id'           => $request->user_id,
             'event_question_id' => $request->event_question_id,
         ];
         EventQuestionLike::create($data);

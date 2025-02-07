@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -54,10 +53,11 @@ class User extends Authenticatable
         'a_code',
         'g_code',
         'email_code',
+        'deletion_reason',
     ];
     protected $attributes = [
-        'a_code' => "",
-        'g_code' => "",
+        'a_code'    => "",
+        'g_code'    => "",
         'device_id' => "",
     ];
     /**
@@ -69,6 +69,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'deleted_at',
+        'deletion_reason',
     ];
     /**
      * The attributes that should be cast.
@@ -77,9 +78,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'mufti_status' => 'integer',
-        'email_code' => 'integer',
+        'password'          => 'hashed',
+        'mufti_status'      => 'integer',
+        'email_code'        => 'integer',
     ];
 
     protected $dates = ['deleted_at'];
@@ -139,14 +140,12 @@ class User extends Authenticatable
         return $this->hasMany(Question::class, 'user_id');
     }
 
-
-
     public function deleteWithRelated()
     {
-        $eventsToDelete = $this->events;
+        $eventsToDelete    = $this->events;
         $questionsToDelete = $this->questions;
 
-        $eventIdsToDelete = $eventsToDelete->pluck('id')->toArray();
+        $eventIdsToDelete    = $eventsToDelete->pluck('id')->toArray();
         $questionIdsToDelete = $questionsToDelete->pluck('id')->toArray();
 
         QuestionComment::whereIn('question_id', $questionIdsToDelete)->delete();
