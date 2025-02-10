@@ -31,7 +31,7 @@ class AddEventRequest extends FormRequest
             'latitude'          => 'required',
             'longitude'         => 'required',
             'about'             => 'required',
-            'question_end_time' => 'required',
+            // 'question_end_time' => 'required',
         ];
     }
 }

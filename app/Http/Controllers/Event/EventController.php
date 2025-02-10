@@ -61,6 +61,7 @@ class EventController extends Controller
             'longitude'         => $request->longitude,
             'about'             => $request->about,
             'time_zone'         => $request->time_zone ?? 'Asia/Karachi',
+            'question_end_time' => $request->question_end_time ?? '2',
         ];
 
         $data['image'] = $this->processImage($data['image'], 'event_images');
