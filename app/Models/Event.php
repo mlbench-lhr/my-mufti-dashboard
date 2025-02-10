@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\EventQuestion;
@@ -27,20 +26,21 @@ class Event extends Model
         'event_status',
         'reason',
         'time_zone',
+        'question_end_time',
     ];
     protected $casts = [
-        'user_id' => 'integer',
-        'latitude' => 'double',
-        'longitude' => 'double',
-        'event_status' => 'integer',
-        'event_category' => 'array',
+        'user_id'           => 'integer',
+        'latitude'          => 'double',
+        'longitude'         => 'double',
+        'event_status'      => 'integer',
+        'event_category'    => 'array',
         'question_category' => 'array',
     ];
 
     protected $attributes = [
-        'event_category' => "[]",
+        'event_category'    => "[]",
         'question_category' => "[]",
-        'about' => "",
+        'about'             => "",
     ];
     protected $hidden = [
         'reason',
