@@ -229,10 +229,12 @@
                             </div>
                         </td>
                          <td class="text-right">
-                            ${row.deletion_reason.length > 30 ? `
-                                ${row.deletion_reason.substring(0, 30)}...
-                                <a href="#" class="read-more text-success" data-reason="${row.deletion_reason}" data-bs-toggle="modal" data-bs-target="#reasonModal">Read More</a>
-                            ` : row.deletion_reason}
+                            ${row.deletion_reason 
+    ? (row.deletion_reason.length > 30 
+        ? `${row.deletion_reason.substring(0, 30)}...
+            <a href="#" class="read-more text-success" data-reason="${row.deletion_reason}" data-bs-toggle="modal" data-bs-target="#reasonModal">Read More</a>`
+        : row.deletion_reason) 
+    : 'N/A'}
                         </td>
                         <td class="text-center">${formattedDate}</td>
                     </tr>
