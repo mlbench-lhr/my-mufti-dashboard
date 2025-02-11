@@ -68,9 +68,22 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'deleted_at',
-        'deletion_reason',
+        // 'deleted_at',
+        // 'deletion_reason',
     ];
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        // Hide 'deleted_at' and 'deletion_reason' only for API responses
+        if (request()->is('api/*')) {
+            unset($array['deleted_at'], $array['deletion_reason']);
+        }
+
+        return $array;
+    }
+
     /**
      * The attributes that should be cast.
      *

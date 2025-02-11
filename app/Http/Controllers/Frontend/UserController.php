@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
@@ -36,8 +35,8 @@ class UserController extends Controller
     public function get_all_users(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = User::where('user_type', 'user')->count();
-        $query = User::where('user_type', 'user');
+        $userCount  = User::where('user_type', 'user')->count();
+        $query      = User::where('user_type', 'user');
 
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
@@ -54,20 +53,20 @@ class UserController extends Controller
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('M d, Y');
-            $row->posted_questions = Question::where('user_id', $row->id)->count();
+            $row->posted_questions  = Question::where('user_id', $row->id)->count();
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
     public function deletion_requests()
     {
         $userRequests = DeleteAccountRequest::where('status', 1)->pluck('user_id')->toArray();
-        $users = User::whereIn('id', $userRequests)->get();
+        $users        = User::whereIn('id', $userRequests)->get();
         return view('frontend.DeletionRequests', compact('users'));
     }
 
     public function get_deletion_requests(Request $request)
     {
-        $searchTerm = $request->input('search');
+        $searchTerm    = $request->input('search');
         $sortingOption = $request->input('sorting');
 
         $deletionRequests = DeleteAccountRequest::where('status', 1)
@@ -75,7 +74,7 @@ class UserController extends Controller
             ->toArray();
 
         $userCount = User::whereIn('id', array_keys($deletionRequests))->count();
-        $query = User::whereIn('id', array_keys($deletionRequests));
+        $query     = User::whereIn('id', array_keys($deletionRequests));
 
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
@@ -99,10 +98,54 @@ class UserController extends Controller
         return response()->json(['userCount' => $userCount, 'users' => $users]);
     }
 
+    public function deleted_accounts()
+    {
+        $users = User::onlyTrashed()
+            ->whereNotNull('deleted_at')
+            ->whereNotNull('deletion_reason')
+            ->get();
+
+        return view('frontend.DeletedAccounts', compact('users'));
+    }
+
+    public function get_deleted_accounts(Request $request)
+    {
+        $searchTerm    = $request->input('search');
+        $sortingOption = $request->input('sorting');
+        $userCount = User::onlyTrashed()
+        ->whereNotNull('deleted_at')
+        ->whereNotNull('deletion_reason')->count();
+
+
+        $query = User::onlyTrashed()
+            ->whereNotNull('deleted_at')
+            ->whereNotNull('deletion_reason');
+
+        if ($searchTerm) {
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        if ($sortingOption === 'newest') {
+            $query->orderBy('deleted_at', 'desc');
+        } elseif ($sortingOption === 'earliest') {
+            $query->orderBy('deleted_at', 'asc');
+        } else {
+            $query->orderBy('deleted_at', 'desc');
+        }
+
+        $users     = $query->paginate(10);
+
+
+        return response()->json([
+            'userCount' => $userCount,
+            'users'     => $users,
+        ]);
+    }
+
     public function reject_request_deletion(Request $request)
     {
         $userId = $request->user_id;
-        $data = [
+        $data   = [
             'status' => 3,
             'reason' => $request->reason ?? "",
         ];
@@ -111,12 +154,12 @@ class UserController extends Controller
         $user = User::where('id', $userId)->first();
 
         $device_id = $user->device_id;
-        $title = "Deletion Request Update";
+        $title     = "Deletion Request Update";
 
-        $notiBody = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
-        $body = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
-        $messageType = "Deletion Request Update";
-        $otherData = "Deletion Request Update";
+        $notiBody         = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
+        $body             = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
+        $messageType      = "Deletion Request Update";
+        $otherData        = "Deletion Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {
@@ -125,8 +168,8 @@ class UserController extends Controller
 
         $data = [
             'user_id' => $userId,
-            'title' => $title,
-            'body' => $body,
+            'title'   => $title,
+            'body'    => $body,
         ];
         Notification::create($data);
 
@@ -145,12 +188,12 @@ class UserController extends Controller
         $user = User::where('id', $id)->first();
 
         $device_id = $user->device_id;
-        $title = "Deletion Request Update";
+        $title     = "Deletion Request Update";
 
-        $notiBody = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
-        $body = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
-        $messageType = "Deletion Request Update";
-        $otherData = "Deletion Request Update";
+        $notiBody         = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
+        $body             = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
+        $messageType      = "Deletion Request Update";
+        $otherData        = "Deletion Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {
@@ -172,8 +215,8 @@ class UserController extends Controller
     public function get_all_scholars(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = User::where('user_type', 'scholar')->count();
-        $query = User::where('user_type', 'scholar');
+        $userCount  = User::where('user_type', 'scholar')->count();
+        $query      = User::where('user_type', 'scholar');
 
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
@@ -183,8 +226,8 @@ class UserController extends Controller
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('M d, Y');
-            $interests = Interest::where('user_id', $row->id)->select('id', 'user_id', 'interest')->get();
-            $row->interests = $interests;
+            $interests              = Interest::where('user_id', $row->id)->select('id', 'user_id', 'interest')->get();
+            $row->interests         = $interests;
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
@@ -197,8 +240,8 @@ class UserController extends Controller
     public function get_all_lifecoach(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = User::where('user_type', 'lifecoach')->count();
-        $query = User::where('user_type', 'lifecoach');
+        $userCount  = User::where('user_type', 'lifecoach')->count();
+        $query      = User::where('user_type', 'lifecoach');
 
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
@@ -208,8 +251,8 @@ class UserController extends Controller
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('M d, Y');
-            $interests = Interest::where('user_id', $row->id)->select('id', 'user_id', 'interest')->get();
-            $row->interests = $interests;
+            $interests              = Interest::where('user_id', $row->id)->select('id', 'user_id', 'interest')->get();
+            $row->interests         = $interests;
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
@@ -222,8 +265,8 @@ class UserController extends Controller
     public function get_all_scholar_request(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = User::where(['user_type' => 'user', 'mufti_status' => 1])->count();
-        $query = User::where(['user_type' => 'user', 'mufti_status' => 1]);
+        $userCount  = User::where(['user_type' => 'user', 'mufti_status' => 1])->count();
+        $query      = User::where(['user_type' => 'user', 'mufti_status' => 1]);
 
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
@@ -240,26 +283,26 @@ class UserController extends Controller
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = $row->created_at->format('M d, Y');
-            $row->posted_questions = Question::where('user_id', $row->id)->count();
-            $userType = Mufti::where('user_id', $row->id)->select('user_type')->first();
-            $row->userType = $userType->user_type;
+            $row->posted_questions  = Question::where('user_id', $row->id)->count();
+            $userType               = Mufti::where('user_id', $row->id)->select('user_type')->first();
+            $row->userType          = $userType->user_type;
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
     public function scholar_request_detail(Request $request, $id)
     {
-        $user = User::with('interests', 'mufti_detail')->where('id', $id)->first();
-        $degrees = Degree::where('user_id', $id)->get();
+        $user       = User::with('interests', 'mufti_detail')->where('id', $id)->first();
+        $degrees    = Degree::where('user_id', $id)->get();
         $experience = Experience::where('user_id', $id)->first();
-        $userType = Mufti::where('user_id', $id)->select('user_type')->first();
-        $userType = $userType->user_type;
+        $userType   = Mufti::where('user_id', $id)->select('user_type')->first();
+        $userType   = $userType->user_type;
 
-        $start_date = Carbon::parse($experience->experience_startDate);
-        $end_date = Carbon::parse($experience->experience_endDate);
-        $diff = $end_date->diff($start_date);
-        $years = $diff->y;
-        $months = $diff->m;
-        $days = $diff->d;
+        $start_date      = Carbon::parse($experience->experience_startDate);
+        $end_date        = Carbon::parse($experience->experience_endDate);
+        $diff            = $end_date->diff($start_date);
+        $years           = $diff->y;
+        $months          = $diff->m;
+        $days            = $diff->d;
         $work_experience = "";
 
         if ($years > 0) {
@@ -279,9 +322,9 @@ class UserController extends Controller
         }
 
         $response = [
-            'user' => $user,
-            'degrees' => $degrees,
-            'experience' => $work_experience,
+            'user'          => $user,
+            'degrees'       => $degrees,
+            'experience'    => $work_experience,
             'requested_for' => $userType,
         ];
         return view('frontend.ScholarRequestDetail', compact('response', 'id'));
@@ -296,20 +339,20 @@ class UserController extends Controller
         $user = User::where('id', $id)->first();
 
         $user->mufti_status = $userType == 'scholar' ? 2 : 4;
-        $user->user_type = $userType == 'scholar' ? 'scholar' : 'lifecoach';
+        $user->user_type    = $userType == 'scholar' ? 'scholar' : 'lifecoach';
 
-        $user->name = $mufti->name;
+        $user->name         = $mufti->name;
         $user->phone_number = $mufti->phone_number;
-        $user->fiqa = $mufti->fiqa ?? '';
+        $user->fiqa         = $mufti->fiqa ?? '';
         $user->save();
 
         $device_id = $user->device_id;
-        $title = "Become {$userType} Request Update";
+        $title     = "Become {$userType} Request Update";
 
         // $notiBody = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
-        $body = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
-        $messageType = "Become {$userType} Request Update";
-        $otherData = "Become {$userType} Request Update";
+        $body             = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
+        $messageType      = "Become {$userType} Request Update";
+        $otherData        = "Become {$userType} Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {
@@ -317,8 +360,8 @@ class UserController extends Controller
         }
         $data = [
             'user_id' => $user->id,
-            'title' => $title,
-            'body' => $body,
+            'title'   => $title,
+            'body'    => $body,
         ];
         Notification::create($data);
 
@@ -335,8 +378,8 @@ class UserController extends Controller
     public function reject_request(Request $request)
     {
 
-        $id = $request->user_id;
-        $user = User::where('id', $id)->first();
+        $id                 = $request->user_id;
+        $user               = User::where('id', $id)->first();
         $user->mufti_status = 3;
         $user->save();
 
@@ -354,12 +397,12 @@ class UserController extends Controller
         $userType = $userType->user_type;
 
         $device_id = $user->device_id;
-        $title = "Become {$userType} Request Update";
+        $title     = "Become {$userType} Request Update";
 
         // $notiBody = 'Your request to become a scholar has been Rejected, Go and check the reason in your Profile.';
-        $body = "Your request to become a {$userType} has been Rejected, Go and check the reason in your Profile.";
-        $messageType = "Become {$userType} Request Update";
-        $otherData = "Become {$userType} Request Update";
+        $body             = "Your request to become a {$userType} has been Rejected, Go and check the reason in your Profile.";
+        $messageType      = "Become {$userType} Request Update";
+        $otherData        = "Become {$userType} Request Update";
         $notificationType = "0";
 
         if ($device_id != "") {
@@ -368,8 +411,8 @@ class UserController extends Controller
 
         $data = [
             'user_id' => $user->id,
-            'title' => $title,
-            'body' => $body,
+            'title'   => $title,
+            'body'    => $body,
         ];
         Notification::create($data);
 
@@ -377,10 +420,10 @@ class UserController extends Controller
     }
     public function user_detail(Request $request, $id)
     {
-        $user = User::with('interests')->where('id', $id)->first();
+        $user             = User::with('interests')->where('id', $id)->first();
         $posted_questions = Question::where('user_id', $id)->get();
-        $response = [
-            'user' => $user,
+        $response         = [
+            'user'             => $user,
             'posted_questions' => $posted_questions,
         ];
         return view('frontend.UserDetail', compact('response', 'id'));
@@ -388,8 +431,8 @@ class UserController extends Controller
     public function get_public_questions_posted_by_user(Request $request)
     {
         $searchTerm = $request->input('search');
-        $query = Question::where('user_id', $request->id);
-        $userCount = Question::where('user_id', $request->id)->count();
+        $query      = Question::where('user_id', $request->id);
+        $userCount  = Question::where('user_id', $request->id)->count();
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
         }
@@ -398,16 +441,16 @@ class UserController extends Controller
         $user = $query->paginate(10);
         foreach ($user as $row) {
             $row->registration_date = Carbon::parse($row->created_at)->format('M d, Y');
-            $row->total_categories = count($row->question_category);
+            $row->total_categories  = count($row->question_category);
         }
         return response()->json(['userCount' => $userCount, 'users' => $user]);
     }
     public function user_detail_private_questons(Request $request, $id)
     {
-        $user = User::with('interests')->where('id', $id)->first();
+        $user             = User::with('interests')->where('id', $id)->first();
         $posted_questions = UserQuery::where('user_id', $id)->get();
-        $response = [
-            'user' => $user,
+        $response         = [
+            'user'             => $user,
             'posted_questions' => $posted_questions,
         ];
         return view('frontend.UserDetailPrivateQuestions', compact('response', 'id'));
@@ -415,8 +458,8 @@ class UserController extends Controller
     public function get_private_questions_asked_by_user(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = UserQuery::where('user_id', $request->id)->count();
-        $query = UserQuery::where('user_id', $request->id)->with('all_question.mufti_detail.interests');
+        $userCount  = UserQuery::where('user_id', $request->id)->count();
+        $query      = UserQuery::where('user_id', $request->id)->with('all_question.mufti_detail.interests');
 
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
@@ -441,7 +484,7 @@ class UserController extends Controller
         }
 
         $response = [
-            'user' => $user,
+            'user'         => $user,
             'appointments' => $appointments,
         ];
         return view('frontend.UserDetailAppointments', compact('response', 'id'));
@@ -449,14 +492,14 @@ class UserController extends Controller
     public function get_appointments_of_user(Request $request)
     {
         $searchTerm = $request->input('search');
-        $user = User::where('id', $request->id)->first();
-        $user_type = $user->user_type;
+        $user       = User::where('id', $request->id)->first();
+        $user_type  = $user->user_type;
         if ($user_type == 'scholar') {
             $userCount = MuftiAppointment::where('mufti_id', $request->id)->count();
-            $query = MuftiAppointment::where('mufti_id', $request->id)->with('mufti_detail.interests');
+            $query     = MuftiAppointment::where('mufti_id', $request->id)->with('mufti_detail.interests');
         } else {
             $userCount = MuftiAppointment::where('user_id', $request->id)->count();
-            $query = MuftiAppointment::where('user_id', $request->id)->with('mufti_detail.interests');
+            $query     = MuftiAppointment::where('user_id', $request->id)->with('mufti_detail.interests');
         }
 
         if ($searchTerm) {
@@ -476,11 +519,11 @@ class UserController extends Controller
     {
         $user = User::with('interests')->where('id', $id)->first();
 
-        $user_type = $user->user_type;
+        $user_type      = $user->user_type;
         $askedFromMufti = UserAllQuery::with('user_detail.interests')->where(['mufti_id' => $id])->get();
 
         $response = [
-            'user' => $user,
+            'user'           => $user,
             'askedFromMufti' => $askedFromMufti,
         ];
         return view('frontend.UserDetailAskedFromMe', compact('response', 'id'));
@@ -488,8 +531,8 @@ class UserController extends Controller
     public function get_asked_from_me(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = UserAllQuery::with('user_detail.interests')->where(['mufti_id' => $request->id])->count();
-        $query = UserAllQuery::with('user_detail.interests')->where(['mufti_id' => $request->id]);
+        $userCount  = UserAllQuery::with('user_detail.interests')->where(['mufti_id' => $request->id])->count();
+        $query      = UserAllQuery::with('user_detail.interests')->where(['mufti_id' => $request->id]);
         if ($searchTerm) {
             $query->where('question', 'LIKE', '%' . $searchTerm . '%');
         }
@@ -503,23 +546,23 @@ class UserController extends Controller
     }
     public function user_detail_degrees(Request $request, $id)
     {
-        $user = User::with('interests')->where('id', $id)->first();
+        $user    = User::with('interests')->where('id', $id)->first();
         $degrees = Degree::where('user_id', $id)->get();
 
         $response = [
-            'user' => $user,
+            'user'    => $user,
             'degrees' => $degrees,
         ];
         return view('frontend.UserDetailDegrees', compact('response', 'id'));
     }
     public function user_events(Request $request, $id)
     {
-        $user = User::with('interests')->where('id', $id)->first();
+        $user      = User::with('interests')->where('id', $id)->first();
         $eventsIds = EventScholar::where('user_id', $id)->pluck('event_id')->toArray();
-        $events = Event::whereIn('id', $eventsIds)->where('event_status', 1)->get();
+        $events    = Event::whereIn('id', $eventsIds)->where('event_status', 1)->get();
 
         $response = [
-            'user' => $user,
+            'user'   => $user,
             'events' => $events,
         ];
         return view('frontend.UserDetailEvents', compact('response', 'id'));
@@ -530,7 +573,7 @@ class UserController extends Controller
         $searchTerm = $request->input('search');
 
         $eventsIds = EventScholar::where('user_id', $request->id)->pluck('event_id')->toArray();
-        $query = Event::whereIn('id', $eventsIds)->where('event_status', 1);
+        $query     = Event::whereIn('id', $eventsIds)->where('event_status', 1);
         $userCount = Event::whereIn('id', $eventsIds)->where('event_status', 1)->count();
 
         if ($searchTerm) {
@@ -547,10 +590,10 @@ class UserController extends Controller
     }
     public function user_events_requests(Request $request, $id)
     {
-        $user = User::with('interests')->where('id', $id)->first();
-        $events = Event::where('user_id', $id)->get();
+        $user     = User::with('interests')->where('id', $id)->first();
+        $events   = Event::where('user_id', $id)->get();
         $response = [
-            'user' => $user,
+            'user'   => $user,
             'events' => $events,
         ];
         return view('frontend.UserDetailEventsRequests', compact('response', 'id'));
@@ -558,8 +601,8 @@ class UserController extends Controller
     public function get_user_events_requests(Request $request)
     {
         $searchTerm = $request->input('search');
-        $query = Event::where('user_id', $request->id);
-        $userCount = Event::where('user_id', $request->id)->count();
+        $query      = Event::where('user_id', $request->id);
+        $userCount  = Event::where('user_id', $request->id)->count();
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
         }
@@ -578,26 +621,26 @@ class UserController extends Controller
         $user = User::where('id', $id)->first();
 
         if ($id == 9 || $id == "9") {
-            $data = array(
-                'status' => 'mufti',
+            $data = [
+                'status'  => 'mufti',
                 'message' => 'You cannot delete default mufti.',
-            );
-        } elseif($id == 24 || $id == "24"){
-            $data = array(
-                'status' => 'mufti',
+            ];
+        } elseif ($id == 24 || $id == "24") {
+            $data = [
+                'status'  => 'mufti',
                 'message' => 'You cannot delete default life coach.',
-            );
-        } else{
+            ];
+        } else {
             if ($user->mufti_status == 2) {
-                $data = array(
-                    'status' => 'mufti',
+                $data = [
+                    'status'  => 'mufti',
                     'message' => 'User deleted successfully.',
-                );
+                ];
             } else {
-                $data = array(
-                    'status' => 'user',
+                $data = [
+                    'status'  => 'user',
                     'message' => 'User deleted successfully.',
-                );
+                ];
             }
             $user->deleteWithRelated();
             $user->delete();

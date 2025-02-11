@@ -14,8 +14,15 @@ Route::group(['middleware' => 'admin'], function () {
     // users & scholars
     Route::get('DeletionRequests', [UserController::class, 'deletion_requests'])->name('DeletionRequests');
     Route::get('getDeletionRequests', [UserController::class, 'get_deletion_requests'])->name('getDeletionRequests');
+
+
+    Route::get('DeletedAccounts', [UserController::class, 'deleted_accounts'])->name('DeletedAccounts');
+    Route::get('getDeletedAccounts', [UserController::class, 'get_deleted_accounts'])->name('getDeletedAccounts');
+
     Route::post('rejectRequestDeletion', [UserController::class, 'reject_request_deletion'])->name('rejectRequestDeletion');
     Route::get('acceptRequestDeletion/{id}', [UserController::class, 'accept_request_deletion']);
+
+    
 
     // users & scholars
     Route::get('AllUsers', [UserController::class, 'all_users'])->name('AllUsers');
