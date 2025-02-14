@@ -114,10 +114,10 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-80px">Sr No</th>
-                                        <th class="min-w-125px">Scholar</th>
-                                        <th class="min-w-125px">Email Address</th>
-                                        <th class="min-w-125px">Requested On</th>
+                                        <th class="min-w-125px">User</th>
+                                        <th class="min-w-80px text-center">Account Type</th>
+                                        <th class="min-w-125px text-center">Email Address</th>
+                                        <th class="min-w-125px text-center">Requested On</th>
                                         <th class="min-w-100px text-center">Action</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -313,7 +313,7 @@
 
                     var noUserRow = `
             <tr>
-                <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No user found</td>
+                <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No request found</td>
             </tr>
         `;
                     tableBody.append(noUserRow);
@@ -325,12 +325,24 @@
                     var count = 0;
                     $.each(users.data, function(index, row) {
 
-                        var modifiedSerialNumber = pad(count + 1, 2,
-                            '0');
+                        var statusText = '';
+
+                        switch (row.mufti_status) {
+                            case 2:
+                                statusText = 'Scholar';
+                                break;
+                            case 4:
+                                statusText = 'Life Coach';
+                                break;
+                            case 0:
+                                statusText = 'User';
+                                break;
+                            default:
+                                statusText = 'Unknown'; 
+                        }
 
                         var newRow = `
                     <tr class="text-start">
-                        <td>${modifiedSerialNumber}</td>
                         <td class="d-flex align-items-center">
                             ${row.image ? `
                                 <div class="symbol symbol-50px overflow-hidden me-3">
@@ -352,9 +364,9 @@
                             </div>
                              </a>
                         </td>
-
-                        <td>${row.email}</td>
-                        <td>${row.requested_date}</td>
+                        <td class="fw-bold text-center" style="color: #38B89A;">${statusText}</td>
+                        <td class="text-center">${row.email}</td>
+                        <td class="text-center">${row.requested_date}</td>
                         <td>
                             <div class="fs-4 fw-bolder text-dark d-flex justify-content-center align-content-center gap-3">
                                     <a>

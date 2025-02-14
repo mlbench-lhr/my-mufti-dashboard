@@ -769,13 +769,23 @@ class EditProfile extends Controller
         $perPage = 10;
         $search  = $request->input('search', '');
 
-        $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests');
-
-        if ($userType === 'scholar') {
-            $query->where('mufti_id', $request->user_id);
-        } elseif ($userType === 'user') {
-            $query->where('user_id', $request->user_id);
+        switch ($userType) {
+            case 'scholar':
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('mufti_id', $request->user_id);
+                break;
+            case 'lifecoach':
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('mufti_id', $request->user_id);
+                break;
+            default:
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('user_id', $request->user_id);
+                break;
         }
+
+        // if ($userType === 'scholar') {
+        //     $query->where('mufti_id', $request->user_id);
+        // } elseif ($userType === 'user') {
+        //     $query->where('user_id', $request->user_id);
+        // }
 
         $query->orderByRaw("STR_TO_DATE(date, '%Y-%m-%d %H:%i:%s') DESC");
 
@@ -812,7 +822,7 @@ class EditProfile extends Controller
         return response()->json(
             [
                 'status'     => true,
-                'message'    => 'My All Appointments',
+                'message'    => 'All Appointments',
                 'totalpages' => $totalPages,
                 'data'       => $myAppointments,
             ],

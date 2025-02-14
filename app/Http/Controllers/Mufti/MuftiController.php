@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Mufti;
 
 use App\Helpers\ActivityHelper;
@@ -22,8 +21,8 @@ class MuftiController extends Controller
     public function request_to_become_mufti(RegisterMufti $request)
     {
         $user_id = $request->user_id;
-        $user = User::find($user_id);
-        if (!$user) {
+        $user    = User::find($user_id);
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
@@ -40,35 +39,35 @@ class MuftiController extends Controller
         }
 
         $data2 = [
-            'user_id' => $request->user_id,
-            'degree_image' => $request->degree_image,
-            'degree_title' => $request->degree_title,
-            'institute_name' => $request->institute_name,
+            'user_id'          => $request->user_id,
+            'degree_image'     => $request->degree_image,
+            'degree_title'     => $request->degree_title,
+            'institute_name'   => $request->institute_name,
             'degree_startDate' => $request->degree_startDate,
-            'degree_endDate' => $request->degree_endDate,
+            'degree_endDate'   => $request->degree_endDate,
         ];
         $base64File = $data2['degree_image'];
-        $fileData = base64_decode($base64File);
-        $name = 'degree_images/' . Str::random(15) . '.png';
+        $fileData   = base64_decode($base64File);
+        $name       = 'degree_images/' . Str::random(15) . '.png';
         Storage::put('public/' . $name, $fileData);
         $data2['degree_image'] = $name;
 
         $data3 = [
-            'user_id' => $request->user_id,
+            'user_id'              => $request->user_id,
             'experience_startDate' => $request->experience_startDate,
-            'experience_endDate' => $request->experience_endDate,
+            'experience_endDate'   => $request->experience_endDate,
         ];
 
         User::where('id', $request->user_id)->update(['mufti_status' => 1]);
 
         $data1 = [
-            'user_id' => $request->user_id,
-            'name' => $request->name,
+            'user_id'      => $request->user_id,
+            'name'         => $request->name,
             'phone_number' => $request->phone_number,
-            'fiqa' => $request->fiqa ?? '',
-            'reason' => "",
-            'status' => 1,
-            'user_type' => $request->join_as ?? 'scholar',
+            'fiqa'         => $request->fiqa ?? '',
+            'reason'       => "",
+            'status'       => 1,
+            'user_type'    => $request->join_as ?? 'scholar',
         ];
 
         Mufti::updateOrCreate(
@@ -81,9 +80,9 @@ class MuftiController extends Controller
 
         collect($request->interest)->map(function ($value) use ($request) {
             return [
-                'user_id' => $request->user_id,
+                'user_id'  => $request->user_id,
                 'interest' => $value,
-                'fiqa' => $request->fiqa ?? '',
+                'fiqa'     => $request->fiqa ?? '',
             ];
         })->each(function ($data) {
             Interest::create($data);
@@ -104,13 +103,13 @@ class MuftiController extends Controller
 
         $rejectionReason = "";
         if ($user->mufti_status == 3) {
-            $mufti = Mufti::where('user_id', $user->id)->first();
+            $mufti           = Mufti::where('user_id', $user->id)->first();
             $rejectionReason = $mufti ? $mufti->reason : "";
         }
 
         $userArray = $user->toArray();
-        $keys = array_keys($userArray);
-        $index = array_search('mufti_status', $keys) + 1;
+        $keys      = array_keys($userArray);
+        $index     = array_search('mufti_status', $keys) + 1;
         $userArray = array_merge(
             array_slice($userArray, 0, $index),
             ['reason' => $rejectionReason],
@@ -125,9 +124,9 @@ class MuftiController extends Controller
         );
 
         $response = [
-            'status' => true,
+            'status'  => true,
             'message' => 'Request Send Successfully!',
-            'data' => $userArray,
+            'data'    => $userArray,
         ];
         return response()->json($response, 200);
     }
@@ -144,8 +143,8 @@ class MuftiController extends Controller
         }
 
         $user_id = $request->user_id;
-        $user = User::where(['id' => $request->user_id])->first();
-        if (!$user) {
+        $user    = User::where(['id' => $request->user_id])->first();
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
         $search = $request->search;
@@ -157,16 +156,56 @@ class MuftiController extends Controller
         if (count($muftis) <= 0) {
             return response()->json([
                 "message" => "No scholar Found against this search",
-                "status" => false,
-                "data" => [],
+                "status"  => false,
+                "data"    => [],
             ], 200);
         } else {
             $response = [
                 'message' => 'All scholar according to this search',
-                'status' => true,
-                'data' => $muftis,
+                'status'  => true,
+                'data'    => $muftis,
             ];
             return response()->json($response, 200);
         }
     }
+
+    public function update_interests(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id'   => 'required|exists:users,id',
+            'interests' => 'required|array',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $user_id = $request->user_id;
+
+        $user = User::find($user_id);
+
+        $newInterests = $request->interests;
+        $oldInterests = Interest::where('user_id', $user_id)->pluck('interest')->toArray();
+
+        $interestsToAdd    = array_values(array_udiff($newInterests, $oldInterests, 'strcasecmp'));
+        $interestsToRemove = array_values(array_udiff($oldInterests, $newInterests, 'strcasecmp'));
+
+        collect($interestsToAdd)->each(fn($interest) => Interest::create(['user_id' => $user_id, 'interest' => $interest, 'fiqa' => $user->fiqa ?? '']));
+
+        Interest::where('user_id', $user_id)
+            ->whereIn('interest', $interestsToRemove)
+            ->delete();
+
+        $interests = Interest::where('user_id', $user_id)->select('id', 'user_id', 'interest')->get();
+
+        $response = [
+            'status'  => true,
+            'message' => 'Interests updated successfully',
+            'data'    => $interests,
+        ];
+        
+        return response()->json($response, 200);
+    }
+
 }

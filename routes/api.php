@@ -68,6 +68,7 @@ Route::group([
 ], function () {
     Route::post('becomeMufti', [MuftiController::class, 'request_to_become_mufti']);
     Route::post('searchScholar', [MuftiController::class, 'search_scholar']);
+    Route::post('updateInterests', [MuftiController::class, 'update_interests']);
     Route::post('muftiDegrees', [MuftiDegrees::class, 'mufti_all_degrees']);
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);
     Route::post('addDegree', [MuftiDegrees::class, 'add_degree']);
