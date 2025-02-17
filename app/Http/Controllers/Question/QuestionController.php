@@ -519,9 +519,16 @@ class QuestionController extends Controller
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
         }
-        $comment = QuestionComment::create($data);
 
-        return ResponseHelper::jsonResponse(true, 'Comment added successfully!');
+        $comment = QuestionComment::create($data)->load('user_detail');
+
+        $response = [
+            'status'  => true,
+            'message' => 'Comment added successfully!',
+            'data'    => $comment,
+        ];
+
+        return response()->json($response, 200);
     }
 
     public function delete_comment(Request $request)
