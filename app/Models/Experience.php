@@ -10,6 +10,7 @@ class Experience extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
+        'company_name',
         'experience_startDate',
         'experience_endDate',
         'user_id',

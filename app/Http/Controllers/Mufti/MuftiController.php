@@ -54,6 +54,7 @@ class MuftiController extends Controller
 
         $data3 = [
             'user_id'              => $request->user_id,
+            'company_name'         => '',
             'experience_startDate' => $request->experience_startDate,
             'experience_endDate'   => $request->experience_endDate,
         ];
@@ -204,7 +205,7 @@ class MuftiController extends Controller
             'message' => 'Interests updated successfully',
             'data'    => $interests,
         ];
-        
+
         return response()->json($response, 200);
     }
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ForgotPassword;
 use App\Http\Controllers\Event\EventController;
 use App\Http\Controllers\Mufti\MuftiController;
 use App\Http\Controllers\Mufti\MuftiDegrees;
+use App\Http\Controllers\Mufti\MuftiExperience;
 use App\Http\Controllers\Notification\UserNotification;
 use App\Http\Controllers\Profile\EditProfile;
 use App\Http\Controllers\Question\QuestionController;
@@ -69,11 +70,18 @@ Route::group([
     Route::post('becomeMufti', [MuftiController::class, 'request_to_become_mufti']);
     Route::post('searchScholar', [MuftiController::class, 'search_scholar']);
     Route::post('updateInterests', [MuftiController::class, 'update_interests']);
+
     Route::post('muftiDegrees', [MuftiDegrees::class, 'mufti_all_degrees']);
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);
     Route::post('addDegree', [MuftiDegrees::class, 'add_degree']);
     Route::put('updateDegree', [MuftiDegrees::class, 'update_degree']);
     Route::post('deleteDegree', [MuftiDegrees::class, 'delete_degree']);
+
+    Route::post('allExperience', [MuftiExperience::class, 'all_experience']);
+    Route::post('addExperience', [MuftiExperience::class, 'add_experience']);
+    Route::put('updateExperience', [MuftiExperience::class, 'update_experience']);
+    Route::post('deleteExperience', [MuftiExperience::class, 'delete_experience']);
+
 });
 
 Route::group([
