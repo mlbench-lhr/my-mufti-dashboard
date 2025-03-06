@@ -128,6 +128,52 @@ class MuftiDegrees extends Controller
         ];
         return response()->json($response, 200);
     }
+    public function add_degree_update(Request $request){
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'degree_title' => 'required',
+            'institute_name' => 'required',
+            'degree_startDate' => 'required',
+            'is_present' => 'required',
+            'degree_image' => 'required',
+        ]);
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+        $user = User::where('id', $request->user_id)->first();
+
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+        }
+        $data = [
+            'user_id' => $request->user_id,
+            'degree_image' => $request->degree_image,
+            'degree_title' => $request->degree_title,
+            'institute_name' => $request->institute_name,
+            'degree_startDate' => $request->degree_startDate,
+            'degree_endDate' => $request->is_present ? '':$request->degree_endDate ?? '',
+        ];
+        $base64File = $data['degree_image'];
+
+        $fileData = base64_decode($base64File);
+
+        $name = 'degree_images/' . Str::random(15) . '.png';
+
+        Storage::put('public/' . $name, $fileData);
+
+        $data['degree_image'] = $name;
+        $degree = Degree::create($data);
+
+        $degree = Degree::where('id', $degree->id)->first();
+
+        $response = [
+            'status' => true,
+            'message' => 'Degree added successfully.',
+            'data' => $degree,
+        ];
+        return response()->json($response, 200);
+    }
     public function update_degree(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -180,6 +226,59 @@ class MuftiDegrees extends Controller
         ];
         return response()->json($response, 200);
     }
+    public function edit_degree_update(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required',
+        'degree_id' => 'required',
+    ]);
+
+    $validationError = ValidationHelper::handleValidationErrors($validator);
+    if ($validationError !== null) {
+        return $validationError;
+    }
+
+    $user = User::where('id', $request->user_id)->first();
+    $degree = Degree::where(['id' => $request->degree_id, 'user_id' => $request->user_id])->first();
+
+    if (!$user) {
+        return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+    }
+    if (!$degree) {
+        return ResponseHelper::jsonResponse(false, 'Degree Not Found');
+    }
+
+    if ($request->degree_image == "") {
+        $image = $degree->degree_image;
+    } else {
+        $base64File = $request->degree_image;
+
+        $fileData = base64_decode($base64File);
+
+        $name = 'degree_images/' . Str::random(15) . '.png';
+
+        Storage::put('public/' . $name, $fileData);
+        $image = $name;
+
+    }
+    $data = [
+        'degree_image' => $image,
+        'degree_title' => $request->degree_title ?? $degree->degree_title,
+        'institute_name' => $request->institute_name ?? $degree->institute_name,
+        'degree_startDate' => $request->degree_startDate ?? $degree->degree_startDate,
+        'degree_endDate' => $request->is_present ? '':$request->degree_endDate ?? $degree->degree_endDate,
+    ];
+    Degree::where(['id' => $request->degree_id, 'user_id' => $request->user_id])->update($data);
+    $degree = Degree::where(['id' => $request->degree_id, 'user_id' => $request->user_id])->first();
+
+    $response = [
+        'status' => true,
+        'message' => 'Degree updated successfully.',
+        'data' => $degree,
+    ];
+    return response()->json($response, 200);
+}
+
     public function delete_degree(Request $request)
     {
         $validator = Validator::make($request->all(), [

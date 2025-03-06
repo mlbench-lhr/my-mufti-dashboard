@@ -6,6 +6,7 @@ use App\Helpers\ResponseHelper;
 use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterMufti;
+use App\Http\Requests\RegisterMuftiRequest;
 use App\Models\Degree;
 use App\Models\Experience;
 use App\Models\Interest;
@@ -131,6 +132,128 @@ class MuftiController extends Controller
         ];
         return response()->json($response, 200);
     }
+public function request_to_become_mufti_update(RegisterMuftiRequest $request)
+{
+    $user_id = $request->user_id;
+    $user = User::find($user_id);
+
+    if (!$user) {
+        return ResponseHelper::jsonResponse(false, 'User Not Found');
+    }
+    $existingMufti = Mufti::where('user_id', $request->user_id)
+            ->whereIn('status', [1, 2])
+            ->whereIn('user_type', ['scholar', 'lifecoach'])
+            ->first();
+
+        if ($existingMufti) {
+            $message = $existingMufti->status === 1
+            ? 'Already sent a request'
+            : ($existingMufti->user_type === 'scholar' ? 'Already Mufti' : 'Already Life Coach');
+            return ResponseHelper::jsonResponse(false, $message);
+        }
+
+        $degrees = collect($request->degree)->map(function ($degreeData, $index) use ($request, $user_id) {
+        $is_present = filter_var($degreeData['is_present'], FILTER_VALIDATE_BOOLEAN);
+
+        $imageName = null;
+        if ($request->hasFile("degree.$index.degree_image")) { 
+            $image = $request->file("degree.$index.degree_image");
+            $imageName = 'degree_images/' . Str::random(15) . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public', $imageName);
+        }
+
+        return [
+            'user_id' => $user_id,
+            'degree_image' => $imageName, 
+            'degree_title' => $degreeData['degree_title'],
+            'institute_name' => $degreeData['institute_name'],
+            'degree_startDate' => $degreeData['degree_startDate'],
+            'degree_endDate' => $is_present ? '' : ($degreeData['degree_endDate'] ?? ''), 
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    })->toArray();
+
+    Degree::insert($degrees);
+
+    $experiences = collect($request->work_experiences)->map(function ($experienceData) use ($user_id) {
+        $is_present = filter_var($experienceData['is_present'], FILTER_VALIDATE_BOOLEAN);
+
+        return [
+            'user_id' => $user_id,
+            'company_name' => $experienceData['company_name'],
+            'experience_startDate' => $experienceData['experience_startDate'],
+            'experience_endDate' => $is_present ? '' : ($experienceData['experience_endDate'] ?? ''),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    })->toArray();
+
+    Experience::insert($experiences);
+
+    User::where('id', $user_id)->update(['mufti_status' => 1]);
+
+    Mufti::updateOrCreate(
+        ['user_id' => $user_id],
+        [
+            'user_id' => $user_id,
+            'phone_number' => $request->phone_number,
+            'fiqa' => $request->fiqa ?? '',
+            'reason' => '',
+            'status' => 1,
+            'user_type' => $request->join_as ?? 'scholar',
+        ]
+    );
+
+    if ($request->has('interest') && is_array($request->interest)) {
+        $interests = collect($request->interest)->map(function ($interest) use ($user_id, $request) {
+            return [
+                'user_id' => $user_id,
+                'interest' => $interest,
+                'fiqa' => $request->fiqa ?? '',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        })->toArray();
+
+        Interest::insert($interests);
+    }
+
+    $user = User::where('id', $user_id)->first();
+    $user->interests = ($user->mufti_status == 2 || $user->mufti_status == 4)
+        ? Interest::where('user_id', $user_id)->select('id', 'user_id', 'interest')->get()
+        : [];
+
+    $rejectionReason = "";
+    if ($user->mufti_status == 3) {
+        $mufti = Mufti::where('user_id', $user_id)->first();
+        $rejectionReason = $mufti ? $mufti->reason : "";
+    }
+
+    $userArray = $user->toArray();
+    $keys = array_keys($userArray);
+    $index = array_search('mufti_status', $keys) + 1;
+    $userArray = array_merge(
+        array_slice($userArray, 0, $index),
+        ['reason' => $rejectionReason],
+        array_slice($userArray, $index)
+    );
+
+    $userType = $request->join_as === 'lifecoach' ? 'life coach' : 'scholar’s';
+    ActivityHelper::store_avtivity(
+        $user->id,
+        "User submitted a request to become a {$userType}.",
+        'request'
+    );
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Request Sent Successfully!',
+        'data' => $userArray,
+    ], 200);
+}
+
+
 
     public function search_scholar(Request $request)
     {

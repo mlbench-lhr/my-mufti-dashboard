@@ -12,6 +12,7 @@ use App\Http\Controllers\Question\QuestionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -68,13 +69,16 @@ Route::group([
     'prefix' => 'mufti',
 ], function () {
     Route::post('becomeMufti', [MuftiController::class, 'request_to_become_mufti']);
+    Route::post('becomeMufti_update', [MuftiController::class, 'request_to_become_mufti_update']);
     Route::post('searchScholar', [MuftiController::class, 'search_scholar']);
     Route::post('updateInterests', [MuftiController::class, 'update_interests']);
 
     Route::post('muftiDegrees', [MuftiDegrees::class, 'mufti_all_degrees']);
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);
     Route::post('addDegree', [MuftiDegrees::class, 'add_degree']);
+    Route::post('addDegree_update',[MuftiDegrees::class,'add_degree_update']);
     Route::put('updateDegree', [MuftiDegrees::class, 'update_degree']);
+    Route::put('editDegree_update', [MuftiDegrees::class, 'edit_degree_update']);
     Route::post('deleteDegree', [MuftiDegrees::class, 'delete_degree']);
 
     Route::post('allExperience', [MuftiExperience::class, 'all_experience']);
