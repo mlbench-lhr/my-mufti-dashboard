@@ -60,6 +60,7 @@ Route::group([
     Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
     Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
     Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
+    Route::post('/MarkAsCompleted',[EditProfile::class,'mark_as_completed']);
     Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
     Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
 

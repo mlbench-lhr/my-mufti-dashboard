@@ -22,10 +22,12 @@ class MuftiAppointment extends Model
         'payment_method',
         'payment_id',
         'user_type',
+        'status',
     ];
     protected $casts = [
         'mufti_id' => 'integer',
         'user_id' => 'integer',
+        'status' => 'integer',
     ];
 
     protected $attributes = [

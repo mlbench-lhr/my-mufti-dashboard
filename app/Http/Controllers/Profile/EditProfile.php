@@ -829,4 +829,36 @@ class EditProfile extends Controller
             200
         );
     }
+    public function mark_as_completed(Request $request){
+    $validator = Validator::make($request->all(), [
+        'appointment_id' => 'required|exists:mufti_appointments,id',
+    ]);
+
+    $validationError = ValidationHelper::handleValidationErrors($validator);
+    if ($validationError !== null) {
+        return $validationError;
+    }
+
+    $appointment = MuftiAppointment::find($request->appointment_id);
+
+    if (!$appointment) {
+        return ResponseHelper::jsonResponse(false, 'Appointment not found', null);
+    }
+
+    $userId = $appointment->mufti_id ?? $appointment->user_id;
+
+    if ($appointment->mufti_id !== $userId && $appointment->user_id !== $userId) {
+        return ResponseHelper::jsonResponse(false, 'User not found', null);
+    }
+
+    if ($appointment->status == 2) { 
+        return ResponseHelper::jsonResponse(false, 'Appointment is already completed', null);
+    }
+
+    $appointment->status = 2;
+    $appointment->save();
+
+    return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
+}
+       
 }
