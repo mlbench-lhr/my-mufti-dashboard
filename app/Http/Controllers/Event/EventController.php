@@ -59,7 +59,7 @@ class EventController extends Controller
             'location'          => $request->location,
             'latitude'          => $request->latitude,
             'longitude'         => $request->longitude,
-            'about'             => $request->about,
+            'about' => $request->about ?? '',
             'time_zone'         => $request->time_zone ?? 'Asia/Karachi',
             'question_end_time' => $request->question_end_time ?? '2',
         ];

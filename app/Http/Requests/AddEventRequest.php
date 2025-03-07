@@ -30,7 +30,7 @@ class AddEventRequest extends FormRequest
             'location'          => 'required',
             'latitude'          => 'required',
             'longitude'         => 'required',
-            'about'             => 'required',
+            'about'             => 'nullable|string',
             // 'question_end_time' => 'required',
         ];
     }
