@@ -170,13 +170,15 @@ class MuftiDegrees extends Controller
         $response = [
             'status' => true,
             'message' => 'Degree added successfully.',
-            'data' => $degree,
-        ];
+            'data' => array_merge($degree->toArray(), [
+                'is_present' => empty($degree->degree_endDate)
+            ]),
+        ];        
         return response()->json($response, 200);
     }
     public function update_degree(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(),[
             'user_id' => 'required',
             'degree_id' => 'required',
         ]);
@@ -273,8 +275,10 @@ class MuftiDegrees extends Controller
 
     $response = [
         'status' => true,
-        'message' => 'Degree updated successfully.',
-        'data' => $degree,
+        'message' => 'Degree added successfully.',
+        'data' => array_merge($degree->toArray(), [
+            'is_present' => empty($degree->degree_endDate)
+        ]),
     ];
     return response()->json($response, 200);
 }
