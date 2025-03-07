@@ -413,7 +413,7 @@ class EventController extends Controller
         $timeZone        = $event->time_zone ?? 'Asia/Karachi';
         $eventTimeZone   = new CarbonTimeZone($timeZone ?? 'UTC');
         $eventTime       = Carbon::parse($event->date, $eventTimeZone)->utc();
-        $questionEndTime = $eventTime->subMinutes($event->question_end_time);
+        $questionEndTime = $eventTime->subMinutes((int) $event->question_end_time);
         $currentTime     = Carbon::now('UTC');
 
         if ($currentTime->greaterThan($questionEndTime)) {
