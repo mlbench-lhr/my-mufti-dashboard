@@ -7,10 +7,13 @@ use App\Helpers\ValidationHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterMufti;
 use App\Http\Requests\RegisterMuftiRequest;
+use App\Http\Requests\AddMediaRequest;
 use App\Models\Degree;
 use App\Models\Experience;
 use App\Models\Interest;
 use App\Models\Mufti;
+use App\Models\Stage;
+use App\Models\TempMedia;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -132,6 +135,112 @@ class MuftiController extends Controller
         ];
         return response()->json($response, 200);
     }
+
+    public function get_TempID(Request $request){
+        
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+    
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+    
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
+        }
+    
+        // Remove existing record if found
+        $alreadyExist = Stage::where('user_id', $request->user_id)->first();
+        if ($alreadyExist) {
+            TempMedia::where('temp_id', $alreadyExist->id)->delete();
+            Stage::where('user_id', $request->user_id)->delete();
+        }
+    
+        // Create new record
+        $stage = Stage::create([
+            'user_id' => $request->user_id,
+        ]);
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Stage ID generated successfully!',
+            'temp_id' => $stage->id,
+        ], 200);
+    }
+    public function add_media_file(AddMediaRequest $request)
+{
+    $task = Stage::find($request->temp_id);
+
+    if (! $task) {
+        return ResponseHelper::jsonResponse(false, 'Temporary Data Not Found');
+    }
+
+    $url = null;
+
+    if ($request->hasFile('media')) {
+        $file = $request->file('media');
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // Allowed image extensions
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+        if (!in_array($extension, $imageExtensions)) {
+            return ResponseHelper::jsonResponse(false, 'Invalid file format! Only images are allowed.');
+        }
+
+        $imageName = 'degree_images/' . Str::random(15) . '.' . $extension;
+
+        // Store file in the 'public' disk
+        $file->storeAs('public', $imageName);
+
+        // Set image path
+        $url = $imageName;
+    } else {
+        return ResponseHelper::jsonResponse(false, 'No image file uploaded.');
+    }
+
+    // Convert is_present to boolean
+    $is_present = filter_var($request->input('is_present', false), FILTER_VALIDATE_BOOLEAN);
+
+    // Save media record with degree details
+    $data = [
+        'temp_id'         => $request->temp_id,
+        'degree_title'    => $request->input('degree_title'),
+        'institute_name'  => $request->input('institute_name'),
+        'degree_startDate'=> $request->input('degree_startDate'),
+        'degree_endDate' => $request->is_present ? '':$request->degree_endDate ?? $degree->degree_endDate,
+        'media'           => $url,
+        //'media_type'      => 'image',
+        'is_present'      => $is_present,  // Add this field for response clarity
+    ];
+
+    TempMedia::create($data);
+
+    // Fetch only related media records
+    $temporary_data = TempMedia::where('temp_id', $request->temp_id)
+        ->get(['id', 'temp_id', 'media as degree_image', 'degree_title', 'institute_name', 'degree_startDate', 'degree_endDate'])
+        ->map(function ($item) {
+            return [
+                'id'              => $item->id,
+                'temp_id'         => $item->temp_id,
+                'degree_image'    => $item->degree_image,
+                'degree_title'    => $item->degree_title,
+                'institute_name'  => $item->institute_name,
+                'degree_startDate'=> $item->degree_startDate,
+                'degree_endDate'  => $item->degree_endDate,
+                'is_present'      => empty($item->degree_endDate), // Dynamically calculate is_present
+            ];
+        });
+
+    return ResponseHelper::jsonResponseWithData(true, 'Image Uploaded Successfully!', [
+        'media' => $temporary_data,
+    ]);
+}
+
+
 public function request_to_become_mufti_update(RegisterMuftiRequest $request)
 {
     $user_id = $request->user_id;

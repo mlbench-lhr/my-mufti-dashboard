@@ -74,6 +74,9 @@ Route::group([
     Route::post('searchScholar', [MuftiController::class, 'search_scholar']);
     Route::post('updateInterests', [MuftiController::class, 'update_interests']);
 
+    Route::post('getTempId', [MuftiController::class, 'get_TempId']);
+    Route::post('addMediaFile', [MuftiController::class, 'add_media_file']);
+
     Route::post('muftiDegrees', [MuftiDegrees::class, 'mufti_all_degrees']);
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);
     Route::post('addDegree', [MuftiDegrees::class, 'add_degree']);
