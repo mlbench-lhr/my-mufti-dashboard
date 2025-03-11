@@ -70,12 +70,13 @@ Route::group([
     'prefix' => 'mufti',
 ], function () {
     Route::post('becomeMufti', [MuftiController::class, 'request_to_become_mufti']);
-    Route::post('becomeMufti_update', [MuftiController::class, 'request_to_become_mufti_update']);
     Route::post('searchScholar', [MuftiController::class, 'search_scholar']);
     Route::post('updateInterests', [MuftiController::class, 'update_interests']);
 
     Route::post('getTempId', [MuftiController::class, 'get_TempId']);
     Route::post('addMediaFile', [MuftiController::class, 'add_media_file']);
+    Route::post('removeMediaFile', [Mufticontroller::class, 'remove_media_file']);
+    Route::post('requestBecomeMufti', [MuftiController::class, 'request_become_mufti']);
 
     Route::post('muftiDegrees', [MuftiDegrees::class, 'mufti_all_degrees']);
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);

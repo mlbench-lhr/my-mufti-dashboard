@@ -10,12 +10,11 @@ class TempMedia extends Model
 
     protected $fillable = [
         'temp_id',
-        'media',
-        //'media_type',
         'degree_title',
         'institute_name',
         'degree_startDate',
         'degree_endDate',
+        'degree_image',
     ];
 
     protected $casts = [

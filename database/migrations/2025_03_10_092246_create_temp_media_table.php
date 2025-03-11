@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('temp_media', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('temp_id')->index();
+            $table->unsignedBigInteger('temp_id');
             $table->foreign('temp_id')->references('id')->on('stages')->onDelete('cascade');
-            $table->string('label')->nullable();
-            $table->integer('index')->default(0);
-            $table->string('media')->nullable(); // Store file path
-            $table->string('media_type')->nullable(); // Type (e.g., image, pdf, etc.)
+            $table->string('degree_title');
+            $table->string('institute_name');
+            $table->string('degree_startDate');
+            $table->string('degree_endDate')->nullable();
+            $table->string('degree_image');
             $table->timestamps();
         });
     }

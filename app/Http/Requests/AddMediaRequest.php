@@ -16,14 +16,12 @@ class AddMediaRequest extends FormRequest
     {
         return [
             'temp_id' => 'required|exists:stages,id',
-            //'label'   => 'required',
-            //'index'   => 'required',
             'degree_title' => 'required',
             'institute_name' => 'required',
             'degree_startDate' => 'required',
-            'degree_endDate' => 'required',
-            'is_present' => 'required|in:true,false',
-            'media'   => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp|max:3048',
+            'degree_endDate'  => 'nullable|required_if:is_present,false',
+            'is_present'      => 'required|in:true,false',
+            'degree_image'   => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp|max:3048',
         ];
     }
 
