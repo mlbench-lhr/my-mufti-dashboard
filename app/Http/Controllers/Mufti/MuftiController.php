@@ -218,8 +218,8 @@ class MuftiController extends Controller
 
     TempMedia::create($data);
 
-    // Fetch only related media records
-    $temporary_data = TempMedia::where('temp_id', $request->temp_id)
+// Fetch only related media records
+$temporary_data = TempMedia::where('temp_id', $request->temp_id)
     ->get(['id', 'temp_id', 'degree_title', 'institute_name', 'degree_startDate', 'degree_endDate', 'degree_image'])
     ->map(function ($item) {
         return [
@@ -230,13 +230,11 @@ class MuftiController extends Controller
             'degree_startDate'=> $item->degree_startDate,
             'degree_endDate'  => $item->degree_endDate,
             'degree_image'    => $item->degree_image,
-            'is_present'      => $item->degree_endDate === '',
+            'is_present'      => empty($item->degree_endDate),
         ];
     });
 
-return ResponseHelper::jsonResponseWithData(true, 'Degree  Uploaded Successfully!', [
-    'item' => $temporary_data,
-]);
+return ResponseHelper::jsonResponseWithData(true, 'Degree Uploaded Successfully!', $temporary_data);
 }
 public function remove_media_file(Request $request)
 {
