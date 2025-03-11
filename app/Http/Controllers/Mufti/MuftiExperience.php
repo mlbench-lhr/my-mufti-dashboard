@@ -39,6 +39,10 @@ class MuftiExperience extends Controller
             ];
             return response()->json($response, 200);
         }
+        $mufti_experience = $mufti_experience->map(function ($exp) {
+            $exp->is_present = empty($exp->experience_endDate); 
+            return $exp;
+        });
 
         $response = [
             'status'  => true,
@@ -81,8 +85,10 @@ class MuftiExperience extends Controller
         $response = [
             'status'  => true,
             'message' => 'Experience added successfully.',
-            'data'    => $experience,
-        ];
+            'data' => array_merge($experience->toArray(), [
+                'is_present' => empty($experience->experience_endDate)
+            ]),
+        ];    
         return response()->json($response, 200);
     }
     public function update_experience(Request $request)
@@ -115,7 +121,9 @@ class MuftiExperience extends Controller
         $response = [
             'status'  => true,
             'message' => 'Experience updated successfully.',
-            'data'    => $experience,
+            'data' => array_merge($experience->toArray(), [
+                'is_present' => empty($experience->experience_endDate)
+            ]),
         ];
         return response()->json($response, 200);
     }
