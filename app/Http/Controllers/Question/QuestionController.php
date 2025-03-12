@@ -823,8 +823,18 @@ class QuestionController extends Controller
         ActivityHelper::store_avtivity($user_id, $message, $type);
 
         UserAllQuery::create($data1);
+        
+        $questionWithRelations = UserQuery::with([
+            'all_question' => function ($query) {
+                $query->with(['mufti_detail' => function ($query) {
+                    $query->select('id', 'name', 'email', 'image', 'phone_number', 'fiqa', 'mufti_status', 'user_type', 'device_id')
+                          ->with('interests:id,user_id,interest'); 
+                }]);
+            }
+        ])->where('id', $question->id)->first();
+        
 
-        return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+        return ResponseHelper::jsonResponse(true, 'Added question successfully!',$questionWithRelations);
     }
     // public function post_fiqa_wise_question(Request $request)
     // {
@@ -1013,7 +1023,13 @@ class QuestionController extends Controller
         ];
         Notification::create($notificationData);
 
-        return ResponseHelper::jsonResponse(true, 'Added question successfully!');
+        $questionWithRelations = UserQuery::with([
+            'all_question' => function ($query) {
+                $query->with('mufti_detail:id,name,email,image,phone_number,fiqa,mufti_status,user_type,device_id')
+                      ->with('mufti_detail.interests:id,user_id,interest');
+            }
+        ])->where('id', $question->id)->first();
+        return ResponseHelper::jsonResponse(true, 'Added question successfully!',$questionWithRelations);
     }
 
     public function report_question(Request $request)
