@@ -70,6 +70,7 @@ Route::group([
     'prefix' => 'mufti',
 ], function () {
     Route::post('becomeMufti', [MuftiController::class, 'request_to_become_mufti']);
+    Route::post('requestbecomeMufti', [MuftiController::class, 'request_to_become_mufti_update']);
     Route::post('searchScholar', [MuftiController::class, 'search_scholar']);
     Route::post('updateInterests', [MuftiController::class, 'update_interests']);
 
