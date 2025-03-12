@@ -169,7 +169,7 @@ class EventController extends Controller
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
-        $allowedFields = ['user_id', 'image', 'event_title', 'event_category', 'date', 'duration', 'location', 'latitude', 'longitude', 'about'];
+        $allowedFields = ['user_id', 'image', 'event_title', 'event_category', 'date', 'duration','question_end_time', 'location', 'latitude', 'longitude', 'about'];
         if (isset($request->date)) {
             $parsedDate = Carbon::parse($request->date);
             $eventDate  = Carbon::parse($event->date);
@@ -227,8 +227,9 @@ class EventController extends Controller
         }
 
         $event->update($data);
+        $updatedEvent = Event::with(['scholars', 'hosted_by.interests'])->where('id', $event->id)->first();
 
-        return ResponseHelper::jsonResponse(true, 'Updated Event successfully!');
+        return ResponseHelper::jsonResponse(true, 'Updated Event successfully!',$updatedEvent);
     }
 
     public function add_event_scholars(Request $request)
