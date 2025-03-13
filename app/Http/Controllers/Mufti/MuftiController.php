@@ -208,7 +208,7 @@ class MuftiController extends Controller
     
     $data1 = [
         'user_id' => $user_id,
-        'name' => $request->name,
+        'name' => '',
         'phone_number' => $request->phone_number,
         'fiqa' => $request->fiqa ?? '',
         'reason' => '',
@@ -217,18 +217,22 @@ class MuftiController extends Controller
     ];
     Mufti::updateOrCreate(['user_id' => $user_id], $data1);
 
-    if ($request->has('interest') && is_array($request->interest)) {
-        $interests = collect($request->interest)->map(function ($interest) use ($user_id, $request) {
-            return [
-                'user_id' => $user_id,
-                'interest' => $interest,
-                'fiqa' => $request->fiqa ?? '',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        })->toArray();
-
-        Interest::insert($interests);
+    if ($request->has('interest')) {
+        $interests = is_string($request->interest) ? json_decode($request->interest, true) : $request->interest;
+    
+        if (is_array($interests)) {
+            $data = collect($interests)->map(function ($interest) use ($user_id, $request) {
+                return [
+                    'user_id' => $user_id,
+                    'interest' => $interest,
+                    'fiqa' => $request->fiqa ?? '',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+    
+            Interest::insert($data);
+        }
     }
 
     $user = User::where('id', $user_id)->first();

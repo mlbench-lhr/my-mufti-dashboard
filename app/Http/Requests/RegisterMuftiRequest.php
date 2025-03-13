@@ -32,8 +32,7 @@ class RegisterMuftiRequest extends FormRequest
             'work_experiences.*.is_present' => 'required|in:true,false',
             'work_experiences.*.experience_endDate' => 'nullable|required_if:is_present,false|prohibited_if:is_present,true',
 
-            'interest' => 'required|array|min:1',
-            'interest.*' => 'required',
+            'interest' => 'required',
         ];
     }
 }
