@@ -155,7 +155,7 @@ class EventController extends Controller
             'location'       => 'required',
             'latitude'       => 'required',
             'longitude'      => 'required',
-            'about'          => 'required',
+            'about'          => '',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -227,7 +227,7 @@ class EventController extends Controller
         }
 
         $event->update($data);
-        $updatedEvent = Event::with(['scholars', 'hosted_by.interests'])->where('id', $event->id)->first();
+        $updatedEvent = Event::with(['scholars', 'hosted_by.interests','event_questions.user_detail', 'event_questions.likes'])->where('id', $event->id)->first();
 
         return ResponseHelper::jsonResponse(true, 'Updated Event successfully!',$updatedEvent);
     }

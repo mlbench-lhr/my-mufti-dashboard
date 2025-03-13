@@ -113,6 +113,72 @@ class QuestionController extends Controller
         ];
         return response()->json($response, 200);
     }
+    public function edit_post_question(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'question_id'       => 'required',
+            'question_category' => 'required',
+            'question'          => 'required',
+            'time_limit'        => 'required',
+            'voting_option'     => 'required',
+            'user_info'         => 'required',
+        ]);
+    
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+    
+        $question = Question::find($request->question_id);
+    
+        if (!$question) {
+            return ResponseHelper::jsonResponse(false, 'Question not found');
+        }
+    
+        $updated = $question->fill($request->only([
+            'question_category',
+            'question',
+            'time_limit',
+            'voting_option',
+            'user_info',
+        ]));
+    
+        if (!$updated->isDirty()) {
+            return ResponseHelper::jsonResponse(false, 'No updates applied');
+        }
+    
+        $question->save();
+        $totalYesVote  = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
+        $totalNoVote   = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
+        $currentUserVote = QuestionVote::where(['question_id' => $request->question_id])->first();
+        if (! $currentUserVote) {
+            $question->current_user_vote = 0;
+        } else if ($currentUserVote->vote == 1) {
+            $question->current_user_vote = 1;
+        } else if ($currentUserVote->vote == 2) {
+            $question->current_user_vote = 2;
+        }
+
+    $question->totalYesVote = $totalYesVote;
+    $question->totalNoVote  = $totalNoVote;
+    $question->current_user_vote = $currentUserVote;
+
+    $question->user_detail = User::where('id', $question->user_id)
+        ->select('name', 'image')->first();
+
+    $question->comments = QuestionComment::with('user_detail')
+        ->where('question_id', $question->id)->get();
+
+    $question->scholar_reply = ScholarReply::with('user_detail')
+        ->where(['question_id' => $question->id, 'user_type' => 'scholar'])
+        ->first() ?? (object) [];
+
+    $question->lifecoach_reply = ScholarReply::with('user_detail')
+        ->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])
+        ->first() ?? (object) [];
+    
+       return ResponseHelper::jsonResponse(true, 'Updated Post Public Question successfully!',$question);
+    }
 
     public function vote_on_question(Request $request)
     {

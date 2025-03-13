@@ -98,6 +98,7 @@ Route::group([
     'prefix' => 'question',
 ], function () {
     Route::post('postQuestion', [QuestionController::class, 'post_question']);
+    Route::post('editpostQuestion', [QuestionController::class, 'edit_post_question']);
     Route::post('voteQuestion', [QuestionController::class, 'vote_on_question']);
     Route::post('allQuestion', [QuestionController::class, 'all_question']);
     Route::post('/userAllPublicQuestions', [QuestionController::class, 'User_AllPublicQuestions']);
