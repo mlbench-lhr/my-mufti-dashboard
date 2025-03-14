@@ -298,7 +298,7 @@ class EventController extends Controller
         }
         
         $allScholars = EventScholar::where('event_id', $eventId)->get();
-        return ResponseHelper::jsonResponse(true, 'Added Event Scholars Successfully!',['scholars' => $allScholars]);
+        return ResponseHelper::jsonResponse(true, 'Added Event Scholars Successfully!',$allScholars->toArray());
     }
 
     public function remove_event_scholar(Request $request)
