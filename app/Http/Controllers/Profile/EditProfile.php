@@ -719,7 +719,7 @@ class EditProfile extends Controller
             'consultation_fee' => $request->consultation_fee,
             'user_type'        => $typeDetails['type'],
         ];
-        MuftiAppointment::create($data);
+        $appointment=MuftiAppointment::create($data);
 
         $device_id        = $mufti->device_id;
         $title            = "New Appointment Request Received";
@@ -744,8 +744,9 @@ class EditProfile extends Controller
         $message = "A new appointment booked by " . $user->name;
         $type    = "booked appointment";
         ActivityHelper::store_avtivity($user_id, $message, $type);
+        $appointmentDetails = MuftiAppointment::with(['user_detail', 'mufti_detail.interests'])->find($appointment->id);
 
-        return ResponseHelper::jsonResponse(true, 'Book Appointment successfully!');
+        return ResponseHelper::jsonResponse(true, 'Book Appointment successfully!',$appointmentDetails);
     }
     public function my_appointments(Request $request)
     {

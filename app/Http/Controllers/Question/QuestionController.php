@@ -81,69 +81,7 @@ class QuestionController extends Controller
         if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        // $userType = $user->user_type;
-
-        // $data = [
-        //     'user_id'           => $request->user_id,
-        //     'question_category' => $request->question_category,
-        //     'question'          => $request->question,
-        //     'time_limit'        => $request->time_limit,
-        //     'voting_option'     => $request->voting_option,
-        //     'user_info'         => $request->user_info,
-        //     'user_type'         => $userType,
-        // ];
-
-        // $question = Question::create($data);
-
-        // $question = Question::where('id', $question->id)->first();
-
-        // $totalYesVote           = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
-        // $question->totalYesVote = $totalYesVote;
-        // $totalNoVote            = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
-        // $question->totalNoVote  = $totalNoVote;
-
-        // $currentUserVote = QuestionVote::where(['question_id' => $request->question_id, 'user_id' => $request->user_id])->first();
-        // if (! $currentUserVote) {
-        //     $question->current_user_vote = 0;
-        // } else if ($currentUserVote->vote == 1) {
-        //     $question->current_user_vote = 1;
-        // } else if ($currentUserVote->vote == 2) {
-        //     $question->current_user_vote = 2;
-        // }
-
-        // $question->user_detail = User::where('id', $question->user_id)->select('name', 'image')->first();
-        // $question->comments    = QuestionComment::with('user_detail')->where('question_id', $question->id)->get();
-        // $scholar_reply         = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'scholar'])->first();
-        // $lifecoach_reply       = ScholarReply::with('user_detail')->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])->first();
-
-        // if ($scholar_reply) {
-        //     $question->scholar_reply = $scholar_reply;
-        // } else {
-        //     $question->scholar_reply = (object) [];
-        // }
-
-        // if ($lifecoach_reply) {
-        //     $question->lifecoach_reply = $lifecoach_reply;
-        // } else {
-        //     $question->lifecoach_reply = (object) [];
-        // }
-
-        // if ($user->mufti_status == 2) {
-        //     $message = "Mufti " . $user->name . " posted a new question.";
-        // } else {
-        //     $message = $user->name . " posted a new question.";
-        // }
-
-        // $user_id = $user->id;
-        // $type    = "posted question";
-
-        // ActivityHelper::store_avtivity($user_id, $message, $type);
-        // $response = [
-        //     'status'  => true,
-        //     'message' => 'Added question successfully!',
-        //     'data'    => $question,
-        // ];
-        // return response()->json($response, 200);
+        
         $question = Question::create([
             'user_id'           => $request->user_id,
             'question_category' => $request->question_category,
@@ -203,36 +141,7 @@ class QuestionController extends Controller
         }
     
         $question->save();
-    //     $totalYesVote  = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
-    //     $totalNoVote   = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
-    //     $currentUserVote = QuestionVote::where(['question_id' => $request->question_id])->first();
-    //     if (! $currentUserVote) {
-    //         $question->current_user_vote = 0;
-    //     } else if ($currentUserVote->vote == 1) {
-    //         $question->current_user_vote = 1;
-    //     } else if ($currentUserVote->vote == 2) {
-    //         $question->current_user_vote = 2;
-    //     }
-
-    // $question->totalYesVote = $totalYesVote;
-    // $question->totalNoVote  = $totalNoVote;
-    // $question->current_user_vote = $currentUserVote;
-
-    // $question->user_detail = User::where('id', $question->user_id)
-    //     ->select('name', 'image')->first();
-
-    // $question->comments = QuestionComment::with('user_detail')
-    //     ->where('question_id', $question->id)->get();
-
-    // $question->scholar_reply = ScholarReply::with('user_detail')
-    //     ->where(['question_id' => $question->id, 'user_type' => 'scholar'])
-    //     ->first() ?? (object) [];
-
-    // $question->lifecoach_reply = ScholarReply::with('user_detail')
-    //     ->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])
-    //     ->first() ?? (object) [];
     
-    //    return ResponseHelper::jsonResponse(true, 'Updated Post Public Question successfully!',$question);
     $formattedQuestion = $this->formatQuestionResponse($question, $request->user_id);
 
     return ResponseHelper::jsonResponse(true, 'Updated question successfully!', $formattedQuestion);
