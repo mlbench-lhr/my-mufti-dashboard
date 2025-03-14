@@ -28,6 +28,33 @@ class QuestionController extends Controller
     {
         $this->fcmService = $fcmService;
     }
+    private function formatQuestionResponse($question,$user_id)
+    {
+        $totalYesVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
+        $totalNoVote = QuestionVote::where(['question_id' => $question->id, 'vote' => 2])->count();
+
+        $currentUserVote = QuestionVote::where(['question_id' => $question->id, 'user_id' => $user_id])->first();
+        $question->current_user_vote = $currentUserVote ? $currentUserVote->vote : 0;
+
+        $question->totalYesVote = $totalYesVote;
+        $question->totalNoVote = $totalNoVote;
+
+        $question->user_detail = User::where('id', $question->user_id)
+            ->select('name', 'image')->first();
+
+        $question->comments = QuestionComment::with('user_detail')
+            ->where('question_id', $question->id)->get();
+
+        $question->scholar_reply = ScholarReply::with('user_detail')
+            ->where(['question_id' => $question->id, 'user_type' => 'scholar'])
+            ->first() ?? (object) [];
+
+        $question->lifecoach_reply = ScholarReply::with('user_detail')
+            ->where(['question_id' => $question->id, 'user_type' => 'lifecoach'])
+            ->first() ?? (object) [];
+
+        return $question;
+    }
 
     public function post_question(Request $request)
     {

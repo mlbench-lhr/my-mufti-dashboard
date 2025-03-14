@@ -228,6 +228,9 @@ class EventController extends Controller
 
         $event->update($data);
         $updatedEvent = Event::with(['scholars', 'hosted_by.interests','event_questions.user_detail', 'event_questions.likes'])->where('id', $event->id)->first();
+        if (!empty($updatedEvent->question_category)) {
+            $updatedEvent->question_category = array_combine($updatedEvent->question_category, array_fill(0, count($updatedEvent->question_category), 0));
+        }
 
         return ResponseHelper::jsonResponse(true, 'Updated Event successfully!',$updatedEvent);
     }
@@ -263,42 +266,39 @@ class EventController extends Controller
             unset($user->interests);
         });
 
-        collect($registerScholars)->map(function ($scholar) use ($eventId) {
-            return [
+        $addedScholars = collect($registerScholars)->map(function ($scholar) use ($eventId) {
+            return EventScholar::create([
                 'event_id' => $eventId,
                 'user_id'  => $scholar['id'],
                 'image'    => $scholar['image'],
                 'name'     => $scholar['name'],
                 'fiqa'     => $scholar['fiqa'],
                 'category' => $scholar['interest'],
-            ];
-        })->each(function ($data) {
-            EventScholar::create($data);
+            ]);
         });
-
+        
         $name     = $request->name;
         $fiqa     = $request->fiqa;
         $category = $request->category;
         $image    = $request->image;
-        if ($request->image != "") {
-            $img = $this->processImage($request->image, 'event_scholar');
-        } else {
-            $img = "";
-        }
-        if ($name != "") {
-            $data1 = [
+        
+        if (!empty($name)) {
+            $img = !empty($image) ? $this->processImage($image, 'event_scholar') : "";
+        
+            $manualScholar = EventScholar::create([
                 'event_id' => $eventId,
                 'user_id'  => 0,
                 'image'    => $img,
                 'name'     => $name ?? "",
                 'fiqa'     => $fiqa ?? "",
                 'category' => $category,
-            ];
-
-            EventScholar::create($data1);
+            ]);
+        
+            $addedScholars->push($manualScholar);
         }
-
-        return ResponseHelper::jsonResponse(true, 'Added Event Scholars Successfully!');
+        
+        $allScholars = EventScholar::where('event_id', $eventId)->get();
+        return ResponseHelper::jsonResponse(true, 'Added Event Scholars Successfully!',['scholars' => $allScholars]);
     }
 
     public function remove_event_scholar(Request $request)
