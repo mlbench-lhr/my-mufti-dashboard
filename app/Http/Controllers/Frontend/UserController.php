@@ -112,10 +112,9 @@ class UserController extends Controller
     {
         $searchTerm    = $request->input('search');
         $sortingOption = $request->input('sorting');
-        $userCount = User::onlyTrashed()
-        ->whereNotNull('deleted_at')
-        ->whereNotNull('deletion_reason')->count();
-
+        $userCount     = User::onlyTrashed()
+            ->whereNotNull('deleted_at')
+            ->whereNotNull('deletion_reason')->count();
 
         $query = User::onlyTrashed()
             ->whereNotNull('deleted_at')
@@ -133,8 +132,7 @@ class UserController extends Controller
             $query->orderBy('deleted_at', 'desc');
         }
 
-        $users     = $query->paginate(10);
-
+        $users = $query->paginate(10);
 
         return response()->json([
             'userCount' => $userCount,
@@ -259,14 +257,14 @@ class UserController extends Controller
 
     public function all_scholar_request()
     {
-        $users = User::where(['user_type' => 'user', 'mufti_status' => 1])->get();
+        $users = User::where(['user_type' => 'user'])->whereIn('mufti_status', [1, 5])->get();
         return view('frontend.ScholarRequest', compact('users'));
     }
     public function get_all_scholar_request(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount  = User::where(['user_type' => 'user', 'mufti_status' => 1])->count();
-        $query      = User::where(['user_type' => 'user', 'mufti_status' => 1]);
+        $userCount  = User::where(['user_type' => 'user'])->whereIn('mufti_status', [1, 5])->count();
+        $query      = User::where(['user_type' => 'user'])->whereIn('mufti_status', [1, 5]);
 
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
@@ -380,7 +378,7 @@ class UserController extends Controller
 
         $id                 = $request->user_id;
         $user               = User::where('id', $id)->first();
-        $check_role = Mufti::where('user_id', $id)->first();
+        $check_role         = Mufti::where('user_id', $id)->first();
         $user->mufti_status = $check_role->user_type == 'scholar' ? 3 : 6;
         $user->save();
 
