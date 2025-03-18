@@ -319,12 +319,34 @@
                               Appointments</span>
                       </a>
                   </div>
+                </div>
+                <div class="menu menu-column menu-rounded fw-bold my-auto" id="kt_aside_menu" data-kt-menu="true">
+                 <div class="menu-item">
+                  <a class="menu-link" href="{{ URL::to('AllFAQs') }}">
+                   <span class="menu-icon">
+                      <!--begin::Svg Icon-->
+                     <span class="menu-bullet">
+                     <span class="bullet bullet-dot"></span>
+                    </span>
+                    @php
+                    $currentRoute = request()->path();
+                    $isActive1 = preg_match('/^AllFAQs$/', $currentRoute);
+                    $isActive2 = preg_match('/^FAQDetail(\/\d+)?$/', $currentRoute);
+                    @endphp
+                      <!--end::Svg Icon-->
+                    </span>
+                   <span class="menu-title"
+                     style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">
+                       All FAQ's
+                    </span>
+                   </a>
+                  </div>
+                </div>
 
 
-              </div>
 
               <!--end::Menu-->
-          </div>
+            </div>
 
           <!--end::Aside Menu-->
       </div>

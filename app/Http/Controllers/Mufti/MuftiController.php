@@ -203,7 +203,8 @@ class MuftiController extends Controller
     }
 
     
-    User::where('id', $user_id)->update(['mufti_status' => 1]);
+    $mufti_status = $request->join_as == "scholar" ? 1 : 5;
+    User::where('id', $user_id)->update(['mufti_status' => $mufti_status]);
 
     
     $data1 = [

@@ -380,7 +380,8 @@ class UserController extends Controller
 
         $id                 = $request->user_id;
         $user               = User::where('id', $id)->first();
-        $user->mufti_status = 3;
+        $check_role = Mufti::where('user_id', $id)->first();
+        $user->mufti_status = $check_role->user_type == 'scholar' ? 3 : 6;
         $user->save();
 
         Degree::where('user_id', $id)->delete();

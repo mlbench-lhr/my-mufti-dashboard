@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\EventsAndApptController;
 use App\Http\Controllers\Frontend\QuestionsController;
 use App\Http\Controllers\Frontend\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FAQController;
 
 Route::group(['middleware' => 'admin'], function () {
     Route::get('/', [AdminController::class, 'login']);
@@ -84,6 +85,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('PublicQuestionDetail/{id}', [QuestionsController::class, 'public_question_detail'])->name('PublicQuestionDetail');
     Route::get('getQuestionComments/{id}', [QuestionsController::class, 'get_question_comments'])->name('getQuestionComments');
     Route::get('DeletePublicQuestion/{id}', [QuestionsController::class, 'delete_public_question'])->name('DeletePublicQuestion');
+    //All FAQS
+    Route::get('/AllFAQs', [FAQController::class, 'index'])->name('allfaqs');
+    Route::post('/faqs', [FAQController::class, 'store'])->name('faqs.store');
+
 
     //Reported Questions
     Route::get('ReportedQuestions', [QuestionsController::class, 'all_reported_questions'])->name('ReportedQuestions');
