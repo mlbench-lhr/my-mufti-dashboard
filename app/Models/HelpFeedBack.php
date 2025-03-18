@@ -20,4 +20,9 @@ class HelpFeedBack extends Model
     protected $attributes = [
         'description' => "",
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
 }

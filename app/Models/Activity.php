@@ -13,4 +13,9 @@ class Activity extends Model
         'message',
         'type',
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
 }

@@ -24,6 +24,12 @@ class ScholarReply extends Model
     protected $attributes = [
         'reply' => "",
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+    
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id','name', 'image', 'fiqa');

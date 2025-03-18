@@ -31,6 +31,12 @@ class UserQuery extends Model
     protected $hidden = [
         'deleted_at',
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+    
     public function all_question()
     {
         return $this->hasMany(UserAllQuery::class, 'query_id', 'id');

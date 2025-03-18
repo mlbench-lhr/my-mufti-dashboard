@@ -25,4 +25,9 @@ class EventScholar extends Model
     protected $attributes = [
         'category' => "[]",
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
 }

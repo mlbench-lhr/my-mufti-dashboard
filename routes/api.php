@@ -16,8 +16,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-// **Live API (Production & Local)**
+// **Live API**
 Route::prefix('live')->middleware(['switch-db'])->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('signUp', 'sign_up')->name('signUp');
@@ -26,9 +25,25 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('updateDeviceId', 'update_device_id')->name('updateDeviceId');
         Route::post('logout', 'logout')->name('logout');
     });
+
+    Route::controller(ForgotPassword::class)->group(function () {
+        Route::post('generateOTP', 'generate_otp')->name('generateOTP');
+        Route::post('verifyOTP', 'verify_otp')->name('verifyOTP');
+        Route::post('resetPassword', 'reset_password')->name('resetPassword');
+    });
+
+    Route::group([
+        'prefix' => 'notification',
+    ], function () {
+        Route::post('userAllNotification', [UserNotification::class, 'user_all_notification']);
+        Route::post('deleteNotification', [UserNotification::class, 'delete_notification']);
+        Route::post('textNotification', [UserNotification::class, 'text_notification']);
+        Route::post('newTextNotification', [UserNotification::class, 'new_text_notification']);
+        Route::post('messageNotification', [UserNotification::class, 'message_notification']);
+    });
 });
 
-// **Testing API (Production & Local)**
+// **Testing API**
 Route::prefix('testing')->middleware(['switch-db'])->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('signUp', 'sign_up')->name('signUp');
@@ -36,6 +51,22 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('socialLoginSignUp', 'social_login_signup')->name('socialLoginSignUp');
         Route::post('updateDeviceId', 'update_device_id')->name('updateDeviceId');
         Route::post('logout', 'logout')->name('logout');
+    });
+
+    Route::controller(ForgotPassword::class)->group(function () {
+        Route::post('generateOTP', 'generate_otp')->name('generateOTP');
+        Route::post('verifyOTP', 'verify_otp')->name('verifyOTP');
+        Route::post('resetPassword', 'reset_password')->name('resetPassword');
+    });
+
+    Route::group([
+        'prefix' => 'notification',
+    ], function () {
+        Route::post('userAllNotification', [UserNotification::class, 'user_all_notification']);
+        Route::post('deleteNotification', [UserNotification::class, 'delete_notification']);
+        Route::post('textNotification', [UserNotification::class, 'text_notification']);
+        Route::post('newTextNotification', [UserNotification::class, 'new_text_notification']);
+        Route::post('messageNotification', [UserNotification::class, 'message_notification']);
     });
 });
 
@@ -74,7 +105,6 @@ Route::group([
     Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
     Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
     Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
-
 });
 
 Route::group([
@@ -84,12 +114,10 @@ Route::group([
     Route::post('requestbecomeMufti', [MuftiController::class, 'request_to_become_mufti_update']);
     Route::post('searchScholar', [MuftiController::class, 'search_scholar']);
     Route::post('updateInterests', [MuftiController::class, 'update_interests']);
-
     Route::post('getTempId', [MuftiController::class, 'get_TempId']);
     Route::post('addMediaFile', [MuftiController::class, 'add_media_file']);
     Route::post('removeMediaFile', [Mufticontroller::class, 'remove_media_file']);
     Route::post('requestBecomeMufti', [MuftiController::class, 'request_become_mufti']);
-
     Route::post('muftiDegrees', [MuftiDegrees::class, 'mufti_all_degrees']);
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);
     Route::post('addDegree', [MuftiDegrees::class, 'add_degree']);
@@ -97,12 +125,10 @@ Route::group([
     Route::put('updateDegree', [MuftiDegrees::class, 'update_degree']);
     Route::put('editDegree_update', [MuftiDegrees::class, 'edit_degree_update']);
     Route::post('deleteDegree', [MuftiDegrees::class, 'delete_degree']);
-
     Route::post('allExperience', [MuftiExperience::class, 'all_experience']);
     Route::post('addExperience', [MuftiExperience::class, 'add_experience']);
     Route::put('updateExperience', [MuftiExperience::class, 'update_experience']);
     Route::post('deleteExperience', [MuftiExperience::class, 'delete_experience']);
-
 });
 
 Route::group([
@@ -130,13 +156,10 @@ Route::group([
     Route::post('addEvent', [EventController::class, 'add_event']);
     Route::patch('updateEvent', [EventController::class, 'update_event']);
     Route::post('eventDetail', [EventController::class, 'event_detail']);
-
     Route::post('pastUpcomingEvents', [EventController::class, 'past_upcoming_events']);
     Route::post('allPastUpcomingEvents', [EventController::class, 'all_past_upcoming_events']);
-
     Route::post('myPastUpcomingRequestedEvents', [EventController::class, 'my_past_upcoming_requested_events']);
     Route::post('myAllPastUpcomingRequestedEvents', [EventController::class, 'my_all_past_upcoming_requested_events']);
-
     Route::post('addQuestionOnEvent', [EventController::class, 'add_question_on_event']);
     Route::post('addAnswerOnEvent', [EventController::class, 'add_answer_on_event']);
     Route::post('savaUnsaveEvent', [EventController::class, 'sava_unsave_event']);
@@ -146,7 +169,6 @@ Route::group([
     Route::post('deleteEvent', [EventController::class, 'delete_event']);
     Route::post('addEventScholars', [EventController::class, 'add_event_scholars']);
     Route::post('removeEventScholar', [EventController::class, 'remove_event_scholar']);
-
     Route::post('likeDislikeEventQuestion', [EventController::class, 'like_dislike_event_question']);
 });
 

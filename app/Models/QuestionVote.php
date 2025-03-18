@@ -19,5 +19,10 @@ class QuestionVote extends Model
         'question_id' => 'integer',
         'vote' => 'integer',
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
    
 }

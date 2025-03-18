@@ -25,6 +25,11 @@ class EventQuestion extends Model
         'answer' => "",
     ];
 
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

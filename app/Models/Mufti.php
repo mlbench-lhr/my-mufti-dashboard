@@ -21,4 +21,8 @@ class Mufti extends Model
         'user_id' => 'integer',
         'status' => 'integer',
     ];
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
 }
