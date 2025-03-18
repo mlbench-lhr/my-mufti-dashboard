@@ -103,6 +103,11 @@ class User extends Authenticatable
         return $value !== null ? $value : '';
     }
 
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+
     protected static function boot()
     {
         parent::boot();

@@ -12,20 +12,31 @@ use App\Http\Controllers\Question\QuestionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
- */
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+
+// **Live API (Production & Local)**
+Route::prefix('live')->middleware(['switch-db'])->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('signUp', 'sign_up')->name('signUp');
+        Route::post('login', 'sign_in')->name('login');
+        Route::post('socialLoginSignUp', 'social_login_signup')->name('socialLoginSignUp');
+        Route::post('updateDeviceId', 'update_device_id')->name('updateDeviceId');
+        Route::post('logout', 'logout')->name('logout');
+    });
+});
+
+// **Testing API (Production & Local)**
+Route::prefix('testing')->middleware(['switch-db'])->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('signUp', 'sign_up')->name('signUp');
+        Route::post('login', 'sign_in')->name('login');
+        Route::post('socialLoginSignUp', 'social_login_signup')->name('socialLoginSignUp');
+        Route::post('updateDeviceId', 'update_device_id')->name('updateDeviceId');
+        Route::post('logout', 'logout')->name('logout');
+    });
 });
 
 // Auth Apis
@@ -60,7 +71,7 @@ Route::group([
     Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
     Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
     Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
-    Route::post('/MarkAsCompleted',[EditProfile::class,'mark_as_completed']);
+    Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
     Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
     Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
 
@@ -82,7 +93,7 @@ Route::group([
     Route::post('muftiDegrees', [MuftiDegrees::class, 'mufti_all_degrees']);
     Route::post('getDegree', [MuftiDegrees::class, 'get_single_degree']);
     Route::post('addDegree', [MuftiDegrees::class, 'add_degree']);
-    Route::post('addDegree_update',[MuftiDegrees::class,'add_degree_update']);
+    Route::post('addDegree_update', [MuftiDegrees::class, 'add_degree_update']);
     Route::put('updateDegree', [MuftiDegrees::class, 'update_degree']);
     Route::put('editDegree_update', [MuftiDegrees::class, 'edit_degree_update']);
     Route::post('deleteDegree', [MuftiDegrees::class, 'delete_degree']);
