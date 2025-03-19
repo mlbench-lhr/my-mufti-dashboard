@@ -8,9 +8,4 @@ use Illuminate\Database\Eloquent\Model;
 class Admin extends Model
 {
     use HasFactory;
-
-    public function getConnectionName()
-    {
-        return request()->is('testing/*') || request()->is('api/testing/*') ? 'testing_db' : 'mysql';
-    }
 }

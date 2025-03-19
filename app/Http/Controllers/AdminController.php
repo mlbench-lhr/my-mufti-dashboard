@@ -142,22 +142,9 @@ class AdminController extends Controller
         echo json_encode($data);
 
     }
-    // public function flush(Request $request)
-    // {
-    //     $request->session()->flush();
-    //     return redirect('/');
-    // }
-
     public function flush(Request $request)
     {
         $request->session()->flush();
-    
-        $previousUrl = url()->previous();
-    
-        if (str_contains($previousUrl, '/testing')) {
-            return redirect('/testing');
-        }
-    
         return redirect('/');
     }
 }

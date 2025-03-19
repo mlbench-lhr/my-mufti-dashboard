@@ -25,14 +25,9 @@ class ScholarReply extends Model
         'reply' => "",
     ];
 
-    // public function getConnectionName()
-    // {
-    //     return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
-    // }
-    
     public function getConnectionName()
     {
-        return request()->is('testing/*') || request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
     }
     
     public function user_detail()

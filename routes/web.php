@@ -8,22 +8,6 @@ use App\Http\Controllers\Frontend\QuestionsController;
 use App\Http\Controllers\Frontend\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['switch-db'])->group(function () {
-
-    Route::prefix('testing')->group(function () {
-        Route::get('/', [AdminController::class, 'login'])->name('testing.login');
-        Route::get('Dashboard', [DashboardController::class, 'dashboard'])->name('testing.Dashboard');
-        Route::post('loginn', [AdminController::class, 'loginn']);
-        Route::get('logout', [AdminController::class, 'flush']);
-        Route::get('db-check', function () {
-            return response()->json([
-                'database' => config('database.default'),
-            ]);
-        });
-    });
-
-});
-
 Route::group(['middleware' => 'admin'], function () {
     Route::get('/', [AdminController::class, 'login']);
     Route::get('Dashboard', [DashboardController::class, 'dashboard'])->name('Dashboard');

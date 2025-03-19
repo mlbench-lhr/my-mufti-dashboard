@@ -20,13 +20,8 @@ class Interest extends Model
     protected $hidden = [
         'deleted_at',
     ];
-    // public function getConnectionName()
-    // {
-    //     return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
-    // }
-
     public function getConnectionName()
     {
-        return request()->is('testing/*') || request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
     }
 }
