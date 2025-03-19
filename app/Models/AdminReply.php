@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Models;
 
+use App\Models\Question;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Question;
 
 class AdminReply extends Model
 {
@@ -19,8 +18,8 @@ class AdminReply extends Model
     ];
 
     protected $casts = [
-        'user_id' => 'integer',
-        'question_id' => 'integer',
+        'user_id'       => 'integer',
+        'question_id'   => 'integer',
         'question_type' => 'string',
     ];
 
@@ -28,9 +27,14 @@ class AdminReply extends Model
         'reply' => "",
     ];
 
+    // public function getConnectionName()
+    // {
+    //     return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    // }
+
     public function getConnectionName()
     {
-        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+        return request()->is('testing/*') || request()->is('api/testing/*') ? 'testing_db' : 'mysql';
     }
 
     public function user_detail()

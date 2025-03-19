@@ -199,7 +199,12 @@
             $('#togglePassword').hide();
         });
     </script>
-
+    <script>
+        function getUrl(path) {
+            return window.location.pathname.startsWith('/testing') ? '/testing' + path : path;
+        }
+    </script>
+    
     <script type="module">
         $(document).ready(function() {
             $('#btnLogin').on('click', function(e) {
@@ -241,7 +246,8 @@
                     }
 
                     $.ajax({
-                        url: 'loginn',
+                        // url: 'loginn',
+                        url: getUrl('/loginn'),
                         type: 'POST',
                         data: {
                             email: email,
@@ -251,7 +257,8 @@
                             var data = $.parseJSON(response);
 
                             if (data.response == "success") {
-                                window.location.href = 'Dashboard'
+                                // window.location.href = 'Dashboard'
+                                window.location.href = getUrl('/Dashboard');
                             } else if (data.response == "success1") {
                                 window.location.href = 'FitmeRecipe'
                             } else if (data.response == "error") {

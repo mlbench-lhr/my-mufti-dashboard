@@ -21,8 +21,13 @@ class HelpFeedBack extends Model
         'description' => "",
     ];
 
+    // public function getConnectionName()
+    // {
+    //     return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    // }
+
     public function getConnectionName()
     {
-        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+        return request()->is('testing/*') || request()->is('api/testing/*') ? 'testing_db' : 'mysql';
     }
 }

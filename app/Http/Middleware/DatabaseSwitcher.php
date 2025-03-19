@@ -9,14 +9,13 @@ class DatabaseSwitcher
 {
     public function handle($request, Closure $next)
     {
-        if ($request->is('api/testing/*')) {
+        if ($request->is('testing/*') || $request->is('api/testing/*')) {
             Config::set('database.default', 'testing_db');
             Log::info('Database switched to: testing_db');
         } else {
             Config::set('database.default', 'mysql');
             Log::info('Database switched to: mysql');
         }
-
         return $next($request);
     }
 }

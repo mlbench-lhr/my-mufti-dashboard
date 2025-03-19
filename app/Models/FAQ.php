@@ -12,8 +12,13 @@ class FAQ extends Model
     protected $table = 'faqs'; // Ensure this matches your table name
     protected $fillable = ['question', 'answer'];
 
+    // public function getConnectionName()
+    // {
+    //     return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    // }
+
     public function getConnectionName()
     {
-        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+        return request()->is('testing/*') || request()->is('api/testing/*') ? 'testing_db' : 'mysql';
     }
 }

@@ -370,7 +370,7 @@
               <div class="btn btn-lg btn-icon btn-active-color-white position-relative me-n2 ms-4"
                   data-kt-menu-trigger="click" data-kt-menu-overflow="true" data-kt-menu-placement="top-end">
                   <!--begin::Svg Icon | path: icons/duotune/coding/cod001.svg-->
-                  <a href="{{ URL::to('logout') }}">
+                  <a href="{{ url('logout') }}">
                       <span class="">
                           <svg width="50" height="50" viewBox="0 0 30 30" fill="none"
                               xmlns="http://www.w3.org/2000/svg">
