@@ -718,6 +718,7 @@ class EditProfile extends Controller
             'payment_method'   => $request->payment_method ?? "",
             'consultation_fee' => $request->consultation_fee,
             'user_type'        => $typeDetails['type'],
+            'selected_slot'    => (int) 0,
         ];
         $appointment = MuftiAppointment::create($data);
 
@@ -744,10 +745,11 @@ class EditProfile extends Controller
         $message = "A new appointment booked by " . $user->name;
         $type    = "booked appointment";
         ActivityHelper::store_avtivity($user_id, $message, $type);
-        $appointmentDetails = MuftiAppointment::with(['user_detail', 'mufti_detail.interests'])->find($appointment->id);
+        $appointmentDetails = MuftiAppointment::with(['user_detail', 'mufti_detail.interests', 'book_slot'])->find($appointment->id);
 
         return ResponseHelper::jsonResponse(true, 'Book Appointment successfully!', $appointmentDetails);
     }
+
     public function my_appointments(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -772,13 +774,13 @@ class EditProfile extends Controller
 
         switch ($userType) {
             case 'scholar':
-                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('mufti_id', $request->user_id);
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests', 'book_slot')->where('mufti_id', $request->user_id);
                 break;
             case 'lifecoach':
-                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('mufti_id', $request->user_id);
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests', 'book_slot')->where('mufti_id', $request->user_id);
                 break;
             default:
-                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('user_id', $request->user_id);
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests', 'book_slot')->where('user_id', $request->user_id);
                 break;
         }
 

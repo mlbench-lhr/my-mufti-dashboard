@@ -15,6 +15,7 @@ use App\Models\Question;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
+use App\Models\WorkingDay;
 use App\Services\FcmService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -368,6 +369,18 @@ class UserController extends Controller
             'reason' => "",
         ];
         $mufti = Mufti::where('user_id', $user->id)->update($data);
+
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        $workingDays = array_map(fn($day) => [
+            'user_id' => $user->id,
+            'day_name'      => $day,
+            'is_available'     => false,
+            'created_at'    => now(),
+            'updated_at'    => now(),
+        ], $daysOfWeek);
+
+        WorkingDay::insert($workingDays);
 
         // $mufti->delete();
         return redirect('ScholarsRequests');

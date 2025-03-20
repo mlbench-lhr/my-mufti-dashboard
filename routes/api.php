@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Appointments\AppointmentsController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPassword;
 use App\Http\Controllers\Event\EventController;
@@ -52,7 +53,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
         Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
     });
-    
+
     Route::group([
         'prefix' => 'mufti',
     ], function () {
@@ -76,7 +77,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::put('updateExperience', [MuftiExperience::class, 'update_experience']);
         Route::post('deleteExperience', [MuftiExperience::class, 'delete_experience']);
     });
-    
+
     Route::group([
         'prefix' => 'question',
     ], function () {
@@ -95,7 +96,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('reportQuestion', [QuestionController::class, 'report_question']);
         Route::post('delete-all-private-questions', [QuestionController::class, 'deleteAllPrivateQuestionsByUserIds']);
     });
-    
+
     Route::group([
         'prefix' => 'event',
     ], function () {
@@ -117,7 +118,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('removeEventScholar', [EventController::class, 'remove_event_scholar']);
         Route::post('likeDislikeEventQuestion', [EventController::class, 'like_dislike_event_question']);
     });
-    
+
     Route::group([
         'prefix' => 'notification',
     ], function () {
@@ -127,7 +128,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('newTextNotification', [UserNotification::class, 'new_text_notification']);
         Route::post('messageNotification', [UserNotification::class, 'message_notification']);
     });
-    
+
 });
 
 // **Testing API**
@@ -166,7 +167,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
         Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
     });
-    
+
     Route::group([
         'prefix' => 'mufti',
     ], function () {
@@ -190,7 +191,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::put('updateExperience', [MuftiExperience::class, 'update_experience']);
         Route::post('deleteExperience', [MuftiExperience::class, 'delete_experience']);
     });
-    
+
     Route::group([
         'prefix' => 'question',
     ], function () {
@@ -209,7 +210,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('reportQuestion', [QuestionController::class, 'report_question']);
         Route::post('delete-all-private-questions', [QuestionController::class, 'deleteAllPrivateQuestionsByUserIds']);
     });
-    
+
     Route::group([
         'prefix' => 'event',
     ], function () {
@@ -231,7 +232,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('removeEventScholar', [EventController::class, 'remove_event_scholar']);
         Route::post('likeDislikeEventQuestion', [EventController::class, 'like_dislike_event_question']);
     });
-    
+
     Route::group([
         'prefix' => 'notification',
     ], function () {
@@ -354,4 +355,15 @@ Route::group([
     Route::post('textNotification', [UserNotification::class, 'text_notification']);
     Route::post('newTextNotification', [UserNotification::class, 'new_text_notification']);
     Route::post('messageNotification', [UserNotification::class, 'message_notification']);
+});
+
+Route::group([
+    'prefix' => 'appointments',
+], function () {
+    Route::post('addSlots', [AppointmentsController::class, 'add_slots']);
+    Route::post('getSlots', [AppointmentsController::class, 'get_slots']);
+    Route::post('getMuftiSlots', [AppointmentsController::class, 'get_mufti_slots']);
+    Route::post('removeSlot', [AppointmentsController::class, 'remove_slot']);
+    Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
+
 });

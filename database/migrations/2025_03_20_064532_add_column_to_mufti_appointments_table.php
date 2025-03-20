@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('user_all_queries', function (Blueprint $table) {
-            $table->longText('answer')->after('question');
+        Schema::table('mufti_appointments', function (Blueprint $table) {
+            $table->integer('selected_slot')->after('status');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('user_all_queries', function (Blueprint $table) {
-            $table->dropColumn('answer');
+        Schema::table('mufti_appointments', function (Blueprint $table) {
+            $table->dropColumn('selected_slot');
         });
     }
 };
