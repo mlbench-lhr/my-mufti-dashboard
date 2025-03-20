@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // **Live API**
 Route::prefix('live')->middleware(['switch-db'])->group(function () {
+    
     Route::controller(AuthController::class)->group(function () {
         Route::post('signUp', 'sign_up')->name('signUp');
         Route::post('login', 'sign_in')->name('login');
@@ -144,6 +145,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
 
 // **Testing API**
 Route::prefix('testing')->middleware(['switch-db'])->group(function () {
+
     Route::controller(AuthController::class)->group(function () {
         Route::post('signUp', 'sign_up')->name('signUp');
         Route::post('login', 'sign_in')->name('login');
