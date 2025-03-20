@@ -79,7 +79,7 @@
                 <!--begin::Heading-->
                 <h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">All FAQ's
                 </h1>
-                <h3 class="mt-4" style=" font-weight:400; ">Total FAQ's: <span class="fs-5" id="user-count"
+                <h3 class="mt-4" style=" font-weight:400; color:#78827F">Total FAQ's: <span class="fs-5" id="faq-count"
                         style="font-weight:500 "> </span> </h3>
                 <!--end::Heading-->
             </div>
@@ -98,11 +98,11 @@
                     </span>
                     <!--end::Svg Icon-->
                     <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
-                        placeholder="Search" />
+                        placeholder="Search" style="border: 1px solid #7B849A; border-radius: 5px;padding: 4px 20px" />
                 </div>
 
                 <div class="dropdown">
-                    <button class="btn" style="background-color: #38B89A; color: #FFFFFF" type="button" id=""
+                    <button class="btn" style="background-color: #38B89A; color: #FFFFFF; padding: 4px 20px" type="button" id=""
                         data-bs-toggle="modal" data-bs-target="#kt_modal_add_interests" aria-expanded="false">
                         Add FAQ
                     </button>
@@ -122,18 +122,6 @@
         <div class="card">
             <!--begin::Card body-->
             <div class="card-body pt-0">
-                
-                <div class="d-flex overflow-auto h-55px">
-                    <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-3 fw-bolder flex-nowrap">
-                        <!--begin::Nav item-->
-                        <li class="nav-item">
-                            <a class="nav-link text-active-success me-6 {{ Request::is('AllFAQ') ? 'active' : null }}"
-                                href="{{ URL::to('AllFAQ') }}">All FAQs</a>
-                        </li>
-                        <!--end::Nav item-->
-                    </ul>
-                </div>
-
                 @if (count($faqs))
                     <!--begin::Table-->
                     <div class="table-responsive">
@@ -141,11 +129,11 @@
                             <!--begin::Table head-->
                             <thead>
                                 <!--begin::Table row-->
-                                <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
+                                <tr class="text-start text-dark fw-bold fs-5  gs-0">
+                                    <th class="min-w-75px">Sr No</th>
                                     <th class="min-w-275px">Question</th>
-                                    <th class="min-w-175px">Answer</th>
-                                    <th class="min-w-150px">Published On</th>
-                                    <th class="min-w-125px">Action</th>
+                                    <th class="min-w-125px">Published On</th>
+                                    <th class="min-w-150px text-center">Action</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -163,7 +151,7 @@
                 @else
                     <div class="text-center my-19">
                         <img alt="No FAQs" style="align-items: center; margin-top:50px"
-                            src="{{ url('public/frontend/media/NoFAQ.svg') }}" class="img-fluid">
+                            src="{{ url('../../public/frontend/media/NoFAQ.svg') }}" class="img-fluid"> <!--add::public-->
                     </div>
                 @endif
             </div>
@@ -174,7 +162,7 @@
     <!--end::Container-->
 
     <!-- Modal - Add FAQ -->
-    <div class="modal fade" id="kt_modal_add_faq" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="kt_modal_add_interests" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog mw-500px">
             <div class="modal-content">
                 <div class="modal-header pb-0 border-0 d-flex justify-content-between items-center">
@@ -191,17 +179,17 @@
                     </button>
                 </div>
                 <div class="modal-body pt-4">
-                    <form id="faqForm" action="/submitFAQ" method="post" class="form">
+                    <form id="postForm" action="/submitFAQ" method="post" class="form">
                         @method('POST')
                         @csrf
                         <div class="mb-5">
-                            <label for="faq_question" class="fw-bold fs-6 pb-2 mb-1">Question</label>
-                            <textarea id="faq_question" class="form-control" name="faq_question" placeholder="Add Question"
-                                rows="4" required></textarea>
+                            <label for="faq_question" class="fw-bold fs-3 pb-2 mb-1">Question</label>
+                            <textarea id="faq_question" class="form-control" name="question" placeholder="Add Question"
+                                rows="1" required></textarea>
                         </div>
                         <div class="mb-5">
-                            <label for="faq_answer" class="fw-bold fs-6 pb-2 mb-1">Answer</label>
-                            <textarea id="faq_answer" class="form-control" name="faq_answer" placeholder="Add Answer"
+                            <label for="faq_answer" class="fw-bold fs-3 pb-2 mb-1">Answer</label>
+                            <textarea id="faq_answer" class="form-control" name="answer" placeholder="Add Answer"
                                 rows="4" required></textarea>
                         </div>
                         <div class="d-flex justify-content-center pt-2">
@@ -216,64 +204,12 @@
         </div>
     </div>
 </div>
+<!--end::Content-->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    let faqCategoryArray = [];
-    let selectedFaqObjectId = null;
-
-    function changeFaqFunc() {
-        var selectBox = document.getElementById("allfaqCategoryBox");
-        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        var existingObject = faqCategoryArray.find(obj => obj.id === selectedValue);
-        
-        if (existingObject) {
-            selectedFaqObjectId = existingObject.id;
-        } else {
-            selectedFaqObjectId = null;
-            var selectedText = $('#allfaqCategoryBox option:selected').text();
-            let newObject = {
-                name: selectedText,
-                id: selectedValue,
-            };
-            faqCategoryArray.push(newObject);
-        }
-
-        displayFaqObjects();
-    }
-
-    function removeFaqItem(id) {
-        faqCategoryArray = faqCategoryArray.filter(obj => obj.id !== id);
-        $('#allfaqCategoryBox').prop('selectedIndex', "");
-        displayFaqObjects();
-    }
-
-    function displayFaqObjects() {
-        var container = document.getElementById('allfaqCategoryContainer');
-        container.innerHTML = '';
-
-        faqCategoryArray.forEach(function(obj) {
-            var div = document.createElement('span');
-            div.innerHTML = `
-                <span class="d-flex align-items-center justify-content-start px-3 py-2 bg-white rounded-1 shadow-sm me-2 mb-2" style="width: fit-content;">
-                    <span class="fs-5 text-gray-900 me-2">${obj.name}</span>
-                    <span style="cursor:pointer;" onclick="removeFaqItem('${obj.id}')" class="text-success">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 27 27" fill="none">
-                            <path d="M17.1531 9.90137L9.43948 17.6149" stroke="#38B89A" stroke-width="2" stroke-linecap="round" />
-                            <path d="M17.1531 17.6152L9.43948 9.90166" stroke="#38B89A" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                    </span>
-                </span>`;
-            container.appendChild(div);
-        });
-    }
-
-    function updateFaqFormInput() {
-        document.getElementById("allfaqCategoryBoxInput").value = JSON.stringify(faqCategoryArray);
-    }
-
-    document.getElementById("allfaqForm").addEventListener("submit", function(event) {
+    document.getElementById("postForm").addEventListener("submit", function(event) {
         event.preventDefault();
-        updateFaqFormInput();
+        //updateFaqFormInput();
 
         const formData = new FormData(this);
 
@@ -298,7 +234,7 @@
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
-                    window.location.href = '/AllFAQ'; // Update the redirect URL if necessary
+                    window.location.href = '/AllFAQs'; // Update the redirect URL if necessary
                 });
             })
             .catch(error => {
@@ -317,8 +253,7 @@
     }
 </script>
 @endsection
-<!--end::Content-->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     var currentPage = 1;
 
@@ -350,34 +285,36 @@
                         </tr>`;
                     tableBody.append(noFaqRow);
                 } else {
+                    var count = (faqs.data.length > 0) ? (faqs.current_page - 1) * faqs.per_page : 0;
                     $.each(faqs.data, function(index, row) {
-                        var categoryName = row.faq_category.map(function(categoryname) {
-                            return categoryname;
-                        });
-
-                        var category = categoryName.slice(0, 3).join(', ');
-                        if (categoryName.length > 3) {
-                            category += ' ...';
-                        }
-
+                        var modifiedSerialNumber = pad(count + 1, 2, '0');
                         var newRow = `
-                            <tr class="text-start">
-                                <td>${truncateText(row.question, 14)}</td>
-                                <td>${category}</td>
-                                <td>${row.creation_date}</td>
-                                <td>
+                            <tr class="text-start" style="border-color: #DBDFE9;">
+                                <td>${modifiedSerialNumber}</td>
+                                <td class="fw-bold text-dark">${truncateText(row.question)}</td>
+                                <td>${row.created_at}</td>
+                                <td class="text-center">
                                     <div class="fs-4 fw-bolder text-dark">
-                                        <a href="{{ URL::to('FAQDetail') }}/${row.id}" class="link-success fw-bold">
+                                        <a href="{{ URL::to('AllFAQDetail') }}/${row.id}" class="link-success fw-bold">
                                             View Detail
                                         </a>
                                     </div>
                                 </td>
                             </tr>`;
                         tableBody.append(newRow);
+                        count++;
                     });
+                    // Function to pad numbers with zeros
+                    function pad(number, length, character) {
+                        var str = '' + number;
+                        while (str.length < length) {
+                            str = character + str;
+                        }
+                        return str;
+                    }
                 }
 
-                var paginationLinks = $('#faq-pagination-links');
+                var paginationLinks = $('#pagination-links');
                 paginationLinks.empty();
 
                 var totalPages = faqs.last_page;
@@ -429,7 +366,7 @@
         var page = $(this).data('page');
         if (page && page !== currentPage) {
             currentPage = page;
-            var searchTerm = $('#faq-search').val();
+            var searchTerm = $('#global-search').val();
             loadFaqData(currentPage, searchTerm);
             updateUrlParameter('page', currentPage);
         }
@@ -437,7 +374,7 @@
 
     $(document).on('click', '#apply-filter-faq', function(e) {
         e.preventDefault();
-        var searchTerm = $('#faq-search').val();
+        var searchTerm = $('#global-search').val();
         var sortingOption = $('#faq-date-filter').val();
         loadFaqData(currentPage, searchTerm, sortingOption);
     });
@@ -449,7 +386,7 @@
     });
 
     $(document).ready(function() {
-        $('#faq-search').on('input', function() {
+        $('#global-search').on('input', function() {
             var searchTerm = $(this).val();
             currentPage = 1;
             loadFaqData(currentPage, searchTerm);

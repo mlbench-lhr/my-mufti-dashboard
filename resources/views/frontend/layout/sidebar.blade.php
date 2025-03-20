@@ -331,7 +331,7 @@
                     @php
                     $currentRoute = request()->path();
                     $isActive1 = preg_match('/^AllFAQs$/', $currentRoute);
-                    $isActive2 = preg_match('/^FAQDetail(\/\d+)?$/', $currentRoute);
+                    $isActive2 = preg_match('/^AllFAQDetail(\/\d+)?$/', $currentRoute);
                     @endphp
                       <!--end::Svg Icon-->
                     </span>
@@ -342,9 +342,6 @@
                    </a>
                   </div>
                 </div>
-
-
-
               <!--end::Menu-->
             </div>
 

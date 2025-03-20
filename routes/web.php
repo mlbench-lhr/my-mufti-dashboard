@@ -85,9 +85,17 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('PublicQuestionDetail/{id}', [QuestionsController::class, 'public_question_detail'])->name('PublicQuestionDetail');
     Route::get('getQuestionComments/{id}', [QuestionsController::class, 'get_question_comments'])->name('getQuestionComments');
     Route::get('DeletePublicQuestion/{id}', [QuestionsController::class, 'delete_public_question'])->name('DeletePublicQuestion');
+    
     //All FAQS
-    Route::get('/AllFAQs', [FAQController::class, 'index'])->name('allfaqs');
-    Route::post('/faqs', [FAQController::class, 'store'])->name('faqs.store');
+    Route::get('AllFAQs', [FAQController::class, 'all_faq'])->name('AllFAQs');
+    Route::get('getAllFAQs', [FAQController::class, 'get_all_faq'])->name('getAllFAQs');
+
+    Route::get('AllFAQDetail/{id}', [FAQController::class, 'faq_detail'])->name('AllFAQDetail');
+    Route::post('/submitFAQ', [FAQController::class, 'submit_FAQ'])->name('submitFAQ');
+
+    Route::get('/getfaq/{id}', [FAQController::class, 'get_faq']);
+    Route::get('DeleteFAQ/{id}', [FAQController::class, 'delete_faq'])->name('DeleteFAQ');
+    Route::put('/editfaq', [FAQController::class, 'edit_faq']);
 
 
     //Reported Questions

@@ -61,7 +61,7 @@ class EventController extends Controller
             'longitude'         => $request->longitude,
             'about' => $request->about ?? '',
             'time_zone'         => $request->time_zone ?? 'Asia/Karachi',
-            'question_end_time' => $request->question_end_time ?? '2',
+            'question_end_time' => $request->question_end_time ?? '15',
         ];
 
         $data['image'] = $this->processImage($data['image'], 'event_images');
@@ -411,11 +411,20 @@ class EventController extends Controller
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
-        $timeZone        = $event->time_zone ?? 'Asia/Karachi';
-        $eventTimeZone   = new CarbonTimeZone($timeZone ?? 'UTC');
-        $eventTime       = Carbon::parse($event->date, $eventTimeZone)->utc();
-        $questionEndTime = $eventTime->subMinutes((int) $event->question_end_time);
-        $currentTime     = Carbon::now('UTC');
+        // $timeZone        = $event->time_zone ?? 'Asia/Karachi';
+        // $eventTimeZone   = new CarbonTimeZone($timeZone ?? 'UTC');
+        // $eventTime       = Carbon::parse($event->date, $eventTimeZone)->utc();
+        // $questionEndTime = $eventTime->subMinutes((int) $event->question_end_time);
+        // $currentTime     = Carbon::now('UTC');
+        $timeZone       = $event->time_zone ?? 'Asia/Karachi';
+        $eventTimeZone  = new CarbonTimeZone($timeZone ?? 'UTC');
+        $eventStartTime = Carbon::parse($event->date, $eventTimeZone)->utc();
+
+        $eventEndTime = $eventStartTime->addHours((int) $event->duration);
+
+        $questionEndTime = $eventEndTime->subMinutes((int) $event->question_end_time);
+
+        $currentTime = Carbon::now('UTC');
 
         if ($currentTime->greaterThan($questionEndTime)) {
             return ResponseHelper::jsonResponse(false, 'You can no longer ask questions for this event');
