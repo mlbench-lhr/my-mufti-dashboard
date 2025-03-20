@@ -10,9 +10,13 @@ class FAQ extends Model
 {
     use HasFactory;
 
-    protected $table = 'faqs'; // Ensure this matches your table name
+    protected $table = 'faqs';
     protected $fillable = ['question', 'answer'];
 
+    protected $casts = [
+        'created_at' => "datetime:M d, Y",
+    ];
+    
     public function getConnectionName()
     {
         return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
