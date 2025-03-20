@@ -302,7 +302,7 @@ class QuestionController extends Controller
             return $question;
         });
 
-        dd($questions->items());
+        dd($totalPages);
 
 
         return response()->json([
