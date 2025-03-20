@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +18,10 @@ class Mufti extends Model
     ];
     protected $casts = [
         'user_id' => 'integer',
-        'status' => 'integer',
+        'status'  => 'integer',
     ];
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
 }

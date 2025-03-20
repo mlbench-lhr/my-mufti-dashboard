@@ -18,4 +18,10 @@ class EventQuestionLike extends Model
         'event_question_id' => 'integer',
         'user_id' => 'integer',
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+
 }

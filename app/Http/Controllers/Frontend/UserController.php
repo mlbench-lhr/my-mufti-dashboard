@@ -15,6 +15,7 @@ use App\Models\Question;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
+use App\Models\WorkingDay;
 use App\Services\FcmService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -112,10 +113,9 @@ class UserController extends Controller
     {
         $searchTerm    = $request->input('search');
         $sortingOption = $request->input('sorting');
-        $userCount = User::onlyTrashed()
-        ->whereNotNull('deleted_at')
-        ->whereNotNull('deletion_reason')->count();
-
+        $userCount     = User::onlyTrashed()
+            ->whereNotNull('deleted_at')
+            ->whereNotNull('deletion_reason')->count();
 
         $query = User::onlyTrashed()
             ->whereNotNull('deleted_at')
@@ -133,8 +133,7 @@ class UserController extends Controller
             $query->orderBy('deleted_at', 'desc');
         }
 
-        $users     = $query->paginate(10);
-
+        $users = $query->paginate(10);
 
         return response()->json([
             'userCount' => $userCount,
@@ -259,14 +258,14 @@ class UserController extends Controller
 
     public function all_scholar_request()
     {
-        $users = User::where(['user_type' => 'user', 'mufti_status' => 1])->get();
+        $users = User::where(['user_type' => 'user'])->whereIn('mufti_status', [1, 5])->get();
         return view('frontend.ScholarRequest', compact('users'));
     }
     public function get_all_scholar_request(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount  = User::where(['user_type' => 'user', 'mufti_status' => 1])->count();
-        $query      = User::where(['user_type' => 'user', 'mufti_status' => 1]);
+        $userCount  = User::where(['user_type' => 'user'])->whereIn('mufti_status', [1, 5])->count();
+        $query      = User::where(['user_type' => 'user'])->whereIn('mufti_status', [1, 5]);
 
         if ($searchTerm) {
             $query->where('name', 'LIKE', '%' . $searchTerm . '%');
@@ -371,6 +370,18 @@ class UserController extends Controller
         ];
         $mufti = Mufti::where('user_id', $user->id)->update($data);
 
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        $workingDays = array_map(fn($day) => [
+            'user_id' => $user->id,
+            'day_name'      => $day,
+            'is_available'     => false,
+            'created_at'    => now(),
+            'updated_at'    => now(),
+        ], $daysOfWeek);
+
+        WorkingDay::insert($workingDays);
+
         // $mufti->delete();
         return redirect('ScholarsRequests');
     }
@@ -380,7 +391,7 @@ class UserController extends Controller
 
         $id                 = $request->user_id;
         $user               = User::where('id', $id)->first();
-        $check_role = Mufti::where('user_id', $id)->first();
+        $check_role         = Mufti::where('user_id', $id)->first();
         $user->mufti_status = $check_role->user_type == 'scholar' ? 3 : 6;
         $user->save();
 

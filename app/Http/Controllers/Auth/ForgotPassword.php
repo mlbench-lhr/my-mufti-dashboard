@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Helpers\ResponseHelper;
@@ -45,8 +44,8 @@ class ForgotPassword extends Controller
             $main_data = ['message' => $otp_code];
             Mail::to($request->email)->send(new GenerateOTPMail($main_data));
             $data = [
-                'status' => true,
-                'message' => 'OTP sent Successfully',
+                'status'   => true,
+                'message'  => 'OTP sent Successfully',
                 'OTP Code' => $otp_code,
             ];
             return response()->json($data, 200);
@@ -56,8 +55,8 @@ class ForgotPassword extends Controller
     }
     public function verify_otp(VerifyOTPRequest $request)
     {
-        $email = $request->email;
-        $otp = $request->otp;
+        $email      = $request->email;
+        $otp        = $request->otp;
         $check_user = User::where([['email', $email], ['email_code', $otp]])->first();
         if ($check_user) {
             User::where('email', $request->email)->update(['email_code' => 0]);
@@ -73,15 +72,14 @@ class ForgotPassword extends Controller
             ? Interest::where('user_id', $user->id)->select('id', 'user_id', 'interest')->get()
             : [];
 
-            $user->reason = ($user->mufti_status == 3)
+            $user->reason = ($user->mufti_status == 3 || $user->mufti_status == 6)
             ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
             : "";
-        
 
             $data = [
-                'status' => true,
+                'status'  => true,
                 'message' => 'OTP Verified',
-                'data' => $user,
+                'data'    => $user,
             ];
 
             return response()->json($data, 200);

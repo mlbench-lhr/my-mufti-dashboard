@@ -49,7 +49,7 @@ class EditProfile extends Controller
         }
 
         $rejectionReason = "";
-        if ($user->mufti_status == 3) {
+        if ($user->mufti_status == 3 || $user->mufti_status == 6) {
             $mufti           = Mufti::where('user_id', $user->id)->first();
             $rejectionReason = $mufti ? $mufti->reason : "";
         }
@@ -109,7 +109,7 @@ class EditProfile extends Controller
         $user->save();
         $user = User::find($request->user_id);
 
-        $user->reason = ($user->mufti_status == 3)
+        $user->reason = ($user->mufti_status == 3 || $user->mufti_status == 6)
         ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
         : "";
 
@@ -174,7 +174,7 @@ class EditProfile extends Controller
             //     $user->interests = [];
             // }
 
-            $user->reason = ($user->mufti_status == 3)
+            $user->reason = ($user->mufti_status == 3 || $user->mufti_status == 6)
             ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
             : "";
 
@@ -221,7 +221,7 @@ class EditProfile extends Controller
         //     $user->interests = [];
         // }
 
-        $user->reason = ($user->mufti_status == 3)
+        $user->reason = ($user->mufti_status == 3 || $user->mufti_status == 6)
         ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
         : "";
 
@@ -272,7 +272,7 @@ class EditProfile extends Controller
         //     $user->interests = [];
         // }
 
-        $user->reason = ($user->mufti_status == 3)
+        $user->reason = ($user->mufti_status == 3 || $user->mufti_status == 6)
         ? Mufti::where('user_id', $user->id)->value('reason') ?? ""
         : "";
 
@@ -718,8 +718,9 @@ class EditProfile extends Controller
             'payment_method'   => $request->payment_method ?? "",
             'consultation_fee' => $request->consultation_fee,
             'user_type'        => $typeDetails['type'],
+            'selected_slot'    => (int) 0,
         ];
-        $appointment=MuftiAppointment::create($data);
+        $appointment = MuftiAppointment::create($data);
 
         $device_id        = $mufti->device_id;
         $title            = "New Appointment Request Received";
@@ -744,10 +745,11 @@ class EditProfile extends Controller
         $message = "A new appointment booked by " . $user->name;
         $type    = "booked appointment";
         ActivityHelper::store_avtivity($user_id, $message, $type);
-        $appointmentDetails = MuftiAppointment::with(['user_detail', 'mufti_detail.interests'])->find($appointment->id);
+        $appointmentDetails = MuftiAppointment::with(['user_detail', 'mufti_detail.interests', 'book_slot'])->find($appointment->id);
 
-        return ResponseHelper::jsonResponse(true, 'Book Appointment successfully!',$appointmentDetails);
+        return ResponseHelper::jsonResponse(true, 'Book Appointment successfully!', $appointmentDetails);
     }
+
     public function my_appointments(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -772,13 +774,13 @@ class EditProfile extends Controller
 
         switch ($userType) {
             case 'scholar':
-                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('mufti_id', $request->user_id);
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests', 'book_slot')->where('mufti_id', $request->user_id);
                 break;
             case 'lifecoach':
-                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('mufti_id', $request->user_id);
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests', 'book_slot')->where('mufti_id', $request->user_id);
                 break;
             default:
-                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests')->where('user_id', $request->user_id);
+                $query = MuftiAppointment::with('user_detail', 'mufti_detail.interests', 'book_slot')->where('user_id', $request->user_id);
                 break;
         }
 
@@ -830,36 +832,37 @@ class EditProfile extends Controller
             200
         );
     }
-    public function mark_as_completed(Request $request){
-    $validator = Validator::make($request->all(), [
-        'appointment_id' => 'required|exists:mufti_appointments,id',
-    ]);
+    public function mark_as_completed(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'appointment_id' => 'required|exists:mufti_appointments,id',
+        ]);
 
-    $validationError = ValidationHelper::handleValidationErrors($validator);
-    if ($validationError !== null) {
-        return $validationError;
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $appointment = MuftiAppointment::find($request->appointment_id);
+
+        if (! $appointment) {
+            return ResponseHelper::jsonResponse(false, 'Appointment not found', null);
+        }
+
+        $userId = $appointment->mufti_id ?? $appointment->user_id;
+
+        if ($appointment->mufti_id !== $userId && $appointment->user_id !== $userId) {
+            return ResponseHelper::jsonResponse(false, 'User not found', null);
+        }
+
+        if ($appointment->status == 2) {
+            return ResponseHelper::jsonResponse(false, 'Appointment is already completed', null);
+        }
+
+        $appointment->status = 2;
+        $appointment->save();
+
+        return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
     }
 
-    $appointment = MuftiAppointment::find($request->appointment_id);
-
-    if (!$appointment) {
-        return ResponseHelper::jsonResponse(false, 'Appointment not found', null);
-    }
-
-    $userId = $appointment->mufti_id ?? $appointment->user_id;
-
-    if ($appointment->mufti_id !== $userId && $appointment->user_id !== $userId) {
-        return ResponseHelper::jsonResponse(false, 'User not found', null);
-    }
-
-    if ($appointment->status == 2) { 
-        return ResponseHelper::jsonResponse(false, 'Appointment is already completed', null);
-    }
-
-    $appointment->status = 2;
-    $appointment->save();
-
-    return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
-}
-       
 }

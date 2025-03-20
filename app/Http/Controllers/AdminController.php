@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Mail\GenerateOTPMail;
@@ -40,28 +39,28 @@ class AdminController extends Controller
                 $admin->save();
                 $name = Session::get('name');
                 if ($name == 'Data Operator') {
-                    $data = array(
+                    $data = [
                         'response' => 'success1',
-                        'message' => "Login successfull",
-                    );
+                        'message'  => "Login successfull",
+                    ];
                 } else {
-                    $data = array(
+                    $data = [
                         'response' => 'success',
-                        'message' => "Login successfull",
-                    );
+                        'message'  => "Login successfull",
+                    ];
                 }
 
             } else {
-                $data = array(
+                $data = [
                     'response' => 'error',
-                    'message' => "invalid",
-                );
+                    'message'  => "invalid",
+                ];
             }
         } else {
-            $data = array(
+            $data = [
                 'response' => 'error',
-                'message' => "invalid",
-            );
+                'message'  => "invalid",
+            ];
         }
 
         echo json_encode($data);
@@ -70,7 +69,7 @@ class AdminController extends Controller
     {
 
         $otp_code = mt_rand(1000, 9999);
-        $admin = Admin::where('email', '=', $request->email)->first();
+        $admin    = Admin::where('email', '=', $request->email)->first();
 
         if ($admin) {
             Admin::where('email', '=', $request->email)->update(['email_code' => $otp_code]);
@@ -78,15 +77,15 @@ class AdminController extends Controller
             $main_data = ['message' => $otp_code];
             Mail::to($request->email)->send(new GenerateOTPMail($main_data));
 
-            $data = array(
+            $data = [
                 'response' => 'success',
-                'message' => "OTP sent Successfully",
-            );
+                'message'  => "OTP sent Successfully",
+            ];
         } else {
-            $data = array(
+            $data = [
                 'response' => 'error',
-                'message' => "Email not founded in Database",
-            );
+                'message'  => "Email not founded in Database",
+            ];
         }
         echo json_encode($data);
 
@@ -95,22 +94,22 @@ class AdminController extends Controller
     {
 
         $email = $request->email;
-        $otp = $request->otp;
+        $otp   = $request->otp;
         $admin = Admin::where([['email', $email], ['email_code', $otp]])->first();
 
         if ($admin) {
             Admin::where('email', $request->email)->update(['email_code' => 0]);
-            $data = array(
+            $data = [
                 'response' => 'success',
-                'message' => "OTP Verified",
-                'email' => $email,
+                'message'  => "OTP Verified",
+                'email'    => $email,
 
-            );
+            ];
         } else {
-            $data = array(
+            $data = [
                 'response' => 'error',
-                'message' => "Please enter valid OTP",
-            );
+                'message'  => "Please enter valid OTP",
+            ];
         }
         echo json_encode($data);
 
@@ -123,22 +122,22 @@ class AdminController extends Controller
             if ($request->confPassword === $request->password) {
                 $admin->password = $request->password;
                 $admin->save();
-                $data = array(
+                $data = [
                     'response' => 'success',
-                    'message' => "Password update successfully",
-                );
+                    'message'  => "Password update successfully",
+                ];
             } else {
-                $data = array(
+                $data = [
                     'response' => 'passwordError',
-                    'message' => "Password and Confirm Password should be same!",
-                );
+                    'message'  => "Password and Confirm Password should be same!",
+                ];
             }
 
         } else {
-            $data = array(
+            $data = [
                 'response' => 'error',
-                'message' => "User Not Found in Database",
-            );
+                'message'  => "User Not Found in Database",
+            ];
         }
         echo json_encode($data);
 
@@ -148,5 +147,4 @@ class AdminController extends Controller
         $request->session()->flush();
         return redirect('/');
     }
-
 }

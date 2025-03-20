@@ -15,6 +15,7 @@ class MuftiAppointment extends Model
         'category',
         'description',
         'date',
+        'selected_slot',
         'duration',
         'contact_number',
         'email',
@@ -36,9 +37,19 @@ class MuftiAppointment extends Model
         "payment_method" => "",
     ];
 
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+
     public function user_detail()
     {
         return $this->belongsTo(User::class, 'user_id')->select('id', 'name', 'image', 'email', 'user_type');
+    }
+
+    public function book_slot()
+    {
+        return $this->belongsTo(WorkingSlot::class, 'selected_slot')->select('id', 'start_time', 'end_time');
     }
 
     public function mufti_detail()

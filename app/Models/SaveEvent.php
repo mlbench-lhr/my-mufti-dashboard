@@ -21,4 +21,9 @@ class SaveEvent extends Model
     {
         return $this->belongsTo(Event::class, 'event_id', 'id');
     }
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
 }

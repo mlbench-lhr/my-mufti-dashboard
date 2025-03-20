@@ -199,7 +199,6 @@
             $('#togglePassword').hide();
         });
     </script>
-
     <script type="module">
         $(document).ready(function() {
             $('#btnLogin').on('click', function(e) {

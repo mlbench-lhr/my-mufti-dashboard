@@ -20,4 +20,9 @@ class Notification extends Model
     protected $attributes = [
         'body' => "",
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
 }

@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FAQController;
 use App\Http\Controllers\Frontend\DashboardController;
 use App\Http\Controllers\Frontend\EventsAndApptController;
 use App\Http\Controllers\Frontend\QuestionsController;
 use App\Http\Controllers\Frontend\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FAQController;
 
 Route::group(['middleware' => 'admin'], function () {
     Route::get('/', [AdminController::class, 'login']);
@@ -16,14 +16,11 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('DeletionRequests', [UserController::class, 'deletion_requests'])->name('DeletionRequests');
     Route::get('getDeletionRequests', [UserController::class, 'get_deletion_requests'])->name('getDeletionRequests');
 
-
     Route::get('DeletedAccounts', [UserController::class, 'deleted_accounts'])->name('DeletedAccounts');
     Route::get('getDeletedAccounts', [UserController::class, 'get_deleted_accounts'])->name('getDeletedAccounts');
 
     Route::post('rejectRequestDeletion', [UserController::class, 'reject_request_deletion'])->name('rejectRequestDeletion');
     Route::get('acceptRequestDeletion/{id}', [UserController::class, 'accept_request_deletion']);
-
-    
 
     // users & scholars
     Route::get('AllUsers', [UserController::class, 'all_users'])->name('AllUsers');
@@ -96,7 +93,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/getfaq/{id}', [FAQController::class, 'get_faq']);
     Route::get('DeleteFAQ/{id}', [FAQController::class, 'delete_faq'])->name('DeleteFAQ');
     Route::put('/editfaq', [FAQController::class, 'edit_faq']);
-
 
     //Reported Questions
     Route::get('ReportedQuestions', [QuestionsController::class, 'all_reported_questions'])->name('ReportedQuestions');

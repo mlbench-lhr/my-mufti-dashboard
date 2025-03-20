@@ -22,4 +22,10 @@ class DeleteAccountRequest extends Model
     protected $hidden = [
         'deleted_at',
     ];
+
+    public function getConnectionName()
+    {
+        return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+  
 }

@@ -1,29 +1,31 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Experience extends Model
+class WorkingSlot extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
     protected $fillable = [
-        'company_name',
-        'experience_startDate',
-        'experience_endDate',
-        'user_id',
+        'working_day_id',
+        'start_time',
+        'end_time',
+        'status',
     ];
+
     protected $casts = [
         'user_id' => 'integer',
-    ];
-    protected $hidden = [
-        'deleted_at',
     ];
 
     public function getConnectionName()
     {
         return request()->is('api/testing/*') ? 'testing_db' : 'mysql';
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(MuftiAppointment::class, 'selected_slot', 'id');
     }
 }
