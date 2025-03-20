@@ -302,7 +302,7 @@ class QuestionController extends Controller
             return $question;
         });
 
-        dd("numan");
+        dd($questions->items());
 
 
         return response()->json([
