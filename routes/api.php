@@ -129,6 +129,17 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('messageNotification', [UserNotification::class, 'message_notification']);
     });
 
+    Route::group([
+        'prefix' => 'appointments',
+    ], function () {
+        Route::post('addSlots', [AppointmentsController::class, 'add_slots']);
+        Route::post('getSlots', [AppointmentsController::class, 'get_slots']);
+        Route::post('getMuftiSlots', [AppointmentsController::class, 'get_mufti_slots']);
+        Route::post('removeSlot', [AppointmentsController::class, 'remove_slot']);
+        Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
+
+    });
+
 });
 
 // **Testing API**
@@ -241,6 +252,17 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('textNotification', [UserNotification::class, 'text_notification']);
         Route::post('newTextNotification', [UserNotification::class, 'new_text_notification']);
         Route::post('messageNotification', [UserNotification::class, 'message_notification']);
+    });
+
+    Route::group([
+        'prefix' => 'appointments',
+    ], function () {
+        Route::post('addSlots', [AppointmentsController::class, 'add_slots']);
+        Route::post('getSlots', [AppointmentsController::class, 'get_slots']);
+        Route::post('getMuftiSlots', [AppointmentsController::class, 'get_mufti_slots']);
+        Route::post('removeSlot', [AppointmentsController::class, 'remove_slot']);
+        Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
+
     });
 
 });
