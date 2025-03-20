@@ -276,6 +276,8 @@ class QuestionController extends Controller
             ], 200);
         }
 
+        dd("numan");
+        
         $questions->each(function ($question) use ($request) {
             $question->current_user_vote = QuestionVote::where([
                 'question_id' => $question->id,
