@@ -185,12 +185,12 @@
                         <div class="mb-5">
                             <label for="faq_question" class="fw-bold fs-3 pb-2 mb-1">Question</label>
                             <textarea id="faq_question" class="form-control" name="question" placeholder="Add Question"
-                                rows="1" required></textarea>
+                                rows="1" required oninput="this.value = this.value.replace(/^\s+/g, '')"></textarea>
                         </div>
                         <div class="mb-5">
                             <label for="faq_answer" class="fw-bold fs-3 pb-2 mb-1">Answer</label>
                             <textarea id="faq_answer" class="form-control" name="answer" placeholder="Add Answer"
-                                rows="4" required></textarea>
+                                rows="4" required oninput="this.value = this.value.replace(/^\s+/g, '')"></textarea>
                         </div>
                         <div class="d-flex justify-content-center pt-2">
                             <button type="submit" class="btn btn-lg col-12"
