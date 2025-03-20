@@ -295,13 +295,15 @@ class QuestionController extends Controller
             ->pluck('question_id')
             ->toArray();
 
-        dd("numan");
 
 
         $questions->transform(function ($question) use ($userLikedQuestionIds) {
             $question->is_reported = in_array($question->id, $userLikedQuestionIds);
             return $question;
         });
+
+        dd("numan");
+
 
         return response()->json([
             'status'     => true,
