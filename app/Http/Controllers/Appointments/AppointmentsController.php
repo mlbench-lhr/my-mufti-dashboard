@@ -145,6 +145,7 @@ class AppointmentsController extends Controller
             if (! empty($slotsToInsert)) {
                 WorkingSlot::insert($slotsToInsert);
             }
+
         } else {
             $workingDay->update(['is_available' => false]);
 
@@ -153,7 +154,7 @@ class AppointmentsController extends Controller
                 ->whereIn('id', function ($query) {
                     $query->select('selected_slot')
                         ->from('mufti_appointments')
-                        ->whereRaw("STR_TO_DATE(date, '%d-%m-%Y') >= ?", [Carbon::today()->format('Y-m-d')]);
+                        ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')]);
                 })
                 ->update(['status' => 3]);
 
@@ -213,7 +214,7 @@ class AppointmentsController extends Controller
 
         WorkingSlot::where('status', 3)
             ->whereDoesntHave('appointments', function ($query) {
-                $query->whereRaw("STR_TO_DATE(date, '%d-%m-%Y') >= ?", [Carbon::today()->format('Y-m-d')]);
+                $query->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')]);
             })
             ->update(['status' => 2]);
 
