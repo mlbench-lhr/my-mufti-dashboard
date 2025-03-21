@@ -76,21 +76,21 @@
                   <img src="{{ asset('../../public/frontend/media/Arrow Left.svg') }}" alt="Back" class="custom-icon"><!--add public-->
                   </a>
                   </span>
-                  <span class="fw-bold text-dark" style="font-size: 34px;">FAQ's Detail</span>
+                  <span class="fw-bold text-dark" style="font-size: 22px;">FAQ's Detail</span>
                 </div>
                      <!-- Right Section: Edit & Delete Buttons -->
                <div class="d-flex align-items-center gap-2">
-                <button style="background-color: #38B89A; color:#FFFFFF; padding: 6px 20px; border-radius: 8px; font-size: 20px; display: flex; align-items: center;" type="button" class="btn"
+                <button style="background-color: #38B89A; color:#FFFFFF; padding: 4px 18px; border-radius: 8px; font-size: 14px; display: flex; align-items: center;" type="button" class="btn"
                 data-bs-toggle="modal" data-bs-target="#kt_editFaqModal"
                 onclick="populateEditForm({{ $faq->id }})">
-                <img src="{{ asset('../../public/frontend/media/Pen 2.svg') }}" alt="Edit" style="width: 26px; height: 26px;">
+                <img src="{{ asset('../../public/frontend/media/Pen 2.svg') }}" alt="Edit" style="width: 20px; height: 18px;">
                 Edit
                  </button>
                 <a href="{{ URL::to('DeleteFAQ/' . $faq->id) }}"
                     id="delete-btn">
-                <button type="button" class="btn" style="background-color:#EA4335; color:white; padding: 6px 13px; border-radius: 8px; font-size: 20px; display: flex; align-items: center;"
+                <button type="button" class="btn" style="background-color:#EA4335; color:white; padding: 4px 13px; border-radius: 8px; font-size: 14px; display: flex; align-items: center;"
                   onclick="confirmDelete(event)">
-                  <img src="{{ asset('../../public/frontend/media/Trash Bin 2.svg') }}" alt="Delete"style="width: 26px; height: 26px;">
+                  <img src="{{ asset('../../public/frontend/media/Trash Bin 2.svg') }}" alt="Delete"style="width: 20px; height: 18px;">
                   Delete
                 </button>
                 </a>
@@ -106,17 +106,17 @@
             <!--begin::Card body-->
                 <!-- FAQ Question -->
                 <div class="card p-4 mb-3" style="background-color: #F0F1F3; border-radius: 0;">
-                    <h6 class="fw-bold" style="color: #38B89A; font-size: 32px;">Question</h6>
-                    <p class="fw-bold" style="font-size: 28px;">
+                    <h6 class="fw-bold" style="color: #38B89A; font-size: 20px;">Question</h6>
+                    <p class="fw-bold" style="font-size: 16px;">
                         {!! nl2br(e($faq['question'])) !!}
                     </p>
-                    <small class="text-muted"style="color: #78827FCC; font-size: 20px;">Published On: {{ $faq->created_at->format('M d, Y') }}</small>
+                    <small class="text-muted"style="color: #78827FCC; font-size: 15px;">Published On: {{ $faq->created_at->format('M d, Y') }}</small>
                 </div>
 
                 <!-- FAQ Answer -->
                 <div class="card p-4" style="background-color: #F0F1F3; border-radius: 0;">
-                    <h6 class="fw-bold" style="color: #38B89A; font-size: 32px;">Answer</h6>
-                    <p class="text-muted" style="color: #78827F; font-size: 22px;">
+                    <h6 class="fw-bold" style="color: #38B89A; font-size: 20px;">Answer</h6>
+                    <p class="text-muted" style="color: #78827F; font-size: 15px;">
                         {!! nl2br(e($faq['answer'])) !!}
                     </p>
                 </div>
