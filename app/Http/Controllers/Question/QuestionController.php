@@ -276,6 +276,7 @@ class QuestionController extends Controller
             ], 200);
         }
 
+
         $questions->each(function ($question) use ($request) {
             $question->current_user_vote = QuestionVote::where([
                 'question_id' => $question->id,
@@ -288,15 +289,21 @@ class QuestionController extends Controller
 
             unset($question->reports_count);
         });
+
         $userLikedQuestionIds = ReportQuestions::where('user_id', $request->user_id)
             ->whereIn('question_id', $questions->pluck('id'))
             ->pluck('question_id')
             ->toArray();
 
+
+
         $questions->transform(function ($question) use ($userLikedQuestionIds) {
             $question->is_reported = in_array($question->id, $userLikedQuestionIds);
             return $question;
         });
+
+        // dd($totalPages);
+
 
         return response()->json([
             'status'     => true,
