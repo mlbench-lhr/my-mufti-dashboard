@@ -1,20 +1,28 @@
   <!--begin::Aside-->
-  <div id="kt_aside" class="aside py-9" data-kt-drawer="true" data-kt-drawer-name="aside"
+  {{-- <div id="kt_aside" class="aside py-9" data-kt-drawer="true" data-kt-drawer-name="aside"
       data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
       data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start"
-      data-kt-drawer-toggle="#kt_aside_toggle">
-      <!--begin::Brand-->
-      <div class="aside-logo flex-column-auto px-9 mb-9" id="kt_aside_logo">
-          <!--begin::Logo-->
+      data-kt-drawer-toggle="#kt_aside_toggle"> --}}
+  <div id="kt_aside" class="aside pt-9 pb-1" data-kt-drawer="true" data-kt-drawer-name="aside"
+      data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
+      data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start"
+      data-kt-drawer-toggle="#kt_aside_toggle" style="overflow:hidden;">
+      {{-- <div class="aside-logo flex-column-auto px-9 mb-9" id="kt_aside_logo"> --}}
+      <div class="aside-logo flex-column-auto px-9 mb-0" id="kt_aside_logo">
           <a href="{{ URL::to('Dashboard') }}">
               <img alt="Logo" src="{{ '../../public/frontend/media/sidebarLogo.svg' }}" />
           </a>
-          <!--end::Logo-->
       </div>
       <!--end::Brand-->
       <!--begin::Aside menu-->
-      <div class="aside-menu flex-column-fluid ps-5 pe-3 mb-9" id="kt_aside_menu">
-          <!--begin::Aside Menu-->
+      {{-- <div class="aside-menu flex-column-fluid ps-5 pe-3 mb-9" id="kt_aside_menu">
+          <div class="w-100 hover-scroll-overlay-y pe-2" id="kt_aside_menu_wrapper" data-kt-scroll="true"
+              data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto"
+              data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer"
+              data-kt-scroll-wrappers="#kt_aside, #kt_aside_menu, #kt_aside_menu_wrapper" data-kt-scroll-offset="100"> --}}
+
+      <div class="aside-menu ps-5 pe-3 my-9" id="kt_aside_menu">
+
           <div class="w-100 hover-scroll-overlay-y pe-2" id="kt_aside_menu_wrapper" data-kt-scroll="true"
               data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto"
               data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer"
@@ -40,7 +48,6 @@
                   </div>
 
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('AllEvents') }}">
@@ -65,7 +72,6 @@
                   </div>
 
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('AllScholars') }}">
@@ -97,7 +103,6 @@
                       </a>
                   </div>
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('AllLifeCoach') }}">
@@ -128,8 +133,6 @@
                       </a>
                   </div>
               </div>
-
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('ScholarsRequests') }}">
@@ -153,7 +156,6 @@
                   </div>
 
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('AllUsers') }}">
@@ -180,7 +182,6 @@
                   </div>
 
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('PublicQuestions') }}">
@@ -205,7 +206,6 @@
                   </div>
 
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('PrivateQuestions') }}">
@@ -228,7 +228,6 @@
                   </div>
 
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('ReportedQuestions') }}">
@@ -256,7 +255,6 @@
                   </div>
 
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('DeletionRequests') }}">
@@ -276,8 +274,6 @@
                       </a>
                   </div>
               </div>
-
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('DeletedAccounts') }}">
@@ -293,11 +289,10 @@
                               <!--end::Svg Icon-->
                           </span>
                           <span class="menu-title" style="{{ $isActive1 ? 'color:#000000;' : 'color:#7B849A;' }}">
-                            Users Deleted Accounts</span>
+                              Users Deleted Accounts</span>
                       </a>
                   </div>
               </div>
-
               <div class="menu menu-column menu-rounded fw-bold my-auto" id="#kt_aside_menu" data-kt-menu="true">
                   <div class="menu-item">
                       <a class="menu-link" href="{{ URL::to('AllAppointments') }}">
@@ -319,54 +314,44 @@
                               Appointments</span>
                       </a>
                   </div>
-                </div>
-                <div class="menu menu-column menu-rounded fw-bold my-auto" id="kt_aside_menu" data-kt-menu="true">
-                 <div class="menu-item">
-                  <a class="menu-link" href="{{ URL::to('AllFAQs') }}">
-                   <span class="menu-icon">
-                      <!--begin::Svg Icon-->
-                     <span class="menu-bullet">
-                     <span class="bullet bullet-dot"></span>
-                    </span>
-                    @php
-                    $currentRoute = request()->path();
-                    $isActive1 = preg_match('/^AllFAQs$/', $currentRoute);
-                    $isActive2 = preg_match('/^AllFAQDetail(\/\d+)?$/', $currentRoute);
-                    @endphp
-                      <!--end::Svg Icon-->
-                    </span>
-                   <span class="menu-title"
-                     style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">
-                       All FAQ's
-                    </span>
-                   </a>
+              </div>
+              <div class="menu menu-column menu-rounded fw-bold my-auto" id="kt_aside_menu" data-kt-menu="true">
+                  <div class="menu-item">
+                      <a class="menu-link" href="{{ URL::to('AllFAQs') }}">
+                          <span class="menu-icon">
+                              <!--begin::Svg Icon-->
+                              <span class="menu-bullet">
+                                  <span class="bullet bullet-dot"></span>
+                              </span>
+                              @php
+                                  $currentRoute = request()->path();
+                                  $isActive1 = preg_match('/^AllFAQs$/', $currentRoute);
+                                  $isActive2 = preg_match('/^AllFAQDetail(\/\d+)?$/', $currentRoute);
+                              @endphp
+                              <!--end::Svg Icon-->
+                          </span>
+                          <span class="menu-title"
+                              style="{{ $isActive1 || $isActive2 ? 'color:#000000;' : 'color:#7B849A;' }}">
+                              All FAQ's
+                          </span>
+                      </a>
                   </div>
-                </div>
+              </div>
               <!--end::Menu-->
-            </div>
-
+          </div>
           <!--end::Aside Menu-->
       </div>
-      <div class="aside-logo flex-column-auto px-9 mb-9" id="kt_aside_logo">
-          <!--begin::Logo-->
+      <div class="aside-logo flex-column-auto px-9 mb-2" id="kt_aside_logo">
           <div class="d-flex align-items-center">
-              <!--begin::Avatar-->
               <div class="symbol symbol-circle symbol-50px">
                   <img src="{{ '../../public/frontend/media/avatars/150-26.jpg' }}" alt="photo" />
               </div>
-              <!--end::Avatar-->
-              <!--begin::User info-->
               <div class="ms-2">
-                  <!--begin::Name-->
                   <a class="text-gray-800 fs-6 fw-bolder lh-1">{{ session('name') }}</a>
-                  <!--end::Name-->
-                  <!--begin::Major-->
                   <span class="text-muted fw-bolder d-block fs-4  pt-1lh-1">Admin</span>
-                  <!--end::Major-->
               </div>
               <div class="btn btn-lg btn-icon btn-active-color-white position-relative me-n2 ms-4"
                   data-kt-menu-trigger="click" data-kt-menu-overflow="true" data-kt-menu-placement="top-end">
-                  <!--begin::Svg Icon | path: icons/duotune/coding/cod001.svg-->
                   <a href="{{ url('logout') }}">
                       <span class="">
                           <svg width="50" height="50" viewBox="0 0 30 30" fill="none"
@@ -378,20 +363,13 @@
                           </svg>
                       </span>
                   </a>
-                  <!--end::Svg Icon-->
               </div>
-              <!--end::User info-->
           </div>
 
 
 
           <!--end::Logo-->
       </div>
-
-
-
-
       <!--end::Aside menu-->
   </div>
-
   <!--end::Aside-->
