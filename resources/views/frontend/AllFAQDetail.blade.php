@@ -44,50 +44,73 @@
 @section('content')
     <!--begin::Header-->
     <div id="kt_header" class="header">
-    <!--begin::Container-->
-    <div class="container-fluid d-flex align-items-center justify-content-between">
-        
-        <!-- Left Section: FAQ Details with Back Arrow -->
-        <div class="d-flex align-items-center">
-            <span>
-                <a href="{{ route('AllFAQs') }}" class="me-2 text-success">
-                <img src="{{ asset('../../public/frontend/media/Arrow Left.svg') }}" alt="Back" class="custom-icon"><!--add public-->
+       <!--begin::Container-->
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="d-flex d-lg-none align-items-center ms-n2 me-2">
+                <!--begin::Aside mobile toggle-->
+                <div class="btn btn-icon btn-active-icon-primary" id="kt_aside_toggle">
+                    <!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg-->
+                    <span class="svg-icon svg-icon-1 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none">
+                            <path d="M21 7H3C2.4 7 2 6.6 2 6V4C2 3.4 2.4 3 3 3H21C21.6 3 22 3.4 22 4V6C22 6.6 21.6 7 21 7Z"
+                                fill="black" />
+                            <path opacity="0.3"
+                                d="M21 14H3C2.4 14 2 13.6 2 13V11C2 10.4 2.4 10 3 10H21C21.6 10 22 10.4 22 11V13C22 13.6 21.6 14 21 14ZM22 20V18C22 17.4 21.6 17 21 17H3C2.4 17 2 17.4 2 18V20C2 20.6 2.4 21 3 21H21C21.6 21 22 20.6 22 20Z"
+                                fill="black" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Aside mobile toggle-->
+                <!--begin::Logo-->
+                <a href="" class="d-flex align-items-center">
+                    <img alt="Logo" src="{{ '../../public/frontend/media/sidebarLogo.svg' }}" class="h-20px" />
                 </a>
-            </span>
-            <span class="fw-bold fs-1 text-dark">FAQ's Detail</span>
-        </div>
-
-        <!-- Right Section: Edit & Delete Buttons -->
-        <div class="d-flex align-items-center gap-2">
-            <button style="background-color: #38B89A; color:#FFFFFF; padding: 4px 20px; border-radius: 6px; font-size: 14px; display: flex; align-items: center;" type="button" class="btn"
+                <!--end::Logo-->
+            </div>
+               <!-- Left Section: FAQ Details with Back Arrow -->
+               <div class="d-flex align-items-center">
+                 <span>
+                  <a href="{{ route('AllFAQs') }}" class="me-2 text-success">
+                  <img src="{{ asset('../../public/frontend/media/Arrow Left.svg') }}" alt="Back" class="custom-icon"><!--add public-->
+                  </a>
+                  </span>
+                  <span class="fw-bold fs-1 text-dark">FAQ's Detail</span>
+                </div>
+                     <!-- Right Section: Edit & Delete Buttons -->
+               <div class="d-flex align-items-center gap-2">
+                <button style="background-color: #38B89A; color:#FFFFFF; padding: 4px 20px; border-radius: 6px; font-size: 14px; display: flex; align-items: center;" type="button" class="btn"
                 data-bs-toggle="modal" data-bs-target="#kt_editFaqModal"
                 onclick="populateEditForm({{ $faq->id }})">
                 <img src="{{ asset('../../public/frontend/media/Pen 2.svg') }}" alt="Edit" style="width: 20px; height: 14px;">
                 Edit
-            </button>
-            <a href="{{ URL::to('DeleteFAQ/' . $faq->id) }}"
+                 </button>
+                <a href="{{ URL::to('DeleteFAQ/' . $faq->id) }}"
                     id="delete-btn">
                 <button type="button" class="btn" style="background-color:#EA4335; color:white; padding: 4px 12px; border-radius: 6px; font-size: 14px; display: flex; align-items: center;"
                   onclick="confirmDelete(event)">
                   <img src="{{ asset('../../public/frontend/media/Trash Bin 2.svg') }}" alt="Delete"style="width: 20px; height: 14px;">
                   Delete
                 </button>
-            </a>
+                </a>
+            </div>
         </div>
-        
     </div> 
     <!--end::Container-->
-</div>
-        <!--begin::Card body-->
+      <!--begin::Container-->
+        <div class="container-fluid" id="">
+           <!--begin::Card-->
+              <!--begin::Card body-->
                 <div style="max-width: 825px; width: 100%; margin: auto; background-color: #F0F1F3; padding: 15px;min-height: auto;"
-                    class="card-body mt-3 mb-3">
+                    class="card-body mt-3 mb-3" >
 
                     <div style="margin-bottom: 5px;">
-                      <h6 class="fw-bold" style="color: #38B89A; font-size: 22px; margin-bottom: 10px;">Question</h6>
-                      <p class="fw-bold" style="color: #333; font-size: 20px; line-height: 1.3; margin-bottom: 4px;word-wrap: break-word; overflow-wrap: break-word;">
+                      <h6 class="fw-bold" style="color: #38B89A; font-size: 32px; margin-bottom: 10px;">Question</h6>
+                      <p class="fw-bold" style="color: #333; font-size: 28px; line-height: 1.3; margin-bottom: 4px;word-wrap: break-word; overflow-wrap: break-word;">
                           {!! nl2br(e($faq['question'])) !!}
                         </p>
-                        <small class="text-muted" style="color:#78827F;font-size: 15px; margin-top: 6px; display: block;">
+                        <small class="text-muted" style="color:#78827F;font-size: 20px; margin-top: 6px; display: block;">
                           Published On: {{ $faq->created_at->format('M d, Y') }}
                         </small>
                     </div>
@@ -97,15 +120,13 @@
                     class="card-body mt-3 mb-3">
 
                     <div style="margin-bottom: 5px;">
-                       <h6 class="fw-bold" style="color: #38B89A; font-size: 22px; margin-bottom: 10px;">Answer</h6>
-                       <p class="text-muted" style="color:#78827F; font-size: 15px; line-height: 1.4; margin-bottom: 0;">
+                       <h6 class="fw-bold" style="color: #38B89A; font-size: 32px; margin-bottom: 10px;">Answer</h6>
+                       <p class="text-muted" style="color:#78827F; font-size: 22px; line-height: 1.4; margin-bottom: 0;">
                            {!! nl2br(e($faq['answer'])) !!}
                         </p>
                     </div>
                 </div>
-
-        <!--end::Card body-->
-
+        </div><!--end::Card body-->
     <!-- Edit FAQ Modal -->
     <div class="modal fade" id="kt_editFaqModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog mw-500px">

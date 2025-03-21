@@ -41,10 +41,25 @@
         border-color: #38B89A !important;
         box-shadow: 0 0 5px rgba(56, 184, 154, 0.6) !important;
     }
+    .add-faq-btn {
+    background-color: #38B89A !important;
+    color: #FFFFFF !important;
+    width: 139px;
+    height: 40px;
+    border-radius: 8.45px;
+    font-size: 15px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 38px;
+    border: none;
+}
+
 </style>
 @section('content')
     <!--begin::Header-->
-    <div id="kt_header" class="header">
+    <div id="kt_header" class="header" >
         <!--begin::Container-->
         <div class="container-fluid d-flex align-items-center justify-content-between">
             <!--begin::Wrapper-->
@@ -98,12 +113,12 @@
                     </span>
                     <!--end::Svg Icon-->
                     <input type="text" id="global-search" class="form-control form-control-solid w-250px ps-14"
-                        placeholder="Search" style="border: 1px solid #7B849A; border-radius: 5px;padding: 4px 20px" />
+                        placeholder="Search" style="border: 1px solid #7B849A;height: 38px; border-radius: 8px;padding: 4px 20px" />
                 </div>
 
                 <div class="dropdown">
-                    <button class="btn" style="background-color: #38B89A; color: #FFFFFF; padding: 4px 20px" type="button" id=""
-                        data-bs-toggle="modal" data-bs-target="#kt_modal_add_interests" aria-expanded="false">
+                    <button class="btn add-faq-btn" type="button"
+                        data-bs-toggle="modal" data-bs-target="#kt_modal_add_interests">
                         Add FAQ
                     </button>
                 </div>
@@ -115,11 +130,11 @@
     <!--end::Header-->
 
     <!--begin::Content-->
-<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content" >
     <!--begin::Container-->
-    <div class="container-fluid">
+    <div class="container-fluid" id="">
         <!--begin::Card-->
-        <div class="card">
+        <div class="card" >
             <!--begin::Card body-->
             <div class="card-body pt-0">
                 @if (count($faqs))
@@ -130,10 +145,10 @@
                             <thead>
                                 <!--begin::Table row-->
                                 <tr class="text-start text-dark fw-bold fs-5  gs-0">
-                                    <th class="min-w-75px">Sr No</th>
-                                    <th class="min-w-275px">Question</th>
-                                    <th class="min-w-125px">Published On</th>
-                                    <th class="min-w-150px text-center">Action</th>
+                                    <th class="min-w-75px text-center" style="font-size: 20px;">Sr No</th>
+                                    <th class="min-w-250px" style="font-size: 20px;">Question</th>
+                                    <th class="min-w-175px text-center" style="font-size: 20px;">Published On</th>
+                                    <th class="min-w-150px text-center" style="font-size: 20px;">Action</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -193,7 +208,7 @@
                                 rows="4" required oninput="this.value = this.value.replace(/^\s+/g, '')"></textarea>
                         </div>
                         <div class="d-flex justify-content-center pt-2">
-                            <button type="submit" class="btn btn-lg col-12"
+                            <button id="submit-button" type="submit" class="btn btn-lg col-12"
                                 style="background-color: #38B89A; color: #FFFFFF">
                                 Add
                             </button>
@@ -209,7 +224,9 @@
 <script>
     document.getElementById("postForm").addEventListener("submit", function(event) {
         event.preventDefault();
-        //updateFaqFormInput();
+        let submitButton = document.querySelector("#submit-button"); 
+        submitButton.disabled = true; 
+        submitButton.textContent = "Processing...";
 
         const formData = new FormData(this);
 
@@ -234,7 +251,7 @@
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
-                    window.location.href = '/AllFAQs'; // Update the redirect URL if necessary
+                    window.location.href = '/AllFAQs'; 
                 });
             })
             .catch(error => {
@@ -245,6 +262,8 @@
                     showConfirmButton: false,
                     timer: 1500
                 });
+                submitButton.disabled = false; 
+                submitButton.textContent = "Submit FAQ";
             });
     });
 
@@ -290,12 +309,12 @@
                         var modifiedSerialNumber = pad(count + 1, 2, '0');
                         var newRow = `
                             <tr class="text-start" style="border-color: #DBDFE9;">
-                                <td>${modifiedSerialNumber}</td>
-                                <td class="fw-bold text-dark">${truncateText(row.question)}</td>
-                                <td>${row.created_at}</td>
+                                <td class="text-center" style="font-size: 17px;">${modifiedSerialNumber}</td>
+                                <td class="fw-bold text-dark" style="font-size: 19px;">${truncateText(row.question)}</td>
+                                <td class="text-center" style="font-size: 17px;">${row.created_at}</td>
                                 <td class="text-center">
                                     <div class="fs-4 fw-bolder text-dark">
-                                        <a href="{{ URL::to('AllFAQDetail') }}/${row.id}" class="link-success fw-bold">
+                                        <a href="{{ URL::to('AllFAQDetail') }}/${row.id}" class="link-success fw-bold"  style="font-size: 15px;">
                                             View Detail
                                         </a>
                                     </div>
