@@ -351,7 +351,7 @@ class AppointmentsController extends Controller
             'contact_number'   => $request->contact_number ?? "",
             'email'            => $request->email ?? "",
             'date'             => $request->selected_date,
-            'duration'         => $request->duration,
+            'duration'         => $request->duration ?? "",
             'selected_slot'    => $request->selected_slot,
             'payment_id'       => $request->payment_id ?? "",
             'payment_method'   => $request->payment_method ?? "",
