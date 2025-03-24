@@ -86,6 +86,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('editpostQuestion', [QuestionController::class, 'edit_post_question']);
         Route::post('voteQuestion', [QuestionController::class, 'vote_on_question']);
         Route::post('allQuestion', [QuestionController::class, 'all_question']);
+        Route::post('PrivateQuestions', [QuestionController::class, 'search_private_question']);
         Route::post('/userAllPublicQuestions', [QuestionController::class, 'User_AllPublicQuestions']);
         Route::post('questionDetail', [QuestionController::class, 'question_detail']);
         Route::post('/deletePublicQuestion', [QuestionController::class, 'deletePublicQuestion']);
@@ -212,6 +213,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('editpostQuestion', [QuestionController::class, 'edit_post_question']);
         Route::post('voteQuestion', [QuestionController::class, 'vote_on_question']);
         Route::post('allQuestion', [QuestionController::class, 'all_question']);
+        Route::post('PrivateQuestions', [QuestionController::class, 'search_private_question']);
         Route::post('/userAllPublicQuestions', [QuestionController::class, 'User_AllPublicQuestions']);
         Route::post('questionDetail', [QuestionController::class, 'question_detail']);
         Route::post('/deletePublicQuestion', [QuestionController::class, 'deletePublicQuestion']);
@@ -337,6 +339,7 @@ Route::group([
     Route::post('editpostQuestion', [QuestionController::class, 'edit_post_question']);
     Route::post('voteQuestion', [QuestionController::class, 'vote_on_question']);
     Route::post('allQuestion', [QuestionController::class, 'all_question']);
+    Route::post('PrivateQuestions', [QuestionController::class, 'search_private_question']);
     Route::post('/userAllPublicQuestions', [QuestionController::class, 'User_AllPublicQuestions']);
     Route::post('questionDetail', [QuestionController::class, 'question_detail']);
     Route::post('/deletePublicQuestion', [QuestionController::class, 'deletePublicQuestion']);

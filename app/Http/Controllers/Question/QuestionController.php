@@ -1153,4 +1153,65 @@ class QuestionController extends Controller
         UserQuery::whereIn('user_id', $ids)->delete();
         return response()->json(['message' => 'All private questions for specified users have been deleted.'], 200);
     }
+
+    public function search_private_question(Request $request){
+        
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required|integer',
+        'search'  => 'nullable|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status'  => false,
+            'message' => $validator->errors()->first(),
+        ], 400);
+    }
+
+    $user = User::find($request->user_id);
+
+    if (! $user) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'User not found',
+        ], 404);
+    }
+
+    $page    = $request->input('page', 1);
+    $perPage = 10;
+
+    $query = Question::where('user_id', $request->user_id)
+        ->whereHas('adminReply') 
+        ->with(['adminReply:id,question_id,reply']) 
+        ->select('id', 'question') 
+        ->orderBy('created_at', 'DESC');
+
+    if ($request->filled('search')) {
+        $query->where('question', 'LIKE', '%' . trim($request->search) . '%');
+    }
+
+    $questions = $query->paginate($perPage, ['*'], 'page', $page);
+
+    if ($questions->isEmpty()) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'No private questions found!',
+            'data'    => [],
+        ], 200);
+    }
+
+    $data = $questions->map(function ($question) {
+        return [
+            'question' => $question->question,
+            'answer'   => optional($question->adminReply)->reply,
+        ];
+    });
+
+    return response()->json([
+        'status'     => true,
+        'message'    => 'User private questions!',
+        'totalpages' => $questions->lastPage(),
+        'data'       => $data,
+    ], 200);
+  }
 }
