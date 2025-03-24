@@ -27,7 +27,7 @@ class BookAppointment extends FormRequest
             'category' => 'required',
             'description' => 'required',
             'date' => 'required',
-            'duration' => 'required',
+            'duration' => 'nullable|string',
             'consultation_fee' => 'required',
         ];
     }

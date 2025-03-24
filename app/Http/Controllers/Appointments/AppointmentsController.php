@@ -294,6 +294,7 @@ class AppointmentsController extends Controller
 
     public function book_an_appointment(Request $request)
     {
+        dd($request->all());
 
         $validator = Validator::make($request->all(), [
             'user_id'          => 'required',
@@ -352,6 +353,7 @@ class AppointmentsController extends Controller
             'contact_number'   => $request->contact_number ?? "",
             'email'            => $request->email ?? "",
             'date'             => $request->selected_date,
+            'duration'         => $request->duration ?? '',
             'selected_slot'    => $request->selected_slot,
             'payment_id'       => $request->payment_id ?? "",
             'payment_method'   => $request->payment_method ?? "",
