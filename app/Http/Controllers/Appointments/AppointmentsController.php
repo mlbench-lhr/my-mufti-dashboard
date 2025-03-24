@@ -293,9 +293,7 @@ class AppointmentsController extends Controller
     }
 
     public function book_an_appointment(Request $request)
-    {
-        dd($request->all());
-
+    {       
         $validator = Validator::make($request->all(), [
             'user_id'          => 'required',
             'mufti_id'         => 'required',
