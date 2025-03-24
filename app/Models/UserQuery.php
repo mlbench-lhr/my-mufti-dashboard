@@ -51,4 +51,9 @@ class UserQuery extends Model
     {
         return $this->hasOne(AdminReply::class, 'question_id');
     }
+
+    public function scholarReply()
+    {
+        return $this->hasOne(ScholarReply::class, 'question_id', 'id');
+    }
 }

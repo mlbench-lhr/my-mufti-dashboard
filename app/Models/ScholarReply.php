@@ -34,4 +34,9 @@ class ScholarReply extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id')->select('id','name', 'image', 'fiqa');
     }
+
+    public function getReplyAttribute($value)
+    {
+        return $value ?? "";
+    }
 }

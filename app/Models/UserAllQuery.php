@@ -52,4 +52,10 @@ class UserAllQuery extends Model
     {
         return $this->hasMany(AdminReply::class, 'question_id', 'query_id');
     }
+
+    public function scholarReply()
+    {
+        return $this->hasOne(ScholarReply::class, 'question_id', 'query_id');
+    }
+
 }
