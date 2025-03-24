@@ -29,10 +29,7 @@ class MuftiAppointment extends Model
         'mufti_id' => 'integer',
         'user_id' => 'integer',
         'status' => 'integer',
-        'duration' => 'string',
     ];
-
-    
 
     protected $attributes = [
         'description' => "",
@@ -58,10 +55,6 @@ class MuftiAppointment extends Model
     public function mufti_detail()
     {
         return $this->belongsTo(User::class, 'mufti_id')->select('id', 'name', 'image', 'email', 'fiqa', 'phone_number');
-    }
-    public function getDurationAttribute($value)
-    {
-        return $value ?? ''; 
     }
 
     
