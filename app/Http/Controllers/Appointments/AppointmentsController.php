@@ -270,10 +270,16 @@ class AppointmentsController extends Controller
             return ResponseHelper::jsonResponse(false, 'On this date, the mufti is not available');
         }
 
+        $currentDate = Carbon::today()->toDateString();
+        $currentTime = Carbon::now()->format('H:i:s');
+
         $availableSlots = WorkingSlot::where([
-            'working_day_id' => $workingDay->id,
-            'status'         => 1,
-        ])->get();
+           'working_day_id' => $workingDay->id,
+           'status'         => 1,
+        ])
+        ->when($date === $currentDate, function ($query) use ($currentTime) {
+          $query->where('start_time', '>=', $currentTime);
+        })->get();
 
         $bookedSlotIds = MuftiAppointment::where([
             'mufti_id' => $user_id,

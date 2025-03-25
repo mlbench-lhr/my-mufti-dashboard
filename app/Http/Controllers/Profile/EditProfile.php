@@ -15,6 +15,7 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Models\UserAllQuery;
 use App\Models\UserQuery;
+use App\Models\WorkingSlot;
 use App\Services\FcmService;
 use Exception;
 use Illuminate\Http\Request;
@@ -857,6 +858,18 @@ class EditProfile extends Controller
 
         if ($appointment->status == 2) {
             return ResponseHelper::jsonResponse(false, 'Appointment is already completed', null);
+        }
+
+        $workingSlot = WorkingSlot::where('id', $appointment->selected_slot)->first();
+        if (! $workingSlot) {
+            return ResponseHelper::jsonResponse(false, 'Invalid time slot', null);
+        }
+
+        $appointmentDateTime = strtotime($appointment->date . ' ' . $workingSlot->start_time);
+        $currentTime = time();
+
+        if ($currentTime < $appointmentDateTime) {
+            return ResponseHelper::jsonResponse(false, 'Cannot mark as completed before the appointment time', null);
         }
 
         $appointment->status = 2;

@@ -59,4 +59,9 @@ class UserAllQuery extends Model
         return $this->hasOne(ScholarReply::class, 'question_id', 'query_id');
     }
 
+    public function getAnswerAttribute($value)
+    {
+        return $value ?? '';
+    }
+
 }

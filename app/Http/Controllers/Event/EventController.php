@@ -616,6 +616,7 @@ class EventController extends Controller
         if ($request->flag == 1) {
             $pastEvents = Event::where('date', '<', $todayDate)
                 ->where('event_status', 1)
+                ->where('user_id', '!=', $userId)
                 ->orderBy('date', 'desc')
                 ->forPage($page, $perPage)
                 ->with('scholars', 'hosted_by.interests')
@@ -643,6 +644,7 @@ class EventController extends Controller
         if ($request->flag == 2) {
             $upcomingEvents = Event::where('date', '>', $todayDate)
                 ->where('event_status', 1)
+                ->where('user_id', '!=', $userId)
                 ->orderBy('date', 'desc')
                 ->forPage($page, $perPage)
                 ->with('scholars', 'hosted_by.interests')
