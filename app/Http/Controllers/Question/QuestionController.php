@@ -1174,15 +1174,12 @@ class QuestionController extends Controller
         $page    = $request->input('page', 1);
         $perPage = 10;
     
-        $query = UserQuery::with([
-            'all_question' => function ($query) {
-                $query->with([
-                    'mufti_detail:id,name,email,image,phone_number,fiqa,mufti_status,user_type,device_id',
-                    'scholarReply:id,question_id,reply' 
-                ]);
-            },
+        $query = UserAllQuery::with([
+            'mufti_detail:id,name,email,image,phone_number,fiqa,mufti_status,user_type,device_id',
             'scholarReply:id,question_id,reply'
-        ])->where('user_id', $request->user_id);
+        ])
+        ->select('id', 'mufti_id', 'question', 'answer')
+        ->where('user_id', $request->user_id);
     
         if ($request->filled('search')) {
             $query->where('question', 'LIKE', '%' . trim($request->search) . '%');
@@ -1201,7 +1198,7 @@ class QuestionController extends Controller
         $data = $questions->map(function ($question) {
             return [
                 'question' => $question->question,
-                'answer'   => optional($question->scholarReply)->reply ?? "",
+                'answer'   => $question->answer?? "",
             ];
         });
     
@@ -1212,4 +1209,48 @@ class QuestionController extends Controller
             'data'       => $data,
         ], 200);
     }
+
+    public function scholar_reply_private(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'question_id' => 'required',
+            'answer'      => 'required',
+        ]);
+    
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+    
+        $message = UserAllQuery::find($request->question_id);
+        if (!$message) {
+            return ResponseHelper::jsonResponse(false, 'Private Message Not Found');
+        }
+    
+        $mufti = User::find($message->mufti_id);
+        if (!$mufti) {
+            return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+        }
+    
+        if ($mufti->id != 9) {
+            return ResponseHelper::jsonResponse(false, 'Only Mufti Omer can reply to private questions.');
+        }
+    
+        $message->update(['answer' => $request->answer]);
+    
+        $userData  = User::find($message->user_id);
+        $device_id = $userData->device_id ?? null;
+        $title     = "Private Question Update";
+        $body      = $mufti->name . ' has replied to your private question.';
+    
+        if ($device_id) {
+            $this->fcmService->sendNotification(
+                $device_id, $title, $body, 
+                "Private Question Update", "Private Question Update", "2", $request->question_id
+            );
+        }
+    
+        return ResponseHelper::jsonResponse(true, 'Answer for Private Question added successfully!');
+    }
+        
 }

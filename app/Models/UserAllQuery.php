@@ -15,6 +15,7 @@ class UserAllQuery extends Model
         'mufti_id',
         'status',
         'reason',
+        'answer',
     ];
 
 
