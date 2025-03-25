@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_all_queries', function (Blueprint $table) {
-            $table->longText('answer')->default('')->after('question'); // NOT NULL with empty string as default
+            $table->longText('answer')->after('question'); // NOT NULL with empty string as default
         });
     }
 
