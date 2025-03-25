@@ -1157,7 +1157,7 @@ class QuestionController extends Controller
     public function search_private_question(Request $request){
         
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|integer',
+            'user_id' => 'required',
             'search'  => 'nullable|string',
         ]);
     
@@ -1210,7 +1210,7 @@ class QuestionController extends Controller
         ], 200);
     }
 
-    public function scholar_reply_private(Request $request){
+    public function scholar_answer_private(Request $request){
 
         $validator = Validator::make($request->all(), [
             'question_id' => 'required',
@@ -1225,6 +1225,10 @@ class QuestionController extends Controller
         $message = UserAllQuery::find($request->question_id);
         if (!$message) {
             return ResponseHelper::jsonResponse(false, 'Private Message Not Found');
+        }
+
+        if (!empty($message->answer)) {
+            return ResponseHelper::jsonResponse(false, 'Answer has already been added.');
         }
     
         $mufti = User::find($message->mufti_id);
