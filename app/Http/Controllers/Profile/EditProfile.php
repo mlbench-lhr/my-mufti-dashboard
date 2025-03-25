@@ -423,8 +423,10 @@ class EditProfile extends Controller
         $search  = $request->input('search', '');
 
         $query = UserAllQuery::with('user_detail.interests')
-            ->where('mufti_id', $request->mufti_id)
-            ->orderBy('created_at', 'DESC');
+           ->where('mufti_id', $request->mufti_id)
+           ->whereNull('answer')  
+           ->orWhere('answer', '') 
+           ->orderBy('created_at', 'DESC');    
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -439,7 +441,6 @@ class EditProfile extends Controller
 
         $myAllQueries = $query->forPage($page, $perPage)->get();
 
-        // Get fiqas for the queries
         $fiqas = UserQuery::whereIn('id', $myAllQueries->pluck('query_id'))->pluck('fiqa', 'id');
 
         $myAllQueries->each(function ($query) use ($fiqas) {
@@ -876,6 +877,65 @@ class EditProfile extends Controller
         $appointment->save();
 
         return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
+    }
+
+    public function answered_questions(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'mufti_id' => 'required',
+        ]);
+    
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+    
+        $user = User::find($request->mufti_id);
+        if (! $user) {
+            return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
+        }
+    
+        $page    = $request->input('page', 1);
+        $perPage = 10;
+        $search  = $request->input('search', '');
+    
+        $query = UserAllQuery::with('user_detail.interests')
+            ->where('mufti_id', $request->mufti_id)
+            ->whereNotNull('answer')
+            ->where('answer', '!=', '')
+            ->orderBy('created_at', 'DESC');
+    
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user_detail', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('email', 'LIKE', '%' . $search . '%');
+                })->orWhere('question', 'LIKE', '%' . $search . '%');
+            });
+        }
+    
+        $totalPages = ceil($query->count() / $perPage);
+    
+        $answeredQueries = $query->forPage($page, $perPage)->get();
+    
+        $fiqas = UserQuery::whereIn('id', $answeredQueries->pluck('query_id'))->pluck('fiqa', 'id');
+    
+        $answeredQueries->each(function ($query) use ($fiqas) {
+            $query->fiqa = $fiqas->get($query->query_id, 'General');
+            if ($query->reason === null) {
+                unset($query->reason);
+            }
+        });
+    
+        return response()->json(
+            [
+                'status'     => true,
+                'message'    => 'Answered Queries',
+                'totalpages' => $totalPages,
+                'data'       => $answeredQueries,
+            ],
+            200
+        );
     }
 
 }

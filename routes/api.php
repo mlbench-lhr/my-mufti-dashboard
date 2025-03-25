@@ -47,6 +47,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('/userQueries', [EditProfile::class, 'my_queries']);
         Route::post('/userAllQueries', [EditProfile::class, 'my_all_queries']);
         Route::post('/askForMe', [EditProfile::class, 'ask_for_me']);
+        Route::post('askForMeWithAnswer', [EditProfile::class, 'answered_questions']);
         Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
         Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
         Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
@@ -175,6 +176,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('/userQueries', [EditProfile::class, 'my_queries']);
         Route::post('/userAllQueries', [EditProfile::class, 'my_all_queries']);
         Route::post('/askForMe', [EditProfile::class, 'ask_for_me']);
+        Route::post('askForMeWithAnswer', [EditProfile::class, 'answered_questions']);
         Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
         Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
         Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
@@ -302,6 +304,7 @@ Route::group([
     Route::post('/userQueries', [EditProfile::class, 'my_queries']);
     Route::post('/userAllQueries', [EditProfile::class, 'my_all_queries']);
     Route::post('/askForMe', [EditProfile::class, 'ask_for_me']);
+    Route::post('askForMeWithAnswer', [EditProfile::class, 'answered_questions']);
     Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
     Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
     Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
