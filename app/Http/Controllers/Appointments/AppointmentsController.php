@@ -240,6 +240,12 @@ class AppointmentsController extends Controller
             $workingDays = WorkingDay::where('user_id', $user_id)->with('slots')->get();
         }
 
+        WorkingDay::where('user_id', $user_id)
+        ->whereDoesntHave('slots', function ($query) {
+            $query->whereIn('status', [1, 3]); 
+        })
+        ->update(['is_available' => 2]);
+
         return ResponseHelper::jsonResponseWithData(true, "Added Successfully", $workingDays);
     }
 
