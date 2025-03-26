@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class EditProfile extends Controller
 {
@@ -838,6 +839,7 @@ class EditProfile extends Controller
     {
         $validator = Validator::make($request->all(), [
             'appointment_id' => 'required|exists:mufti_appointments,id',
+            'timezone' => 'required|timezone',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -866,11 +868,13 @@ class EditProfile extends Controller
             return ResponseHelper::jsonResponse(false, 'Invalid time slot', null);
         }
 
-        $appointmentDateTime = strtotime($appointment->date . ' ' . $workingSlot->start_time);
-        $currentTime = time();
+        $timezone = $request->timezone; 
 
-        if ($currentTime < $appointmentDateTime) {
-            return ResponseHelper::jsonResponse(false, 'Cannot mark as completed before the appointment time', null);
+        $appointmentEndDateTime = Carbon::parse($appointment->date . ' ' . $workingSlot->end_time, $timezone);
+        $currentTime = Carbon::now($timezone);
+
+        if ($currentTime->lessThan($appointmentEndDateTime)) {
+            return ResponseHelper::jsonResponse(false, 'Cannot mark as completed before the appointment end time', null);
         }
 
         $appointment->status = 2;
