@@ -133,7 +133,7 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-175px">Username</th>
+                                        <th class="min-w-175px">Booked By</th>
                                         <th class="min-w-175px">Scholarname</th>
                                         <th class="min-w-125px">Category</th>
                                         <th class="min-w-125px">Date</th>

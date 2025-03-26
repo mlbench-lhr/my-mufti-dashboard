@@ -567,6 +567,16 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailDegrees', compact('response', 'id'));
     }
+    public function user_detail_experiences(Request $request, $id){
+        $user       = User::with('interests')->where('id', $id)->first();
+        $experiences = Experience::where('user_id', $id)->get();
+
+        $response = [
+           'user'        => $user,
+           'experiences' => $experiences,
+        ];
+        return view('frontend.UserDetailExperiences', compact('response', 'id'));
+    }
     public function user_events(Request $request, $id)
     {
         $user      = User::with('interests')->where('id', $id)->first();

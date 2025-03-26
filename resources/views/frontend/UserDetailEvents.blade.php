@@ -247,6 +247,10 @@
                                 <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
                                     href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
                             </li>
+                            <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Experiences/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/Experiences/' . $response['user']->id) }}">Work Experience</a>
+                                </li>
                         @endif
                     </ul>
                     </div>

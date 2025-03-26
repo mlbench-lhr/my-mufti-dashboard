@@ -268,11 +268,19 @@
                                     <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('UserDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
                                 </li>
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Experiences/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/Experiences/' . $response['user']->id) }}">Work Experience</a>
+                                </li>
                             @endif
                             @if ($response['user']->user_type == 'lifecoach')
                                 <li class="nav-item min-w-100px">
                                     <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('LifeCoachDetail/Degrees/' . $response['user']->id) ? 'active' : null }}"
                                         href="{{ URL::to('LifeCoachDetail/Degrees/' . $response['user']->id) }}">Degrees</a>
+                                </li>
+                                <li class="nav-item min-w-100px">
+                                    <a class="nav-link mx-0 text-active-success me-2 {{ Request::is('UserDetail/Experiences/' . $response['user']->id) ? 'active' : null }}"
+                                        href="{{ URL::to('UserDetail/Experiences/' . $response['user']->id) }}">Work Experience</a>
                                 </li>
                             @endif
                         </ul>
@@ -303,7 +311,7 @@
                                                         class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
                                                         <img src="{{ asset('public/storage/' . $row->degree_image) }}"
                                                             alt="image"
-                                                            style="height: 90px; width:90px; object-fit: cover;" />
+                                                            style="height: 80px; width:80px; object-fit: cover;" />
                                                     </div>
                                                 </a>
                                             @endif
@@ -311,16 +319,15 @@
                                                 <div class="fw-bold fs-2 text-dark">
                                                     {{ $row->degree_title }}
                                                 </div>
-                                                <div class="fw-normal fs-6 text-muted pt-2">
+                                                <div class="fw-normal fs-5 text-muted pt-2">
                                                     {{ $row->institute_name }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-3 text-muted fs-3 d-flex justify-content-end align-content-end">
-                                        {{ \Carbon\Carbon::parse($row->degree_startDate)->format('Y') }} -
-                                        {{ \Carbon\Carbon::parse($row->degree_endDate)->format('Y') }}
+                                    <div class="col-3 text-muted fs-5 d-flex justify-content-end align-content-end">
+                                        {{ \Carbon\Carbon::parse($row->degree_startDate)->format('Y') }}-{{ \Carbon\Carbon::parse($row->degree_endDate)->format('Y') }}
 
                                     </div>
                                 </div>

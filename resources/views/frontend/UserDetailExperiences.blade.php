@@ -33,6 +33,16 @@
         max-width: 100px;
         /* Adjust the max-width based on your requirements */
     }
+
+    .box {
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 1);
+        padding: 8px 12px;
+        align-items: flex-start;
+        gap: 10px;
+        flex-wrap: wrap;
+
+    }
 </style>
 @section('content')
     <!--begin::Header-->
@@ -205,12 +215,11 @@
                         <ul
                             class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bolder flex-nowrap">
                             @php
-
                                 if ($response['user']->user_type == 'lifecoach') {
                                     $routes = [
                                         'PublicQuestions' => 'Public Questions',
                                         'Appointments' => 'Appointments',
-                                        'UserEventsRequest' => 'Events',
+                                       'UserEventsRequest' => 'Events',
                                     ];
                                 } else {
                                     $routes = [
@@ -222,13 +231,12 @@
                                     ];
                                 }
 
-                                // $baseUrl = $response['user']->user_type == 'scholar'  ? 'ScholarDetail/' : 'UserDetail/';
+                                // $baseUrl = $response['user']->user_type == 'scholar' ? 'ScholarDetail/' : 'UserDetail/';
                                 $baseUrl = match ($response['user']->user_type) {
                                     'scholar' => 'ScholarDetail/',
                                     'lifecoach' => 'LifeCoachDetail/',
                                     default => 'UserDetail/',
                                 };
-
                             @endphp
 
                             @foreach ($routes as $route => $displayName)
@@ -237,12 +245,12 @@
                                     $isActive = Request::is($fullUrl);
                                 @endphp
                                 <li
-                                    class="nav-item d-flex justify-content-start {{ $displayName == 'Events' ? 'min-w-100px' : 'min-w-175px' }}">
-                                    <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
-                                        href="{{ URL::to($fullUrl) }}">
-                                        {{ $displayName }}
-                                    </a>
-                                </li>
+                                class="nav-item d-flex justify-content-start {{ $displayName == 'Events' ? 'min-w-100px' : 'min-w-175px' }}">
+                                <a class="nav-link mx-0 text-active-success me-2 {{ $isActive ? 'active' : '' }}"
+                                    href="{{ URL::to($fullUrl) }}">
+                                    {{ $displayName }}
+                                </a>
+                            </li>
                             @endforeach
 
                             @if ($response['user']->user_type == 'scholar')
@@ -275,101 +283,42 @@
                                         href="{{ URL::to('UserDetail/Experiences/' . $response['user']->id) }}">Work Experience</a>
                                 </li>
                             @endif
-
                         </ul>
-
-
                     </div>
                 </div>
             </div>
 
 
             {{-- posted questions  --}}
-            <div class="card">
-                <div class="card-header border-0 pt-6">
-                    <!--begin::Card title-->
-                    <div class=" mb-5">
-                        <!--begin::Title-->
-                        <h3 class="mt-4" style=" font-weight:400; ">Total Questions: <span class="fs-5"
-                                id="user-count" style="font-weight:500 "> </span> </h3>
-                        <!--end::Title-->
-                    </div>
-
-                    <!--begin::Card title-->
-                    <!--begin::Card toolbar-->
-                    <div class="card-toolbar mb-5">
-                        <!--begin::Toolbar-->
-                        <div class="d-flex justify-content-between " data-kt-user-table-toolbar="base">
-
-                            <!--begin::Search-->
-                            <div class="d-flex align-items-center position-relative ">
-                                <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none">
-                                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
-                                            rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                        <path
-                                            d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                                            fill="black" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon-->
-                                <input type="text" id="global-search"
-                                    class="form-control form-control-solid w-250px ps-14"
-                                    placeholder="Search Questions" />
+            @if (count($response['experiences']))
+                <div class="row pt-md-10">
+                  @foreach ($response['experiences'] as $row)
+                    <div class="col-6 mb-6">
+                        <div class="box">
+                            <div class="row pb-5">
+                                <div class="col-9">
+                                    <div class="d-flex">
+                                        <div class="ms-3">
+                                            <div class="fw-bold fs-2 text-dark">
+                                               {{ $row->company_name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <div class="ms-3 mt-2 text-muted fs-4">
+                                            {{ \Carbon\Carbon::parse($row->experience_startDate)->format('Y') }}-
+                                            {{ \Carbon\Carbon::parse($row->experience_endDate)->format('Y') }}
+                                        </div>
+                                </div>
                             </div>
-                            <!--end::Search-->
                         </div>
-                        <!--end::Toolbar-->
                     </div>
-                    <!--end::Card toolbar-->
+                  @endforeach
                 </div>
-                <!--begin::Card body-->
-                <div class="card-body pt-0">
-                    @if (count($response['posted_questions']))
-                        <!--begin::Table-->
-                        <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
-                                <!--begin::Table head-->
-                                <thead>
-                                    <!--begin::Table row-->
-                                    <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-100px">Sr No</th>
-                                        <th class="min-w-275px">Question</th>
-                                        <th class="min-w-275px">Question Categories</th>
-                                        <th class="min-w-275px">Posted on</th>
-                                        <th class="min-w-175px">Voting Option</th>
-                                        <th class="text-end min-w-175px">Action</th>
-                                    </tr>
-                                    <!--end::Table row-->
-                                </thead>
-                                <!--end::Table head-->
-                                <!--begin::Table body-->
-                                <tbody class="text-gray-600 fw-bold" id="verification-table-body">
-                                    {{-- ajax data is appending here  --}}
-                                    <div id="loader" class="loader"></div>
-
-                                </tbody>
-                                <!--end::Table body-->
-                            </table>
-                        </div>
-                        <!--end::Table-->
-                        <div class="pagination d-flex justify-content-end" id="pagination-links"></div>
-                    @else
-                        <div class=" text-center">
-                            <img alt="Logo" style="align-items: center; margin-top:50px"
-                                src="{{ url('public/frontend/media/noPublicQus.svg') }}" class="img-fluid ">
-                        </div>
-                    @endif
-                </div>
-                <!--end::Card body-->
-            </div>
+            @endif
         </div>
         <!--end::Container-->
     </div>
     <!--end::Content-->
-
     <script type="module">
         $(document).ready(function() {
             $(document).on('click', '.btn-remove', function(e) {
@@ -445,175 +394,3 @@
     </script>
 
 @endsection
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    var user_id = @json($id);
-    console.log(user_id);
-    var currentPage = 1;
-
-    function loadVerificationData(page, search = '', sortingOption = '') {
-        $('#loader').removeClass('d-none');
-        $.ajax({
-            url: '{{ route('getUserPublicQuestions', ['id' => ':id']) }}'.replace(':id', user_id) + '?page=' +
-                page + '&search=' + encodeURIComponent(search) + '&sorting=' +
-                sortingOption,
-            method: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                console.log(response);
-                var users = response.users;
-                var userCount = response.userCount;
-                $('#user-count').text(userCount);
-                var tableBody = $('#verification-table-body');
-
-                tableBody.empty();
-
-                if (users.data.length === 0) {
-                    var noUserRow = `
-            <tr>
-                <td colspan="6" class="text-center pt-10 fw-bolder fs-2">No Questions found</td>
-            </tr>
-        `;
-                    tableBody.append(noUserRow);
-                } else {
-
-                    var count = (users.data.length > 0) ? (users.current_page - 1) * users.per_page : 0;
-                    $.each(users.data, function(index, row) {
-                        var modifiedSerialNumber = pad(count + 1, 2,
-                            '0');
-                        var newRow = `
-                    <tr>
-                        <td class="d-flex align-items-center">${modifiedSerialNumber}</td>
-
-                        <td>${truncateText(row.question, 20)}</td>
-                        <td style = "padding-left: 50px;">${row.total_categories}</td>
-                        <td style = "">${row.registration_date}</td>
-                        <td style = "padding-left: 50px;">
-                                ${row.voting_option == 0 ?
-                                    `Yes, No` :
-                                    `True, False`}
-                        </td>
-                        <td class="text-end">
-                            <div class="fs-4 fw-bolder text-dark">
-                                <a href="{{ URL::to('PublicQuestionDetail') }}/${row.id}?flag=0&uId=${user_id}" class="link-success fw-bold">
-                                    View Detail
-                                </a>
-                            </div>
-                        </td>
-
-                    </tr>
-                `;
-                        tableBody.append(newRow);
-                        count++;
-                    });
-
-                    function pad(number, length, character) {
-                        var str = '' + number;
-                        while (str.length < length) {
-                            str = character + str;
-                        }
-                        return str;
-                    }
-
-                    var paginationLinks = $('#pagination-links');
-                    paginationLinks.empty();
-
-                    var totalPages = users.last_page;
-
-                    var previousLink = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
-                    </li>`;
-                    paginationLinks.append(previousLink);
-
-                    for (var i = 1; i <= totalPages; i++) {
-                        if (totalPages > 7 && (i < currentPage - 2 || i > currentPage + 2)) {
-                            if (i === 1 || i === totalPages) {
-                                var pageLink =
-                                    `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                                paginationLinks.append(pageLink);
-                            }
-                            continue;
-                        }
-
-                        var pageLink = `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
-                    </li>`;
-                        paginationLinks.append(pageLink);
-                    }
-
-                    var nextLink = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
-                </li>`;
-                    paginationLinks.append(nextLink);
-                }
-                $('#loader').addClass('d-none');
-
-            },
-        });
-    }
-
-    function truncateText(text, wordLimit) {
-        const words = text.split(" ");
-        return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + " ..." : text;
-    }
-
-    $(document).on('click', '.page-link', function(e) {
-        e.preventDefault();
-        currentPage = $(this).data('page');
-        var searchTerm = $('#global-search').val();
-        loadVerificationData(currentPage, searchTerm);
-    });
-    $(document).on('click', '#apply-filter-button', function(e) {
-        e.preventDefault();
-        var searchTerm = $('#global-search').val();
-        var sortingOption = $('#request-date-filter').val();
-        loadVerificationData(currentPage, searchTerm, sortingOption);
-    });
-
-    $(document).on('click', '#reset-filter-button', function(e) {
-        e.preventDefault();
-        $('#request-date-filter').val('').trigger('change');
-        loadVerificationData(currentPage);
-    });
-    $(document).ready(function() {
-        $('#global-search').on('input', function() {
-            var searchTerm = $(this).val();
-            loadVerificationData(1, searchTerm);
-        });
-    });
-    $(document).ready(function() {
-        loadVerificationData(currentPage);
-    });
-</script>
-{{--
-                            @if ($response['user']->user_type == 'scholar')
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('ScholarDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
-                                        href="{{ URL::to('ScholarDetail/PublicQuestions/' . $response['user']->id) }}">Public
-                                        Questions</a>
-                                </li>
-                            @else
-                                <li class="nav-item">
-                                    <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PublicQuestions/' . $response['user']->id) ? 'active' : null }}"
-                                        href="{{ URL::to('UserDetail/PublicQuestions/' . $response['user']->id) }}">Public
-                                        Questions</a>
-                                </li>
-                            @endif
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/PrivateQuestions/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/PrivateQuestions/' . $response['user']->id) }}">Private
-                                    Questions</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/Appointments/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/Appointments/' . $response['user']->id) }}">Appointments</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEvents/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/UserEvents/' . $response['user']->id) }}">Events</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-active-success me-6 {{ Request::is('UserDetail/UserEventsRequest/' . $response['user']->id) ? 'active' : null }}"
-                                    href="{{ URL::to('UserDetail/UserEventsRequest/' . $response['user']->id) }}">Events
-                                    Request</a>
-                            </li> --}}

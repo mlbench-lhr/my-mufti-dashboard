@@ -67,6 +67,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('UserDetail/AskedFromScholar/{id}', [UserController::class, 'user_detail_asked_from_me'])->name('UserDetail/AskedFromScholar');
     Route::get('getUserAskedFromMe/{id}', [UserController::class, 'get_asked_from_me'])->name('getUserAskedFromMe');
     Route::get('UserDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('UserDetail/Degrees');
+    Route::get('UserDetail/Experiences/{id}', [UserController::class, 'user_detail_experiences'])->name('UserDetail/Experiences');
 
     Route::get('LifeCoachDetail/Degrees/{id}', [UserController::class, 'user_detail_degrees'])->name('LifeCoachDetail/Degrees');
 

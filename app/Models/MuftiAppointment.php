@@ -57,5 +57,10 @@ class MuftiAppointment extends Model
         return $this->belongsTo(User::class, 'mufti_id')->select('id', 'name', 'image', 'email', 'fiqa', 'phone_number');
     }
 
+    public function working_slot()
+    {
+        return $this->belongsTo(WorkingSlot::class, 'selected_slot', 'id');
+    }
+
     
 }

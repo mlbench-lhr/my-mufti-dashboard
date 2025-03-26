@@ -133,8 +133,8 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-dark fw-bold fs-5 text-uppercase gs-0">
-                                        <th class="min-w-175px">Username</th>
-                                        <th class="min-w-175px">Coach name</th>
+                                        <th class="min-w-175px">Booked By</th>
+                                        <th class="min-w-175px">Life Coach Name</th>
                                         <th class="min-w-125px">Category</th>
                                         <th class="min-w-125px">Date</th>
                                         <th class="min-w-100px">Charges</th>

@@ -97,8 +97,8 @@
         <div class="container-fluid" id="">
             <div class="row pb-4">
                 <div class="col-6">
-                    <div class=" title fs-2 fw-bold pb-9">
-                        Username
+                    <div class=" title fs-2 text-dark fw-bolder pb-9">
+                        Booked By
                     </div>
                     <div class="d-flex flex-wrap flex-sm-nowrap">
                         <!--begin: Pic-->
@@ -140,8 +140,8 @@
                     </div>
                 </div>
                 <div class="col-6">
-                    <div class=" title fs-2 fw-bold pb-9">
-                        {{ $detail->user_type == 'scholar' ? 'Scholar' : 'Life Coach' }}
+                    <div class=" title fs-2 text-dark fw-bolder pb-9">
+                        Booked From
                     </div>
                     <div class="d-flex flex-wrap flex-sm-nowrap">
                         <!--begin: Pic-->
@@ -225,12 +225,12 @@
                         <!--begin::Input group-->
                         <div class="row mb-7">
                             <!--begin::Label-->
-                            <label class="col-lg-7 fw-bolder fs-2 text-gray-800">Date and time</label>
+                            <label class="col-lg-7 fw-bolder fs-2 text-gray-800">Date</label>
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-5">
                                 <span class="fw-bold fs-3 text-muted">
-                                    {{ \Carbon\Carbon::parse($detail->date)->format('M d, Y, h:iA') }}
+                                    {{ \Carbon\Carbon::parse($detail->date)->format('M d, Y') }}
                                 </span>
                             </div>
                             <!--end::Col-->
@@ -239,13 +239,16 @@
                         <!--begin::Input group-->
                         <div class="row mb-7">
                             <!--begin::Label-->
-                            <label class="col-lg-7 fw-bolder fs-2 text-gray-800">Duration</label>
+                            <label class="col-lg-7 fw-bolder fs-2 text-gray-800">Time</label>
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-lg-5">
-                                <span class="fw-bold fs-3 text-muted">
-                                    {{ $detail->duration }} Mins
+                            @if($detail->working_slot)
+                                <span class="fw-bold fs-2 text-muted">
+                                {{ \Carbon\Carbon::parse($detail->working_slot->start_time)->format('h:i A') }} - 
+                                {{ \Carbon\Carbon::parse($detail->working_slot->end_time)->format('h:i A') }}
                                 </span>
+                            @endif
                             </div>
                             <!--end::Col-->
                         </div>
