@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -940,6 +941,70 @@ class EditProfile extends Controller
             ],
             200
         );
+    }
+
+    public function get_Hadith_Of_The_Day(){
+
+        $apiKey = '$2y$10$ZVlVh55sY3df7vgXZFQOiO6pN97WsMJ09jj0yLYYwGpPfMUjUF2mm';
+        $url = "https://hadithapi.com/api/hadiths?apiKey=" . urlencode($apiKey);
+    
+        // Define cache key for today
+        $cacheKey = 'hadith_of_the_day_' . date('Y-m-d', strtotime('day'));
+    
+        // Check if Hadith is already cached
+        if (Cache::has($cacheKey)) {
+            return response()->json(Cache::get($cacheKey), 200);
+        }
+    
+        // Initialize cURL request
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Ignore SSL certificate verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Ignore hostname verification
+    
+        $response = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+    
+        // Handle cURL error
+        if ($curlError) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Failed to fetch Hadith data. cURL error: ' . $curlError
+            ], 500);
+        }
+    
+        $hadithData = json_decode($response, true);
+    
+        if (!$hadithData || empty($hadithData['hadiths']['data'])) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No Hadiths found.',
+            ], 404);
+        }
+    
+        // Get today's index based on date
+        $hadithList = $hadithData['hadiths']['data'];
+        $index = date('z') % count($hadithList); // Picks a new Hadith daily
+        $dailyHadith = $hadithList[$index];
+    
+        $formattedResponse = [
+            'status' => 200,
+            'message' => 'Hadith of the Day found.',
+            'hadith' => [
+                'id' => $dailyHadith['id'],
+                'hadithEnglish' => $dailyHadith['hadithEnglish'],
+                'hadithUrdu' => $dailyHadith['hadithUrdu'],
+                'hadithArabic' => $dailyHadith['hadithArabic'],
+                'bookSlug' => $dailyHadith['bookSlug']
+            ]
+        ];
+    
+        // Cache the result until end of the day
+        Cache::put($cacheKey, $formattedResponse, now()->endOfDay());
+    
+        return response()->json($formattedResponse, 200);
     }
 
 }
