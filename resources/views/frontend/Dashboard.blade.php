@@ -61,7 +61,7 @@
                             <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <!--begin::Card widget 6-->
                                 <div class="card card-flush  h-md-50 mb-md-5 mb-xl-10 mt-4"
-                                    style="background-color: #f4d7dc
+                                    style="background-color: #F4CBCB78
                                     ; max-height:230px;">
                                     <div class="card-body d-flex flex-column">
                                         <!--begin::Wrapper-->
@@ -77,9 +77,9 @@
                                         </div>
                                         <!--end::Wrapper-->
                                         <!--begin::Stats-->
-                                        <div class="pt-5">
+                                        <div class="pt-1 d-flex">
                                             <!--begin::Number-->
-                                            <span class="text-dark fw-bolder me-2 lh-0" style="font-size:2vw;">
+                                            <span class="text-dark fw-bolder me-2 lh-1" style="font-size:2.2vw;">
                                                 @if ($response['get_questions']['total_matches'] >= 0 && $response['get_questions']['total_matches'] < 1000)
                                                     {{ $response['get_questions']['total_matches'] }}
                                                 @elseif ($response['get_questions']['total_matches'] >= 1000 && $response['get_questions']['total_matches'] < 1000000)
@@ -90,10 +90,18 @@
                                             </span>
                                             <!--end::Number-->
                                             <!--begin::Text-->
-                                            <span class="text-dark fw-bolder  lh-0" style="font-size:0.9vw;">
+                                            <div class="d-flex flex-column">
+                                            @php
+                                                $currentMonth = \Carbon\Carbon::now()->format('F');
+                                            @endphp
+                                            <span class="text-dark fw-bold lh-1" style="font-size:1.1vw;">
+                                                {{ $currentMonth }}
+                                            </span>
+                                            <span class="text-dark fw-medium" style="font-size:0.7vw;">
                                                 {{ $response['get_questions']['current_month_match'] }}
                                                 % this month
                                             </span>
+                                            </div>
                                             <!--end::Text-->
                                         </div>
                                         <!--end::Stats-->
@@ -107,8 +115,8 @@
                                         <!--begin::Wrapper-->
                                         <div class="d-flex flex-column flex-grow-1">
                                             <!--begin::Title-->
-                                            <a class="text-dark  fw-bolder fs-3">Total
-                                                Scholars
+                                            <a class="text-dark  fw-bolder fs-3">Total Scholars &
+                                                LifeCoaches
                                             </a>
                                             <!--end::Title-->
                                             <!--begin::Chart-->
@@ -117,9 +125,9 @@
                                         </div>
                                         <!--end::Wrapper-->
                                         <!--begin::Stats-->
-                                        <div class="pt-5">
+                                        <div class="pt-1 d-flex">
                                             <!--begin::Number-->
-                                            <span class="text-dark fw-bolder me-2 lh-0" style="font-size:2vw;">
+                                            <span class="text-dark fw-bolder me-2 lh-1" style="font-size:2.2vw;">
                                                 @if ($response['get_scholars']['total_matches'] >= 0 && $response['get_scholars']['total_matches'] < 1000)
                                                     {{ $response['get_scholars']['total_matches'] }}
                                                 @elseif ($response['get_scholars']['total_matches'] >= 1000 && $response['get_scholars']['total_matches'] < 1000000)
@@ -131,10 +139,18 @@
                                             </span>
                                             <!--end::Number-->
                                             <!--begin::Text-->
-                                            <span class="text-dark fw-bolder lh-0" style="font-size:0.9vw;">
-                                                {{ $response['get_scholars']['current_month_match'] }}
+                                            <div class="d-flex flex-column">
+                                            @php
+                                                $currentMonth = \Carbon\Carbon::now()->format('F');
+                                            @endphp
+                                            <span class="text-dark fw-bold lh-1" style="font-size:1.1vw;">
+                                                {{ $currentMonth }}
+                                            </span>
+                                            <span class="text-dark fw-medium" style="font-size:0.7vw;">
+                                                {{ $response['get_questions']['current_month_match'] }}
                                                 % this month
                                             </span>
+                                            </div>
                                             <!--end::Text-->
                                         </div>
                                         <!--end::Stats-->
@@ -147,7 +163,7 @@
 
                                 <!--begin::Card widget 6-->
                                 <div class="card card-flush  h-md-50 mb-md-5 mb-xl-10 mt-4"
-                                    style="background-color: #cdebcd
+                                    style="background-color: #38B89A33
                                     ; max-height:230px;">
                                     <div class="card-body d-flex flex-column">
                                         <!--begin::Wrapper-->
@@ -163,9 +179,9 @@
                                         </div>
                                         <!--end::Wrapper-->
                                         <!--begin::Stats-->
-                                        <div class="pt-5">
+                                        <div class="pt-1 d-flex">
                                             <!--begin::Number-->
-                                            <span class="text-dark fw-bolder  me-2 lh-0" style="font-size:2vw;">
+                                            <span class="text-dark fw-bolder  me-2 lh-1" style="font-size:2.2vw;">
                                                 @if ($response['get_all_users']['total_users'] >= 0 && $response['get_all_users']['total_users'] < 1000)
                                                     {{ $response['get_all_users']['total_users'] }}
                                                 @elseif ($response['get_all_users']['total_users'] >= 1000 && $response['get_all_users']['total_users'] < 1000000)
@@ -177,10 +193,18 @@
                                             </span>
                                             <!--end::Number-->
                                             <!--begin::Text-->
-                                            <span class="text-dark fw-bolder  lh-0" style="font-size:0.9vw;">
-                                                {{ $response['get_all_users']['current_month'] }}
+                                            <div class="d-flex flex-column">
+                                            @php
+                                                $currentMonth = \Carbon\Carbon::now()->format('F');
+                                            @endphp
+                                            <span class="text-dark fw-bold lh-1" style="font-size:1.1vw;">
+                                                {{ $currentMonth }}
+                                            </span>
+                                            <span class="text-dark fw-medium" style="font-size:0.7vw;">
+                                                {{ $response['get_questions']['current_month_match'] }}
                                                 % this month
                                             </span>
+                                            </div>
                                             <!--end::Text-->
                                         </div>
                                         <!--end::Stats-->
@@ -204,9 +228,9 @@
                                         </div>
                                         <!--end::Wrapper-->
                                         <!--begin::Stats-->
-                                        <div class="pt-5">
+                                        <div class="pt-1 d-flex">
                                             <!--begin::Number-->
-                                            <span class="text-dark fw-bolder  me-2 lh-0" style="font-size:2vw;">
+                                            <span class="text-dark fw-bolder  me-2 lh-1" style="font-size:2.2vw;">
                                                 @if ($response['get_all_events']['total_events'] >= 0 && $response['get_all_events']['total_events'] < 1000)
                                                     {{ $response['get_all_events']['total_events'] }}
                                                 @elseif ($response['get_all_events']['total_events'] >= 1000 && $response['get_all_events']['total_events'] < 1000000)
@@ -218,10 +242,18 @@
                                             </span>
                                             <!--end::Number-->
                                             <!--begin::Text-->
-                                            <span class="text-dark fw-bolder  lh-0" style="font-size:0.9vw;">
-                                                {{ $response['get_all_events']['current_month'] }}
+                                            <div class="d-flex flex-column">
+                                            @php
+                                                $currentMonth = \Carbon\Carbon::now()->format('F');
+                                            @endphp
+                                            <span class="text-dark fw-bold lh-1" style="font-size:1.1vw;">
+                                                {{ $currentMonth }}
+                                            </span>
+                                            <span class="text-dark fw-medium" style="font-size:0.7vw;">
+                                                {{ $response['get_questions']['current_month_match'] }}
                                                 % this month
                                             </span>
+                                            </div>
                                             <!--end::Text-->
                                         </div>
                                         <!--end::Stats-->
