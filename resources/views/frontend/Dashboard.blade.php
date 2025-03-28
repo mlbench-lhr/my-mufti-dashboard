@@ -563,7 +563,7 @@
                                     shadeIntensity: 0,
                                     opacityFrom: 0.3,
                                     opacityTo: 0,
-                                    stops: [20, 80]
+                                    stops: [0, 80]
                                 }
                             },
                             colors: ["#38B89A"],
@@ -614,9 +614,6 @@
                                 },
                             },
                             yaxis: {
-                                min: 20,
-                                max: 80,
-                                tickAmount: 3,
                                 labels: {
                                     style: {
                                         colors: n,
