@@ -190,7 +190,7 @@ class QuestionController extends Controller
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
-                $notificationType = "2";
+                $notificationType = "public_question_update";
 
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
@@ -213,7 +213,7 @@ class QuestionController extends Controller
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
-                $notificationType = "2";
+                $notificationType = "public_question_update";
 
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
@@ -554,7 +554,7 @@ class QuestionController extends Controller
             $body             = 'User ' . $user->name . ' has comment on your posted public question.';
             $messageType      = "Public Question Update";
             $otherData        = "Public Question Update";
-            $notificationType = "2";
+            $notificationType = "public_question_update";
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
             }
@@ -643,7 +643,7 @@ class QuestionController extends Controller
         $body             = $user->name . ' has reply on your question.';
         $messageType      = "Public Question Update";
         $otherData        = "Public Question Update";
-        $notificationType = "2";
+        $notificationType = "public_question_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
@@ -844,7 +844,7 @@ class QuestionController extends Controller
         $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
         $messageType      = "Question Request Update";
         $otherData        = "Question Request Update";
-        $notificationType = "1";
+        $notificationType = "question_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -1051,7 +1051,7 @@ class QuestionController extends Controller
         $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
         $messageType      = "Question Request Update";
         $otherData        = "Question Request Update";
-        $notificationType = "1";
+        $notificationType = "question_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -1126,7 +1126,7 @@ class QuestionController extends Controller
         $body             = 'User' . ' ' . $name . ' wants to ask a question for you.';
         $messageType      = $title;
         $otherData        = "Asked Question";
-        $notificationType = "1";
+        $notificationType = "question_asked";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -1251,7 +1251,7 @@ class QuestionController extends Controller
         if ($device_id) {
             $this->fcmService->sendNotification(
                 $device_id, $title, $body, 
-                "Private Question Update", "Private Question Update", "2", $request->question_id
+                "Private Question Update", "Private Question Update", "private_question_update", $request->question_id
             );
         }
     

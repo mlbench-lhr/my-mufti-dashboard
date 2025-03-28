@@ -198,7 +198,7 @@ class EventController extends Controller
                     $body             = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
                     $messageType      = "Event Request Update";
                     $otherData        = "Event Request Update";
-                    $notificationType = "0";
+                    $notificationType = "event_schedule_updated";
 
                     if ($device_id != "") {
                         $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);

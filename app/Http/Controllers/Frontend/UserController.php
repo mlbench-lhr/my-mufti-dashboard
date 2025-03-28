@@ -159,7 +159,7 @@ class UserController extends Controller
         $body             = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
         $messageType      = "Deletion Request Update";
         $otherData        = "Deletion Request Update";
-        $notificationType = "0";
+        $notificationType = "deletion_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -193,7 +193,7 @@ class UserController extends Controller
         $body             = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
         $messageType      = "Deletion Request Update";
         $otherData        = "Deletion Request Update";
-        $notificationType = "0";
+        $notificationType = "deletion_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -352,7 +352,7 @@ class UserController extends Controller
         $body             = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
         $messageType      = "Become {$userType} Request Update";
         $otherData        = "Become {$userType} Request Update";
-        $notificationType = "0";
+        $notificationType = "become {$userType} request update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -415,7 +415,7 @@ class UserController extends Controller
         $body             = "Your request to become a {$userType} has been Rejected, Go and check the reason in your Profile.";
         $messageType      = "Become {$userType} Request Update";
         $otherData        = "Become {$userType} Request Update";
-        $notificationType = "0";
+        $notificationType = "become {$userType} request update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);

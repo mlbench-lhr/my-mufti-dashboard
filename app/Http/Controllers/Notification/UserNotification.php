@@ -40,7 +40,50 @@ class UserNotification extends Controller
         $perPage = 10;
         $totalPages = ceil(Notification::where('user_id', $request->user_id)->count() / $perPage);
 
-        $notifications = Notification::forPage($page, $perPage)->orderBy('created_at', 'desc')->where('user_id', $request->user_id)->get();
+        $notifications = Notification::forPage($page, $perPage)
+        ->orderBy('created_at', 'desc')
+        ->where('user_id', $request->user_id)
+        ->get(['id', 'title', 'body as message', 'created_at']);
+
+        $notifications->transform(function ($notification) {
+            $title = strtolower($notification->title);
+        
+            if (str_contains($title, 'new appointment request received')) {
+                $notification->notification_type = 'request_new_appointment';
+            } elseif (str_contains($title, 'event request update')) {
+                $notification->notification_type = 'event_schedule_updated';
+            } elseif (str_contains($title, 'event invitation')) {
+                $notification->notification_type = 'event_invitation';
+            } elseif (str_contains($title, 'become scholar request update')) {
+                $notification->notification_type = 'scholar_request_update';
+            } elseif (str_contains($title, 'become lifecoach request update')) {
+                $notification->notification_type = 'lifecoach_request_update';
+            } elseif (str_contains($title, 'question request update')) {
+                $notification->notification_type = 'question_request_update';
+            } elseif (str_contains($title, 'asked question')) {
+                $notification->notification_type = 'question_asked';
+            } elseif (str_contains($title, 'private question update')) {
+                $notification->notification_type = 'private_question_update';
+            } elseif (str_contains($title, 'public question update')) {
+                $notification->notification_type = 'public_question_update';
+            } elseif (str_contains($title, 'question request sent')) {
+                $notification->notification_type = 'question_request_sent';
+            } elseif (str_contains($title, 'deletion request update')) {
+                $notification->notification_type = 'deletion_request_update';
+            } elseif (str_contains($title, 'admin replied')) {
+                $notification->notification_type = 'admin_replied';
+            } elseif (str_contains($title, 'reply declined')) {
+                $notification->notification_type = 'admin_replied';
+            } elseif (str_contains($title, 'new reply to your question')) {
+                $notification->notification_type = 'new_reply';
+            } elseif (str_contains($title, 'reply updated to your question')) {
+                $notification->notification_type = 'reply_updated';
+            } else {
+                $notification->notification_type = 'general';
+            }
+        
+            return $notification;
+        });
 
         $response = [
             'status' => true,

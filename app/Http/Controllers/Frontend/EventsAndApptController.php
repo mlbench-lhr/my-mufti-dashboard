@@ -196,7 +196,7 @@ class EventsAndApptController extends Controller
             $body = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
             $messageType = "Event Request Update";
             $otherData = "Event Request Update";
-            $notificationType = "0";
+            $notificationType = "event_schedule_updated";
 
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -223,7 +223,7 @@ class EventsAndApptController extends Controller
                 $body = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
                 $messageType = "Event Invitation";
                 $otherData = "Event Invitation";
-                $notificationType = "0";
+                $notificationType = "event_invitation";
 
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -276,7 +276,7 @@ class EventsAndApptController extends Controller
         $body = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been rejected.';
         $messageType = "Event Request Update";
         $otherData = "Event Request Update";
-        $notificationType = "0";
+        $notificationType = "event_schedule_updated";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);

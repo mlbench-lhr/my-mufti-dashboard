@@ -379,7 +379,7 @@ class AppointmentsController extends Controller
         $body             = 'You have received a new appointment request from ' . $user->name . '.';
         $messageType      = "New Appointment Request Received";
         $otherData        = "New Appointment Request Received";
-        $notificationType = "0";
+        $notificationType = "request_new_appointment";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);

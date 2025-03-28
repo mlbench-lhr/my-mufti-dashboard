@@ -495,7 +495,7 @@ class EditProfile extends Controller
                 $body             = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
                 $messageType      = "Question Request Update";
                 $otherData        = "Question Request Update";
-                $notificationType = "0";
+                $notificationType = "question_request_update";
 
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -527,7 +527,7 @@ class EditProfile extends Controller
                 $body             = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
                 $messageType      = "Question Request Update";
                 $otherData        = "Question Request Update";
-                $notificationType = "0";
+                $notificationType = "question_request_update";
 
                 if ($device_id != "") {
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -732,7 +732,7 @@ class EditProfile extends Controller
         $body             = 'You have received a new appointment request from ' . $user->name . '.';
         $messageType      = "New Appointment Request Received";
         $otherData        = "New Appointment Request Received";
-        $notificationType = "0";
+        $notificationType = "request_new_appointment";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);

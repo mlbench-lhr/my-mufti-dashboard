@@ -411,7 +411,7 @@ class QuestionsController extends Controller
             $body = 'My Mufti Admin has reply on your question.';
             $messageType = "Admin reply";
             $otherData = "Admin reply";
-            $notificationType = "2";
+            $notificationType = "admin_replied";
 
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
@@ -555,7 +555,7 @@ class QuestionsController extends Controller
             $body = 'My Mufti Admin has replied to your question. Please see it in your chat.';
             $messageType = "Question Request Update";
             $otherData = "Question Request Update";
-            $notificationType = "2";
+            $notificationType = "question_request_update";
 
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
@@ -593,7 +593,7 @@ class QuestionsController extends Controller
                 $body = 'Your private query has been declined with a reason: ' . $request->reason;
                 $messageType = "Admin reply";
                 $otherData = "Admin reply";
-                $notificationType = "3";
+                $notificationType = "admin_replied";
 
                 $this->fcmService->sendNotification(
                     $device_id,
