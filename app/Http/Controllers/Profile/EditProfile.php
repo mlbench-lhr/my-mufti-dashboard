@@ -842,45 +842,44 @@ class EditProfile extends Controller
             'appointment_id' => 'required|exists:mufti_appointments,id',
             'timezone' => 'required|timezone',
         ]);
-
+    
         $validationError = ValidationHelper::handleValidationErrors($validator);
         if ($validationError !== null) {
             return $validationError;
         }
-
+    
         $appointment = MuftiAppointment::find($request->appointment_id);
-
-        if (! $appointment) {
+        if (!$appointment) {
             return ResponseHelper::jsonResponse(false, 'Appointment not found', null);
         }
-
-        $userId = $appointment->mufti_id ?? $appointment->user_id;
-
-        if ($appointment->mufti_id !== $userId && $appointment->user_id !== $userId) {
-            return ResponseHelper::jsonResponse(false, 'User not found', null);
-        }
-
+    
         if ($appointment->status == 2) {
             return ResponseHelper::jsonResponse(false, 'Appointment is already completed', null);
         }
-
-        $workingSlot = WorkingSlot::where('id', $appointment->selected_slot)->first();
-        if (! $workingSlot) {
+    
+        $workingSlot = WorkingSlot::find($appointment->selected_slot);
+        if (!$workingSlot) {
             return ResponseHelper::jsonResponse(false, 'Invalid time slot', null);
         }
-
-        $timezone = $request->timezone; 
-
-        $appointmentEndDateTime = Carbon::parse($appointment->date . ' ' . $workingSlot->end_time, $timezone);
-        $currentTime = Carbon::now($timezone);
-
-        if ($currentTime->lessThan($appointmentEndDateTime)) {
-            return ResponseHelper::jsonResponse(false, 'Cannot mark as completed before the appointment end time', null);
+    
+        try {
+            $timezone = $request->timezone; 
+    
+            $appointmentEndDateTime = Carbon::parse($appointment->date, $timezone)
+                ->setTimeFromTimeString($workingSlot->end_time);
+            
+            $currentTime = Carbon::now($timezone);
+    
+            if ($currentTime->lessThan($appointmentEndDateTime)) {
+                return ResponseHelper::jsonResponse(false, 'Cannot mark as completed before the appointment end time', null);
+            }
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, 'Invalid timezone or date format', null);
         }
-
+    
         $appointment->status = 2;
         $appointment->save();
-
+    
         return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
     }
 
