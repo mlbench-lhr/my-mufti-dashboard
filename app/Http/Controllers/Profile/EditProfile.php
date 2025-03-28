@@ -948,26 +948,23 @@ class EditProfile extends Controller
         $apiKey = '$2y$10$ZVlVh55sY3df7vgXZFQOiO6pN97WsMJ09jj0yLYYwGpPfMUjUF2mm';
         $url = "https://hadithapi.com/api/hadiths?apiKey=" . urlencode($apiKey);
     
-        // Define cache key for today
-        $cacheKey = 'hadith_of_the_day_' . date('Y-m-d', strtotime('day'));
+        $today = Carbon::now('UTC'); 
+        $cacheKey = 'hadith_of_the_day_' . $today->format('Y-m-d');
     
-        // Check if Hadith is already cached
         if (Cache::has($cacheKey)) {
             return response()->json(Cache::get($cacheKey), 200);
         }
     
-        // Initialize cURL request
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_URL, "https://hadithapi.com/api/hadiths?apiKey=" . urlencode($apiKey));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Ignore SSL certificate verification
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Ignore hostname verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     
         $response = curl_exec($ch);
         $curlError = curl_error($ch);
         curl_close($ch);
     
-        // Handle cURL error
         if ($curlError) {
             return response()->json([
                 'status' => 500,
@@ -984,9 +981,9 @@ class EditProfile extends Controller
             ], 404);
         }
     
-        // Get today's index based on date
         $hadithList = $hadithData['hadiths']['data'];
-        $index = date('z') % count($hadithList); // Picks a new Hadith daily
+        $seed = $today->format('Y-m-d');  
+        $index = crc32($seed) % count($hadithList);
         $dailyHadith = $hadithList[$index];
     
         $formattedResponse = [
@@ -1001,8 +998,7 @@ class EditProfile extends Controller
             ]
         ];
     
-        // Cache the result until end of the day
-        Cache::put($cacheKey, $formattedResponse, now()->endOfDay());
+        Cache::put($cacheKey, $formattedResponse, $today->endOfDay());
     
         return response()->json($formattedResponse, 200);
     }

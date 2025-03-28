@@ -551,7 +551,7 @@ class DashboardController extends Controller
             $data = [
                 'all_accepted' => 0,
                 'all_rejected' => 0,
-                'current_month' => 0,
+                'current_month' => $current_month1,
                 'one_month_before' => 0,
                 'two_months_before' => 0,
                 'three_months_before' => 0,

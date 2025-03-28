@@ -109,13 +109,13 @@
                                 </div>
                                 <!--end::Card widget 6-->
                                 <!--begin::Card widget 6-->
-                                <div class="card card-flush  h-md-50 mb-md-5 mb-xl-10 mt-3"
+                                <div class="card card-flush  h-md-50 mb-md-5 mb-xl-10 mt-4"
                                     style="background-color: #E3EAF4; max-height:230px;">
                                     <div class="card-body d-flex flex-column">
                                         <!--begin::Wrapper-->
                                         <div class="d-flex flex-column flex-grow-1">
                                             <!--begin::Title-->
-                                            <a class="text-dark  fw-bolder fs-3">Total Scholars &
+                                            <a class="text-dark  fw-bolder fs-4">Total Scholars &
                                                 LifeCoaches
                                             </a>
                                             <!--end::Title-->
@@ -354,10 +354,10 @@
                             <div class="fs-1 fw-bolder">
                                 {{ $response['accountCount'] }}
                                 <span class="badge badge-light-success fw-bolder pt-2">
-                                    {{ $response['inApp'] }}%
+                                    +{{ $response['inApp'] }}%
                                 </span>
                             </div>
-                            <div class="fs-4 fw-bold mb-7">Total Account created</div>
+                            <div class="fs-4 fw-bold mb-7" style="color: #99A1B7;">Total Account created</div>
                             <!--end::Heading-->
                             <!--begin::Wrapper-->
                             <div class="d-flex flex-wrap">
@@ -374,7 +374,8 @@
                                             style="background-color: #F52E2E;height:9px; width:13px;">
                                         </div>
                                         <div class="text-gray-400">In App</div>
-                                        <div class="ms-auto fw-bolder text-gray-700">
+                                        <div class="flex-grow-1 mx-3" style="border-bottom: 2px dotted #99A1B7;"></div>
+                                        <div class="ms-auto fw-bolder">
                                             {{ $response['inApp'] }}%
                                         </div>
                                     </div>
@@ -385,8 +386,8 @@
                                             style="background-color: #38B89A; height:9px; width:13px;">
                                         </div>
                                         <div class="text-gray-400">Google</div>
-
-                                        <div class="ms-auto fw-bolder text-gray-700">
+                                        <div class="flex-grow-1 mx-3" style="border-bottom: 2px dotted #99A1B7;"></div>
+                                        <div class="ms-auto fw-bolder">
                                             {{ $response['google'] }}%
                                         </div>
                                     </div>
@@ -397,7 +398,8 @@
                                             style="background-color: #DBDFE9;height:9px; width:13px;">
                                         </div>
                                         <div class="text-gray-400">Apple</div>
-                                        <div class="ms-auto fw-bolder text-gray-700">
+                                        <div class="flex-grow-1 mx-3" style="border-bottom: 2px dotted #99A1B7;"></div>
+                                        <div class="ms-auto fw-bolder">
 
                                             {{ $response['apple'] }}%
 
@@ -417,9 +419,9 @@
                         <div class="card-header col px-10 mt-10" style="min-height: 25px">
                             <!--begin::Card title-->
                             <span>
-                                <h3>{{ $response['appointmentCount'] }} <span
+                                <h3 class="fw-medium fs-1">{{ $response['appointmentCount'] }} <span
                                         class="badge badge-light-success fw-bolder pt-2">
-                                        {{ $response['get_all_appoinments']['current_month'] }}
+                                        +{{ $response['get_all_appoinments']['current_month'] }}
                                         %
                                     </span></h3>
                             </span>
@@ -443,12 +445,16 @@
                         <div class="card-header border-0 pt-5">
                             <div class="d-flex justify-content-between align-items-start col-12">
 
-                                <span class="d-flex justify-content-between align-items-start flex-column g-0">
-                                    <p style="color:#B5B5C3;" class="fs-4">
-                                        Question Requests <span class="fw-bolder fs-4 mb-0" style="color: #38B89A;">
-                                            {{ $response['questionCount'] }}</span>
-                                    </p>
+                                <span class="fs-6 text-gray-400">
+                                    <h3 class="fw-medium fs-1" style="color: #38B89A">
+                                        {{ $response['questionCount'] }} 
+                                        <span class="badge badge-light-success fw-bolder pt-2">
+                                             +{{ $response['get_all_questions']['current_month1'] }}%
+                                        </span>
+                                    </h3>
+                                    Question Requests
                                 </span>
+
                                 <span class="d-flex align-items-center justify-content-start">
                                     <div class="d-flex justify-content-center align-items-center flex-column">
                                         <div class="d-flex">
@@ -473,7 +479,7 @@
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <!-- <div>
                                             <p class="d-flex justify-content-between gap-8 fw-bolder fs-3 mb-0" style="color: #38B89A;">
                                                 <span class="badge badge-light-success fw-bolder pt-2 me-8">
                                                     {{ $response['count'] }}%
@@ -482,7 +488,7 @@
                                                     {{ $response['count1'] }}%
                                                 </span>
                                             </p>
-                                        </div>
+                                        </div> -->
 
                                     </div>
                                 </span>
@@ -551,8 +557,16 @@
                                 enabled: !1
                             },
                             fill: {
-                                type: "solid",
-                                opacity: 1
+                                fill: {
+                                  type: "gradient", 
+                                    gradient: {
+                                    shadeIntensity: 0,
+                                    opacityFrom: 0.3,
+                                    opacityTo: 0,
+                                    stops: [20, 80]
+                                }
+                            },
+                            colors: ["#38B89A"],
                             },
                             stroke: {
                                 curve: "smooth",
@@ -600,6 +614,9 @@
                                 },
                             },
                             yaxis: {
+                                min: 20,
+                                max: 80,
+                                tickAmount: 3,
                                 labels: {
                                     style: {
                                         colors: n,
@@ -640,7 +657,7 @@
                             },
                             colors: ["#FFFFFF", r],
                             grid: {
-                                borderColor: o,
+                                borderColor: "#DBDFE9",
                                 strokeDashArray: 4,
                                 yaxis: {
                                     lines: {
@@ -831,7 +848,8 @@
                     },
                     yaxis: {
                         min: 0,
-                        tickAmount: 5,
+                        max: 400,
+                        tickAmount: 4,
                         labels: {
                             style: {
                                 colors: a,
@@ -876,7 +894,7 @@
 
                     colors: ['#38B89A', "#FA4A0C"],
                     grid: {
-                        borderColor: o,
+                        borderColor: "#DBDFE9",
                         strokeDashArray: 4,
                         yaxis: {
                             lines: {
