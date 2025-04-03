@@ -306,7 +306,7 @@ class AppointmentsController extends Controller
             $workingDaysData = array_map(fn($day) => [
                 'user_id'      => $user_id,
                 'day_name'     => $day,
-                'is_available' => false,
+                'is_available' => 2,
                 'created_at'   => now(),
                 'updated_at'   => now(),
             ], $daysOfWeek);
