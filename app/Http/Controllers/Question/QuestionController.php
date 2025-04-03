@@ -1040,6 +1040,7 @@ class QuestionController extends Controller
             'user_id'  => $request->user_id,
             'mufti_id' => $mufti_id,
             'question' => $request->question,
+            'answer'   => '',
         ];
 
         $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
