@@ -307,27 +307,19 @@ class AppointmentsController extends Controller
             })
             ->update(['status' => 2]);
 
-            // WorkingDay::where('user_id', $user_id)
-            // ->whereDoesntHave('slots', function ($query) {
-            //     $query->whereIn('status', [1, 2, 3]); 
-            // })
-            // ->update(['is_available' => 2]);
 
         $workingDays = WorkingDay::where('user_id', $user_id)
             ->with(['slots' => function ($query) {
                 $query->whereIn('status', [1, 3]);
             }])
-            ->get();
+            ->get()
+            ->map(function ($day) {
+                if ($day->slots->isEmpty()) {
+                    $day->is_available = 2; 
+                }
+                return $day;
+            });
 
-            // Check if there are any slots for the user
-            $hasSlots = $workingDays->contains(fn($day) => !$day->slots->isEmpty());
-
-            // If there are no slots, set 'is_available' to 2 in the response but don't update DB
-            if (!$hasSlots) {
-                return ResponseHelper::jsonResponseWithData(true, "No slots available", [
-                    'is_available' => 2
-                ]);
-            }
 
         if ($workingDays->isEmpty()) {
             $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -341,12 +333,6 @@ class AppointmentsController extends Controller
             ], $daysOfWeek);
 
             WorkingDay::insert($workingDaysData);
-
-            $workingDays->each(function ($day) {
-                if ($day->is_available === false) {
-                    $day->is_available = 0;  // Availability closed, return 0
-                }
-            });
 
             $workingDays = WorkingDay::where('user_id', $user_id)->with('slots')->get();
         }       
