@@ -321,7 +321,7 @@ class AppointmentsController extends Controller
 
         $workingDays = WorkingDay::where('user_id', $user_id)
             ->with(['slots' => function ($query) {
-                $query->whereIn('status', [1, 3]);
+                $query->whereIn('status', [1]);
             }])
             ->get()
             ->map(function ($day) {
