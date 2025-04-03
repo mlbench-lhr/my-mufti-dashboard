@@ -97,10 +97,22 @@ class AppointmentsController extends Controller
     } else {
         $workingDay->update(['is_available' => false]);
 
-        // Change slot status to "Closed" instead of deleting
+        $bookedSlotIds = DB::table('mufti_appointments')
+            ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')])
+            ->pluck('selected_slot')
+            ->toArray();
+
+        // Update booked slots to status 2 (closed)
         WorkingSlot::where('working_day_id', $workingDay->id)
+            ->whereIn('id', $bookedSlotIds)
             ->where('status', 1)
             ->update(['status' => 2]);
+
+        // Delete unbooked slots
+        WorkingSlot::where('working_day_id', $workingDay->id)
+            ->whereNotIn('id', $bookedSlotIds)
+            ->where('status', 1)
+            ->delete();
     }
 
     return ResponseHelper::jsonResponse(true, 'Slots updated successfully');
