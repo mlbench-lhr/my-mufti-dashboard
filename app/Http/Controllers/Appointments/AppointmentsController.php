@@ -332,7 +332,7 @@ class AppointmentsController extends Controller
             })
             ->sortBy(function ($day) {
                 return array_search($day->day_name, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
-            });
+            })->values();
 
 
         if ($workingDays->isEmpty()) {
