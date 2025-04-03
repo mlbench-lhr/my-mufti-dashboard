@@ -98,36 +98,34 @@ class AppointmentsController extends Controller
     } else {
         $workingDay->update(['is_available' => false]);
 
-        $bookedSlotIds = DB::table('mufti_appointments')
+        $bookedFutureSlotIds = DB::table('mufti_appointments')
             ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')])
             ->pluck('selected_slot')
             ->toArray();
-        
-        // Update booked slots to status 3 if the slot is in the future, or 2 if the slot has passed
-WorkingSlot::where('working_day_id', $workingDay->id)
-->whereIn('id', $bookedSlotIds)
-->where('status', 1)
-->get()
-->each(function ($slot) {
-    // Get the next occurrence of the working day (e.g., next "Monday")
-    $slotDate = Carbon::parse("next " . $slot->workingDay->day_name)->format('Y-m-d');
-    
-    // Create the DateTime object for the slot
-    $slotDateTime = Carbon::parse("$slotDate $slot->start_time");
 
-    if ($slotDateTime->isFuture()) {
-        // If the slot is in the future, set status to 3
-        $slot->update(['status' => 3]);
-    } elseif ($slotDateTime->isPast()) {
-        // If the slot is in the past, set status to 2
-        $slot->update(['status' => 2]);
-    }
-});
-        
-        // Delete unbooked slots
-        WorkingSlot::where('working_day_id', $workingDay->id)
-            ->whereNotIn('id', $bookedSlotIds)
+            $bookedPastSlotIds = DB::table('mufti_appointments')
+            ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') < ?", [Carbon::today()->format('Y-m-d')])
+            ->pluck('selected_slot')
+            ->toArray();     
+
+
+            WorkingSlot::where('working_day_id', $workingDay->id)
+            ->whereIn('id', $bookedFutureSlotIds)
             ->where('status', 1)
+            ->update(['status' => 3]);
+
+
+
+            WorkingSlot::where('working_day_id', $workingDay->id)
+            ->whereIn('id', $bookedPastSlotIds)
+            ->where('status', 1)
+            ->update(['status' => 2]);
+
+
+        $mergedSlotIds = array_merge(array_unique($bookedFutureSlotIds), array_unique($bookedPastSlotIds));
+        
+        WorkingSlot::where('working_day_id', $workingDay->id)
+            ->whereNotIn('id', $mergedSlotIds)->where('status', 1)
             ->delete();
     }
 
