@@ -10,6 +10,7 @@ use App\Http\Controllers\Mufti\MuftiExperience;
 use App\Http\Controllers\Notification\UserNotification;
 use App\Http\Controllers\Profile\EditProfile;
 use App\Http\Controllers\Question\QuestionController;
+use App\Http\Controllers\FAQController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -144,7 +145,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
 
     });
-
+    Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
 });
 
 // **Testing API**
@@ -274,9 +275,10 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
 
     });
-
+    Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
 });
 
+Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
 // Auth Apis
 Route::controller(AuthController::class)->group(function () {
     Route::post('signUp', 'sign_up')->name('signUp');

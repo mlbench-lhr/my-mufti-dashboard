@@ -87,6 +87,28 @@ class FAQController extends Controller
 
     return redirect()->route('AllFAQs')->with('success', 'FAQ deleted successfully.');
 }
+public function getPaginatedFaqs(Request $request)
+{
+    $page = $request->input('page', 1); 
+    $perPage = 10;
+
+    $faqs = FAQ::select('question', 'answer')
+        ->orderBy('created_at', 'desc')
+        ->skip(($page - 1) * $perPage)
+        ->take($perPage)
+        ->get();
+
+    $total = FAQ::count();
+    $totalPages = ceil($total / $perPage);
+
+    return response()->json([
+        'page' => (int) $page,
+        'per_page' => $perPage,
+        'total FAQs' => $total,
+        'total_pages' => $totalPages,
+        'data' => $faqs
+    ]);
+}
 
 
 }
