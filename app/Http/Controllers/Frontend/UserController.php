@@ -169,6 +169,8 @@ class UserController extends Controller
             'user_id' => $userId,
             'title'   => $title,
             'body'    => $body,
+            'event_id'=> "",
+            'question_id'=>"",
         ];
         Notification::create($data);
 
@@ -361,6 +363,8 @@ class UserController extends Controller
             'user_id' => $user->id,
             'title'   => $title,
             'body'    => $body,
+            'event_id'=> "",
+            'question_id'=>"",
         ];
         Notification::create($data);
 
@@ -425,6 +429,8 @@ class UserController extends Controller
             'user_id' => $user->id,
             'title'   => $title,
             'body'    => $body,
+            'event_id'=> "",
+            'question_id'=>"",
         ];
         Notification::create($data);
 

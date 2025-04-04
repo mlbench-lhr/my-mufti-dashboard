@@ -18,7 +18,7 @@ class FcmService
             ->createMessaging();
     }
 
-    public function sendNotification($deviceToken, $title, $body, $messageType, $otherData, $notificationType, $questionId = 0)
+    public function sendNotification($deviceToken, $title, $body, $messageType, $otherData, $notificationType, $questionId = 0, $eventId= 0)
     {
 
         // Create a notification payload
@@ -30,6 +30,7 @@ class FcmService
             'other_data' => $otherData,
             'notification_type' => $notificationType,
             'question_id' => $questionId,
+            'event_id'    => $eventId,
         ];
 
         $message = CloudMessage::withTarget('token', $deviceToken)

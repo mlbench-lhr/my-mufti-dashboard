@@ -497,6 +497,8 @@ class AppointmentsController extends Controller
             'user_id' => $mufti->id,
             'title'   => $title,
             'body'    => $body,
+            'question_id'=>"",
+            'event_id'=>"",
         ];
         Notification::create($data);
 

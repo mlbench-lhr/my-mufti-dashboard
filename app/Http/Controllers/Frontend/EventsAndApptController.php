@@ -197,15 +197,19 @@ class EventsAndApptController extends Controller
             $messageType = "Event Request Update";
             $otherData = "Event Request Update";
             $notificationType = "event_schedule_updated";
+            $questionId      = "";
+            $eventId        = $event->id;
 
             if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
             }
 
             $data = [
                 'user_id' => $user_data->id,
                 'title' => $title,
                 'body' => $body,
+                'event_id'=> $event->id,
+                'question_id'=>"",
             ];
             Notification::create($data);
 
@@ -224,15 +228,19 @@ class EventsAndApptController extends Controller
                 $messageType = "Event Invitation";
                 $otherData = "Event Invitation";
                 $notificationType = "event_invitation";
+                $questionId      = "";
+                $eventId        = $event->id;
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
                 }
 
                 $data = [
                     'user_id' => $user->id,
                     'title' => $title,
                     'body' => $body,
+                    'event_id'=> $event->id,
+                    'question_id'=>"",
                 ];
 
                 Notification::create($data);
@@ -277,15 +285,19 @@ class EventsAndApptController extends Controller
         $messageType = "Event Request Update";
         $otherData = "Event Request Update";
         $notificationType = "event_schedule_updated";
+        $questionId      = "";
+        $eventId        = $event->id;
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
         }
 
         $data = [
             'user_id' => $user->id,
             'title' => $title,
             'body' => $body,
+            'event_id'=> $event->id,
+            'question_id'=>"",
         ];
         Notification::create($data);
 

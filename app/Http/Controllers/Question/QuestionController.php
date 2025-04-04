@@ -845,15 +845,19 @@ class QuestionController extends Controller
         $messageType      = "Question Request Update";
         $otherData        = "Question Request Update";
         $notificationType = "question_request_update";
+        $questionId       = $question->id;
+        $eventId          = "";
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
         }
 
         $notificationData = [
             'user_id' => $user->id,
             'title'   => $title,
             'body'    => $body,
+            'event_id'=> "",
+            'question_id'=>$question->id,
         ];
         Notification::create($notificationData);
 
