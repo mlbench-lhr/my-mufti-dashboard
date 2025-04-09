@@ -355,7 +355,7 @@ class UserController extends Controller
         $body             = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
         $messageType      = "Become {$userType} Request Update";
         $otherData        = "Become {$userType} Request Update";
-        $notificationType = "become_a_{$userType}_request_update";
+        $notificationType = "scholar_lifecoach_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -422,7 +422,7 @@ class UserController extends Controller
         $body             = "Your request to become a {$userType} has been Rejected, Go and check the reason in your Profile.";
         $messageType      = "Become {$userType} Request Update";
         $otherData        = "Become {$userType} Request Update";
-        $notificationType = "become_a_{$userType}_request_update";
+        $notificationType = "scholar_lifecoach_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
