@@ -42,7 +42,7 @@ class UserNotification extends Controller
         $notifications = Notification::forPage($page, $perPage)
             ->orderBy('created_at', 'desc')
             ->where('user_id', $request->user_id)
-            ->get(['id', 'title', 'body as message', 'event_id', 'question_id', 'created_at']);
+            ->get(['id', 'title', 'body as message', 'event_id', 'question_id', 'appointment_id', 'created_at']);
 
         $notifications->transform(function ($notification) {
 
