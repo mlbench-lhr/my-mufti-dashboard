@@ -16,7 +16,6 @@ use App\Services\FcmService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 
 class AppointmentsController extends Controller
 {
@@ -30,243 +29,239 @@ class AppointmentsController extends Controller
     public function add_slots(AddSlots $request)
     {
         $user_id = $request->user_id;
-    $user    = User::where('id', $user_id)->first();
+        $user    = User::where('id', $user_id)->first();
 
-    if (! $user) {
-        return ResponseHelper::jsonResponse(false, 'User Not Found');
-    }
-
-    $day_name   = $request->day_name;
-    $workingDay = WorkingDay::where(['user_id' => $user_id, 'day_name' => $day_name])->first();
-
-    if (! $workingDay) {
-        return ResponseHelper::jsonResponse(false, 'Day Not Found');
-    }
-
-    if ($request->is_available) {
-        $workingDay->update(['is_available' => true]);
-
-        $newSlots = collect($request->slots)->map(function ($slot) {
-            return [
-                'start_time' => date('H:i', strtotime($slot['start_time'])),
-                'end_time'   => date('H:i', strtotime($slot['end_time'])),
-            ];
-        });
-
-        $existingSlots = WorkingSlot::where('working_day_id', $workingDay->id)->get()->mapWithKeys(function ($slot) {
-            return [
-                $slot->id => [
-                    'start_time' => date('H:i', strtotime($slot->start_time)),
-                    'end_time'   => date('H:i', strtotime($slot->end_time)),
-                    'status'     => $slot->status,
-                ],
-            ];
-        });
-
-        $slotsToUpdate = collect($existingSlots)->filter(fn($slot) =>
-            $slot['status'] !== 1 &&
-            $newSlots->contains(fn($newSlot) =>
-                $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
-            )
-        );
-
-        if ($slotsToUpdate->isNotEmpty()) {
-            WorkingSlot::whereIn('id', $slotsToUpdate->keys())->update(['status' => 1]);
+        if (! $user) {
+            return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $slotsToInsert = $newSlots->filter(fn($newSlot) =>
-            ! collect($existingSlots)->contains(fn($slot) =>
-                $slot['start_time'] === $newSlot['start_time'] && $slot['end_time'] === $newSlot['end_time']
-            )
-        )->map(fn($slot) => [
-            'working_day_id' => $workingDay->id,
-            'start_time'     => $slot['start_time'],
-            'end_time'       => $slot['end_time'],
-            'status'         => 1,
-            'created_at'     => now(),
-            'updated_at'     => now(),
-        ])->toArray();
+        $day_name   = $request->day_name;
+        $workingDay = WorkingDay::where(['user_id' => $user_id, 'day_name' => $day_name])->first();
 
-        if (! empty($slotsToInsert)) {
-            WorkingSlot::insert($slotsToInsert);
+        if (! $workingDay) {
+            return ResponseHelper::jsonResponse(false, 'Day Not Found');
         }
 
-        // Restore previously closed slots
-        WorkingSlot::where('working_day_id', $workingDay->id)
-            ->where('status', 2)
-            ->update(['status' => 1]);
-    } else {
-        $workingDay->update(['is_available' => false]);
+        if ($request->is_available) {
+            $workingDay->update(['is_available' => true]);
 
-        // $bookedFutureSlotIds = DB::table('mufti_appointments')
-        //     ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')])
-        //     ->pluck('selected_slot')
-        //     ->toArray();
+            $newSlots = collect($request->slots)->map(function ($slot) {
+                return [
+                    'start_time' => date('H:i', strtotime($slot['start_time'])),
+                    'end_time'   => date('H:i', strtotime($slot['end_time'])),
+                ];
+            });
 
-        //     $bookedPastSlotIds = DB::table('mufti_appointments')
-        //     ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') < ?", [Carbon::today()->format('Y-m-d')])
-        //     ->pluck('selected_slot')
-        //     ->toArray();     
+            $existingSlots = WorkingSlot::where('working_day_id', $workingDay->id)->get()->mapWithKeys(function ($slot) {
+                return [
+                    $slot->id => [
+                        'start_time' => date('H:i', strtotime($slot->start_time)),
+                        'end_time'   => date('H:i', strtotime($slot->end_time)),
+                        'status'     => $slot->status,
+                    ],
+                ];
+            });
 
+            $slotsToUpdate = collect($existingSlots)->filter(fn($slot) =>
+                $slot['status'] !== 1 &&
+                $newSlots->contains(fn($newSlot) =>
+                    $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
+                )
+            );
 
-        //     WorkingSlot::where('working_day_id', $workingDay->id)
-        //     ->whereIn('id', $bookedFutureSlotIds)
-        //     ->where('status', 1)
-        //     ->update(['status' => 3]);
+            if ($slotsToUpdate->isNotEmpty()) {
+                WorkingSlot::whereIn('id', $slotsToUpdate->keys())->update(['status' => 1]);
+            }
 
+            $slotsToInsert = $newSlots->filter(fn($newSlot) =>
+                ! collect($existingSlots)->contains(fn($slot) =>
+                    $slot['start_time'] === $newSlot['start_time'] && $slot['end_time'] === $newSlot['end_time']
+                )
+            )->map(fn($slot) => [
+                'working_day_id' => $workingDay->id,
+                'start_time'     => $slot['start_time'],
+                'end_time'       => $slot['end_time'],
+                'status'         => 1,
+                'created_at'     => now(),
+                'updated_at'     => now(),
+            ])->toArray();
 
+            if (! empty($slotsToInsert)) {
+                WorkingSlot::insert($slotsToInsert);
+            }
 
-        //     WorkingSlot::where('working_day_id', $workingDay->id)
-        //     ->whereIn('id', $bookedPastSlotIds)
-        //     ->where('status', 1)
-        //     ->update(['status' => 2]);
+            // Restore previously closed slots
+            WorkingSlot::where('working_day_id', $workingDay->id)
+                ->where('status', 2)
+                ->update(['status' => 1]);
+        } else {
+            $workingDay->update(['is_available' => false]);
 
+            // $bookedFutureSlotIds = DB::table('mufti_appointments')
+            //     ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')])
+            //     ->pluck('selected_slot')
+            //     ->toArray();
 
-        // $mergedSlotIds = array_merge(array_unique($bookedFutureSlotIds), array_unique($bookedPastSlotIds));
-        
-        // WorkingSlot::where('working_day_id', $workingDay->id)
-        //     ->whereNotIn('id', $mergedSlotIds)->where('status', 1)
-        //     ->delete();
+            //     $bookedPastSlotIds = DB::table('mufti_appointments')
+            //     ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') < ?", [Carbon::today()->format('Y-m-d')])
+            //     ->pluck('selected_slot')
+            //     ->toArray();
+
+            //     WorkingSlot::where('working_day_id', $workingDay->id)
+            //     ->whereIn('id', $bookedFutureSlotIds)
+            //     ->where('status', 1)
+            //     ->update(['status' => 3]);
+
+            //     WorkingSlot::where('working_day_id', $workingDay->id)
+            //     ->whereIn('id', $bookedPastSlotIds)
+            //     ->where('status', 1)
+            //     ->update(['status' => 2]);
+
+            // $mergedSlotIds = array_merge(array_unique($bookedFutureSlotIds), array_unique($bookedPastSlotIds));
+
+            // WorkingSlot::where('working_day_id', $workingDay->id)
+            //     ->whereNotIn('id', $mergedSlotIds)->where('status', 1)
+            //     ->delete();
+        }
+
+        return ResponseHelper::jsonResponse(true, 'Slots updated successfully');
     }
+    // $user_id = $request->user_id;
+    // $user    = User::where('id', $user_id)->first();
 
-    return ResponseHelper::jsonResponse(true, 'Slots updated successfully');
-    }
-        // $user_id = $request->user_id;
-        // $user    = User::where('id', $user_id)->first();
+    // if (! $user) {
+    //     return ResponseHelper::jsonResponse(false, 'User Not Found');
+    // }
 
-        // if (! $user) {
-        //     return ResponseHelper::jsonResponse(false, 'User Not Found');
-        // }
+    // $day_name   = $request->day_name;
+    // $workingDay = WorkingDay::where(['user_id' => $user_id, 'day_name' => $day_name])->first();
 
-        // $day_name   = $request->day_name;
-        // $workingDay = WorkingDay::where(['user_id' => $user_id, 'day_name' => $day_name])->first();
+    // if (! $workingDay) {
+    //     return ResponseHelper::jsonResponse(false, 'Day Not Found');
+    // }
 
-        // if (! $workingDay) {
-        //     return ResponseHelper::jsonResponse(false, 'Day Not Found');
-        // }
+    // if ($request->is_available) {
+    //     $workingDay->update(['is_available' => true]);
 
-        // if ($request->is_available) {
-        //     $workingDay->update(['is_available' => true]);
+    //     $newSlots = collect($request->slots)->map(function ($slot) {
+    //         return [
+    //             'start_time' => date('H:i', strtotime($slot['start_time'])),
+    //             'end_time'   => date('H:i', strtotime($slot['end_time'])),
+    //         ];
+    //     });
 
-        //     $newSlots = collect($request->slots)->map(function ($slot) {
-        //         return [
-        //             'start_time' => date('H:i', strtotime($slot['start_time'])),
-        //             'end_time'   => date('H:i', strtotime($slot['end_time'])),
-        //         ];
-        //     });
+    //     $existingSlots = WorkingSlot::where('working_day_id', $workingDay->id)->get()->map(function ($slot) {
+    //         return [
+    //             'id'         => $slot->id,
+    //             'start_time' => date('H:i', strtotime($slot->start_time)),
+    //             'end_time'   => date('H:i', strtotime($slot->end_time)),
+    //         ];
+    //     });
 
-        //     $existingSlots = WorkingSlot::where('working_day_id', $workingDay->id)->get()->map(function ($slot) {
-        //         return [
-        //             'id'         => $slot->id,
-        //             'start_time' => date('H:i', strtotime($slot->start_time)),
-        //             'end_time'   => date('H:i', strtotime($slot->end_time)),
-        //         ];
-        //     });
+    //     $slotsToDelete = $existingSlots->filter(fn($slot) =>
+    //         ! $newSlots->contains(fn($newSlot) =>
+    //             $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
+    //         )
+    //     );
 
-        //     $slotsToDelete = $existingSlots->filter(fn($slot) =>
-        //         ! $newSlots->contains(fn($newSlot) =>
-        //             $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
-        //         )
-        //     );
+    //     if ($slotsToDelete->isNotEmpty()) {
+    //         WorkingSlot::whereIn('id', $slotsToDelete->pluck('id'))->delete();
+    //     }
 
-        //     if ($slotsToDelete->isNotEmpty()) {
-        //         WorkingSlot::whereIn('id', $slotsToDelete->pluck('id'))->delete();
-        //     }
+    //     $slotsToInsert = $newSlots->filter(fn($newSlot) =>
+    //         ! $existingSlots->contains(fn($slot) =>
+    //             $slot['start_time'] === $newSlot['start_time'] && $slot['end_time'] === $newSlot['end_time']
+    //         )
+    //     )->map(fn($slot) => [
+    //         'working_day_id' => $workingDay->id,
+    //         'start_time'     => $slot['start_time'],
+    //         'end_time'       => $slot['end_time'],
+    //         'created_at'     => now(),
+    //         'updated_at'     => now(),
+    //     ])->toArray();
 
-        //     $slotsToInsert = $newSlots->filter(fn($newSlot) =>
-        //         ! $existingSlots->contains(fn($slot) =>
-        //             $slot['start_time'] === $newSlot['start_time'] && $slot['end_time'] === $newSlot['end_time']
-        //         )
-        //     )->map(fn($slot) => [
-        //         'working_day_id' => $workingDay->id,
-        //         'start_time'     => $slot['start_time'],
-        //         'end_time'       => $slot['end_time'],
-        //         'created_at'     => now(),
-        //         'updated_at'     => now(),
-        //     ])->toArray();
+    //     if (! empty($slotsToInsert)) {
+    //         WorkingSlot::insert($slotsToInsert);
+    //     }
 
-        //     if (! empty($slotsToInsert)) {
-        //         WorkingSlot::insert($slotsToInsert);
-        //     }
+    // }
 
-        // }
+    // if ($request->is_available) {
+    //     $workingDay->update(['is_available' => true]);
 
-        // if ($request->is_available) {
-        //     $workingDay->update(['is_available' => true]);
+    //     $newSlots = collect($request->slots)->map(function ($slot) {
+    //         return [
+    //             'start_time' => date('H:i', strtotime($slot['start_time'])),
+    //             'end_time'   => date('H:i', strtotime($slot['end_time'])),
+    //         ];
+    //     });
 
-        //     $newSlots = collect($request->slots)->map(function ($slot) {
-        //         return [
-        //             'start_time' => date('H:i', strtotime($slot['start_time'])),
-        //             'end_time'   => date('H:i', strtotime($slot['end_time'])),
-        //         ];
-        //     });
+    //     $existingSlots = WorkingSlot::where('working_day_id', $workingDay->id)->get()->mapWithKeys(function ($slot) {
+    //         return [
+    //             $slot->id => [
+    //                 'start_time' => date('H:i', strtotime($slot->start_time)),
+    //                 'end_time'   => date('H:i', strtotime($slot->end_time)),
+    //                 'status'     => $slot->status,
+    //             ],
+    //         ];
+    //     });
 
-        //     $existingSlots = WorkingSlot::where('working_day_id', $workingDay->id)->get()->mapWithKeys(function ($slot) {
-        //         return [
-        //             $slot->id => [
-        //                 'start_time' => date('H:i', strtotime($slot->start_time)),
-        //                 'end_time'   => date('H:i', strtotime($slot->end_time)),
-        //                 'status'     => $slot->status,
-        //             ],
-        //         ];
-        //     });
+    //     $slotsToDelete = collect($existingSlots)->filter(fn($slot) =>
+    //         ! $newSlots->contains(fn($newSlot) =>
+    //             $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
+    //         )
+    //     );
 
-        //     $slotsToDelete = collect($existingSlots)->filter(fn($slot) =>
-        //         ! $newSlots->contains(fn($newSlot) =>
-        //             $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
-        //         )
-        //     );
+    // if ($slotsToDelete->isNotEmpty()) {
+    //     WorkingSlot::whereIn('id', $slotsToDelete->keys())->delete();
+    // }
 
-            // if ($slotsToDelete->isNotEmpty()) {
-            //     WorkingSlot::whereIn('id', $slotsToDelete->keys())->delete();
-            // }
+    //     $slotsToUpdate = collect($existingSlots)->filter(fn($slot) =>
+    //         $slot['status'] !== 1 &&
+    //         $newSlots->contains(fn($newSlot) =>
+    //             $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
+    //         )
+    //     );
 
-        //     $slotsToUpdate = collect($existingSlots)->filter(fn($slot) =>
-        //         $slot['status'] !== 1 &&
-        //         $newSlots->contains(fn($newSlot) =>
-        //             $newSlot['start_time'] === $slot['start_time'] && $newSlot['end_time'] === $slot['end_time']
-        //         )
-        //     );
+    //     if ($slotsToUpdate->isNotEmpty()) {
+    //         WorkingSlot::whereIn('id', $slotsToUpdate->keys())->update(['status' => 1]);
+    //     }
 
-        //     if ($slotsToUpdate->isNotEmpty()) {
-        //         WorkingSlot::whereIn('id', $slotsToUpdate->keys())->update(['status' => 1]);
-        //     }
+    //     $slotsToInsert = $newSlots->filter(fn($newSlot) =>
+    //         ! collect($existingSlots)->contains(fn($slot) =>
+    //             $slot['start_time'] === $newSlot['start_time'] && $slot['end_time'] === $newSlot['end_time']
+    //         )
+    //     )->map(fn($slot) => [
+    //         'working_day_id' => $workingDay->id,
+    //         'start_time'     => $slot['start_time'],
+    //         'end_time'       => $slot['end_time'],
+    //         'status'         => 1,
+    //         'created_at'     => now(),
+    //         'updated_at'     => now(),
+    //     ])->toArray();
 
-        //     $slotsToInsert = $newSlots->filter(fn($newSlot) =>
-        //         ! collect($existingSlots)->contains(fn($slot) =>
-        //             $slot['start_time'] === $newSlot['start_time'] && $slot['end_time'] === $newSlot['end_time']
-        //         )
-        //     )->map(fn($slot) => [
-        //         'working_day_id' => $workingDay->id,
-        //         'start_time'     => $slot['start_time'],
-        //         'end_time'       => $slot['end_time'],
-        //         'status'         => 1,
-        //         'created_at'     => now(),
-        //         'updated_at'     => now(),
-        //     ])->toArray();
+    //     if (! empty($slotsToInsert)) {
+    //         WorkingSlot::insert($slotsToInsert);
+    //     }
 
-        //     if (! empty($slotsToInsert)) {
-        //         WorkingSlot::insert($slotsToInsert);
-        //     }
+    // } else {
+    //     $workingDay->update(['is_available' => false]);
 
-        // } else {
-        //     $workingDay->update(['is_available' => false]);
+    //     WorkingSlot::where('working_day_id', $workingDay->id)
+    //         ->where('status', 1)
+    //         ->whereIn('id', function ($query) {
+    //             $query->select('selected_slot')
+    //                 ->from('mufti_appointments')
+    //                 ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')]);
+    //         })
+    //         ->update(['status' => 3]);
 
-        //     WorkingSlot::where('working_day_id', $workingDay->id)
-        //         ->where('status', 1)
-        //         ->whereIn('id', function ($query) {
-        //             $query->select('selected_slot')
-        //                 ->from('mufti_appointments')
-        //                 ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')]);
-        //         })
-        //         ->update(['status' => 3]);
+    //     WorkingSlot::where('working_day_id', $workingDay->id)
+    //         ->where('status', 1)
+    //         ->update(['status' => 2]);
+    // }
 
-        //     WorkingSlot::where('working_day_id', $workingDay->id)
-        //         ->where('status', 1)
-        //         ->update(['status' => 2]);
-        // }
-
-        // return ResponseHelper::jsonResponse(true, 'Slots updated successfully');
+    // return ResponseHelper::jsonResponse(true, 'Slots updated successfully');
 
     public function remove_slot(Request $request)
     {
@@ -312,7 +307,7 @@ class AppointmentsController extends Controller
 
     public function get_slots(UserId $request)
     {
-        $user_id = $request->user_id;
+        $userId = $request->user_id;
 
         WorkingSlot::where('status', 3)
             ->whereDoesntHave('appointments', function ($query) {
@@ -320,15 +315,14 @@ class AppointmentsController extends Controller
             })
             ->update(['status' => 2]);
 
-
-        $workingDays = WorkingDay::where('user_id', $user_id)
+        $workingDays = WorkingDay::where('user_id', $userId)
             ->with(['slots' => function ($query) {
-                $query->whereIn('status', [1,3]);
+                $query->whereIn('status', [1, 3]);
             }])
             ->get()
             ->map(function ($day) {
                 if ($day->slots->isEmpty()) {
-                    $day->is_available = 2; 
+                    $day->is_available = 2;
                 }
                 return $day;
             })
@@ -336,12 +330,11 @@ class AppointmentsController extends Controller
                 return array_search($day->day_name, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
             })->values();
 
-
         if ($workingDays->isEmpty()) {
             $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
             $workingDaysData = array_map(fn($day) => [
-                'user_id'      => $user_id,
+                'user_id'      => $userId,
                 'day_name'     => $day,
                 'is_available' => 2,
                 'created_at'   => now(),
@@ -350,9 +343,8 @@ class AppointmentsController extends Controller
 
             WorkingDay::insert($workingDaysData);
 
-            $workingDays = WorkingDay::where('user_id', $user_id)->with('slots')->get();
-        }       
-
+            $workingDays = WorkingDay::where('user_id', $userId)->with('slots')->get();
+        }
 
         return ResponseHelper::jsonResponseWithData(true, "Added Successfully", $workingDays);
     }
@@ -388,12 +380,12 @@ class AppointmentsController extends Controller
         $currentTime = Carbon::now()->format('H:i:s');
 
         $availableSlots = WorkingSlot::where([
-           'working_day_id' => $workingDay->id,
-           'status'         => 1,
+            'working_day_id' => $workingDay->id,
+            'status'         => 1,
         ])
-        ->when($date === $currentDate, function ($query) use ($currentTime) {
-          $query->where('start_time', '>=', $currentTime);
-        })->get();
+            ->when($date === $currentDate, function ($query) use ($currentTime) {
+                $query->where('start_time', '>=', $currentTime);
+            })->get();
 
         $bookedSlotIds = MuftiAppointment::where([
             'mufti_id' => $user_id,
@@ -413,7 +405,7 @@ class AppointmentsController extends Controller
     }
 
     public function book_an_appointment(Request $request)
-    {       
+    {
         $validator = Validator::make($request->all(), [
             'user_id'          => 'required',
             'mufti_id'         => 'required',
@@ -488,17 +480,19 @@ class AppointmentsController extends Controller
         $messageType      = "New Appointment Request Received";
         $otherData        = "New Appointment Request Received";
         $notificationType = "request_new_appointment";
+        $appointmentId    = $appointment->id;
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, 0, $appointmentId);
         }
 
         $data = [
-            'user_id' => $mufti->id,
-            'title'   => $title,
-            'body'    => $body,
-            'question_id'=>"",
-            'event_id'=>"",
+            'user_id'        => $mufti->id,
+            'title'          => $title,
+            'body'           => $body,
+            'question_id'    => "",
+            'event_id'       => "",
+            'appointment_id' => $appointmentId ?? "",
         ];
         Notification::create($data);
 

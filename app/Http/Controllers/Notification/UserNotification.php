@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Notification;
 
 use App\Helpers\ResponseHelper;
@@ -33,21 +32,21 @@ class UserNotification extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        $page = $request->input('page', 1);
-        $perPage = 10;
+        $page       = $request->input('page', 1);
+        $perPage    = 10;
         $totalPages = ceil(Notification::where('user_id', $request->user_id)->count() / $perPage);
 
         $notifications = Notification::forPage($page, $perPage)
-        ->orderBy('created_at', 'desc')
-        ->where('user_id', $request->user_id)
-        ->get(['id', 'title', 'body as message','event_id','question_id', 'created_at']);
+            ->orderBy('created_at', 'desc')
+            ->where('user_id', $request->user_id)
+            ->get(['id', 'title', 'body as message', 'event_id', 'question_id', 'created_at']);
 
         $notifications->transform(function ($notification) {
             $title = strtolower($notification->title);
-        
+
             if (str_contains($title, 'new appointment request received')) {
                 $notification->notification_type = 'request_new_appointment';
             } elseif (str_contains($title, 'event request update')) {
@@ -81,15 +80,15 @@ class UserNotification extends Controller
             } else {
                 $notification->notification_type = 'general';
             }
-        
+
             return $notification;
         });
 
         $response = [
-            'status' => true,
-            'message' => 'User All Notifications!',
+            'status'     => true,
+            'message'    => 'User All Notifications!',
             'totalpages' => $totalPages,
-            'data' => $notifications,
+            'data'       => $notifications,
         ];
         return response()->json($response, 200);
     }
@@ -107,7 +106,7 @@ class UserNotification extends Controller
 
         $notification = Notification::where('id', $request->notification_id)->first();
 
-        if (!$notification) {
+        if (! $notification) {
             return ResponseHelper::jsonResponse(false, 'Notification Not Found');
         }
         $notification->delete();
@@ -119,8 +118,8 @@ class UserNotification extends Controller
     {
         $validator = Validator::make($request->all(), [
             'receiver_id' => 'required',
-            'sender_id' => 'required',
-            'message' => 'required',
+            'sender_id'   => 'required',
+            'message'     => 'required',
         ]);
 
         $validationError = ValidationHelper::handleValidationErrors($validator);
@@ -130,27 +129,24 @@ class UserNotification extends Controller
 
         $receiver = User::where('id', $request->receiver_id)->first();
 
-
-        if (!$receiver) {
+        if (! $receiver) {
             return ResponseHelper::jsonResponse(false, 'Receiver Not Found');
         }
 
         $sender = User::where('id', $request->sender_id)->first();
 
-        if (!$sender) {
+        if (! $sender) {
             return ResponseHelper::jsonResponse(false, 'Sender Not Found');
         }
-        $device_id = $receiver->device_id;
-        $notifTitle = $sender->name;
-        $notiBody = $request->message;
-        $message_type = "chat";
-        $notificationType = "chat";
-        $otherData = "";
-        $sender_id = $request->sender_id;
+        $device_id        = $receiver->device_id;
+        $notifTitle       = $sender->name;
+        $notiBody         = $request->message;
+        $message_type     = "chat";
+        $notificationType = "chat_inbox";
+        $otherData        = $request->sender_id;
 
         if ($device_id != "") {
-            
-            $this->fcmService->sendNotification($device_id, $notifTitle, $notiBody, $message_type, $otherData, $notificationType, $sender_id);
+            $this->fcmService->sendNotification($device_id, $notifTitle, $notiBody, $message_type, $otherData, $notificationType);
         }
         return ResponseHelper::jsonResponse(true, 'Notification Send Successfully!');
 
@@ -169,15 +165,15 @@ class UserNotification extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $device_id = $user->device_id;
-        $title = "Test";
-        $body = 'User ' . $user->name . ' has test on your question.';
-        $messageType = "voting question";
-        $otherData = "voting question";
+        $device_id        = $user->device_id;
+        $title            = "Test";
+        $body             = 'User ' . $user->name . ' has test on your question.';
+        $messageType      = "voting question";
+        $otherData        = "voting question";
         $notificationType = "2";
         $this->send_notification($device_id, $title, $body, $messageType, $otherData, $notificationType);
 
@@ -197,16 +193,16 @@ class UserNotification extends Controller
 
         $user = User::where('id', $request->user_id)->first();
 
-        if (!$user) {
+        if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
 
-        $device_id = $user->device_id;
-        $title = "New Test";
-        $body = 'User ' . $user->name . ' has new test on your question.';
-        $messageType = "voting question";
-        $otherData = "voting question";
-        $notificationType = "2";
+        $device_id        = $user->device_id;
+        $title            = "New Test";
+        $body             = 'User ' . $user->name . ' has new test on your question.';
+        $messageType      = "voting question";
+        $otherData        = "voting question";
+        $notificationType = "vote_on_question";
 
         if ($user->device_id != "") {
             $this->fcmService->sendNotification($user->device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -230,24 +226,24 @@ class UserNotification extends Controller
         // notification content
         $notification = [
             'title' => $notifTitle,
-            'body' => $notiBody,
+            'body'  => $notiBody,
         ];
         // optional
         $dataPayLoad = [
-            'to' => '/topics/test',
-            'date' => '2019-01-01',
-            'other_data' => $other_data,
-            'message_Type' => $message_type,
+            'to'                => '/topics/test',
+            'date'              => '2019-01-01',
+            'other_data'        => $other_data,
+            'message_Type'      => $message_type,
             'notification_type' => $notification_type,
-            'question_id' => $question_id,
+            'question_id'       => $question_id,
         ];
 
         // create Api body
         $notifbody = [
             'notification' => $notification,
-            'data' => $dataPayLoad,
+            'data'         => $dataPayLoad,
             'time_to_live' => 86400,
-            'to' => $device_id,
+            'to'           => $device_id,
             // 'registration_ids' => $arr,
         ];
         $ch = curl_init();

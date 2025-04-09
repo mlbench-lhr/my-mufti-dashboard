@@ -28,7 +28,7 @@ class QuestionController extends Controller
     {
         $this->fcmService = $fcmService;
     }
-    private function formatQuestionResponse($question,$user_id)
+    private function formatQuestionResponse($question, $user_id)
     {
         $totalYesVote           = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
         $question->totalYesVote = $totalYesVote;
@@ -81,7 +81,7 @@ class QuestionController extends Controller
         if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-        
+
         $question = Question::create([
             'user_id'           => $request->user_id,
             'question_category' => $request->question_category,
@@ -91,22 +91,23 @@ class QuestionController extends Controller
             'user_info'         => $request->user_info,
             'user_type'         => $user->user_type,
         ]);
-    
+
         $formattedQuestion = $this->formatQuestionResponse($question, $request->user_id)->toArray();
         $formattedQuestion = array_merge([
             'id'      => $formattedQuestion['id'],
-            'user_id' => $formattedQuestion['user_id']
+            'user_id' => $formattedQuestion['user_id'],
         ], $formattedQuestion);
-    
+
         ActivityHelper::store_avtivity(
-            $user->id, 
-            ($user->mufti_status == 2 ? "Mufti " : "") . $user->name . " posted a new question.", 
+            $user->id,
+            ($user->mufti_status == 2 ? "Mufti " : "") . $user->name . " posted a new question.",
             "posted question"
         );
-    
+
         return ResponseHelper::jsonResponse(true, 'Added question successfully!', $formattedQuestion);
     }
-    public function edit_post_question(Request $request){
+    public function edit_post_question(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'question_id'       => 'required',
@@ -116,18 +117,18 @@ class QuestionController extends Controller
             'voting_option'     => 'required',
             'user_info'         => 'required',
         ]);
-    
+
         $validationError = ValidationHelper::handleValidationErrors($validator);
         if ($validationError !== null) {
             return $validationError;
         }
-    
+
         $question = Question::find($request->question_id);
-    
-        if (!$question) {
+
+        if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question not found');
         }
-    
+
         $updated = $question->fill($request->only([
             'question_category',
             'question',
@@ -135,16 +136,16 @@ class QuestionController extends Controller
             'voting_option',
             'user_info',
         ]));
-    
-        if (!$updated->isDirty()) {
+
+        if (! $updated->isDirty()) {
             return ResponseHelper::jsonResponse(false, 'No updates applied');
         }
-    
-        $question->save();
-    
-    $formattedQuestion = $this->formatQuestionResponse($question, $request->user_id);
 
-    return ResponseHelper::jsonResponse(true, 'Updated question successfully!', $formattedQuestion);
+        $question->save();
+
+        $formattedQuestion = $this->formatQuestionResponse($question, $request->user_id);
+
+        return ResponseHelper::jsonResponse(true, 'Updated question successfully!', $formattedQuestion);
     }
 
     public function vote_on_question(Request $request)
@@ -190,10 +191,10 @@ class QuestionController extends Controller
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
-                $notificationType = "public_question_update";
+                $notificationType = "vote_on_public_question";
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
                 }
             }
 
@@ -213,10 +214,10 @@ class QuestionController extends Controller
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
-                $notificationType = "public_question_update";
+                $notificationType = "vote_on_public_question";
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
                 }
             }
 
@@ -276,7 +277,6 @@ class QuestionController extends Controller
             ], 200);
         }
 
-
         $questions->each(function ($question) use ($request) {
             $question->current_user_vote = QuestionVote::where([
                 'question_id' => $question->id,
@@ -295,15 +295,12 @@ class QuestionController extends Controller
             ->pluck('question_id')
             ->toArray();
 
-
-
         $questions->transform(function ($question) use ($userLikedQuestionIds) {
             $question->is_reported = in_array($question->id, $userLikedQuestionIds);
             return $question;
         });
 
         // dd($totalPages);
-
 
         return response()->json([
             'status'     => true,
@@ -554,9 +551,9 @@ class QuestionController extends Controller
             $body             = 'User ' . $user->name . ' has comment on your posted public question.';
             $messageType      = "Public Question Update";
             $otherData        = "Public Question Update";
-            $notificationType = "public_question_update";
+            $notificationType = "comment_on_public_question";
             if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
             }
         }
 
@@ -643,10 +640,10 @@ class QuestionController extends Controller
         $body             = $user->name . ' has reply on your question.';
         $messageType      = "Public Question Update";
         $otherData        = "Public Question Update";
-        $notificationType = "public_question_update";
+        $notificationType = "mufti_reply_on_public_question";
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
         }
 
         return ResponseHelper::jsonResponse(true, 'Reply added successfully!');
@@ -837,27 +834,28 @@ class QuestionController extends Controller
             'answer'   => "",
         ];
 
-        $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
+        $questionId = $question->id;
+
+        $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id, $questionId);
 
         $device_id        = $user->device_id;
         $title            = "Question Request Update";
         $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
         $messageType      = "Question Request Update";
         $otherData        = "Question Request Update";
-        $notificationType = "question_request_update";
-        $questionId       = $question->id;
-        $eventId          = "";
+        $notificationType = "private_question_request_sent";
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
         }
 
         $notificationData = [
-            'user_id' => $user->id,
-            'title'   => $title,
-            'body'    => $body,
-            'event_id'=> "",
-            'question_id'=>$question->id,
+            'user_id'        => $user->id,
+            'title'          => $title,
+            'body'           => $body,
+            'event_id'       => "",
+            'question_id'    => $questionId,
+            'appointment_id' => "",
         ];
         Notification::create($notificationData);
 
@@ -868,18 +866,17 @@ class QuestionController extends Controller
         ActivityHelper::store_avtivity($user_id, $message, $type);
 
         UserAllQuery::create($data1);
-        
+
         $questionWithRelations = UserQuery::with([
             'all_question' => function ($query) {
                 $query->with(['mufti_detail' => function ($query) {
                     $query->select('id', 'name', 'email', 'image', 'phone_number', 'fiqa', 'mufti_status', 'user_type', 'device_id')
-                          ->with('interests:id,user_id,interest'); 
+                        ->with('interests:id,user_id,interest');
                 }]);
-            }
+            },
         ])->where('id', $question->id)->first();
-        
 
-        return ResponseHelper::jsonResponse(true, 'Added question successfully!',$questionWithRelations);
+        return ResponseHelper::jsonResponse(true, 'Added question successfully!', $questionWithRelations);
     }
     // public function post_fiqa_wise_question(Request $request)
     // {
@@ -1047,7 +1044,9 @@ class QuestionController extends Controller
             'answer'   => '',
         ];
 
-        $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id);
+        $questionId = $question->id;
+
+        $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id, $questionId);
 
         UserAllQuery::create($data2);
 
@@ -1056,26 +1055,29 @@ class QuestionController extends Controller
         $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
         $messageType      = "Question Request Update";
         $otherData        = "Question Request Update";
-        $notificationType = "question_request_update";
+        $notificationType = "private_question_request_sent";
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
         }
 
         $notificationData = [
-            'user_id' => $user->id,
-            'title'   => $title,
-            'body'    => $body,
+            'user_id'        => $user->id,
+            'title'          => $title,
+            'body'           => $body,
+            'event_id'       => "",
+            'question_id'    => $questionId,
+            'appointment_id' => "",
         ];
         Notification::create($notificationData);
 
         $questionWithRelations = UserQuery::with([
             'all_question' => function ($query) {
                 $query->with('mufti_detail:id,name,email,image,phone_number,fiqa,mufti_status,user_type,device_id')
-                      ->with('mufti_detail.interests:id,user_id,interest');
-            }
+                    ->with('mufti_detail.interests:id,user_id,interest');
+            },
         ])->where('id', $question->id)->first();
-        return ResponseHelper::jsonResponse(true, 'Added question successfully!',$questionWithRelations);
+        return ResponseHelper::jsonResponse(true, 'Added question successfully!', $questionWithRelations);
     }
 
     public function report_question(Request $request)
@@ -1123,7 +1125,7 @@ class QuestionController extends Controller
         }
     }
 
-    public function send($deviceId, $title, $name, $muftiId)
+    public function send($deviceId, $title, $name, $muftiId, $questionId = 0)
     {
         $device_id        = $deviceId;
         $title            = $title;
@@ -1131,10 +1133,10 @@ class QuestionController extends Controller
         $body             = 'User' . ' ' . $name . ' wants to ask a question for you.';
         $messageType      = $title;
         $otherData        = "Asked Question";
-        $notificationType = "question_asked";
+        $notificationType = "private_question_asked";
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
         }
 
         $data = [
@@ -1160,39 +1162,40 @@ class QuestionController extends Controller
         return response()->json(['message' => 'All private questions for specified users have been deleted.'], 200);
     }
 
-    public function search_private_question(Request $request){
-        
+    public function search_private_question(Request $request)
+    {
+
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'search'  => 'nullable|string',
         ]);
-    
+
         $validationError = ValidationHelper::handleValidationErrors($validator);
         if ($validationError !== null) {
             return $validationError;
         }
-    
+
         $user = User::find($request->user_id);
         if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-    
+
         $page    = $request->input('page', 1);
         $perPage = 10;
-    
+
         $query = UserAllQuery::with([
             'mufti_detail:id,name,email,image,phone_number,fiqa,mufti_status,user_type,device_id',
-            'scholarReply:id,question_id,reply'
+            'scholarReply:id,question_id,reply',
         ])
-        ->select('id', 'mufti_id', 'question', 'answer')
-        ->where('user_id', $request->user_id);
-    
+            ->select('id', 'mufti_id', 'question', 'answer')
+            ->where('user_id', $request->user_id);
+
         if ($request->filled('search')) {
             $query->where('question', 'LIKE', '%' . trim($request->search) . '%');
         }
-    
+
         $questions = $query->paginate($perPage, ['*'], 'page', $page);
-    
+
         if ($questions->isEmpty()) {
             return response()->json([
                 'status'  => false,
@@ -1200,14 +1203,14 @@ class QuestionController extends Controller
                 'data'    => [],
             ], 200);
         }
-    
+
         $data = $questions->map(function ($question) {
             return [
                 'question' => $question->question,
-                'answer'   => $question->answer?? "",
+                'answer'   => $question->answer ?? "",
             ];
         });
-    
+
         return response()->json([
             'status'     => true,
             'message'    => 'User private questions!',
@@ -1216,51 +1219,52 @@ class QuestionController extends Controller
         ], 200);
     }
 
-    public function scholar_answer_private(Request $request){
+    public function scholar_answer_private(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'question_id' => 'required',
             'answer'      => 'required',
         ]);
-    
+
         $validationError = ValidationHelper::handleValidationErrors($validator);
         if ($validationError !== null) {
             return $validationError;
         }
-    
+
         $message = UserAllQuery::find($request->question_id);
-        if (!$message) {
+        if (! $message) {
             return ResponseHelper::jsonResponse(false, 'Private Message Not Found');
         }
 
-        if (!empty($message->answer)) {
+        if (! empty($message->answer)) {
             return ResponseHelper::jsonResponse(false, 'Answer has already been added.');
         }
-    
+
         $mufti = User::find($message->mufti_id);
-        if (!$mufti) {
+        if (! $mufti) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
-    
+
         if ($mufti->id != 9) {
             return ResponseHelper::jsonResponse(false, 'Only Mufti Omer can reply to private questions.');
         }
-    
+
         $message->update(['answer' => $request->answer]);
-    
+
         $userData  = User::find($message->user_id);
         $device_id = $userData->device_id ?? null;
         $title     = "Private Question Update";
         $body      = $mufti->name . ' has replied to your private question.';
-    
+
         if ($device_id) {
             $this->fcmService->sendNotification(
-                $device_id, $title, $body, 
-                "Private Question Update", "Private Question Update", "private_question_update", $request->question_id
+                $device_id, $title, $body,
+                "Private Question Update", "Private Question Update", "scholar_replied_private_question", $request->question_id
             );
         }
-    
+
         return ResponseHelper::jsonResponse(true, 'Answer for Private Question added successfully!');
     }
-        
+
 }

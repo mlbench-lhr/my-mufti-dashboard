@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\Appointments\AppointmentsController;
 use Kreait\Firebase\Exception\Messaging\NotFound;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -18,7 +19,7 @@ class FcmService
             ->createMessaging();
     }
 
-    public function sendNotification($deviceToken, $title, $body, $messageType, $otherData, $notificationType, $questionId = 0, $eventId= 0)
+    public function sendNotification($deviceToken, $title, $body, $messageType, $otherData, $notificationType, $questionId = 0, $eventId= 0, $appointmentId = 0)
     {
 
         // Create a notification payload
@@ -31,6 +32,7 @@ class FcmService
             'notification_type' => $notificationType,
             'question_id' => $questionId,
             'event_id'    => $eventId,
+            'appointment_id' => $appointmentId
         ];
 
         $message = CloudMessage::withTarget('token', $deviceToken)

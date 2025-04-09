@@ -17,14 +17,14 @@ use App\Models\UserAllQuery;
 use App\Models\UserQuery;
 use App\Models\WorkingSlot;
 use App\Services\FcmService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class EditProfile extends Controller
 {
@@ -425,10 +425,10 @@ class EditProfile extends Controller
         $search  = $request->input('search', '');
 
         $query = UserAllQuery::with('user_detail.interests')
-           ->where('mufti_id', $request->mufti_id)
-           ->whereNull('answer')  
-           ->orWhere('answer', '') 
-           ->orderBy('created_at', 'DESC');    
+            ->where('mufti_id', $request->mufti_id)
+            ->whereNull('answer')
+            ->orWhere('answer', '')
+            ->orderBy('created_at', 'DESC');
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -495,12 +495,11 @@ class EditProfile extends Controller
                 $body             = 'Your request for private question to ' . $mufti->name . ' has been accepted.';
                 $messageType      = "Question Request Update";
                 $otherData        = "Question Request Update";
-                $notificationType = "question_request_update";
-                $questionId      = $question->id;
-                $eventId        = "";
+                $notificationType = "private_question_update";
+                $questionId       = $question->id;
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId,$eventId);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
                 }
 
                 $muftiId = $mufti->id;
@@ -510,13 +509,14 @@ class EditProfile extends Controller
                 ActivityHelper::store_avtivity($muftiId, $message, $type);
 
                 $data = [
-                    'user_id' => $user->id,
-                    'title'   => $title,
-                    'body'    => $body,
-                    'event_id'=> "",
-                    'question_id'=>$question->id,
-
+                    'user_id'        => $user->id,
+                    'title'          => $title,
+                    'body'           => $body,
+                    'event_id'       => "",
+                    'question_id'    => $questionId,
+                    'appointment_id' => "",
                 ];
+
                 Notification::create($data);
 
                 UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status]);
@@ -532,12 +532,11 @@ class EditProfile extends Controller
                 $body             = 'Your request for private question to ' . $mufti->name . ' has been rejected. Go and check the reason in your Question Requests.';
                 $messageType      = "Question Request Update";
                 $otherData        = "Question Request Update";
-                $notificationType = "question_request_update";
-                $questionId      = $question->id;
-                $eventId        = "";
+                $notificationType = "private_question_update";
+                $questionId       = $question->id;
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
                 }
 
                 $muftiId = $mufti->id;
@@ -547,11 +546,12 @@ class EditProfile extends Controller
                 ActivityHelper::store_avtivity($muftiId, $message, $type);
 
                 $data = [
-                    'user_id' => $user->id,
-                    'title'   => $title,
-                    'body'    => $body,
-                    'event_id'=> "",
-                    'question_id'=>$question->id,
+                    'user_id'        => $user->id,
+                    'title'          => $title,
+                    'body'           => $body,
+                    'event_id'       => "",
+                    'question_id'    => $questionId,
+                    'appointment_id' => "",
                 ];
                 Notification::create($data);
 
@@ -742,17 +742,19 @@ class EditProfile extends Controller
         $messageType      = "New Appointment Request Received";
         $otherData        = "New Appointment Request Received";
         $notificationType = "request_new_appointment";
+        $appointmentId    = $appointment->id;
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, 0, $appointmentId);
         }
 
         $data = [
-            'user_id' => $mufti->id,
-            'title'   => $title,
-            'body'    => $body,
-            'event_id'=> "",
-            'question_id'=>"",
+            'user_id'        => $mufti->id,
+            'title'          => $title,
+            'body'           => $body,
+            'question_id'    => "",
+            'event_id'       => "",
+            'appointment_id' => $appointmentId ?? "",
         ];
         Notification::create($data);
 
@@ -851,75 +853,76 @@ class EditProfile extends Controller
     {
         $validator = Validator::make($request->all(), [
             'appointment_id' => 'required|exists:mufti_appointments,id',
-            'timezone' => 'required|timezone',
+            'timezone'       => 'required|timezone',
         ]);
-    
+
         $validationError = ValidationHelper::handleValidationErrors($validator);
         if ($validationError !== null) {
             return $validationError;
         }
-    
+
         $appointment = MuftiAppointment::find($request->appointment_id);
-        if (!$appointment) {
+        if (! $appointment) {
             return ResponseHelper::jsonResponse(false, 'Appointment not found', null);
         }
-    
+
         if ($appointment->status == 2) {
             return ResponseHelper::jsonResponse(false, 'Appointment is already completed', null);
         }
-    
+
         $workingSlot = WorkingSlot::find($appointment->selected_slot);
-        if (!$workingSlot) {
+        if (! $workingSlot) {
             return ResponseHelper::jsonResponse(false, 'Invalid time slot', null);
         }
-    
+
         try {
-            $timezone = $request->timezone; 
-    
+            $timezone = $request->timezone;
+
             $appointmentEndDateTime = Carbon::parse($appointment->date, $timezone)
                 ->setTimeFromTimeString($workingSlot->end_time);
-            
+
             $currentTime = Carbon::now($timezone);
-    
+
             if ($currentTime->lessThan($appointmentEndDateTime)) {
                 return ResponseHelper::jsonResponse(false, 'Cannot mark as completed before the appointment end time', null);
             }
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponse(false, 'Invalid timezone or date format', null);
         }
-    
+
         $appointment->status = 2;
         $appointment->save();
-    
+
         return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
     }
 
-    public function answered_questions(Request $request){
+    public function answered_questions(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'mufti_id' => 'required',
         ]);
-    
+
         $validationError = ValidationHelper::handleValidationErrors($validator);
         if ($validationError !== null) {
             return $validationError;
         }
-    
+
         $user = User::find($request->mufti_id);
         if (! $user) {
             return ResponseHelper::jsonResponse(false, 'Mufti Not Found');
         }
-    
+
         $page    = $request->input('page', 1);
         $perPage = 10;
         $search  = $request->input('search', '');
-    
+
         $query = UserAllQuery::with('user_detail.interests')
             ->where('mufti_id', $request->mufti_id)
             ->whereNotNull('answer')
             ->where('answer', '!=', '')
             ->orderBy('created_at', 'DESC');
-    
+
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('user_detail', function ($q) use ($search) {
@@ -928,20 +931,20 @@ class EditProfile extends Controller
                 })->orWhere('question', 'LIKE', '%' . $search . '%');
             });
         }
-    
+
         $totalPages = ceil($query->count() / $perPage);
-    
+
         $answeredQueries = $query->forPage($page, $perPage)->get();
-    
+
         $fiqas = UserQuery::whereIn('id', $answeredQueries->pluck('query_id'))->pluck('fiqa', 'id');
-    
+
         $answeredQueries->each(function ($query) use ($fiqas) {
             $query->fiqa = $fiqas->get($query->query_id, 'General');
             if ($query->reason === null) {
                 unset($query->reason);
             }
         });
-    
+
         return response()->json(
             [
                 'status'     => true,
@@ -953,63 +956,64 @@ class EditProfile extends Controller
         );
     }
 
-    public function get_Hadith_Of_The_Day(){
+    public function get_Hadith_Of_The_Day()
+    {
 
         $apiKey = '$2y$10$ZVlVh55sY3df7vgXZFQOiO6pN97WsMJ09jj0yLYYwGpPfMUjUF2mm';
-        $url = "https://hadithapi.com/api/hadiths?apiKey=" . urlencode($apiKey);
-    
-        $today = Carbon::now('UTC'); 
+        $url    = "https://hadithapi.com/api/hadiths?apiKey=" . urlencode($apiKey);
+
+        $today    = Carbon::now('UTC');
         $cacheKey = 'hadith_of_the_day_' . $today->format('Y-m-d');
-    
+
         if (Cache::has($cacheKey)) {
             return response()->json(Cache::get($cacheKey), 200);
         }
-    
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://hadithapi.com/api/hadiths?apiKey=" . urlencode($apiKey));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    
-        $response = curl_exec($ch);
+
+        $response  = curl_exec($ch);
         $curlError = curl_error($ch);
         curl_close($ch);
-    
+
         if ($curlError) {
             return response()->json([
-                'status' => 500,
-                'message' => 'Failed to fetch Hadith data. cURL error: ' . $curlError
+                'status'  => 500,
+                'message' => 'Failed to fetch Hadith data. cURL error: ' . $curlError,
             ], 500);
         }
-    
+
         $hadithData = json_decode($response, true);
-    
-        if (!$hadithData || empty($hadithData['hadiths']['data'])) {
+
+        if (! $hadithData || empty($hadithData['hadiths']['data'])) {
             return response()->json([
-                'status' => 404,
+                'status'  => 404,
                 'message' => 'No Hadiths found.',
             ], 404);
         }
-    
-        $hadithList = $hadithData['hadiths']['data'];
-        $seed = $today->format('Y-m-d');  
-        $index = crc32($seed) % count($hadithList);
+
+        $hadithList  = $hadithData['hadiths']['data'];
+        $seed        = $today->format('Y-m-d');
+        $index       = crc32($seed) % count($hadithList);
         $dailyHadith = $hadithList[$index];
-    
+
         $formattedResponse = [
-            'status' => 200,
+            'status'  => 200,
             'message' => 'Hadith of the Day found.',
-            'hadith' => [
-                'id' => $dailyHadith['id'],
+            'hadith'  => [
+                'id'            => $dailyHadith['id'],
                 'hadithEnglish' => $dailyHadith['hadithEnglish'],
-                'hadithUrdu' => $dailyHadith['hadithUrdu'],
-                'hadithArabic' => $dailyHadith['hadithArabic'],
-                'bookSlug' => $dailyHadith['bookSlug']
-            ]
+                'hadithUrdu'    => $dailyHadith['hadithUrdu'],
+                'hadithArabic'  => $dailyHadith['hadithArabic'],
+                'bookSlug'      => $dailyHadith['bookSlug'],
+            ],
         ];
-    
+
         Cache::put($cacheKey, $formattedResponse, $today->endOfDay());
-    
+
         return response()->json($formattedResponse, 200);
     }
 

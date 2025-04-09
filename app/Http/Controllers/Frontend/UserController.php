@@ -159,18 +159,19 @@ class UserController extends Controller
         $body             = 'We regret to inform you that your account deletion request has been rejected due to pending tasks that need to be completed on your end.';
         $messageType      = "Deletion Request Update";
         $otherData        = "Deletion Request Update";
-        $notificationType = "deletion_request_update";
+        $notificationType = "account_deletion_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
         $data = [
-            'user_id' => $userId,
-            'title'   => $title,
-            'body'    => $body,
-            'event_id'=> "",
-            'question_id'=>"",
+            'user_id'        => $userId,
+            'title'          => $title,
+            'body'           => $body,
+            'event_id'       => "",
+            'question_id'    => "",
+            'appointment_id' => "",
         ];
         Notification::create($data);
 
@@ -195,7 +196,7 @@ class UserController extends Controller
         $body             = 'Congratulations! Your account deletion request has been approved. Your account will now be deleted.';
         $messageType      = "Deletion Request Update";
         $otherData        = "Deletion Request Update";
-        $notificationType = "deletion_request_update";
+        $notificationType = "account_deletion_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
@@ -354,17 +355,19 @@ class UserController extends Controller
         $body             = "Congrats! Your request for become a {$userType} has been accepted. You are a {$userType} now!!";
         $messageType      = "Become {$userType} Request Update";
         $otherData        = "Become {$userType} Request Update";
-        $notificationType = "become {$userType} request update";
+        $notificationType = "become_a_{$userType}_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
         $data = [
-            'user_id' => $user->id,
-            'title'   => $title,
-            'body'    => $body,
-            'event_id'=> "",
-            'question_id'=>"",
+            'user_id'        => $user->id,
+            'title'          => $title,
+            'body'           => $body,
+            'event_id'       => "",
+            'question_id'    => "",
+            'appointment_id' => "",
+
         ];
         Notification::create($data);
 
@@ -377,11 +380,11 @@ class UserController extends Controller
         $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
         $workingDays = array_map(fn($day) => [
-            'user_id' => $user->id,
-            'day_name'      => $day,
-            'is_available'     => false,
-            'created_at'    => now(),
-            'updated_at'    => now(),
+            'user_id'      => $user->id,
+            'day_name'     => $day,
+            'is_available' => false,
+            'created_at'   => now(),
+            'updated_at'   => now(),
         ], $daysOfWeek);
 
         WorkingDay::insert($workingDays);
@@ -419,18 +422,19 @@ class UserController extends Controller
         $body             = "Your request to become a {$userType} has been Rejected, Go and check the reason in your Profile.";
         $messageType      = "Become {$userType} Request Update";
         $otherData        = "Become {$userType} Request Update";
-        $notificationType = "become {$userType} request update";
+        $notificationType = "become_a_{$userType}_request_update";
 
         if ($device_id != "") {
             $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType);
         }
 
         $data = [
-            'user_id' => $user->id,
-            'title'   => $title,
-            'body'    => $body,
-            'event_id'=> "",
-            'question_id'=>"",
+            'user_id'        => $user->id,
+            'title'          => $title,
+            'body'           => $body,
+            'event_id'       => "",
+            'question_id'    => "",
+            'appointment_id' => "",
         ];
         Notification::create($data);
 
@@ -573,13 +577,14 @@ class UserController extends Controller
         ];
         return view('frontend.UserDetailDegrees', compact('response', 'id'));
     }
-    public function user_detail_experiences(Request $request, $id){
-        $user       = User::with('interests')->where('id', $id)->first();
+    public function user_detail_experiences(Request $request, $id)
+    {
+        $user        = User::with('interests')->where('id', $id)->first();
         $experiences = Experience::where('user_id', $id)->get();
 
         $response = [
-           'user'        => $user,
-           'experiences' => $experiences,
+            'user'        => $user,
+            'experiences' => $experiences,
         ];
         return view('frontend.UserDetailExperiences', compact('response', 'id'));
     }

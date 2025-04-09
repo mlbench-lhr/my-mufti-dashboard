@@ -59,7 +59,7 @@ class EventController extends Controller
             'location'          => $request->location,
             'latitude'          => $request->latitude,
             'longitude'         => $request->longitude,
-            'about' => $request->about ?? '',
+            'about'             => $request->about ?? '',
             'time_zone'         => $request->time_zone ?? 'Asia/Karachi',
             'question_end_time' => $request->question_end_time ?? '15',
         ];
@@ -163,13 +163,15 @@ class EventController extends Controller
             return $validationError;
         }
 
+        $eventId = $request->event_id;
+
         $event = Event::with('scholars', 'hosted_by.interests')->where('id', $request->event_id)->first();
 
         if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
         }
 
-        $allowedFields = ['user_id', 'image', 'event_title', 'event_category', 'date', 'duration','question_end_time', 'location', 'latitude', 'longitude', 'about'];
+        $allowedFields = ['user_id', 'image', 'event_title', 'event_category', 'date', 'duration', 'question_end_time', 'location', 'latitude', 'longitude', 'about'];
         if (isset($request->date)) {
             $parsedDate = Carbon::parse($request->date);
             $eventDate  = Carbon::parse($event->date);
@@ -190,7 +192,7 @@ class EventController extends Controller
                 $oldDateTime = Carbon::parse($event_date)->format('F j, Y, g:i A');
                 $newDateTime = Carbon::parse($change_date)->format('F j, Y, g:i A');
 
-                array_walk($eventScholars, function ($value) use ($oldDateTime, $newDateTime, $userName) {
+                array_walk($eventScholars, function ($value) use ($oldDateTime, $newDateTime, $userName, $eventId) {
                     $user             = User::find($value);
                     $device_id        = $user->device_id;
                     $title            = "Event Request Update";
@@ -198,20 +200,19 @@ class EventController extends Controller
                     $body             = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
                     $messageType      = "Event Request Update";
                     $otherData        = "Event Request Update";
-                    $notificationType = "event_schedule_updated";
-                    $questionId       = "";
-                    $eventId          = $event->id;
+                    $notificationType = "event_schedule_update";
 
                     if ($device_id != "") {
-                        $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, $eventId);
+                        $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, $eventId, 0);
                     }
 
                     $data = [
-                        'user_id' => $user->id,
-                        'title'   => $title,
-                        'body'    => $body,
-                        'event_id'=> $event->id,
-                        'question_id'=>"",
+                        'user_id'        => $user->id,
+                        'title'          => $title,
+                        'body'           => $body,
+                        'event_id'       => $eventId ?? "",
+                        'question_id'    => "",
+                        'appointment_id' => "",
                     ];
 
                     Notification::create($data);
@@ -231,12 +232,12 @@ class EventController extends Controller
         }
 
         $event->update($data);
-        $updatedEvent = Event::with(['scholars', 'hosted_by.interests','event_questions.user_detail', 'event_questions.likes'])->where('id', $event->id)->first();
-        if (!empty($updatedEvent->question_category)) {
+        $updatedEvent = Event::with(['scholars', 'hosted_by.interests', 'event_questions.user_detail', 'event_questions.likes'])->where('id', $event->id)->first();
+        if (! empty($updatedEvent->question_category)) {
             $updatedEvent->question_category = array_combine($updatedEvent->question_category, array_fill(0, count($updatedEvent->question_category), 0));
         }
 
-        return ResponseHelper::jsonResponse(true, 'Updated Event successfully!',$updatedEvent);
+        return ResponseHelper::jsonResponse(true, 'Updated Event successfully!', $updatedEvent);
     }
 
     public function add_event_scholars(Request $request)
@@ -280,15 +281,15 @@ class EventController extends Controller
                 'category' => $scholar['interest'],
             ]);
         });
-        
+
         $name     = $request->name;
         $fiqa     = $request->fiqa;
         $category = $request->category;
         $image    = $request->image;
-        
-        if (!empty($name)) {
-            $img = !empty($image) ? $this->processImage($image, 'event_scholar') : "";
-        
+
+        if (! empty($name)) {
+            $img = ! empty($image) ? $this->processImage($image, 'event_scholar') : "";
+
             $manualScholar = EventScholar::create([
                 'event_id' => $eventId,
                 'user_id'  => 0,
@@ -297,12 +298,12 @@ class EventController extends Controller
                 'fiqa'     => $fiqa ?? "",
                 'category' => $category,
             ]);
-        
+
             $addedScholars->push($manualScholar);
         }
-        
+
         $allScholars = EventScholar::where('event_id', $eventId)->get();
-        return ResponseHelper::jsonResponse(true, 'Added Event Scholars Successfully!',$allScholars->toArray());
+        return ResponseHelper::jsonResponse(true, 'Added Event Scholars Successfully!', $allScholars->toArray());
     }
 
     public function remove_event_scholar(Request $request)

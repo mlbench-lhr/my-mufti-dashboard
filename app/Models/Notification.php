@@ -12,6 +12,10 @@ class Notification extends Model
         'user_id',
         'title',
         'body',
+        'question_id',
+        'event_id',
+        'appointment_id',
+
     ];
     protected $casts = [
         'user_id' => 'integer',

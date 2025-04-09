@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
@@ -30,8 +29,8 @@ class EventsAndApptController extends Controller
     public function get_all_appointments(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = MuftiAppointment::where('user_type', 'scholar')->count();
-        $query = MuftiAppointment::where('user_type', 'scholar')->with('user_detail', 'mufti_detail');
+        $userCount  = MuftiAppointment::where('user_type', 'scholar')->count();
+        $query      = MuftiAppointment::where('user_type', 'scholar')->with('user_detail', 'mufti_detail');
 
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
@@ -60,8 +59,8 @@ class EventsAndApptController extends Controller
     public function get_all_lifeCoach_appointments(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = MuftiAppointment::where('user_type', 'lifecoach')->count();
-        $query = MuftiAppointment::where('user_type', 'lifecoach')->with('user_detail', 'mufti_detail');
+        $userCount  = MuftiAppointment::where('user_type', 'lifecoach')->count();
+        $query      = MuftiAppointment::where('user_type', 'lifecoach')->with('user_detail', 'mufti_detail');
 
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
@@ -97,8 +96,8 @@ class EventsAndApptController extends Controller
     public function get_all_events(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = Event::whereIn('event_status', [0, 1, 2])->count();
-        $query = Event::with('scholars', 'hosted_by', 'event_questions');
+        $userCount  = Event::whereIn('event_status', [0, 1, 2])->count();
+        $query      = Event::with('scholars', 'hosted_by', 'event_questions');
 
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
@@ -122,9 +121,9 @@ class EventsAndApptController extends Controller
 
     public function event_detail(Request $request)
     {
-        $event_id = $request->id;
-        $event = Event::with('hosted_by', 'scholars', 'event_questions')->where('id', $request->id)->first();
-        $event_scholar = EventScholar::where('event_id', $request->id)->limit(2)->get();
+        $event_id          = $request->id;
+        $event             = Event::with('hosted_by', 'scholars', 'event_questions')->where('id', $request->id)->first();
+        $event_scholar     = EventScholar::where('event_id', $request->id)->limit(2)->get();
         $all_event_scholar = EventScholar::where('event_id', $request->id)->get();
         return view('frontend.EventDetail', compact('event', 'event_id', 'event_scholar', 'all_event_scholar'));
     }
@@ -140,7 +139,7 @@ class EventsAndApptController extends Controller
         $searchTerm = $request->input('search');
 
         $userCount = EventQuestion::with('user_detail')->where('event_id', $request->id)->count();
-        $query = EventQuestion::with('user_detail')->where('event_id', $request->id);
+        $query     = EventQuestion::with('user_detail')->where('event_id', $request->id);
 
         $query->orderBy('created_at', 'desc');
 
@@ -155,8 +154,8 @@ class EventsAndApptController extends Controller
     public function get_all_requested_events(Request $request)
     {
         $searchTerm = $request->input('search');
-        $userCount = Event::where('event_status', 2)->count();
-        $query = Event::with('scholars', 'hosted_by', 'event_questions');
+        $userCount  = Event::where('event_status', 2)->count();
+        $query      = Event::with('scholars', 'hosted_by', 'event_questions');
 
         if ($searchTerm) {
             $query->where('event_title', 'LIKE', '%' . $searchTerm . '%');
@@ -176,7 +175,7 @@ class EventsAndApptController extends Controller
     {
         $event = Event::where('id', $request->id)->first();
 
-        $eventDate = Carbon::parse($event->date);
+        $eventDate       = Carbon::parse($event->date);
         $currentDateTime = Carbon::now();
 
         // $timezone = 'Asia/Karachi';
@@ -187,29 +186,29 @@ class EventsAndApptController extends Controller
             $event->event_status = 1;
             $event->save();
             $event_date = Carbon::parse($event->date)->format('M d, Y');
-            $user_id = $event->user_id;
-            $user_data = User::find($user_id);
-            $device_id = $user_data->device_id;
-            $title = "Event Request Update";
+            $user_id    = $event->user_id;
+            $user_data  = User::find($user_id);
+            $device_id  = $user_data->device_id;
+            $title      = "Event Request Update";
 
-            $notiBody = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
-            $body = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
-            $messageType = "Event Request Update";
-            $otherData = "Event Request Update";
-            $notificationType = "event_schedule_updated";
-            $questionId      = "";
-            $eventId        = $event->id;
+            $notiBody         = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
+            $body             = 'Your request for ' . $event->event_title . ' on ' . $event_date . ' has been approved.';
+            $messageType      = "Event Request Update";
+            $otherData        = "Event Request Update";
+            $notificationType = "event_request_update";
+            $eventId          = $event->id;
 
             if ($device_id != "") {
-                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
+                $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, $eventId, 0);
             }
 
             $data = [
-                'user_id' => $user_data->id,
-                'title' => $title,
-                'body' => $body,
-                'event_id'=> $event->id,
-                'question_id'=>"",
+                'user_id'        => $user_data->id,
+                'title'          => $title,
+                'body'           => $body,
+                'event_id'       => $eventId,
+                'question_id'    => "",
+                'appointment_id' => "",
             ];
             Notification::create($data);
 
@@ -220,42 +219,42 @@ class EventsAndApptController extends Controller
                 })
                 ->toArray();
             array_walk($eventScholars, function ($value) use ($event_date, $user_data, $event) {
-                $user = User::find($value);
-                $device_id = $user->device_id;
-                $title = "Event Invitation";
-                $notiBody = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
-                $body = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
-                $messageType = "Event Invitation";
-                $otherData = "Event Invitation";
-                $notificationType = "event_invitation";
-                $questionId      = "";
-                $eventId        = $event->id;
+                $user             = User::find($value);
+                $device_id        = $user->device_id;
+                $title            = "Event Invitation";
+                $notiBody         = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
+                $body             = $user_data->name . " has invited you to participate as a scholar in their event: " . $event->event_title;
+                $messageType      = "Event Invitation";
+                $otherData        = "Event Invitation";
+                $notificationType = "event_invite";
+                $eventId          = $event->id;
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, $eventId, 0);
                 }
 
                 $data = [
-                    'user_id' => $user->id,
-                    'title' => $title,
-                    'body' => $body,
-                    'event_id'=> $event->id,
-                    'question_id'=>"",
+                    'user_id'        => $user->id,
+                    'title'          => $title,
+                    'body'           => $body,
+                    'event_id'       => $eventId,
+                    'question_id'    => "",
+                    'appointment_id' => "",
                 ];
 
                 Notification::create($data);
             });
 
-            $data = array(
-                'status' => 'success',
+            $data = [
+                'status'  => 'success',
                 'message' => 'Event approved successfully.',
-            );
+            ];
         } else {
 
-            $data = array(
+            $data = [
                 'response' => 'error',
-                'message' => 'Event date is passed, you are unable to accept the event.',
-            );
+                'message'  => 'Event date is passed, you are unable to accept the event.',
+            ];
         }
         return response()->json($data);
     }
@@ -270,34 +269,34 @@ class EventsAndApptController extends Controller
         // $event->save();
 
         $data = [
-            'reason' => $request->reason ?? "",
+            'reason'       => $request->reason ?? "",
             'event_status' => 0,
         ];
         Event::where('id', $request->event_id)->update($data);
         $event_date = Carbon::parse($event->date)->format('M d, Y');
-        $user_id = $event->user_id;
-        $user = User::find($user_id);
-        $device_id = $user->device_id;
-        $title = "Event Request Update";
+        $user_id    = $event->user_id;
+        $user       = User::find($user_id);
+        $device_id  = $user->device_id;
+        $title      = "Event Request Update";
 
-        $notiBody = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been rejected.';
-        $body = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been rejected.';
-        $messageType = "Event Request Update";
-        $otherData = "Event Request Update";
-        $notificationType = "event_schedule_updated";
-        $questionId      = "";
-        $eventId        = $event->id;
+        $notiBody         = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been rejected.';
+        $body             = 'Your request for islamic event on ' . ' ' . $event_date . ' ' . 'has been rejected.';
+        $messageType      = "Event Request Update";
+        $otherData        = "Event Request Update";
+        $notificationType = "event_request_update";
+        $eventId          = $event->id;
 
         if ($device_id != "") {
-            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType,$questionId,$eventId);
+            $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, $eventId, 0);
         }
 
         $data = [
-            'user_id' => $user->id,
-            'title' => $title,
-            'body' => $body,
-            'event_id'=> $event->id,
-            'question_id'=>"",
+            'user_id'        => $user->id,
+            'title'          => $title,
+            'body'           => $body,
+            'event_id'       => $eventId,
+            'question_id'    => "",
+            'appointment_id' => "",
         ];
         Notification::create($data);
 
