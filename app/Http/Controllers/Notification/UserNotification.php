@@ -45,40 +45,95 @@ class UserNotification extends Controller
             ->get(['id', 'title', 'body as message', 'event_id', 'question_id', 'created_at']);
 
         $notifications->transform(function ($notification) {
+
+            // $title = strtolower($notification->title);
+
+            // if (str_contains($title, 'New Appointment Request Received')) {
+            //     $notification->notification_type = 'request_new_appointment';
+            // } elseif (str_contains($title, 'Event Request Update')) {
+            //     $notification->notification_type = 'event_request_update';
+            // } elseif (str_contains($title, 'Event Schedule Update')) {
+            //     $notification->notification_type = 'event_schedule_update';
+            // } elseif (str_contains($title, 'Event Invitation')) {
+            //     $notification->notification_type = 'event_invite';
+            // } elseif (str_contains($title, 'Become scholar Request Update')) {
+            //     $notification->notification_type = 'scholar_lifecoach_request_update';
+            // } elseif (str_contains($title, 'Become lifecoach Request Update')) {
+            //     $notification->notification_type = 'scholar_lifecoach_request_update';
+            // } elseif (str_contains($title, 'Question Request Update')) {
+            //     $notification->notification_type = 'private_question_update';
+            // } elseif (str_contains($title, 'Public Question Update')) {
+            //     $notification->notification_type = 'admin_replied_on_public_question';
+            // } elseif (str_contains($title, 'Private Question Update')) {
+            //     $notification->notification_type = 'admin_replied_on_private_question';
+            // } elseif (str_contains($title, 'Vote On Question')) {
+            //     $notification->notification_type = 'vote_on_public_question';
+            // } elseif (str_contains($title, 'Deletion Request Update')) {
+            //     $notification->notification_type = 'account_deletion_request_update';
+            // } elseif (str_contains($title, 'Comment On Question')) {
+            //     $notification->notification_type = 'comment_on_public_question';
+            // } elseif (strtolower($title) === 'question request sent') {
+            //     $notification->notification_type = 'private_question_request_sent';
+            // } elseif (str_contains($title, 'Reply On Question')) {
+            //     $notification->notification_type = 'mufti_reply_on_public_question';
+            // } elseif (str_contains($title, 'Asked Question')) {
+            //     $notification->notification_type = 'private_question_asked';
+            // } elseif (str_contains($title, 'Added Replied On Question')) {
+            //     $notification->notification_type = 'scholar_replied_private_question';
+            // } else {
+            //     $notification->notification_type = 'general';
+            // }
+
             $title = strtolower($notification->title);
 
-            if (str_contains($title, 'New Appointment Request Received')) {
+            if (str_contains($title, 'new appointment request received')) {
                 $notification->notification_type = 'request_new_appointment';
-            } elseif (str_contains($title, 'Event Request Update')) {
+
+            } elseif (str_contains($title, 'event request update')) {
                 $notification->notification_type = 'event_request_update';
-            } elseif (str_contains($title, 'Event Schedule Update')) {
+
+            } elseif (str_contains($title, 'event schedule update')) {
                 $notification->notification_type = 'event_schedule_update';
-            } elseif (str_contains($title, 'Event Invitation')) {
+
+            } elseif (str_contains($title, 'event invitation')) {
                 $notification->notification_type = 'event_invite';
-            } elseif (str_contains($title, 'Become scholar Request Update')) {
+
+            } elseif (str_contains($title, 'become scholar request update')) {
                 $notification->notification_type = 'scholar_lifecoach_request_update';
-            } elseif (str_contains($title, 'Become lifecoach Request Update')) {
+
+            } elseif (str_contains($title, 'become lifecoach request update')) {
                 $notification->notification_type = 'scholar_lifecoach_request_update';
-            } elseif (str_contains($title, 'Question Request Update')) {
+
+            } elseif (str_contains($title, 'question request update')) {
                 $notification->notification_type = 'private_question_update';
-            } elseif (str_contains($title, 'Public Question Update')) {
+
+            } elseif (str_contains($title, 'public question update')) {
                 $notification->notification_type = 'admin_replied_on_public_question';
-            } elseif (str_contains($title, 'Private Question Update')) {
+
+            } elseif (str_contains($title, 'private question update')) {
                 $notification->notification_type = 'admin_replied_on_private_question';
-            } elseif (str_contains($title, 'Vote On Question')) {
+
+            } elseif (str_contains($title, 'vote on question')) {
                 $notification->notification_type = 'vote_on_public_question';
-            } elseif (str_contains($title, 'Deletion Request Update')) {
+
+            } elseif (str_contains($title, 'deletion request update')) {
                 $notification->notification_type = 'account_deletion_request_update';
-            } elseif (str_contains($title, 'Comment On Question')) {
+
+            } elseif (str_contains($title, 'comment on question')) {
                 $notification->notification_type = 'comment_on_public_question';
-            } elseif (strtolower($title) === 'question request sent') {
+
+            } elseif ($title === 'question request sent') {
                 $notification->notification_type = 'private_question_request_sent';
-            } elseif (str_contains($title, 'Reply On Question')) {
+
+            } elseif (str_contains($title, 'reply on question')) {
                 $notification->notification_type = 'mufti_reply_on_public_question';
-            } elseif (str_contains($title, 'Asked Question')) {
+
+            } elseif (str_contains($title, 'asked question')) {
                 $notification->notification_type = 'private_question_asked';
-            } elseif (str_contains($title, 'Added Replied On Question')) {
+
+            } elseif (str_contains($title, 'added replied on question')) {
                 $notification->notification_type = 'scholar_replied_private_question';
+
             } else {
                 $notification->notification_type = 'general';
             }
