@@ -71,7 +71,7 @@ class UserNotification extends Controller
                 $notification->notification_type = 'account_deletion_request_update';
             } elseif (str_contains($title, 'Comment On Question')) {
                 $notification->notification_type = 'comment_on_public_question';
-            } elseif (str_contains($title, 'Question Request Sent')) {
+            } elseif (strtolower($title) === 'question request sent') {
                 $notification->notification_type = 'private_question_request_sent';
             } elseif (str_contains($title, 'Reply On Question')) {
                 $notification->notification_type = 'mufti_reply_on_public_question';
