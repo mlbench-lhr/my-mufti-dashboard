@@ -587,7 +587,7 @@ class QuestionsController extends Controller
             $userData = User::find($userQuery->user_id);
             if ($userData && $userData->device_id) {
                 $device_id        = $userData->device_id;
-                $title            = "Reply Declined";
+                $title            = "Question Request Update";
                 $body             = 'Your private query has been declined with a reason: ' . $request->reason;
                 $messageType      = "Private Question Update";
                 $otherData        = "Private Question Update";

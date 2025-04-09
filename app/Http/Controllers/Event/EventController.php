@@ -195,7 +195,7 @@ class EventController extends Controller
                 array_walk($eventScholars, function ($value) use ($oldDateTime, $newDateTime, $userName, $eventId) {
                     $user             = User::find($value);
                     $device_id        = $user->device_id;
-                    $title            = "Event Request Update";
+                    $title            = "Event Schedule Update";
                     $notiBody         = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
                     $body             = 'User ' . $userName . ' changed the event schedule from ' . $oldDateTime . ' to ' . $newDateTime . '!';
                     $messageType      = "Event Request Update";

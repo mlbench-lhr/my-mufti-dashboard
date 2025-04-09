@@ -187,7 +187,7 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id        = $userData->device_id;
-                $title            = "Public Question Update";
+                $title            = "Vote On Question";
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
@@ -210,7 +210,7 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id        = $userData->device_id;
-                $title            = "Public Question Update";
+                $title            = "Vote On Question";
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
@@ -547,7 +547,7 @@ class QuestionController extends Controller
         if ($question->user_id != $request->user_id) {
             $userData         = User::where('id', $question->user_id)->first();
             $device_id        = $userData->device_id;
-            $title            = "Public Question Update";
+            $title            = "Comment On Question";
             $body             = 'User ' . $user->name . ' has comment on your posted public question.';
             $messageType      = "Public Question Update";
             $otherData        = "Public Question Update";
@@ -636,7 +636,7 @@ class QuestionController extends Controller
 
         $userData         = User::where('id', $question->user_id)->first();
         $device_id        = $userData->device_id;
-        $title            = "Public Question Update";
+        $title            = "Reply On Question";
         $body             = $user->name . ' has reply on your question.';
         $messageType      = "Public Question Update";
         $otherData        = "Public Question Update";
@@ -839,7 +839,7 @@ class QuestionController extends Controller
         $this->send($mufti->device_id, "Asked Question", $user->name, $mufti->id, $questionId);
 
         $device_id        = $user->device_id;
-        $title            = "Question Request Update";
+        $title            = "Question Request Sent";
         $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
         $messageType      = "Question Request Update";
         $otherData        = "Question Request Update";
@@ -1051,7 +1051,7 @@ class QuestionController extends Controller
         UserAllQuery::create($data2);
 
         $device_id        = $user->device_id;
-        $title            = "Question Request Update";
+        $title            = "Question Request Sent";
         $body             = 'Your request for a private question to ' . $mufti->name . ' has been sent.';
         $messageType      = "Question Request Update";
         $otherData        = "Question Request Update";
@@ -1254,7 +1254,7 @@ class QuestionController extends Controller
 
         $userData  = User::find($message->user_id);
         $device_id = $userData->device_id ?? null;
-        $title     = "Private Question Update";
+        $title     = "Added Replied On Question";
         $body      = $mufti->name . ' has replied to your private question.';
 
         if ($device_id) {
