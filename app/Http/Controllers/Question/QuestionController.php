@@ -1143,6 +1143,9 @@ class QuestionController extends Controller
             'user_id' => $muftiId,
             'title'   => $title,
             'body'    => $body,
+            'event_id'       => "",
+            'question_id'    => $questionId,
+            'appointment_id' => "",
         ];
         Notification::create($data);
     }
