@@ -508,6 +508,8 @@ class EditProfile extends Controller
             return $validationError;
         }
         $question = UserAllQuery::find($request->question_id);
+        $questId = $request->question_id;
+
         if (! $question) {
             return ResponseHelper::jsonResponse(false, 'Question Not Found');
         }
@@ -528,10 +530,9 @@ class EditProfile extends Controller
                 $messageType      = "Question Request Update";
                 $otherData        = "Question Request Update";
                 $notificationType = "private_question_update";
-                $questionId       = $question->id;
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questId, 0, 0);
                 }
 
                 $muftiId = $mufti->id;
@@ -545,7 +546,7 @@ class EditProfile extends Controller
                     'title'          => $title,
                     'body'           => $body,
                     'event_id'       => "",
-                    'question_id'    => $questionId,
+                    'question_id'    => $questId,
                     'appointment_id' => "",
                 ];
 
@@ -565,10 +566,9 @@ class EditProfile extends Controller
                 $messageType      = "Question Request Update";
                 $otherData        = "Question Request Update";
                 $notificationType = "private_question_update";
-                $questionId       = $question->id;
 
                 if ($device_id != "") {
-                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
+                    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questId, 0, 0);
                 }
 
                 $muftiId = $mufti->id;
@@ -582,7 +582,7 @@ class EditProfile extends Controller
                     'title'          => $title,
                     'body'           => $body,
                     'event_id'       => "",
-                    'question_id'    => $questionId,
+                    'question_id'    => $questId,
                     'appointment_id' => "",
                 ];
                 Notification::create($data);
