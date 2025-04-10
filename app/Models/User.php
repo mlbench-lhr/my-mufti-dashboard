@@ -166,12 +166,14 @@ class User extends Authenticatable
         $eventIdsToDelete    = $eventsToDelete->pluck('id')->toArray();
         $questionIdsToDelete = $questionsToDelete->pluck('id')->toArray();
 
+        Notification::whereIn('question_id', $questionIdsToDelete)->delete();
         QuestionComment::whereIn('question_id', $questionIdsToDelete)->delete();
         QuestionVote::whereIn('question_id', $questionIdsToDelete)->delete();
         ScholarReply::whereIn('question_id', $questionIdsToDelete)->delete();
         ReportQuestion::whereIn('question_id', $questionIdsToDelete)->delete();
         AdminReply::whereIn('question_id', $questionIdsToDelete)->delete();
 
+        Notification::whereIn('event_id', $eventIdsToDelete)->delete();
         EventScholar::whereIn('event_id', $eventIdsToDelete)->delete();
         EventQuestion::whereIn('event_id', $eventIdsToDelete)->delete();
         $eventQuestions = EventQuestion::whereIn('event_id', $eventIdsToDelete)->pluck('id')->toArray();

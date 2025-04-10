@@ -4,13 +4,13 @@ use App\Http\Controllers\Appointments\AppointmentsController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPassword;
 use App\Http\Controllers\Event\EventController;
+use App\Http\Controllers\FAQController;
 use App\Http\Controllers\Mufti\MuftiController;
 use App\Http\Controllers\Mufti\MuftiDegrees;
 use App\Http\Controllers\Mufti\MuftiExperience;
 use App\Http\Controllers\Notification\UserNotification;
 use App\Http\Controllers\Profile\EditProfile;
 use App\Http\Controllers\Question\QuestionController;
-use App\Http\Controllers\FAQController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // **Live API**
 Route::prefix('live')->middleware(['switch-db'])->group(function () {
-    
+
     Route::controller(AuthController::class)->group(function () {
         Route::post('signUp', 'sign_up')->name('signUp');
         Route::post('login', 'sign_in')->name('login');
@@ -46,12 +46,14 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('/delete', [EditProfile::class, 'delete_account']);
         Route::post('/requestForDeleteAccount', [EditProfile::class, 'request_for_delete_account']);
         Route::post('/userQueries', [EditProfile::class, 'my_queries']);
+        Route::post('/privateQuestionDetail', [EditProfile::class, 'private_question_detail']);
         Route::post('/userAllQueries', [EditProfile::class, 'my_all_queries']);
         Route::post('/askForMe', [EditProfile::class, 'ask_for_me']);
         Route::post('askForMeWithAnswer', [EditProfile::class, 'answered_questions']);
         Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
         Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
         Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
+        Route::post('/appointmentsDetail', [EditProfile::class, 'appointments_detail']);
         Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
         Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
         Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
@@ -176,12 +178,14 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('/delete', [EditProfile::class, 'delete_account']);
         Route::post('/requestForDeleteAccount', [EditProfile::class, 'request_for_delete_account']);
         Route::post('/userQueries', [EditProfile::class, 'my_queries']);
+        Route::post('/privateQuestionDetail', [EditProfile::class, 'private_question_detail']);
         Route::post('/userAllQueries', [EditProfile::class, 'my_all_queries']);
         Route::post('/askForMe', [EditProfile::class, 'ask_for_me']);
         Route::post('askForMeWithAnswer', [EditProfile::class, 'answered_questions']);
         Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
         Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
         Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
+        Route::post('/appointmentsDetail', [EditProfile::class, 'appointments_detail']);
         Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
         Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
         Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
@@ -306,12 +310,14 @@ Route::group([
     Route::post('/delete', [EditProfile::class, 'delete_account']);
     Route::post('/requestForDeleteAccount', [EditProfile::class, 'request_for_delete_account']);
     Route::post('/userQueries', [EditProfile::class, 'my_queries']);
+    Route::post('/privateQuestionDetail', [EditProfile::class, 'private_question_detail']);
     Route::post('/userAllQueries', [EditProfile::class, 'my_all_queries']);
     Route::post('/askForMe', [EditProfile::class, 'ask_for_me']);
     Route::post('askForMeWithAnswer', [EditProfile::class, 'answered_questions']);
     Route::post('/questionAcceptDecline', [EditProfile::class, 'question_accept_decline']);
     Route::post('/bookAnAppointment', [EditProfile::class, 'book_an_appointment']);
     Route::post('/myAppointments', [EditProfile::class, 'my_appointments']);
+    Route::post('/appointmentsDetail', [EditProfile::class, 'appointments_detail']);
     Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
     Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
     Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);

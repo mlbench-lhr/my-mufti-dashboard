@@ -361,6 +361,38 @@ class EditProfile extends Controller
             200
         );
     }
+
+    public function private_question_detail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'question_id' => 'required',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+        $question = UserQuery::with('all_question.mufti_detail.interests')
+            ->where('id', $request->question_id)
+            ->first();
+
+        if (! $question) {
+            return ResponseHelper::jsonResponse(false, 'Question Not Found');
+        }
+
+        $question->all_question->each(function ($q) {
+            $fiqa    = UserQuery::where('id', $q->query_id)->select('fiqa')->first();
+            $q->fiqa = $fiqa ? $fiqa->fiqa : 'General';
+
+            if ($q->reason === null) {
+                unset($q->reason);
+            }
+        });
+
+        return ResponseHelper::jsonResponse(true, 'Question Detail', $question);
+
+    }
+
     // get user profile
     // public function ask_for_me(Request $request)
     // {
@@ -848,6 +880,27 @@ class EditProfile extends Controller
             ],
             200
         );
+    }
+
+    public function appointments_detail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'appointment_id' => 'required',
+        ]);
+
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        $appointment = MuftiAppointment::with('user_detail', 'mufti_detail.interests', 'book_slot')->where(['id' => $request->appointment_id])->first();
+
+        if (! $appointment) {
+            return ResponseHelper::jsonResponse(false, 'Appointment Not Found');
+        }
+
+        return ResponseHelper::jsonResponse(true, 'Appointment Detail', $appointment);
+
     }
     public function mark_as_completed(Request $request)
     {
