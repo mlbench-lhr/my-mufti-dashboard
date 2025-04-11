@@ -91,37 +91,12 @@ class AppointmentsController extends Controller
             }
 
             // Restore previously closed slots
+            
+        } else {
+            $workingDay->update(['is_available' => false]);
             WorkingSlot::where('working_day_id', $workingDay->id)
                 ->where('status', 2)
                 ->update(['status' => 1]);
-        } else {
-            $workingDay->update(['is_available' => false]);
-
-            // $bookedFutureSlotIds = DB::table('mufti_appointments')
-            //     ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') >= ?", [Carbon::today()->format('Y-m-d')])
-            //     ->pluck('selected_slot')
-            //     ->toArray();
-
-            //     $bookedPastSlotIds = DB::table('mufti_appointments')
-            //     ->whereRaw("STR_TO_DATE(date, '%Y-%m-%d') < ?", [Carbon::today()->format('Y-m-d')])
-            //     ->pluck('selected_slot')
-            //     ->toArray();
-
-            //     WorkingSlot::where('working_day_id', $workingDay->id)
-            //     ->whereIn('id', $bookedFutureSlotIds)
-            //     ->where('status', 1)
-            //     ->update(['status' => 3]);
-
-            //     WorkingSlot::where('working_day_id', $workingDay->id)
-            //     ->whereIn('id', $bookedPastSlotIds)
-            //     ->where('status', 1)
-            //     ->update(['status' => 2]);
-
-            // $mergedSlotIds = array_merge(array_unique($bookedFutureSlotIds), array_unique($bookedPastSlotIds));
-
-            // WorkingSlot::where('working_day_id', $workingDay->id)
-            //     ->whereNotIn('id', $mergedSlotIds)->where('status', 1)
-            //     ->delete();
         }
 
         return ResponseHelper::jsonResponse(true, 'Slots updated successfully');
