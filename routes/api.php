@@ -22,17 +22,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('live')->middleware(['switch-db'])->group(function () {
 
     Route::controller(AuthController::class)->group(function () {
-        Route::post('signUp', 'sign_up')->name('signUp');
-        Route::post('login', 'sign_in')->name('login');
-        Route::post('socialLoginSignUp', 'social_login_signup')->name('socialLoginSignUp');
-        Route::post('updateDeviceId', 'update_device_id')->name('updateDeviceId');
-        Route::post('logout', 'logout')->name('logout');
+        Route::post('signUp', 'sign_up')->name('live.signUp');
+        Route::post('login', 'sign_in')->name('live.login');
+        Route::post('socialLoginSignUp', 'social_login_signup')->name('live.socialLoginSignUp');
+        Route::post('updateDeviceId', 'update_device_id')->name('live.updateDeviceId');
+        Route::post('logout', 'logout')->name('live.logout');
     });
 
     Route::controller(ForgotPassword::class)->group(function () {
-        Route::post('generateOTP', 'generate_otp')->name('generateOTP');
-        Route::post('verifyOTP', 'verify_otp')->name('verifyOTP');
-        Route::post('resetPassword', 'reset_password')->name('resetPassword');
+        Route::post('generateOTP', 'generate_otp')->name('live.generateOTP');
+        Route::post('verifyOTP', 'verify_otp')->name('live.verifyOTP');
+        Route::post('resetPassword', 'reset_password')->name('live.resetPassword');
     });
 
     Route::group([
@@ -154,17 +154,17 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
 Route::prefix('testing')->middleware(['switch-db'])->group(function () {
 
     Route::controller(AuthController::class)->group(function () {
-        Route::post('signUp', 'sign_up')->name('signUp');
-        Route::post('login', 'sign_in')->name('login');
-        Route::post('socialLoginSignUp', 'social_login_signup')->name('socialLoginSignUp');
-        Route::post('updateDeviceId', 'update_device_id')->name('updateDeviceId');
-        Route::post('logout', 'logout')->name('logout');
+        Route::post('signUp', 'sign_up')->name('testing.signUp');
+        Route::post('login', 'sign_in')->name('testing.login');
+        Route::post('socialLoginSignUp', 'social_login_signup')->name('testing.socialLoginSignUp');
+        Route::post('updateDeviceId', 'update_device_id')->name('testing.updateDeviceId');
+        Route::post('logout', 'logout')->name('testing.logout');
     });
 
     Route::controller(ForgotPassword::class)->group(function () {
-        Route::post('generateOTP', 'generate_otp')->name('generateOTP');
-        Route::post('verifyOTP', 'verify_otp')->name('verifyOTP');
-        Route::post('resetPassword', 'reset_password')->name('resetPassword');
+        Route::post('generateOTP', 'generate_otp')->name('testing.generateOTP');
+        Route::post('verifyOTP', 'verify_otp')->name('testing.verifyOTP');
+        Route::post('resetPassword', 'reset_password')->name('testing.resetPassword');
     });
 
     Route::group([
