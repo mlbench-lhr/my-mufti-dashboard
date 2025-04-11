@@ -19,15 +19,19 @@ use App\Models\UserQuery;
 use App\Services\FcmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Database;
 
 class QuestionController extends Controller
 {
     protected $fcmService;
+    protected $firebase;
 
-    public function __construct(FcmService $fcmService)
+    public function __construct(FcmService $fcmService, Database $firebase)
     {
         $this->fcmService = $fcmService;
+        $this->firebase   = $firebase;
     }
+
     private function formatQuestionResponse($question, $user_id)
     {
         $totalYesVote           = QuestionVote::where(['question_id' => $question->id, 'vote' => 1])->count();
@@ -1140,9 +1144,9 @@ class QuestionController extends Controller
         }
 
         $data = [
-            'user_id' => $muftiId,
-            'title'   => $title,
-            'body'    => $body,
+            'user_id'        => $muftiId,
+            'title'          => $title,
+            'body'           => $body,
             'event_id'       => "",
             'question_id'    => $questionId,
             'appointment_id' => "",
@@ -1266,6 +1270,54 @@ class QuestionController extends Controller
                 "Private Question Update", "Private Question Update", "scholar_replied_private_question", $request->question_id
             );
         }
+
+        $muftiId = '9';
+        $userId  = (string) $userData->id;
+        $postKey = ($muftiId < $userId) ? $muftiId . '+' . $userId : $userId . '+' . $muftiId;
+
+        // Push to All_Messages
+        $chatData = (object) [
+            'content_message' => $request->answer,
+            'conversation_id' => $postKey,
+            'date'            => now()->format('d-m-Y H:i:s'),
+            'is_read'         => false,
+            'receiver_id'     => $userId,
+            'sender_id'       => $muftiId,
+            'time_zone_id'    => 'Asia/Karachi',
+            'type'            => 'text',
+        ];
+        $this->firebase->getReference("All_Messages/{$postKey}")
+            ->push(json_decode(json_encode($chatData)));
+
+        // Update Inbox for User (user sees Mufti's name)
+        $inboxForUser = (object) [
+            'chat_name'           => "Mufti Omar",
+            'content_message'     => $request->answer,
+            'conversation_enable' => false,
+            'conversation_id'     => $postKey,
+            'date'                => now()->format('d-m-Y H:i:s'),
+            'other_user_id'       => $muftiId,
+            'read_count'          => 1,
+            'time_zone_id'        => 'Asia/Karachi',
+            'type'                => 'text',
+        ];
+        $this->firebase->getReference("Inbox/_{$userId}/{$postKey}")
+            ->set(json_decode(json_encode($inboxForUser)));
+
+        // Update Inbox for Mufti (Mufti sees user's name)
+        $inboxForMufti = (object) [
+            'chat_name'           => $userData->name ?? '',
+            'content_message'     => $request->answer,
+            'conversation_enable' => false,
+            'conversation_id'     => $postKey,
+            'date'                => now()->format('d-m-Y H:i:s'),
+            'other_user_id'       => $userId,
+            'read_count'          => 1,
+            'time_zone_id'        => 'Asia/Karachi',
+            'type'                => 'text',
+        ];
+        $this->firebase->getReference("Inbox/_{$muftiId}/{$postKey}")
+            ->set(json_decode(json_encode($inboxForMufti)));
 
         return ResponseHelper::jsonResponse(true, 'Answer for Private Question added successfully!');
     }
