@@ -98,8 +98,14 @@
                                                 {{ $currentMonth }}
                                             </span>
                                             <span class="text-dark fw-medium" style="font-size:0.7vw;">
-                                                {{ $response['get_questions']['current_month_match'] }}
-                                                % this month
+                                            @php
+                                            $current = $response['get_questions']['current_month_match'];
+                                            $previous = $response['get_questions']['one_month_before_match'] ?? 0;
+                                            $difference = $current - $previous;
+                                            $sign = $difference > 0 ? '+' : ($difference < 0 ? '-' : '');
+                                            @endphp
+
+                                            {{ $sign }}{{ abs($current) }}% this month
                                             </span>
                                             </div>
                                             <!--end::Text-->
@@ -147,8 +153,14 @@
                                                 {{ $currentMonth }}
                                             </span>
                                             <span class="text-dark fw-medium" style="font-size:0.7vw;">
-                                                {{ $response['get_questions']['current_month_match'] }}
-                                                % this month
+                                            @php
+                                            $current = $response['get_scholars']['current_month_match'];
+                                            $previous = $response['get_scholars']['one_month_before_match'] ?? 0;
+                                            $difference = $current - $previous;
+                                            $sign = $difference > 0 ? '+' : ($difference < 0 ? '-' : '');
+                                            @endphp
+
+                                            {{ $sign }}{{ abs($current) }}% this month
                                             </span>
                                             </div>
                                             <!--end::Text-->
@@ -201,8 +213,14 @@
                                                 {{ $currentMonth }}
                                             </span>
                                             <span class="text-dark fw-medium" style="font-size:0.7vw;">
-                                                {{ $response['get_questions']['current_month_match'] }}
-                                                % this month
+                                            @php
+                                            $current = $response['get_all_users']['current_month'];
+                                            $previous = $response['get_all_users']['one_month_before'] ?? 0;
+                                            $difference = $current - $previous;
+                                            $sign = $difference > 0 ? '+' : ($difference < 0 ? '-' : '');
+                                            @endphp
+
+                                            {{ $sign }}{{ abs($current) }}% this month
                                             </span>
                                             </div>
                                             <!--end::Text-->
@@ -250,8 +268,14 @@
                                                 {{ $currentMonth }}
                                             </span>
                                             <span class="text-dark fw-medium" style="font-size:0.7vw;">
-                                                {{ $response['get_questions']['current_month_match'] }}
-                                                % this month
+                                            @php
+                                            $current = $response['get_all_events']['current_month'];
+                                            $previous = $response['get_all_events']['one_month_before'] ?? 0;
+                                            $difference = $current - $previous;
+                                            $sign = $difference > 0 ? '+' : ($difference < 0 ? '-' : '');
+                                            @endphp
+
+                                            {{ $sign }}{{ abs($current) }}% this month
                                             </span>
                                             </div>
                                             <!--end::Text-->
