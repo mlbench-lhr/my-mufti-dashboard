@@ -364,18 +364,15 @@ class EventController extends Controller
         $eventCategories    = $event->event_category;
         $questionCategories = $event->question_category;
 
-        $categoryCounts = collect($eventCategories)->map(function ($value) use ($request) {
-            $count = EventQuestion::where(['event_id' => $request->event_id, 'category' => $value])->count();
-            return (object) [$value => $count];
-        })->values()->all();
+        $event->event_category = collect($eventCategories)->values()->all();
 
-        $questionCounts = collect($questionCategories)->map(function ($value) use ($request) {
-            $count = EventQuestion::where(['event_id' => $request->event_id, 'category' => $value])->count();
-            return (object) [$value => $count];
-        })->values()->all();
-
-        $event->event_category    = $categoryCounts;
-        $event->question_category = $questionCounts;
+        $event->question_category = collect($questionCategories)->mapWithKeys(function ($value) use ($request) {
+        $count = EventQuestion::where([
+            'event_id' => $request->event_id,
+            'category' => $value
+        ])->count();
+        return [$value => $count];
+        });
 
         if (! $event) {
             return ResponseHelper::jsonResponse(false, 'Event Not Found');
