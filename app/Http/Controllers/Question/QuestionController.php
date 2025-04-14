@@ -1286,7 +1286,7 @@ class QuestionController extends Controller
             'time_zone_id'    => 'Asia/Karachi',
             'type'            => 'text',
         ];
-        $this->firebase->getReference("Test_All_Messages/{$postKey}")
+        $this->firebase->getReference("Test_All_Messages/{$postKey}") //change this test when live
             ->push(json_decode(json_encode($chatData)));
 
         // Update Inbox for User (user sees Mufti's name)
