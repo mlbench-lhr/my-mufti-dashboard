@@ -463,7 +463,7 @@ class QuestionsController extends Controller
                 'type'            => 'text',
             ];
 
-            $referencePath1 = 'Test_All_Messages/' . $postKey;  //remove test when live
+            $referencePath1 = 'All_Messages/' . $postKey;
 
             $this->firebase->getReference($referencePath1)
                 ->push(json_decode(json_encode($allMessagesData1)));
@@ -492,11 +492,11 @@ class QuestionsController extends Controller
                 'type'                => 'text',
             ];
 
-            $referencePath2 = 'Test_Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
+            $referencePath2 = 'Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
             $this->firebase->getReference($referencePath2)
                 ->set(json_decode(json_encode($inboxData2)));
 
-            $referencePath3 = 'Test_Inbox/_9/' . $postKey;
+            $referencePath3 = 'Inbox/_9/' . $postKey;
             $this->firebase->getReference($referencePath3)
                 ->set(json_decode(json_encode($inboxData1)));
 
@@ -511,7 +511,7 @@ class QuestionsController extends Controller
                 'type'            => 'text',
             ];
 
-            $referencePath4 = 'Test_All_Messages/' . $postKey;
+            $referencePath4 = 'All_Messages/' . $postKey;
             $this->firebase->getReference($referencePath4)
                 ->push(json_decode(json_encode($allMessagesData2)));
 
@@ -539,11 +539,11 @@ class QuestionsController extends Controller
                 'type'                => 'text',
             ];
 
-            $referencePath5 = 'Test_Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
+            $referencePath5 = 'Inbox/' . '_' . $userQuery->user_id . '/' . $postKey;
             $this->firebase->getReference($referencePath5)
                 ->set(json_decode(json_encode($inboxData4)));
 
-            $referencePath6 = 'Test_Inbox/_9/' . $postKey;
+            $referencePath6 = 'Inbox/_9/' . $postKey;
             $this->firebase->getReference($referencePath6)
                 ->set(json_decode(json_encode($inboxData3)));
 
