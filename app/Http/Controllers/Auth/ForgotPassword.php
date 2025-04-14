@@ -42,6 +42,8 @@ class ForgotPassword extends Controller
             $user = User::where('email', $request->email)->update(['email_code' => $otp_code]);
 
             $main_data = ['message' => $otp_code];
+            dd(Mail::to($request->email)->send(new GenerateOTPMail($main_data)));
+            
             Mail::to($request->email)->send(new GenerateOTPMail($main_data));
             $data = [
                 'status'   => true,
