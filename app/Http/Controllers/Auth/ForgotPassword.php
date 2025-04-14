@@ -42,18 +42,28 @@ class ForgotPassword extends Controller
             $user = User::where('email', $request->email)->update(['email_code' => $otp_code]);
 
             $main_data = ['message' => $otp_code];
-            // dd(Mail::to($request->email)->send(new GenerateOTPMail($main_data)));
-
-            Mail::to($request->email)->send(new GenerateOTPMail($main_data));
-
-            dd("done 1");
-
-            $data = [
+            $response = response()->json([
                 'status'   => true,
-                'message'  => 'OTP sent Successfully',
+                'message'  => 'OTP sent successfully',
                 'OTP Code' => $otp_code,
-            ];
-            return response()->json($data, 200);
+            ], 200);
+            //Mail::to($request->email)->send(new GenerateOTPMail($main_data));
+            // $data = [
+            //     'status'   => true,
+            //     'message'  => 'OTP sent Successfully',
+            //     'OTP Code' => $otp_code,
+            // ], 200);
+           // return response()->json($data
+           register_shutdown_function(function () use ($request, $main_data) {
+            try {
+                Mail::to($request->email)->send(new GenerateOTPMail($main_data));
+            } catch (\Exception $e) {
+                \Log::error('OTP email sending failed: ' . $e->getMessage());
+            }
+        });
+
+        return $response;
+
         } else {
             return ResponseHelper::jsonResponse(false, 'Email not founded in Database');
         }
