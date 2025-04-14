@@ -1286,7 +1286,7 @@ class QuestionController extends Controller
             'time_zone_id'    => 'Asia/Karachi',
             'type'            => 'text',
         ];
-        $this->firebase->getReference("All_Messages/{$postKey}")
+        $this->firebase->getReference("Test_All_Messages/{$postKey}")
             ->push(json_decode(json_encode($chatData)));
 
         // Update Inbox for User (user sees Mufti's name)
@@ -1301,7 +1301,7 @@ class QuestionController extends Controller
             'time_zone_id'        => 'Asia/Karachi',
             'type'                => 'text',
         ];
-        $this->firebase->getReference("Inbox/_{$userId}/{$postKey}")
+        $this->firebase->getReference("Test_Inbox/_{$userId}/{$postKey}")
             ->set(json_decode(json_encode($inboxForUser)));
 
         // Update Inbox for Mufti (Mufti sees user's name)
@@ -1316,7 +1316,7 @@ class QuestionController extends Controller
             'time_zone_id'        => 'Asia/Karachi',
             'type'                => 'text',
         ];
-        $this->firebase->getReference("Inbox/_{$muftiId}/{$postKey}")
+        $this->firebase->getReference("Test_Inbox/_{$muftiId}/{$postKey}")
             ->set(json_decode(json_encode($inboxForMufti)));
 
         return ResponseHelper::jsonResponse(true, 'Answer for Private Question added successfully!');
