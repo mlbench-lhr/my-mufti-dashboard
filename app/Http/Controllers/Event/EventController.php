@@ -1135,4 +1135,35 @@ class EventController extends Controller
         EventQuestionLike::create($data);
         return ResponseHelper::jsonResponse(true, 'Like Successfully');
     }
+
+    public function getEventDetail($event_id)
+{
+    $event = Event::with('scholars', 'hosted_by.interests')
+        ->with('event_questions') // all questions
+        ->where('id', $event_id)
+        ->first();
+
+    if (! $event) {
+        return ResponseHelper::jsonResponse(false, 'Event Not Found');
+    }
+
+    // Format event categories
+    $event->event_category = collect($event->event_category)->values()->all();
+
+    // Add question category counts
+    $event->question_category = collect($event->question_category)->mapWithKeys(function ($value) use ($event_id) {
+        $count = EventQuestion::where([
+            'event_id' => $event_id,
+            'category' => $value
+        ])->count();
+        return [$value => $count];
+    });
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Event detail!',
+        'data'    => $event,
+    ], 200);
+}
+
 }
