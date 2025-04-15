@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\FAQ;
+use Carbon\Carbon;
 use App\Services\FcmService;
 use Illuminate\Support\Facades\Validator;
 
@@ -92,11 +93,19 @@ public function getPaginatedFaqs(Request $request)
     $page = $request->input('page', 1); 
     $perPage = 10;
 
-    $faqs = FAQ::select('question', 'answer')
+    $faqs = FAQ::select('id','question', 'answer','created_at')
         ->orderBy('created_at', 'desc')
         ->skip(($page - 1) * $perPage)
         ->take($perPage)
-        ->get();
+        ->get()
+        ->map(function ($faq) {
+            return [
+                'id' => $faq->id,
+                'question' => $faq->question,
+                'answer' => $faq->answer,
+                'date' => Carbon::parse($faq->created_at)->format('M d, Y'),
+            ];
+        });
 
     $total = FAQ::count();
     $totalPages = ceil($total / $perPage);
