@@ -1138,8 +1138,8 @@ class EventController extends Controller
 
     public function getEventDetail(Request $request, $event_id)
 {
-    $page  = $request->get('page', 1);   // only page from URL
-    $limit = 10; // fixed number of items per page
+    $page  = $request->get('page', 1);   
+    $limit = 10; 
 
     $event = Event::with('scholars', 'hosted_by.interests')
         ->where('id', $event_id)
@@ -1149,10 +1149,8 @@ class EventController extends Controller
         return ResponseHelper::jsonResponse(false, 'Event Not Found');
     }
 
-    // Format event categories
     $event->event_category = collect($event->event_category)->values()->all();
 
-    // Add question category counts
     $event->question_category = collect($event->question_category)->mapWithKeys(function ($value) use ($event_id) {
         $count = EventQuestion::where([
             'event_id' => $event_id,
@@ -1161,22 +1159,28 @@ class EventController extends Controller
         return [$value => $count];
     });
 
-    // Get paginated event questions
-    $questionsQuery = EventQuestion::where('event_id', $event_id);
-    $paginatedQuestions = $questionsQuery->paginate($limit, ['*'], 'page', $page);
+    $questionsQuery = EventQuestion::where('event_id', $event_id)
+                               ->orderBy('created_at', 'desc')
+                               ->paginate($limit, ['*'], 'page', $page);
 
-    // Replace event_questions with paginated data
-    $event->event_questions = $paginatedQuestions->items();
+    $eventArray = collect($event->toArray());
 
-    // Response
+    $ordered = collect();
+    foreach ($eventArray as $key => $value) {
+        $ordered[$key] = $value;
+
+        if ($key === 'hosted_by') {
+            $ordered['event_questions'] = $questionsQuery->items();
+        }
+    }
+
     return response()->json([
         'status'      => true,
         'message'     => 'Event detail!',
         'per_page'    => $limit,
-        'total_pages' => $paginatedQuestions->lastPage(),
-        'data'        => $event,
+        'total_pages' => $questionsQuery->lastPage(),
+        'data'        => $ordered,
     ], 200);
 }
-
 
 }
