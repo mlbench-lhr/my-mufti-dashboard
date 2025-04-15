@@ -1136,10 +1136,12 @@ class EventController extends Controller
         return ResponseHelper::jsonResponse(true, 'Like Successfully');
     }
 
-    public function getEventDetail($event_id)
+    public function getEventDetail(Request $request, $event_id)
 {
+    $page  = $request->get('page', 1);   // only page from URL
+    $limit = 10; // fixed number of items per page
+
     $event = Event::with('scholars', 'hosted_by.interests')
-        ->with('event_questions') // all questions
         ->where('id', $event_id)
         ->first();
 
@@ -1159,11 +1161,22 @@ class EventController extends Controller
         return [$value => $count];
     });
 
+    // Get paginated event questions
+    $questionsQuery = EventQuestion::where('event_id', $event_id);
+    $paginatedQuestions = $questionsQuery->paginate($limit, ['*'], 'page', $page);
+
+    // Replace event_questions with paginated data
+    $event->event_questions = $paginatedQuestions->items();
+
+    // Response
     return response()->json([
-        'status'  => true,
-        'message' => 'Event detail!',
-        'data'    => $event,
+        'status'      => true,
+        'message'     => 'Event detail!',
+        'per_page'    => $limit,
+        'total_pages' => $paginatedQuestions->lastPage(),
+        'data'        => $event,
     ], 200);
 }
+
 
 }
