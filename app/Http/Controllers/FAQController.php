@@ -88,36 +88,50 @@ class FAQController extends Controller
 
     return redirect()->route('AllFAQs')->with('success', 'FAQ deleted successfully.');
 }
-public function getPaginatedFaqs(Request $request)
+
+public function getEventDetail(Request $request, $event_id)
 {
-    $page = $request->input('page', 1); 
-    $perPage = 10;
+    $page  = $request->get('page', 1);   // only page from URL
+    $limit = 10; // fixed number of items per page
 
-    $faqs = FAQ::select('id','question', 'answer','created_at')
-        ->orderBy('created_at', 'desc')
-        ->skip(($page - 1) * $perPage)
-        ->take($perPage)
-        ->get()
-        ->map(function ($faq) {
-            return [
-                'id' => $faq->id,
-                'question' => $faq->question,
-                'answer' => $faq->answer,
-                'date' => Carbon::parse($faq->created_at)->format('M d, Y'),
-            ];
-        });
+    $event = Event::with('scholars', 'hosted_by.interests')
+        ->where('id', $event_id)
+        ->first();
 
-    $total = FAQ::count();
-    $totalPages = ceil($total / $perPage);
+    if (! $event) {
+        return ResponseHelper::jsonResponse(false, 'Event Not Found');
+    }
 
+    // Format event categories
+    $event->event_category = collect($event->event_category)->values()->all();
+
+    // Add question category counts
+    $event->question_category = collect($event->question_category)->mapWithKeys(function ($value) use ($event_id) {
+        $count = EventQuestion::where([
+            'event_id' => $event_id,
+            'category' => $value
+        ])->count();
+        return [$value => $count];
+    });
+
+    // Get paginated event questions
+    $questionsQuery = EventQuestion::where('event_id', $event_id);
+    $paginatedQuestions = $questionsQuery->paginate($limit, ['*'], 'page', $page);
+
+    // Replace event_questions with paginated data
+    $event->event_questions = $paginatedQuestions->items();
+
+    // Response
     return response()->json([
-        'page' => (int) $page,
-        'per_page' => $perPage,
-        'total FAQs' => $total,
-        'total_pages' => $totalPages,
-        'data' => $faqs
-    ]);
+        'status'      => true,
+        'message'     => 'Event detail!',
+        'per_page'    => $limit,
+        'total_pages' => $paginatedQuestions->lastPage(),
+        'page'        => $paginatedQuestions->currentPage(),
+        'data'        => $event,
+    ], 200);
 }
+
 
 
 }
