@@ -577,7 +577,7 @@ class AuthController extends Controller
             // 2. Create an ephemeral key with correct Stripe version
             $ephemeralKey = $stripe->ephemeralKeys->create(
                 ['customer' => $customer->id],
-                ['stripe_version' => '2021-10-01']
+                ['stripe_version' => '2020-08-27']
             );
     
             // 3. Create a payment intent
