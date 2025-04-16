@@ -532,33 +532,77 @@ class AuthController extends Controller
         return ResponseHelper::jsonResponse(true, 'Logout Profile Successfully!');
     }
     // for stripe payment
+    // public function payment_record_test(Request $request)
+    // {
+    //     try {
+
+    //         $amount = $request->amount;
+
+    //         $stripe = new StripeClient(
+    //             'sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa'
+    //         );
+
+    //         $response = $stripe->paymentIntents->create([
+    //             'amount'               => $amount * 100,
+    //             'currency'             => 'usd',
+    //             'payment_method_types' => ['card'],
+    //         ]);
+
+    //         $return = ["success" => true, "message" => "Stripe Checked", "data" => $response];
+    //         return response()->json($return);
+    //     } catch (InvalidRequestException $e) {
+
+    //         $errorResponse = [
+    //             'success' => false,
+    //             'message' => $e->getMessage(),
+    //             'data'    => (object) [],
+    //         ];
+
+    //         return response()->json($errorResponse, 400);
+    //     }
+    // }
+
     public function payment_record_test(Request $request)
     {
         try {
-
             $amount = $request->amount;
 
-            $stripe = new StripeClient(
-                'sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa'
-            );
+            $stripe = new StripeClient('sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa'); 
 
-            $response = $stripe->paymentIntents->create([
-                'amount'               => $amount * 100,
-                'currency'             => 'usd',
-                'payment_method_types' => ['card'],
+            // 1. Create or retrieve a Stripe customer
+            $customer = $stripe->customers->create([
+                'description' => 'Test Customer from Laravel',
             ]);
 
-            $return = ["success" => true, "message" => "Stripe Checked", "data" => $response];
-            return response()->json($return);
-        } catch (InvalidRequestException $e) {
+            // 2. Create an ephemeral key for the customer (Required for mobile clients)
+            $ephemeralKey = $stripe->ephemeralKeys->create(
+                ['customer' => $customer->id],
+                ['stripe_version' => '2022-11-15']
+            );
 
-            $errorResponse = [
+            $paymentIntent = $stripe->paymentIntents->create([
+                'amount'                    => $amount * 100,
+                'currency'                  => 'usd',
+                'customer'                  => $customer->id,
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ],
+            ]);
+
+            // 4. Return the required data
+            return response()->json([
+                'paymentIntent'  => $paymentIntent->client_secret,
+                'ephemeralKey'   => $ephemeralKey->secret,
+                'customer'       => $customer->id,
+                'publishableKey' => 'pk_test_...',
+            ]);
+        } catch (InvalidRequestException $e) {
+            return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
                 'data'    => (object) [],
-            ];
-
-            return response()->json($errorResponse, 400);
+            ], 400);
         }
     }
+
 }
