@@ -532,64 +532,63 @@ class AuthController extends Controller
         return ResponseHelper::jsonResponse(true, 'Logout Profile Successfully!');
     }
     // for stripe payment
-    // public function payment_record_test(Request $request)
-    // {
-    //     try {
-
-    //         $amount = $request->amount;
-
-    //         $stripe = new StripeClient(
-    //             'sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa'
-    //         );
-
-    //         $response = $stripe->paymentIntents->create([
-    //             'amount'               => $amount * 100,
-    //             'currency'             => 'usd',
-    //             'payment_method_types' => ['card'],
-    //         ]);
-
-    //         $return = ["success" => true, "message" => "Stripe Checked", "data" => $response];
-    //         return response()->json($return);
-    //     } catch (InvalidRequestException $e) {
-
-    //         $errorResponse = [
-    //             'success' => false,
-    //             'message' => $e->getMessage(),
-    //             'data'    => (object) [],
-    //         ];
-
-    //         return response()->json($errorResponse, 400);
-    //     }
-    // }
-
     public function payment_record_test(Request $request)
     {
         try {
+
             $amount = $request->amount;
 
-            $stripe = new StripeClient('sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa'); 
+            $stripe = new StripeClient(
+                'sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa'
+            );
 
-            // 1. Create or retrieve a Stripe customer
+            $response = $stripe->paymentIntents->create([
+                'amount'               => $amount * 100,
+                'currency'             => 'usd',
+                'payment_method_types' => ['card'],
+            ]);
+
+            $return = ["success" => true, "message" => "Stripe Checked", "data" => $response];
+            return response()->json($return);
+        } catch (InvalidRequestException $e) {
+
+            $errorResponse = [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data'    => (object) [],
+            ];
+
+            return response()->json($errorResponse, 400);
+        }
+    }
+
+    public function new_payment_record_test(Request $request)
+    {
+        try {
+            $amount = $request->amount;
+    
+            $stripe = new StripeClient('sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa');
+    
+            // 1. Create a new customer (or retrieve existing if needed)
             $customer = $stripe->customers->create([
                 'description' => 'Test Customer from Laravel',
             ]);
-
-            // 2. Create an ephemeral key for the customer (Required for mobile clients)
+    
+            // 2. Create an ephemeral key with correct Stripe version
             $ephemeralKey = $stripe->ephemeralKeys->create(
                 ['customer' => $customer->id],
-                ['stripe_version' => '2022-11-15']
+                ['stripe_version' => '2021-10-01']
             );
-
+    
+            // 3. Create a payment intent
             $paymentIntent = $stripe->paymentIntents->create([
                 'amount'                    => $amount * 100,
                 'currency'                  => 'usd',
                 'customer'                  => $customer->id,
-                'automatic_payment_methods' => [
-                    'enabled' => true,
-                ],
+                'automatic_payment_methods' => ['enabled' => true],
             ]);
-
-            // 4. Return the required data
+    
+            // 4. Send response to client
             return response()->json([
                 'paymentIntent'  => $paymentIntent->client_secret,
                 'ephemeralKey'   => $ephemeralKey->secret,
