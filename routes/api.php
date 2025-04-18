@@ -57,6 +57,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
         Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
         Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
+        Route::post('/newPaymentRecordtest', [AuthController::class, 'new_payment_record_test']);
         Route::get('/hadith-of-the-day', [EditProfile::class, 'get_Hadith_Of_The_Day']);
     });
 
@@ -190,6 +191,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
         Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
         Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
+        Route::post('/newPaymentRecordtest', [AuthController::class, 'new_payment_record_test']);
         Route::get('/hadith-of-the-day', [EditProfile::class, 'get_Hadith_Of_The_Day']);
     });
 
@@ -323,6 +325,7 @@ Route::group([
     Route::post('/MarkAsCompleted', [EditProfile::class, 'mark_as_completed']);
     Route::post('/userSaveEvents', [EventController::class, 'user_save_events']);
     Route::post('/paymentRecordtest', [AuthController::class, 'payment_record_test']);
+    Route::post('/newPaymentRecordtest', [AuthController::class, 'new_payment_record_test']);
     Route::get('/hadith-of-the-day', [EditProfile::class, 'get_Hadith_Of_The_Day']);
 });
 

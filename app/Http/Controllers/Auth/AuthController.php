@@ -561,4 +561,47 @@ class AuthController extends Controller
             return response()->json($errorResponse, 400);
         }
     }
+
+    public function new_payment_record_test(Request $request)
+    {
+        try {
+            $amount = $request->amount;
+    
+            $stripe = new StripeClient('sk_test_51OllT9JvQSLyY5NBWQanTOK6Lew2h8WBs9hrMtVZSEbK5MUGMQ4cwmxdeGxWrDm0hoBwN5sBtsy990Chuux6MrAX00RCwmgmJa');
+    
+            // 1. Create a new customer (or retrieve existing if needed)
+            $customer = $stripe->customers->create([
+                'description' => 'Test Customer from Laravel',
+            ]);
+    
+            // 2. Create an ephemeral key with correct Stripe version
+            $ephemeralKey = $stripe->ephemeralKeys->create(
+                ['customer' => $customer->id],
+                ['stripe_version' => '2020-08-27']
+            );
+    
+            // 3. Create a payment intent
+            $paymentIntent = $stripe->paymentIntents->create([
+                'amount'                    => $amount * 100,
+                'currency'                  => 'usd',
+                'customer'                  => $customer->id,
+                'automatic_payment_methods' => ['enabled' => true],
+            ]);
+    
+            // 4. Send response to client
+            return response()->json([
+                'paymentIntent'  => $paymentIntent->client_secret,
+                'ephemeralKey'   => $ephemeralKey->secret,
+                'customer'       => $customer->id,
+                'publishableKey' => 'pk_test_...',
+            ]);
+        } catch (InvalidRequestException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data'    => (object) [],
+            ], 400);
+        }
+    }
+
 }

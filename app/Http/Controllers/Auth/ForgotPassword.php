@@ -63,7 +63,7 @@ class ForgotPassword extends Controller
         });
 
         return $response;
-            
+
         } else {
             return ResponseHelper::jsonResponse(false, 'Email not founded in Database');
         }
