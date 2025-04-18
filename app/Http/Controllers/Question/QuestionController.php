@@ -191,7 +191,7 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id        = $userData->device_id;
-                $title            = "Vote On Question";
+                $title            = "Public Question Update";
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
@@ -223,7 +223,7 @@ class QuestionController extends Controller
             $userData = User::where('id', $question->user_id)->first();
             if ($question->user_id != $request->user_id) {
                 $device_id        = $userData->device_id;
-                $title            = "Vote On Question";
+                $title            = "Public Question Update";
                 $body             = 'User ' . $user->name . ' has vote on your posted public question.';
                 $messageType      = "Public Question Update";
                 $otherData        = "Public Question Update";
@@ -569,7 +569,7 @@ class QuestionController extends Controller
         if ($question->user_id != $request->user_id) {
             $userData         = User::where('id', $question->user_id)->first();
             $device_id        = $userData->device_id;
-            $title            = "Comment On Question";
+            $title            = "Public Question Update";
             $body             = 'User ' . $user->name . ' has comment on your posted public question.';
             $messageType      = "Public Question Update";
             $otherData        = "Public Question Update";
