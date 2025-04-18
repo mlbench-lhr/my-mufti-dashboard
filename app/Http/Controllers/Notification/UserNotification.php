@@ -137,7 +137,7 @@ class UserNotification extends Controller
             } elseif (str_contains($title, 'added replied on question')) {
                 $notification->notification_type = 'scholar_replied_private_question';
 
-            } elseif (str_contains($title, 'Appointment Completed')) {
+            } elseif (str_contains($title, 'appointment completed')) {
                 $notification->notification_type = 'appointment_complete';
             } else {
                 $notification->notification_type = 'general';
