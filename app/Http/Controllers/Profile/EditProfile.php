@@ -794,7 +794,7 @@ class EditProfile extends Controller
     $userDeviceId = $user->device_id;
     $userTitle = "Appointment Request Update";
     $notiBody  = "You have successfully sent an appointment request to {$mufti->name} for {$request->date} at {$request->duration}.";
-    $userBody = "You have successfully sent an appointment request to {$muftiName} for {$request->date} at {$request->duration}.";
+    $userBody = "You have successfully sent an appointment request to {$mufti->name} for {$request->date} at {$request->duration}.";
     $userMessageType = "Appointment Request Update";
     $userOtherData = "Appointment Request Update";
     $userNotificationType = "appointment_request_sent";
@@ -973,7 +973,7 @@ class EditProfile extends Controller
 $coach = User::find($appointment->mufti_id);
 $user = User::find($appointment->user_id);
 
-if ($user && $user->device_id != "" && $coach) {
+if ($user &&  $coach) {
     $device_id = $user->device_id;
     $title = "Appointment Completed";
     $coachType = $appointment->user_type === 'lifecoach' ? 'Life Coach' : 'Mufti';
@@ -985,17 +985,20 @@ if ($user && $user->device_id != "" && $coach) {
     $notificationType = "appointment_complete";
     $appointmentId    = $appointment->id;
 
+    if ($device_id != "") {
     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, 0, $appointmentId);
+    }
+    $notificationData = [
+        'user_id'        => $user->id,
+        'title'          => $title,
+        'body'           => $body,
+        'event_id'       => "",
+        'question_id'    => "",
+        'appointment_id' => $appointmentId ?? "",
+    ];
+    Notification::create($notificationData);
 }
-$notificationData = [
-    'user_id'        => $user->id,
-    'title'          => $title,
-    'body'           => $body,
-    'event_id'       => "",
-    'question_id'    => "",
-    'appointment_id' => $appointmentId ?? "",
-];
-Notification::create($notificationData);
+
 
 
         return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
