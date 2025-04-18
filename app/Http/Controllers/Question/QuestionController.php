@@ -578,7 +578,7 @@ class QuestionController extends Controller
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
             }
             $notificationData = [
-                'user_id'        => $user->id,
+                'user_id'        => $userData->id,
                 'title'          => $title,
                 'body'           => $body,
                 'event_id'       => "",
