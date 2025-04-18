@@ -116,13 +116,13 @@ class UserNotification extends Controller
             } elseif (str_contains($title, 'private question update')) {
                 $notification->notification_type = 'admin_replied_on_private_question';
 
-            } elseif (str_contains($title, 'public question update')) {
+            } elseif (str_contains($title, 'vote on question')) {
                 $notification->notification_type = 'vote_on_public_question';
 
             } elseif (str_contains($title, 'deletion request update')) {
                 $notification->notification_type = 'account_deletion_request_update';
 
-            } elseif (str_contains($title, 'public question update')) {
+            } elseif (str_contains($title, 'comment on question')) {
                 $notification->notification_type = 'comment_on_public_question';
 
             } elseif ($title === 'question request sent') {
