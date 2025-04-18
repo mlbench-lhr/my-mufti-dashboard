@@ -793,6 +793,7 @@ class EditProfile extends Controller
         // Notification for User (Appointment Request Sent)
     $userDeviceId = $user->device_id;
     $userTitle = "Appointment Request Update";
+    $notiBody  = "You have successfully sent an appointment request to {$mufti->name} for {$request->date} at {$request->duration}.";
     $userBody = "You have successfully sent an appointment request to {$muftiName} for {$request->date} at {$request->duration}.";
     $userMessageType = "Appointment Request Update";
     $userOtherData = "Appointment Request Update";
@@ -976,6 +977,7 @@ if ($user && $user->device_id != "" && $coach) {
     $device_id = $user->device_id;
     $title = "Appointment Completed";
     $coachType = $appointment->user_type === 'lifecoach' ? 'Life Coach' : 'Mufti';
+    $notiBody = "Congratulations!! Your appointment with {$coachType} {$coach->name} has been completed.";
     $body = "Congratulations!! Your appointment with {$coachType} {$coach->name} has been completed.";
 
     $messageType = "appointment completed";
