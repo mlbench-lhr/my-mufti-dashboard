@@ -201,6 +201,15 @@ class QuestionController extends Controller
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
                 }
             }
+            $notificationData = [
+                'user_id'        => $user->id,
+                'title'          => $title,
+                'body'           => $body,
+                'event_id'       => "",
+                'question_id'    => $questionId,
+                'appointment_id' => "",
+            ];
+            Notification::create($notificationData);
 
             return ResponseHelper::jsonResponse(true, 'Update Voted question successfully!');
         } else {
@@ -224,6 +233,15 @@ class QuestionController extends Controller
                     $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
                 }
             }
+            $notificationData = [
+                'user_id'        => $user->id,
+                'title'          => $title,
+                'body'           => $body,
+                'event_id'       => "",
+                'question_id'    => $questionId,
+                'appointment_id' => "",
+            ];
+            Notification::create($notificationData);
 
             return ResponseHelper::jsonResponse(true, 'Voted question successfully!');
         }
@@ -559,7 +577,17 @@ class QuestionController extends Controller
             if ($device_id != "") {
                 $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, $questionId, 0, 0);
             }
+
         }
+        $notificationData = [
+            'user_id'        => $user->id,
+            'title'          => $title,
+            'body'           => $body,
+            'event_id'       => "",
+            'question_id'    => $questionId,
+            'appointment_id' => "",
+        ];
+        Notification::create($notificationData);
 
         $comment = QuestionComment::create($data)->load('user_detail');
 

@@ -790,6 +790,30 @@ class EditProfile extends Controller
         ];
         Notification::create($data);
 
+        // Notification for User (Appointment Request Sent)
+    $userDeviceId = $user->device_id;
+    $userTitle = "Appointment Request Update";
+    $userBody = "You have successfully sent an appointment request to {$muftiName} for {$request->date} at {$request->duration}.";
+    $userMessageType = "Appointment Request Update";
+    $userOtherData = "Appointment Request Update";
+    $userNotificationType = "appointment_request_sent";
+    $appointmentId = $appointment->id;
+
+    if ($userDeviceId != "") {
+        $this->fcmService->sendNotification($userDeviceId, $userTitle, $userBody, $userMessageType, $userOtherData, $userNotificationType, 0, 0, $appointmentId);
+    }
+
+    // Store the notification in the database for User
+    $userNotificationData = [
+        'user_id'        => $user->id,
+        'title'          => $userTitle,
+        'body'           => $userBody,
+        'question_id'    => "",
+        'event_id'       => "",
+        'appointment_id' => $appointmentId ?? "",
+    ];
+    Notification::create($userNotificationData);
+
         $user_id = $user->id;
         $message = "A new appointment booked by " . $user->name;
         $type    = "booked appointment";
@@ -945,6 +969,32 @@ class EditProfile extends Controller
 
         $appointment->status = 2;
         $appointment->save();
+$coach = User::find($appointment->mufti_id);
+$user = User::find($appointment->user_id);
+
+if ($user && $user->device_id != "" && $coach) {
+    $device_id = $user->device_id;
+    $title = "Appointment Completed";
+    $coachType = $appointment->user_type === 'lifecoach' ? 'Life Coach' : 'Mufti';
+    $body = "Congratulations!! Your appointment with {$coachType} {$coach->name} has been completed.";
+
+    $messageType = "appointment completed";
+    $otherData = "appointment completed";
+    $notificationType = "appointment_complete";
+    $appointmentId    = $appointment->id;
+
+    $this->fcmService->sendNotification($device_id, $title, $body, $messageType, $otherData, $notificationType, 0, 0, $appointmentId);
+}
+$notificationData = [
+    'user_id'        => $user->id,
+    'title'          => $title,
+    'body'           => $body,
+    'event_id'       => "",
+    'question_id'    => "",
+    'appointment_id' => $appointmentId ?? "",
+];
+Notification::create($notificationData);
+
 
         return ResponseHelper::jsonResponse(true, 'Appointment marked as completed', null);
     }

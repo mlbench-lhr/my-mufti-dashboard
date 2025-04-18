@@ -470,6 +470,29 @@ class AppointmentsController extends Controller
             'appointment_id' => $appointmentId ?? "",
         ];
         Notification::create($data);
+        // Notification for User (Appointment Request Sent)
+    $userDeviceId = $user->device_id;
+    $userTitle = "Appointment Request Update";
+    $userBody = "You have successfully sent an appointment request to {$muftiName} for {$request->date} at {$request->duration}.";
+    $userMessageType = "Appointment Request Update";
+    $userOtherData = "Appointment Request Update";
+    $userNotificationType = "appointment_request_sent";
+    $appointmentId = $appointment->id;
+
+    if ($userDeviceId != "") {
+        $this->fcmService->sendNotification($userDeviceId, $userTitle, $userBody, $userMessageType, $userOtherData, $userNotificationType, 0, 0, $appointmentId);
+    }
+
+    // Store the notification in the database for User
+    $userNotificationData = [
+        'user_id'        => $user->id,
+        'title'          => $userTitle,
+        'body'           => $userBody,
+        'question_id'    => "",
+        'event_id'       => "",
+        'appointment_id' => $appointmentId ?? "",
+    ];
+    Notification::create($userNotificationData);
 
         $user_id = $user->id;
         $message = "A new appointment booked by " . $user->name;

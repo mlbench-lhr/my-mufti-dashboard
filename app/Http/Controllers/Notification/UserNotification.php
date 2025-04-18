@@ -89,7 +89,10 @@ class UserNotification extends Controller
             if (str_contains($title, 'new appointment request received')) {
                 $notification->notification_type = 'request_new_appointment';
 
-            } elseif (str_contains($title, 'event request update')) {
+            } elseif (str_contains($title, 'Appointment Request Update')) {
+                $notification->notification_type = 'appointment_request_sent';
+
+            }  elseif (str_contains($title, 'event request update')) {
                 $notification->notification_type = 'event_request_update';
 
             } elseif (str_contains($title, 'event schedule update')) {
@@ -134,6 +137,8 @@ class UserNotification extends Controller
             } elseif (str_contains($title, 'added replied on question')) {
                 $notification->notification_type = 'scholar_replied_private_question';
 
+            } elseif (str_contains($title, 'Appointment Completed')) {
+                $notification->notification_type = 'appointment_complete';
             } else {
                 $notification->notification_type = 'general';
             }
