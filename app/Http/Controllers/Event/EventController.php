@@ -354,7 +354,8 @@ class EventController extends Controller
         }
 
         $event = Event::with('scholars', 'hosted_by.interests')->with(['event_questions' => function ($query) use ($userId) {
-            $query->where('user_id', $userId);
+            $query->where('user_id', $userId)
+                  ->where('user_id', '!=', '0');
         }])->where('id', $request->event_id)->first();
 
         if (! $event) {
@@ -388,69 +389,76 @@ class EventController extends Controller
     }
 
     public function add_question_on_event(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'event_id' => 'required',
-            'user_id'  => 'required',
-            'category' => 'required',
-            'question' => 'required',
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'event_id' => 'required',
+        'user_id'  => 'required',
+        'category' => 'required',
+        'question' => 'required',
+    ]);
 
-        $validationError = ValidationHelper::handleValidationErrors($validator);
-        if ($validationError !== null) {
-            return $validationError;
-        }
+    $validationError = ValidationHelper::handleValidationErrors($validator);
+    if ($validationError !== null) {
+        return $validationError;
+    }
 
-        $user = User::where('id', $request->user_id)->first();
+    $userId = (string) $request->user_id; // Cast to string for reliable comparison
 
+    // ✅ Only validate user if not anonymous
+    if ($userId !== '0') {
+        $user = User::where('id', $userId)->first();
         if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
+    }
 
-        $event = Event::where('id', $request->event_id)->first();
+    $event = Event::where('id', $request->event_id)->first();
+    if (! $event) {
+        return ResponseHelper::jsonResponse(false, 'Event Not Found');
+    }
 
-        if (! $event) {
-            return ResponseHelper::jsonResponse(false, 'Event Not Found');
-        }
+    $timeZone       = $event->time_zone ?? 'Asia/Karachi';
+    $eventTimeZone  = new CarbonTimeZone($timeZone);
+    $eventStartTime = Carbon::parse($event->date, $eventTimeZone)->utc();
+    $eventEndTime   = $eventStartTime->addHours((int) $event->duration);
+    $questionEndTime = $eventEndTime->subMinutes((int) $event->question_end_time);
+    $currentTime    = Carbon::now('UTC');
 
-        // $timeZone        = $event->time_zone ?? 'Asia/Karachi';
-        // $eventTimeZone   = new CarbonTimeZone($timeZone ?? 'UTC');
-        // $eventTime       = Carbon::parse($event->date, $eventTimeZone)->utc();
-        // $questionEndTime = $eventTime->subMinutes((int) $event->question_end_time);
-        // $currentTime     = Carbon::now('UTC');
-        $timeZone       = $event->time_zone ?? 'Asia/Karachi';
-        $eventTimeZone  = new CarbonTimeZone($timeZone ?? 'UTC');
-        $eventStartTime = Carbon::parse($event->date, $eventTimeZone)->utc();
+    if ($currentTime->greaterThan($questionEndTime)) {
+        return ResponseHelper::jsonResponse(false, 'You can no longer ask questions for this event');
+    }
 
-        $eventEndTime = $eventStartTime->addHours((int) $event->duration);
+    // ✅ Check for exact same question already asked for this event
+    $existingSameQuestion = EventQuestion::where([
+        'event_id' => $request->event_id,
+        'question' => $request->question,
+    ])->first();
 
-        $questionEndTime = $eventEndTime->subMinutes((int) $event->question_end_time);
+    if ($existingSameQuestion) {
+        return ResponseHelper::jsonResponse(false, 'This question has already been asked');
+    }
 
-        $currentTime = Carbon::now('UTC');
-
-        if ($currentTime->greaterThan($questionEndTime)) {
-            return ResponseHelper::jsonResponse(false, 'You can no longer ask questions for this event');
-        }
-
-        $existingQuestion = EventQuestion::where([
+    // ✅ Skip duplicate question per user check if anonymous
+    if ($userId !== '0') {
+        $existingUserQuestion = EventQuestion::where([
             'event_id' => $request->event_id,
-            'user_id'  => $request->user_id,
+            'user_id'  => $userId,
         ])->first();
 
-        if ($existingQuestion) {
+        if ($existingUserQuestion) {
             return ResponseHelper::jsonResponse(false, 'You have already submitted a question');
         }
-
-        $data = [
-            'event_id' => $request->event_id,
-            'user_id'  => $request->user_id,
-            'question' => $request->question,
-            'category' => $request->category,
-        ];
-
-        EventQuestion::create($data);
-        return ResponseHelper::jsonResponse(true, 'Question Added Successfully!');
     }
+
+    EventQuestion::create([
+        'event_id' => $request->event_id,
+        'user_id'  => $userId,
+        'question' => $request->question,
+        'category' => $request->category,
+    ]);
+
+    return ResponseHelper::jsonResponse(true, 'Question Added Successfully!');
+}
 
     public function add_answer_on_event(Request $request)
     {
@@ -1016,7 +1024,8 @@ class EventController extends Controller
 
         $baseQuery = EventQuestion::with('user_detail:id,name,image')
             ->withCount('likes')
-            ->where(['event_id' => $request->event_id, 'category' => $request->category]);
+            ->where(['event_id' => $request->event_id, 'category' => $request->category])
+            ->where('user_id', '!=', '0');
 
         if ($request->filled('search')) {
             $searchTerm = trim($request->search);
