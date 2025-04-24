@@ -1115,35 +1115,40 @@ class EventController extends Controller
     }
 
     public function like_dislike_event_question(EventQuestionLikeDislike $request)
-    {
-        $user = User::find($request->user_id);
+{
+    $userId = (string) $request->user_id; // Cast for reliable comparison
 
+    // ✅ Only check user if not anonymous
+    if ($userId !== '0') {
+        $user = User::find($userId);
         if (! $user) {
             return ResponseHelper::jsonResponse(false, 'User Not Found');
         }
-
-        $question = EventQuestion::find($request->event_question_id);
-
-        if (! $question) {
-            return ResponseHelper::jsonResponse(false, 'Question Not Found');
-        }
-
-        $check = EventQuestionLike::where([
-            'user_id'           => $request->user_id,
-            'event_question_id' => $request->event_question_id,
-        ])->first();
-        if ($check) {
-            $check->delete();
-            return ResponseHelper::jsonResponse(true, 'Unlike Successfully');
-        }
-
-        $data = [
-            'user_id'           => $request->user_id,
-            'event_question_id' => $request->event_question_id,
-        ];
-        EventQuestionLike::create($data);
-        return ResponseHelper::jsonResponse(true, 'Like Successfully');
     }
+
+    $question = EventQuestion::find($request->event_question_id);
+    if (! $question) {
+        return ResponseHelper::jsonResponse(false, 'Question Not Found');
+    }
+
+    $check = EventQuestionLike::where([
+        'user_id'           => $userId,
+        'event_question_id' => $request->event_question_id,
+    ])->first();
+
+    if ($check) {
+        $check->delete();
+        return ResponseHelper::jsonResponse(true, 'Unlike Successfully');
+    }
+
+    $data = [
+        'user_id'           => $userId,
+        'event_question_id' => $request->event_question_id,
+    ];
+
+    EventQuestionLike::create($data);
+    return ResponseHelper::jsonResponse(true, 'Like Successfully');
+}
 
     public function getEventDetail(Request $request, $event_id)
 {
