@@ -1222,7 +1222,7 @@ class QuestionController extends Controller
             'mufti_detail:id,name,email,image,phone_number,fiqa,mufti_status,user_type,device_id',
             'scholarReply:id,question_id,reply',
         ])
-            ->select('id', 'mufti_id', 'question', 'answer')
+            ->select('id', 'mufti_id', 'question', 'answer','created_at')
             ->where('user_id', $request->user_id);
 
         if ($request->filled('search')) {
@@ -1243,6 +1243,7 @@ class QuestionController extends Controller
             return [
                 'question' => $question->question,
                 'answer'   => $question->answer ?? "",
+                'created_at'     => $question->created_at ? $question->created_at->format('d-m-Y H:i:s') : null,
             ];
         });
 
