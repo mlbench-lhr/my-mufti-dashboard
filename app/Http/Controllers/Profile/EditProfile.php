@@ -554,6 +554,64 @@ class EditProfile extends Controller
 
                 UserAllQuery::where('id', $request->question_id)->update(['status' => $request->status]);
 
+                $userQuery = UserAllQuery::find($questId);
+            if ($userQuery) {
+                $userQuery->status = 1;
+                $userQuery->save();
+
+                $userData = User::find($userQuery->user_id);
+
+                $postKey = ($muftiId < $userQuery->user_id)
+                    ? $muftiId . '+' . $userQuery->user_id
+                    : $userQuery->user_id . '+' . $muftiId;
+
+                $timestamp = now()->format('d-m-Y H:i:s');
+
+                // First message from user (question)
+                $allMessagesData1 = (object) [
+                    'content_message' => $userQuery->question,
+                    'conversation_id' => $postKey,
+                    'date'            => $timestamp,
+                    'is_read'         => false,
+                    'receiver_id'     => (string) $muftiId,
+                    'sender_id'       => (string) $userQuery->user_id,
+                    'time_zone_id'    => 'Asia/Karachi',
+                    'type'            => 'text',
+                ];
+                $this->firebase->getReference('All_Messages/' . $postKey)
+                    ->push(json_decode(json_encode($allMessagesData1)));
+
+                // Inbox entries
+                $inboxDataUser = (object) [
+                    'chat_name'           => $mufti->name,
+                    'content_message'     => $userQuery->question,
+                    'conversation_enable' => false,
+                    'conversation_id'     => $postKey,
+                    'date'                => $timestamp,
+                    'other_user_id'       => (string) $muftiId,
+                    'read_count'          => 1,
+                    'time_zone_id'        => 'Asia/Karachi',
+                    'type'                => 'text',
+                ];
+                $inboxDataMufti = (object) [
+                    'chat_name'           => $userData->name ?? "",
+                    'content_message'     => $userQuery->question,
+                    'conversation_enable' => false,
+                    'conversation_id'     => $postKey,
+                    'date'                => $timestamp,
+                    'other_user_id'       => (string) $userQuery->user_id,
+                    'read_count'          => 1,
+                    'time_zone_id'        => 'Asia/Karachi',
+                    'type'                => 'text',
+                ];
+
+                $this->firebase->getReference('Inbox/_' . $userQuery->user_id . '/' . $postKey)
+                    ->set(json_decode(json_encode($inboxDataUser)));
+
+                $this->firebase->getReference('Inbox/_' . $muftiId . '/' . $postKey)
+                    ->set(json_decode(json_encode($inboxDataMufti)));
+                }
+
                 return ResponseHelper::jsonResponse(true, 'Question Status Updated');
             }
             if ($request->status == 2) {
