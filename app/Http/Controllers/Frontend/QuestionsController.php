@@ -457,8 +457,8 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date'            => now()->format('d-m-Y H:i:s'),
                 'is_read'         => false,
-                'receiver_id'     => (string) $userQuery->user_id,
-                'sender_id'       => "9",
+                'receiver_id'     => "9",
+                'sender_id'       => (string) $userQuery->user_id,
                 'time_zone_id'    => 'Asia/Karachi',
                 'type'            => 'text',
             ];
@@ -505,8 +505,8 @@ class QuestionsController extends Controller
                 'conversation_id' => $postKey,
                 'date'            => now()->format('d-m-Y H:i:s'),
                 'is_read'         => false,
-                'receiver_id'     => "9",
-                'sender_id'       => (string) $userQuery->user_id,
+                'receiver_id'     => (string) $userQuery->user_id,
+                'sender_id'       => "9",
                 'time_zone_id'    => 'Asia/Karachi',
                 'type'            => 'text',
             ];
