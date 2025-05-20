@@ -25,14 +25,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Kreait\Firebase\Database;
 
 class EditProfile extends Controller
 {
     protected $fcmService;
+    protected $firebase;
 
-    public function __construct(FcmService $fcmService)
+    public function __construct(FcmService $fcmService, Database $firebase)
     {
         $this->fcmService = $fcmService;
+         $this->firebase   = $firebase;
     }
     // get user profile
     public function my_profile(Request $request)
