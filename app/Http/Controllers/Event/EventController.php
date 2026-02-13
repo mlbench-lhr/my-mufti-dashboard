@@ -391,7 +391,56 @@ class EventController extends Controller
         ];
         return response()->json($response, 200);
     }
+    public function event_detail_without_user_id(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required',
+            // 'user_id'  => 'required',
+        ]);
+        $userId = $request->user_id;
 
+        $validationError = ValidationHelper::handleValidationErrors($validator);
+        if ($validationError !== null) {
+            return $validationError;
+        }
+
+        // $user = User::where('id', $request->user_id)->first();
+
+        // if (! $user) {
+        //     return ResponseHelper::jsonResponse(false, 'User Not Found');
+        // }
+
+        $event = Event::with('scholars', 'hosted_by.interests')->with('event_questions')->where('id', $request->event_id)->first();
+
+        if (! $event) {
+            return ResponseHelper::jsonResponse(false, 'Event Not Found');
+        }
+
+        $eventCategories    = $event->event_category;
+        $questionCategories = $event->question_category;
+
+        $event->event_category = collect($eventCategories)->values()->all();
+
+        $event->question_category = collect($questionCategories)->mapWithKeys(function ($value) use ($request) {
+            $count = EventQuestion::where([
+                'event_id' => $request->event_id,
+                'category' => $value
+            ])->count();
+            return [$value => $count];
+        });
+
+        if (! $event) {
+            return ResponseHelper::jsonResponse(false, 'Event Not Found');
+        }
+        // $event->save = SaveEvent::where(['user_id' => $request->user_id, 'event_id' => $request->event_id])->exists();
+        $event->save = false;
+        $response = [
+            'status'  => true,
+            'message' => 'Event detail!',
+            'data'    => $event,
+        ];
+        return response()->json($response, 200);
+    }
     public function add_question_on_event(Request $request)
     {
         $validator = Validator::make($request->all(), [

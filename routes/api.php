@@ -13,6 +13,7 @@ use App\Http\Controllers\Profile\EditProfile;
 use App\Http\Controllers\Question\QuestionController;
 use App\Http\Controllers\Prayer\PrayerController;
 use App\Http\Controllers\Ramadan\RamadanQuizController;
+use App\Http\Controllers\Verse\VerseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -114,6 +115,7 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('addEvent', [EventController::class, 'add_event']);
         Route::patch('updateEvent', [EventController::class, 'update_event']);
         Route::post('eventDetail', [EventController::class, 'event_detail']);
+        Route::post('eventDetailWithoutUserId', [EventController::class, 'event_detail_without_user_id']);
         Route::post('pastUpcomingEvents', [EventController::class, 'past_upcoming_events']);
         Route::post('allPastUpcomingEvents', [EventController::class, 'all_past_upcoming_events']);
         Route::post('myPastUpcomingRequestedEvents', [EventController::class, 'my_past_upcoming_requested_events']);
@@ -163,6 +165,14 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
     });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
+    Route::group([
+        'prefix' => 'verse',
+    ], function () {
+        Route::post('verseOfDay', [VerseController::class, 'verseOfTheDay']);
+        Route::post('saveVerse', [VerseController::class, 'saveVerse']);
+        Route::get('savedVerses', [VerseController::class, 'savedVerses']);
+        Route::delete('removeVerse', [VerseController::class, 'removeSavedVerse']);
+    });
 });
 
 // **Testing API**
@@ -259,6 +269,7 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('addEvent', [EventController::class, 'add_event']);
         Route::patch('updateEvent', [EventController::class, 'update_event']);
         Route::post('eventDetail', [EventController::class, 'event_detail']);
+        Route::post('eventDetailWithoutUserId', [EventController::class, 'event_detail_without_user_id']);
         Route::post('pastUpcomingEvents', [EventController::class, 'past_upcoming_events']);
         Route::post('allPastUpcomingEvents', [EventController::class, 'all_past_upcoming_events']);
         Route::post('myPastUpcomingRequestedEvents', [EventController::class, 'my_past_upcoming_requested_events']);
@@ -308,6 +319,14 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
     });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
+    Route::group([
+        'prefix' => 'verse',
+    ], function () {
+        Route::post('verseOfDay', [VerseController::class, 'verseOfTheDay']);
+        Route::post('saveVerse', [VerseController::class, 'saveVerse']);
+        Route::get('savedVerses', [VerseController::class, 'savedVerses']);
+        Route::delete('removeVerse', [VerseController::class, 'removeSavedVerse']);
+    });
 });
 
 Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
@@ -404,6 +423,7 @@ Route::group([
     Route::post('addEvent', [EventController::class, 'add_event']);
     Route::patch('updateEvent', [EventController::class, 'update_event']);
     Route::post('eventDetail', [EventController::class, 'event_detail']);
+    Route::post('eventDetailWithoutUserId', [EventController::class, 'event_detail_without_user_id']);
     Route::post('pastUpcomingEvents', [EventController::class, 'past_upcoming_events']);
     Route::post('allPastUpcomingEvents', [EventController::class, 'all_past_upcoming_events']);
     Route::post('myPastUpcomingRequestedEvents', [EventController::class, 'my_past_upcoming_requested_events']);
@@ -439,4 +459,12 @@ Route::group([
     Route::post('getMuftiSlots', [AppointmentsController::class, 'get_mufti_slots']);
     Route::post('removeSlot', [AppointmentsController::class, 'remove_slot']);
     Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
+});
+Route::group([
+    'prefix' => 'verse',
+], function () {
+    Route::post('verseOfDay', [VerseController::class, 'verseOfTheDay']);
+    Route::post('saveVerse', [VerseController::class, 'saveVerse']);
+    Route::get('savedVerses', [VerseController::class, 'savedVerses']);
+    Route::delete('removeVerse', [VerseController::class, 'removeSavedVerse']);
 });
