@@ -11,6 +11,7 @@ use App\Http\Controllers\Mufti\MuftiExperience;
 use App\Http\Controllers\Notification\UserNotification;
 use App\Http\Controllers\Profile\EditProfile;
 use App\Http\Controllers\Question\QuestionController;
+use App\Http\Controllers\Prayer\PrayerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -147,7 +148,12 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('getMuftiSlots', [AppointmentsController::class, 'get_mufti_slots']);
         Route::post('removeSlot', [AppointmentsController::class, 'remove_slot']);
         Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
-
+    });
+    Route::group([
+        'prefix' => 'prayer',
+    ], function () {
+        Route::post('today', [PrayerController::class, 'today']);
+        Route::post('log', [PrayerController::class, 'log']);
     });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
 });
@@ -281,7 +287,12 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::post('getMuftiSlots', [AppointmentsController::class, 'get_mufti_slots']);
         Route::post('removeSlot', [AppointmentsController::class, 'remove_slot']);
         Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
-
+    });
+    Route::group([
+        'prefix' => 'prayer',
+    ], function () {
+        Route::post('today', [PrayerController::class, 'today']);
+        Route::post('log', [PrayerController::class, 'log']);
     });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
 });
@@ -415,5 +426,4 @@ Route::group([
     Route::post('getMuftiSlots', [AppointmentsController::class, 'get_mufti_slots']);
     Route::post('removeSlot', [AppointmentsController::class, 'remove_slot']);
     Route::post('bookAnAppointment', [AppointmentsController::class, 'book_an_appointment']);
-
 });

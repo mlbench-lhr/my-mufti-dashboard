@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -185,4 +186,13 @@ class User extends Authenticatable
         $this->questions()->delete();
     }
 
+    public function prayerLogs()
+    {
+        return $this->hasMany(UserPrayerLog::class);
+    }
+
+    public function prayerStat()
+    {
+        return $this->hasOne(UserPrayerStat::class);
+    }
 }
