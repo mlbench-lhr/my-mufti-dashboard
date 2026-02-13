@@ -195,4 +195,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserPrayerStat::class);
     }
+
+    public function ramadanAnswers()
+    {
+        return $this->hasMany(UserRamadanAnswer::class);
+    }
+
+    public function ramadanProgress()
+    {
+        return $this->hasMany(UserRamadanQuizProgress::class);
+    }
+
+    public function ramadanStat()
+    {
+        return $this->hasOne(UserRamadanStat::class);
+    }
 }

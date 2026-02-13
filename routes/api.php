@@ -12,6 +12,7 @@ use App\Http\Controllers\Notification\UserNotification;
 use App\Http\Controllers\Profile\EditProfile;
 use App\Http\Controllers\Question\QuestionController;
 use App\Http\Controllers\Prayer\PrayerController;
+use App\Http\Controllers\Ramadan\RamadanQuizController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -155,6 +156,12 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::post('today', [PrayerController::class, 'today']);
         Route::post('log', [PrayerController::class, 'log']);
     });
+    Route::prefix('ramadan-quiz')->group(function () {
+        Route::get('/dashboard', [RamadanQuizController::class, 'dashboard']);
+        Route::get('/week/{week}', [RamadanQuizController::class, 'weekTopics']);
+        Route::get('/topic/{topic}/quiz', [RamadanQuizController::class, 'topicQuiz']);
+        Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
+    });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
 });
 
@@ -293,6 +300,12 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
     ], function () {
         Route::post('today', [PrayerController::class, 'today']);
         Route::post('log', [PrayerController::class, 'log']);
+    });
+    Route::prefix('ramadan-quiz')->group(function () {
+        Route::get('/dashboard', [RamadanQuizController::class, 'dashboard']);
+        Route::get('/week/{week}', [RamadanQuizController::class, 'weekTopics']);
+        Route::get('/topic/{topic}/quiz', [RamadanQuizController::class, 'topicQuiz']);
+        Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
     });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
 });
