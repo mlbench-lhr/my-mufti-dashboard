@@ -468,3 +468,15 @@ Route::group([
     Route::get('savedVerses', [VerseController::class, 'savedVerses']);
     Route::delete('removeVerse', [VerseController::class, 'removeSavedVerse']);
 });
+Route::group([
+    'prefix' => 'prayer',
+], function () {
+    Route::post('today', [PrayerController::class, 'today']);
+    Route::post('log', [PrayerController::class, 'log']);
+});
+Route::prefix('ramadan-quiz')->group(function () {
+    Route::get('/dashboard', [RamadanQuizController::class, 'dashboard']);
+    Route::get('/week/{week}', [RamadanQuizController::class, 'weekTopics']);
+    Route::get('/topic/{topic}/quiz', [RamadanQuizController::class, 'topicQuiz']);
+    Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
+});
