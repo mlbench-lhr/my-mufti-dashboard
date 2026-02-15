@@ -26,31 +26,51 @@ class BuildQuran extends Command
      */
     public function handle()
     {
+        $this->info("Downloading Quran...");
+
+        $arabicResponse = Http::timeout(60)
+            ->get("https://api.alquran.cloud/v1/quran/quran-uthmani");
+
+        if (!$arabicResponse->successful()) {
+            $this->error("Failed to download Arabic Quran");
+            return;
+        }
+
+        $englishResponse = Http::timeout(60)
+            ->get("https://api.alquran.cloud/v1/quran/en.sahih");
+
+        if (!$englishResponse->successful()) {
+            $this->error("Failed to download English Quran");
+            return;
+        }
+
+        $arabic = $arabicResponse->json()['data']['surahs'];
+        $english = $englishResponse->json()['data']['surahs'];
+
         $result = [];
+        $globalIndex = 1;
 
-        for ($i = 1; $i <= 6236; $i++) {
+        foreach ($arabic as $sIndex => $surah) {
+            foreach ($surah['ayahs'] as $aIndex => $ayah) {
 
-            $response = Http::get(
-                "https://api.alquran.cloud/v1/ayah/{$i}/editions/quran-uthmani,en.sahih"
-            );
+                $result[$globalIndex] = [
+                    'ayah_global_number' => $globalIndex,
+                    'surah_number'       => $surah['number'],
+                    'surah'              => $surah['englishName'],
+                    'ayah_number'        => $ayah['numberInSurah'],
+                    'arabic'             => $ayah['text'],
+                    'translation'        => $english[$sIndex]['ayahs'][$aIndex]['text'],
+                ];
 
-            $data = $response->json()['data'];
-
-            $result[$i] = [
-                'ayah_global_number' => $i,
-                'surah_number'       => $data[0]['surah']['number'],
-                'surah'              => $data[0]['surah']['englishName'],
-                'ayah_number'        => $data[0]['numberInSurah'],
-                'arabic'             => $data[0]['text'],
-                'translation'        => $data[1]['text'],
-            ];
+                $globalIndex++;
+            }
         }
 
         file_put_contents(
             storage_path('app/quran.json'),
-            json_encode($result, JSON_UNESCAPED_UNICODE)
+            json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
         );
 
-        $this->info('Built successfully');
+        $this->info("Built successfully");
     }
 }
