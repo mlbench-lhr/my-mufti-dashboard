@@ -10,7 +10,6 @@ use App\Models\UserPrayerStat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class PrayerController extends Controller
 {
@@ -63,60 +62,48 @@ class PrayerController extends Controller
 
     private function updateStats($user, $date)
     {
-        $date = \Carbon\Carbon::parse($date)->toDateString();
-        $yesterday = Carbon::parse($date)->subDay()->toDateString();
-
-
-        $offeredCount = UserPrayerLog::where('user_id', $user->id)
-            ->whereDate('prayer_date', $date)
-            ->where('status', 'offered')
-            ->count();
-
         $stat = UserPrayerStat::firstOrCreate(
             ['user_id' => $user->id],
-            []
+            [
+                'current_streak' => 0,
+                'longest_streak' => 0,
+                'total_points' => 0,
+                'total_prayers_offered' => 0,
+            ]
         );
 
-        // POINTS (temporary rule)
-        // 10 points per prayer
-        $pointsForToday = $offeredCount * 10;
+        // Get latest prayer action
+        $latestLog = UserPrayerLog::where('user_id', $user->id)
+            ->latest('updated_at')
+            ->first();
 
-        // Update total points
-        $stat->total_points = UserPrayerLog::where('user_id', $user->id)
-            ->sum('points_earned');
+        if ($latestLog) {
 
-        if ($offeredCount === 5) {
+            if ($latestLog->status === 'offered') {
 
-            $yesterday = Carbon::parse($date)->subDay()->toDateString();
+                $stat->current_streak += 1;
 
-            $lastDate = $stat->last_completed_date
-                ? Carbon::parse($stat->last_completed_date)->toDateString()
-                : null;
-
-            if ($lastDate !== $date) {
-
-                if ($lastDate === $yesterday) {
-                    $stat->current_streak = ($stat->current_streak ?? 0) + 1;
-                } else {
-                    $stat->current_streak = 1;
+                if ($stat->current_streak > $stat->longest_streak) {
+                    $stat->longest_streak = $stat->current_streak;
                 }
-
-                $stat->longest_streak = max(
-                    $stat->longest_streak ?? 0,
-                    $stat->current_streak
-                );
-
-                $stat->last_completed_date = $date;
+            } else {
+                $stat->current_streak = 0;
             }
         }
+
+        $stat->total_points = UserPrayerLog::where('user_id', $user->id)
+            ->where('status', 'offered')
+            ->sum('points_earned');
 
         $stat->total_prayers_offered = UserPrayerLog::where('user_id', $user->id)
             ->where('status', 'offered')
             ->count();
 
         $stat->save();
+
         return $stat;
     }
+
 
     public function today(Request $request)
     {

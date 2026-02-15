@@ -88,6 +88,13 @@ class RamadanQuizController extends Controller
         $userId = $request->user_id;
         $currentDay = $this->currentRamadanDay();
 
+        $stats = UserRamadanStat::firstOrCreate(
+            ['user_id' => $userId],
+            ['total_points' => 0]
+        );
+        $level = $this->calculateLevel($stats->total_points);
+        $next = $this->nextLevelThreshold($stats->total_points);
+
         $topics = RamadanTopic::whereHas('week', function ($q) use ($week) {
             $q->where('week_number', $week);
         })
@@ -117,6 +124,11 @@ class RamadanQuizController extends Controller
         return response()->json([
             'week_number' => (int) $week,
             'current_day' => $currentDay,
+            // Added dashboard stats
+            'total_points' => $stats->total_points,
+            'level' => $level,
+            'progress_percentage' => round(($stats->total_points / 3000) * 100),
+            'points_to_next_level' => $next ? $next - $stats->total_points : 0,
             'topics' => $topics
         ]);
     }
@@ -139,11 +151,24 @@ class RamadanQuizController extends Controller
             ], 403);
         }
 
-        $questions = $topic->questions->map(function ($q) {
+        $questionIds = $topic->questions->pluck('id');
+
+        $userAnswers = UserRamadanAnswer::where('user_id', $userId)
+            ->whereIn('question_id', $questionIds)
+            ->get()
+            ->keyBy('question_id');
+
+        $questions = $topic->questions->map(function ($q) use ($userAnswers) {
+
+            $userAnswer = $userAnswers[$q->id] ?? null;
+
             return [
                 'id' => $q->id,
                 'question_number' => $q->question_number,
                 'question' => $q->question,
+                'is_answered' => $userAnswer ? true : false,
+                'selected_option_id' => $userAnswer?->selected_option_id,
+                'is_correct' => $userAnswer?->is_correct,
                 'options' => $q->options->map(fn($opt) => [
                     'id' => $opt->id,
                     'text' => $opt->option_text
@@ -252,6 +277,55 @@ class RamadanQuizController extends Controller
             'total_topic_points' => $progress->points_earned,
             'total_user_points' => $stats->total_points,
             'level' => $stats->level
+        ]);
+    }
+
+    public function topicCompletion(Request $request, $topicId)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $userId = $request->user_id;
+
+        $topic = RamadanTopic::with('week')->findOrFail($topicId);
+
+        $progress = UserRamadanQuizProgress::where([
+            'user_id' => $userId,
+            'topic_id' => $topicId
+        ])->first();
+
+        $pointsEarned = $progress?->points_earned ?? 0;
+
+        // Total completed topics in this week
+        $completedInWeek = UserRamadanQuizProgress::where('user_id', $userId)
+            ->where('is_completed', true)
+            ->whereHas('topic', function ($q) use ($topic) {
+                $q->where('week_id', $topic->week_id);
+            })
+            ->count();
+
+        // Total topics in this week
+        $totalWeekTopics = RamadanTopic::where('week_id', $topic->week_id)->count();
+
+        $percentage = $totalWeekTopics > 0
+            ? round(($completedInWeek / $totalWeekTopics) * 100)
+            : 0;
+
+        return response()->json([
+            'topic_id' => $topic->id,
+            'topic_title' => $topic->title,
+
+            'week_number' => $topic->week->week_number,
+            'day_number' => $topic->day_number,
+
+            'points_earned' => $pointsEarned,
+
+            'week_progress' => [
+                'completed_days' => $completedInWeek,
+                'total_days' => $totalWeekTopics,
+                'percentage' => $percentage
+            ]
         ]);
     }
 }

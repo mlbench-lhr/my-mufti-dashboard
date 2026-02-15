@@ -163,6 +163,10 @@ Route::prefix('live')->middleware(['switch-db'])->group(function () {
         Route::get('/week/{week}', [RamadanQuizController::class, 'weekTopics']);
         Route::get('/topic/{topic}/quiz', [RamadanQuizController::class, 'topicQuiz']);
         Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
+        Route::get(
+            '/topic/{topicId}/completion',
+            [RamadanQuizController::class, 'topicCompletion']
+        );
     });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
     Route::group([
@@ -317,6 +321,10 @@ Route::prefix('testing')->middleware(['switch-db'])->group(function () {
         Route::get('/week/{week}', [RamadanQuizController::class, 'weekTopics']);
         Route::get('/topic/{topic}/quiz', [RamadanQuizController::class, 'topicQuiz']);
         Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
+        Route::get(
+            '/topic/{topicId}/completion',
+            [RamadanQuizController::class, 'topicCompletion']
+        );
     });
     Route::post('/faqs', [FAQController::class, 'getPaginatedFaqs']);
     Route::group([
@@ -479,4 +487,8 @@ Route::prefix('ramadan-quiz')->group(function () {
     Route::get('/week/{week}', [RamadanQuizController::class, 'weekTopics']);
     Route::get('/topic/{topic}/quiz', [RamadanQuizController::class, 'topicQuiz']);
     Route::post('/question/submit', [RamadanQuizController::class, 'submitQuestion']);
+    Route::get(
+        '/topic/{topicId}/completion',
+        [RamadanQuizController::class, 'topicCompletion']
+    );
 });
