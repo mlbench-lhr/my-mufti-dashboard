@@ -35,6 +35,11 @@ class RamadanQuizController extends Controller
         return null;
     }
 
+    private function currentWeek($currentDay)
+    {
+        return (int) ceil($currentDay / 7);
+    }
+
     public function dashboard(Request $request)
     {
         $request->validate([
@@ -51,12 +56,16 @@ class RamadanQuizController extends Controller
 
         $level = $this->calculateLevel($stats->total_points);
 
-        $todayTopic = RamadanTopic::where('day_number', $currentDay)->first();
+        $todayTopic = RamadanTopic::with(['week', 'questions.options'])
+            ->where('day_number', $currentDay)
+            ->first();
 
         $next = $this->nextLevelThreshold($stats->total_points);
+        $currentWeek = $this->currentWeek($currentDay);
 
         return response()->json([
             'current_ramadan_day' => $currentDay,
+            'current_week' => $currentWeek,
             'total_points' => $stats->total_points,
             'level' => $level,
             'progress_percentage' => round(($stats->total_points / 3000) * 100) ?? 0,
