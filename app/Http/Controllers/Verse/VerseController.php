@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class VerseController extends Controller
 {
     public function verseOfTheDay(Request $request)
     {
+        $request->validate([
+            'user_id' => 'required'
+        ]);
+
         $userId = $request->user_id;
 
         $cacheKey = "verse_of_day_{$userId}_" . now()->toDateString();
@@ -25,17 +28,22 @@ class VerseController extends Controller
 
             $randomAyah = $this->generateUniqueAyah($shownAyahs);
 
-            return $this->fetchVerseWithRetry($randomAyah);
+            return $this->loadFromLocalJson($randomAyah);
         });
 
         return response()->json([
             'status' => true,
             'data'   => $verse
-        ]);
+        ], 200);
     }
+
     private function generateUniqueAyah(array $excluded)
     {
         $totalAyahs = 6236;
+
+        if (count($excluded) >= $totalAyahs) {
+            return rand(1, $totalAyahs);
+        }
 
         do {
             $ayah = rand(1, $totalAyahs);
@@ -43,32 +51,7 @@ class VerseController extends Controller
 
         return $ayah;
     }
-    private function fetchVerseWithRetry($ayahNumber)
-    {
-        try {
 
-            $response = Http::timeout(5)
-                ->retry(3, 200)
-                ->get("https://api.alquran.cloud/v1/ayah/{$ayahNumber}/editions/quran-uthmani,en.sahih");
-
-            if ($response->successful()) {
-
-                $data = $response->json()['data'];
-
-                return [
-                    'ayah_global_number' => $ayahNumber,
-                    'arabic'             => $data[0]['text'],
-                    'translation'        => $data[1]['text'],
-                    'surah'              => $data[0]['surah']['englishName'],
-                    'ayah_number'        => $data[0]['numberInSurah'],
-                    'reference'          => $data[0]['surah']['englishName'] . ' ' . $data[0]['numberInSurah'],
-                ];
-            }
-        } catch (\Exception $e) {
-        }
-
-        return $this->loadFromLocalJson($ayahNumber);
-    }
     private function loadFromLocalJson($ayahNumber)
     {
         static $quran = null;
@@ -78,18 +61,24 @@ class VerseController extends Controller
             $file = storage_path('app/quran.json');
 
             if (!file_exists($file)) {
-                throw new \Exception('quran.json not found');
+                return [
+                    'error' => 'Quran data not available'
+                ];
             }
 
             $quran = json_decode(file_get_contents($file), true);
 
             if (!is_array($quran) || count($quran) !== 6236) {
-                throw new \Exception('Invalid quran.json structure');
+                return [
+                    'error' => 'Invalid Quran data'
+                ];
             }
         }
 
         if (!isset($quran[$ayahNumber])) {
-            throw new \Exception("Ayah {$ayahNumber} not found");
+            return [
+                'error' => 'Verse not found'
+            ];
         }
 
         $verse = $quran[$ayahNumber];
@@ -117,26 +106,50 @@ class VerseController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        $response = [
-            'status'     => true,
-            'message'    => 'Verse Saved Successfully',
 
-        ];
-        return response()->json($response, 200);
+        return response()->json([
+            'status'  => true,
+            'message' => 'Verse Saved Successfully',
+        ], 200);
     }
+
     public function savedVerses(Request $request)
     {
         $request->validate([
             'user_id' => 'required'
         ]);
 
-        $verses = DB::table('saved_verses')
+        $paginator = DB::table('saved_verses')
             ->where('user_id', $request->user_id)
             ->orderByDesc('id')
             ->paginate(10);
 
-        return response()->json($verses, 200);
+        if ($paginator->total() === 0) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'You do not have any saved verses.'
+            ], 200);
+        }
+
+        $transformed = [];
+
+        foreach ($paginator->items() as $item) {
+            $transformed[] = $this->loadFromLocalJson($item->ayah_global_number);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page'    => $paginator->lastPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+                'data'         => $transformed,
+            ]
+        ], 200);
     }
+
+
     public function removeSavedVerse(Request $request)
     {
         $request->validate([
@@ -149,11 +162,9 @@ class VerseController extends Controller
             ->where('ayah_global_number', $request->ayah_global_number)
             ->delete();
 
-        $response = [
-            'status'     => true,
-            'message'    => 'Verse Removed Successfully',
-
-        ];
-        return response()->json($response, 200);
+        return response()->json([
+            'status'  => true,
+            'message' => 'Verse Removed Successfully',
+        ], 200);
     }
 }
