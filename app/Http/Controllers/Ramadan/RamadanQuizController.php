@@ -99,27 +99,42 @@ class RamadanQuizController extends Controller
             $q->where('week_number', $week);
         })
             ->withCount('questions')
+            ->get();
+        // Get all question IDs for this week topics
+        $questionIds = RamadanQuestion::whereIn(
+            'topic_id',
+            $topics->pluck('id')
+        )->pluck('id');
+        // Get all answers of this user for those questions
+        $answers = UserRamadanAnswer::where('user_id', $userId)
+            ->whereIn('question_id', $questionIds)
             ->get()
-            ->map(function ($topic) use ($currentDay, $userId) {
-
-                $progress = UserRamadanQuizProgress::where([
-                    'user_id' => $userId,
-                    'topic_id' => $topic->id
-                ])->first();
-
-                return [
-                    'id' => $topic->id,
-                    'title' => $topic->title,
-                    'subtitle' => $topic->subtitle,
-                    'day' => $topic->day_number,
-                    'is_unlocked' => $topic->day_number <= $currentDay,
-                    'is_completed' => $progress?->is_completed ?? false,
-                    'points_earned' => $progress?->points_earned ?? 0,
-                    'max_points' =>  $topic->max_points,
-                    'total_questions' =>  $topic->total_questions,
-                    'correct_answers' => $progress?->correct_answers ?? 0
-                ];
+            ->groupBy(function ($answer) {
+                return $answer->question->topic_id;
             });
+        $topics = $topics->map(function ($topic) use ($currentDay, $userId, $answers) {
+
+            $progress = UserRamadanQuizProgress::where([
+                'user_id' => $userId,
+                'topic_id' => $topic->id
+            ])->first();
+
+            $answeredCount = $answers->get($topic->id)?->count() ?? 0;
+
+            return [
+                'id' => $topic->id,
+                'title' => $topic->title,
+                'subtitle' => $topic->subtitle,
+                'day' => $topic->day_number,
+                'is_unlocked' => $topic->day_number <= $currentDay,
+                'is_completed' => $progress?->is_completed ?? false,
+                'points_earned' => $progress?->points_earned ?? 0,
+                'max_points' => $topic->max_points,
+                'total_questions' => $topic->questions_count,
+                'answered_questions_count' => $answeredCount,
+                'correct_answers' => $progress?->correct_answers ?? 0
+            ];
+        });
 
         return response()->json([
             'week_number' => (int) $week,
