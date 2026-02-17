@@ -72,24 +72,47 @@ class PrayerController extends Controller
             ]
         );
 
-        // Get latest prayer action
-        $latestLog = UserPrayerLog::where('user_id', $user->id)
-            ->latest('updated_at')
-            ->first();
+        $logs = UserPrayerLog::where('user_id', $user->id)
+            ->where('status', 'offered')
+            ->orderBy('prayer_date', 'asc')
+            ->orderBy('prayer_id', 'asc')
+            ->get();
 
-        if ($latestLog) {
+        $currentStreak = 0;
+        $longestStreak = 0;
 
-            if ($latestLog->status === 'offered') {
+        $expectedPrayerId = 1;
 
-                $stat->current_streak += 1;
+        foreach ($logs as $log) {
 
-                if ($stat->current_streak > $stat->longest_streak) {
-                    $stat->longest_streak = $stat->current_streak;
+            if ($log->prayer_id == $expectedPrayerId) {
+
+                $currentStreak++;
+                $longestStreak = max($longestStreak, $currentStreak);
+
+                $expectedPrayerId++;
+
+                // Reset cycle after 5
+                if ($expectedPrayerId > 5) {
+                    $expectedPrayerId = 1;
                 }
             } else {
-                $stat->current_streak = 0;
+
+                // Sequence broken → reset streak
+                $currentStreak = 1;
+                $longestStreak = max($longestStreak, $currentStreak);
+
+                // Restart expected sequence from next after current
+                $expectedPrayerId = $log->prayer_id + 1;
+
+                if ($expectedPrayerId > 5) {
+                    $expectedPrayerId = 1;
+                }
             }
         }
+
+        $stat->current_streak = $currentStreak;
+        $stat->longest_streak = $longestStreak;
 
         $stat->total_points = UserPrayerLog::where('user_id', $user->id)
             ->where('status', 'offered')
@@ -103,7 +126,6 @@ class PrayerController extends Controller
 
         return $stat;
     }
-
 
     public function today(Request $request)
     {
