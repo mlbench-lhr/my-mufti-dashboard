@@ -73,7 +73,6 @@ class PrayerController extends Controller
         );
 
         $logs = UserPrayerLog::where('user_id', $user->id)
-            ->where('status', 'offered')
             ->orderBy('prayer_date', 'asc')
             ->orderBy('prayer_id', 'asc')
             ->get();
@@ -81,38 +80,52 @@ class PrayerController extends Controller
         $currentStreak = 0;
         $longestStreak = 0;
 
-        $expectedPrayerId = 1;
+        $expectedPrayerId = null;
+        $lastDate = null;
 
         foreach ($logs as $log) {
 
-            if ($log->prayer_id == $expectedPrayerId) {
-
-                $currentStreak++;
-                $longestStreak = max($longestStreak, $currentStreak);
-
-                $expectedPrayerId++;
-
-                // Reset cycle after 5
-                if ($expectedPrayerId > 5) {
-                    $expectedPrayerId = 1;
-                }
+            if ($log->status === 'missed') {
+                $currentStreak = 0;
+                $expectedPrayerId = null;
+                $lastDate = null;
+                continue;
+            }
+            // First valid prayer
+            if ($expectedPrayerId === null) {
+                $currentStreak = 1;
+                $expectedPrayerId = $this->nextPrayer($log->prayer_id);
+                $lastDate = $log->prayer_date;
             } else {
 
-                // Sequence broken → reset streak
-                $currentStreak = 1;
-                $longestStreak = max($longestStreak, $currentStreak);
+                $expectedDate = $lastDate;
 
-                // Restart expected sequence from next after current
-                $expectedPrayerId = $log->prayer_id + 1;
+                // If last prayer was Isha → next expected date = next day
+                if ($expectedPrayerId == 1) {
+                    $expectedDate = Carbon::parse($lastDate)
+                        ->addDay()
+                        ->toDateString();
+                }
 
-                if ($expectedPrayerId > 5) {
-                    $expectedPrayerId = 1;
+                if (
+                    $log->prayer_id == $expectedPrayerId &&
+                    $log->prayer_date == $expectedDate
+                ) {
+                    $currentStreak++;
+                    $expectedPrayerId = $this->nextPrayer($log->prayer_id);
+                    $lastDate = $log->prayer_date;
+                } else {
+                    // Sequence broken
+                    $currentStreak = 1;
+                    $expectedPrayerId = $this->nextPrayer($log->prayer_id);
+                    $lastDate = $log->prayer_date;
                 }
             }
+            $longestStreak = max($longestStreak, $currentStreak);
         }
 
         $stat->current_streak = $currentStreak;
-        $stat->longest_streak = $longestStreak;
+        $longestStreak = max($longestStreak, $currentStreak);
 
         $stat->total_points = UserPrayerLog::where('user_id', $user->id)
             ->where('status', 'offered')
@@ -127,6 +140,11 @@ class PrayerController extends Controller
         return $stat;
     }
 
+    private function nextPrayer($currentPrayerId)
+    {
+        return $currentPrayerId == 5 ? 1 : $currentPrayerId + 1;
+    }
+
     public function today(Request $request)
     {
         $user = User::findOrFail($request->user_id);
@@ -139,10 +157,11 @@ class PrayerController extends Controller
         }])->get();
 
         $response = $prayers->map(function ($prayer) {
+            $log = $prayer->logs->first();
             return [
                 'id' => $prayer->id,
                 'name' => $prayer->name,
-                'is_offered' => $prayer->logs->isNotEmpty(),
+                'is_offered' => $log && $log->status === 'offered',
             ];
         });
 
